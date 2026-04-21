@@ -3,167 +3,195 @@ from odoo.tests import common, tagged
 
 @tagged('post_install', '-at_install', 'website_blog_restricted')
 class TestBlogRestricted(common.HttpCase):
-    """Tests pour la restriction d'accès aux blogs par utilisateur."""
+    """Tests pour la restriction d'accès aux blogs par niveau de visibilité."""
 
     def setUp(self):
         super().setUp()
 
-        # Blog public — aucune restriction
         self.blog_public = self.env['blog.blog'].create({
             'name': 'Blog Public',
+            'visibility': 'public',
+        })
+        self.blog_members = self.env['blog.blog'].create({
+            'name': 'Blog Membres',
+            'visibility': 'members',
         })
 
-        # Blog restreint
-        self.blog_restreint = self.env['blog.blog'].create({
-            'name': 'Blog Privé',
-        })
-
-        # Article dans chaque blog
         self.post_public = self.env['blog.post'].create({
             'name': 'Article public',
             'blog_id': self.blog_public.id,
             'website_published': True,
         })
-        self.post_restreint = self.env['blog.post'].create({
-            'name': 'Article privé',
-            'blog_id': self.blog_restreint.id,
+        self.post_members = self.env['blog.post'].create({
+            'name': 'Article membres',
+            'blog_id': self.blog_members.id,
             'website_published': True,
         })
 
-        # Utilisateur autorisé
-        self.user_autorise = self.env['res.users'].create({
-            'name': 'Utilisateur Autorisé',
-            'login': 'user_autorise',
-            'password': 'user_autorise',
-            'email': 'autorise@test.com',
+        # Utilisateur interne (membre du club = non-portal)
+        self.user_member = self.env['res.users'].create({
+            'name': 'Membre',
+            'login': 'user_member',
+            'password': 'user_member',
+            'email': 'membre@test.com',
+            'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],
+        })
+        # Utilisateur portal (non-membre)
+        self.user_portal = self.env['res.users'].create({
+            'name': 'Portal',
+            'login': 'user_portal',
+            'password': 'user_portal',
+            'email': 'portal@test.com',
             'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])],
         })
 
-        # Utilisateur non autorisé
-        self.user_non_autorise = self.env['res.users'].create({
-            'name': 'Utilisateur Non Autorisé',
-            'login': 'user_non_autorise',
-            'password': 'user_non_autorise',
-            'email': 'non_autorise@test.com',
-            'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])],
-        })
+        slug = self.env['ir.http']._slug
+        self.url_public = '/blog/%s' % slug(self.blog_public)
+        self.url_members = '/blog/%s' % slug(self.blog_members)
+        self.url_post_public = '/blog/%s/%s' % (slug(self.blog_public), slug(self.post_public))
+        self.url_post_members = '/blog/%s/%s' % (slug(self.blog_members), slug(self.post_members))
 
-        # Appliquer la restriction
-        self.blog_restreint.restricted_user_ids = self.user_autorise
+    # ── Blog public ────────────────────────────────────────────────────────
 
-        # Slugs pour les URLs
-        self.slug = self.env['ir.http']._slug
-        self.blog_public_url = '/blog/%s' % self.slug(self.blog_public)
-        self.blog_restreint_url = '/blog/%s' % self.slug(self.blog_restreint)
-        self.post_public_url = '/blog/%s/%s' % (self.slug(self.blog_public), self.slug(self.post_public))
-        self.post_restreint_url = '/blog/%s/%s' % (self.slug(self.blog_restreint), self.slug(self.post_restreint))
-
-    # -----------------------------------------------------------------------
-    # Blog public — accessible à tous
-    # -----------------------------------------------------------------------
-
-    def test_blog_public_visiteur_anonyme(self):
-        """Un blog sans restriction est accessible sans connexion."""
-        resp = self.url_open(self.blog_public_url)
+    def test_blog_public_anonyme(self):
+        resp = self.url_open(self.url_public)
         self.assertEqual(resp.status_code, 200)
 
-    def test_blog_public_utilisateur_connecte(self):
-        """Un blog sans restriction est accessible à tout utilisateur connecté."""
-        self.authenticate('user_non_autorise', 'user_non_autorise')
-        resp = self.url_open(self.blog_public_url)
+    def test_blog_public_portal(self):
+        self.authenticate('user_portal', 'user_portal')
+        resp = self.url_open(self.url_public)
         self.assertEqual(resp.status_code, 200)
 
-    def test_post_public_visiteur_anonyme(self):
-        """Un article d'un blog public est accessible sans connexion."""
-        resp = self.url_open(self.post_public_url)
+    def test_post_public_anonyme(self):
+        resp = self.url_open(self.url_post_public)
         self.assertEqual(resp.status_code, 200)
 
-    # -----------------------------------------------------------------------
-    # Blog restreint — visiteur anonyme
-    # -----------------------------------------------------------------------
+    # ── Blog membres — visiteur anonyme ───────────────────────────────────
 
-    def test_blog_restreint_visiteur_anonyme_redirige(self):
-        """Un visiteur anonyme est redirigé vers /web/login sur un blog restreint."""
-        resp = self.url_open(self.blog_restreint_url, allow_redirects=False)
+    def test_blog_members_anonyme_redirige(self):
+        resp = self.url_open(self.url_members, allow_redirects=False)
         self.assertEqual(resp.status_code, 302)
         self.assertIn('/web/login', resp.headers.get('Location', ''))
 
-    def test_post_restreint_visiteur_anonyme_redirige(self):
-        """Un visiteur anonyme est redirigé vers /web/login sur un article restreint."""
-        resp = self.url_open(self.post_restreint_url, allow_redirects=False)
+    def test_post_members_anonyme_redirige(self):
+        resp = self.url_open(self.url_post_members, allow_redirects=False)
         self.assertEqual(resp.status_code, 302)
         self.assertIn('/web/login', resp.headers.get('Location', ''))
 
-    # -----------------------------------------------------------------------
-    # Blog restreint — utilisateur non autorisé
-    # -----------------------------------------------------------------------
+    # ── Blog membres — utilisateur portal (non-membre) ────────────────────
 
-    def test_blog_restreint_non_autorise_redirige(self):
-        """Un utilisateur non listé est redirigé vers /web/login."""
-        self.authenticate('user_non_autorise', 'user_non_autorise')
-        resp = self.url_open(self.blog_restreint_url, allow_redirects=False)
+    def test_blog_members_portal_redirige(self):
+        self.authenticate('user_portal', 'user_portal')
+        resp = self.url_open(self.url_members, allow_redirects=False)
         self.assertEqual(resp.status_code, 302)
         self.assertIn('/web/login', resp.headers.get('Location', ''))
 
-    def test_post_restreint_non_autorise_redirige(self):
-        """Un utilisateur non listé ne peut pas accéder aux articles du blog restreint."""
-        self.authenticate('user_non_autorise', 'user_non_autorise')
-        resp = self.url_open(self.post_restreint_url, allow_redirects=False)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn('/web/login', resp.headers.get('Location', ''))
+    # ── Blog membres — utilisateur interne ───────────────────────────────
 
-    # -----------------------------------------------------------------------
-    # Blog restreint — utilisateur autorisé
-    # -----------------------------------------------------------------------
-
-    def test_blog_restreint_autorise_accessible(self):
-        """L'utilisateur autorisé peut accéder au blog restreint."""
-        self.authenticate('user_autorise', 'user_autorise')
-        resp = self.url_open(self.blog_restreint_url)
+    def test_blog_members_interne_accessible(self):
+        self.authenticate('user_member', 'user_member')
+        resp = self.url_open(self.url_members)
         self.assertEqual(resp.status_code, 200)
 
-    def test_post_restreint_autorise_accessible(self):
-        """L'utilisateur autorisé peut lire les articles du blog restreint."""
-        self.authenticate('user_autorise', 'user_autorise')
-        resp = self.url_open(self.post_restreint_url)
+    def test_post_members_interne_accessible(self):
+        self.authenticate('user_member', 'user_member')
+        resp = self.url_open(self.url_post_members)
         self.assertEqual(resp.status_code, 200)
 
-    # -----------------------------------------------------------------------
-    # Liste des blogs — filtrage
-    # -----------------------------------------------------------------------
+    # ── Liste /blog — filtrage ────────────────────────────────────────────
 
-    def test_liste_blogs_cache_restreint_pour_anonyme(self):
-        """La liste /blog ne contient pas les blogs restreints pour un visiteur anonyme."""
+    def test_liste_blogs_anonyme_cache_members(self):
         resp = self.url_open('/blog')
         self.assertEqual(resp.status_code, 200)
-        self.assertNotIn('Blog Privé', resp.text)
+        self.assertNotIn('Blog Membres', resp.text)
         self.assertIn('Blog Public', resp.text)
 
-    def test_liste_blogs_cache_restreint_pour_non_autorise(self):
-        """La liste /blog ne contient pas les blogs restreints pour un utilisateur non autorisé."""
-        self.authenticate('user_non_autorise', 'user_non_autorise')
+    def test_liste_blogs_interne_affiche_members(self):
+        self.authenticate('user_member', 'user_member')
         resp = self.url_open('/blog')
         self.assertEqual(resp.status_code, 200)
-        self.assertNotIn('Blog Privé', resp.text)
+        self.assertIn('Blog Membres', resp.text)
 
-    def test_liste_blogs_affiche_restreint_pour_autorise(self):
-        """La liste /blog affiche les blogs restreints pour l'utilisateur autorisé."""
-        self.authenticate('user_autorise', 'user_autorise')
-        resp = self.url_open('/blog')
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn('Blog Privé', resp.text)
+    # ── Modèle — is_accessible_by ─────────────────────────────────────────
 
-    # -----------------------------------------------------------------------
-    # Modèle — méthode is_accessible_by
-    # -----------------------------------------------------------------------
-
-    def test_is_accessible_by_sans_restriction(self):
-        """Un blog sans restriction est accessible par n'importe quel utilisateur."""
-        self.assertTrue(self.blog_public.is_accessible_by(self.user_non_autorise))
+    def test_is_accessible_by_public(self):
+        self.assertTrue(self.blog_public.is_accessible_by(self.user_portal))
         self.assertTrue(self.blog_public.is_accessible_by(self.env.ref('base.public_user')))
 
-    def test_is_accessible_by_avec_restriction(self):
-        """is_accessible_by retourne True/False selon la liste des utilisateurs."""
-        self.assertTrue(self.blog_restreint.is_accessible_by(self.user_autorise))
-        self.assertFalse(self.blog_restreint.is_accessible_by(self.user_non_autorise))
-        self.assertFalse(self.blog_restreint.is_accessible_by(self.env.ref('base.public_user')))
+    def test_is_accessible_by_members_interne(self):
+        self.assertTrue(self.blog_members.is_accessible_by(self.user_member))
+
+    def test_is_accessible_by_members_portal(self):
+        self.assertFalse(self.blog_members.is_accessible_by(self.user_portal))
+
+    def test_is_accessible_by_members_public_user(self):
+        self.assertFalse(self.blog_members.is_accessible_by(self.env.ref('base.public_user')))
+
+
+class TestBlogVisibilityMixin(common.TransactionCase):
+    """Tests unitaires du mixin sur blog.blog (sans HTTP)."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.rel_type = cls.env['res.partner.relation.type'].create({
+            'name': 'Partenaire de', 'name_inverse': 'Partenaire de', 'is_symmetric': True,
+        })
+        cls.user_owner = cls.env['res.users'].create({
+            'name': 'Owner', 'login': 'owner_blog', 'email': 'owner_blog@test.com',
+            'groups_id': [(6, 0, [cls.env.ref('base.group_user').id])],
+        })
+        cls.user_other = cls.env['res.users'].create({
+            'name': 'Other', 'login': 'other_blog', 'email': 'other_blog@test.com',
+            'groups_id': [(6, 0, [cls.env.ref('base.group_user').id])],
+        })
+        cls.partner_owner = cls.user_owner.partner_id
+        cls.partner_other = cls.user_other.partner_id
+
+    def _blog(self, visibility, **kwargs):
+        vals = {'name': 'Blog test', 'visibility': visibility}
+        vals.update(kwargs)
+        return self.env['blog.blog'].create(vals)
+
+    def test_public_accessible_to_all(self):
+        blog = self._blog('public')
+        self.assertTrue(blog._is_accessible_by(self.partner_other))
+
+    def test_members_accessible_to_internal(self):
+        blog = self._blog('members')
+        self.assertTrue(blog._is_accessible_by(self.partner_other))
+
+    def test_relations_with_matching_relation(self):
+        blog = self._blog(
+            'relations',
+            owner_partner_id=self.partner_owner.id,
+            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
+        )
+        self.env['res.partner.relation'].create({
+            'left_partner_id': self.partner_owner.id,
+            'right_partner_id': self.partner_other.id,
+            'type_id': self.rel_type.id,
+        })
+        self.assertTrue(blog._is_accessible_by(self.partner_other))
+
+    def test_relations_without_relation(self):
+        blog = self._blog(
+            'relations',
+            owner_partner_id=self.partner_owner.id,
+            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
+        )
+        self.assertFalse(blog._is_accessible_by(self.partner_other))
+
+    def test_relations_owner_always_visible(self):
+        blog = self._blog(
+            'relations',
+            owner_partner_id=self.partner_owner.id,
+            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
+        )
+        self.assertTrue(blog._is_accessible_by(self.partner_owner))
+
+    def test_connections_no_owner_fallback_to_members(self):
+        """Sans owner_partner_id, connections se replie sur 'membres'."""
+        blog = self._blog('connections')
+        self.assertTrue(blog._is_accessible_by(self.partner_other))  # interne → membre

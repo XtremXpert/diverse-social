@@ -7,9 +7,13 @@
     <field name="inherit_id" ref="website_blog.view_blog_blog_form"/>
     <field name="arch" type="xml">
         <field name="website_id" position="after">
-            <field name="restricted_user_ids" widget="many2many_tags"
+            <field name="owner_partner_id"
+                   placeholder="Optionnel — requis pour les niveaux Connexions et Relations"/>
+            <field name="visibility" widget="radio"/>
+            <field name="allowed_relation_type_ids"
+                   widget="many2many_tags"
                    options="{'no_create': True}"
-                   placeholder="Laisser vide = accessible à tous"/>
+                   attrs="{'invisible': [('visibility', '!=', 'relations')]}"/>
         </field>
     </field>
 </record>

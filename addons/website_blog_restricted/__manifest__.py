@@ -3,7 +3,7 @@
     'summary': 'Limite la visibilité d\'un blog à des utilisateurs Odoo spécifiques',
     'version': '19.0.1.0.0',
     'category': 'Website',
-    'depends': ['website_blog'],
+    'depends': ['website_blog', 'club_visibility'],
     'data': [
         'views/blog_blog_views.xml',
     ],

@@ -2,18 +2,22 @@ from odoo import fields, models
 
 
 class BlogBlog(models.Model):
-    _inherit = 'blog.blog'
+    _name = 'blog.blog'
+    _inherit = ['blog.blog', 'club.visibility.mixin']
 
-    restricted_user_ids = fields.Many2many(
-        'res.users',
-        string="Visible uniquement par",
-        help="Si rempli, seuls ces utilisateurs connectés peuvent voir ce blog et ses articles. "
-             "Laissez vide pour un accès public.",
+    # Propriétaire du blog — nécessaire pour les niveaux 'connections' et 'relations'
+    owner_partner_id = fields.Many2one(
+        'res.partner', string="Auteur / Propriétaire",
+        help="Utilisé pour les règles de visibilité par connexion ou relation. "
+             "Laisser vide si le blog n'a pas de propriétaire spécifique.",
     )
 
-    def is_accessible_by(self, user):
-        """Retourne True si l'utilisateur peut accéder à ce blog."""
+    def _visibility_owner_partner(self):
         self.ensure_one()
-        if not self.restricted_user_ids:
-            return True
-        return user in self.restricted_user_ids
+        return self.owner_partner_id
+
+    def is_accessible_by(self, user):
+        """Rétrocompatibilité : accepte un res.users ou un res.partner."""
+        self.ensure_one()
+        partner = user.partner_id if hasattr(user, 'partner_id') else user
+        return self._is_accessible_by(partner)
