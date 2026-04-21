@@ -7,6 +7,7 @@
     'data': [
         'views/blog_blog_views.xml',
     ],
+    'installable': True,
     'author': 'Bemade',
     'license': 'LGPL-3',
 }
