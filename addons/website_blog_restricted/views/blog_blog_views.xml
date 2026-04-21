@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_blog_blog_form_restricted" model="ir.ui.view">
+    <field name="name">blog.blog.form.restricted</field>
+    <field name="model">blog.blog</field>
+    <field name="inherit_id" ref="website_blog.view_blog_blog_form"/>
+    <field name="arch" type="xml">
+        <field name="website_id" position="after">
+            <field name="restricted_user_ids" widget="many2many_tags"
+                   options="{'no_create': True}"
+                   placeholder="Laisser vide = accessible à tous"/>
+        </field>
+    </field>
+</record>
+
+</odoo>
