@@ -13,7 +13,7 @@
             <field name="allowed_relation_type_ids"
                    widget="many2many_tags"
                    options="{'no_create': True}"
-                   attrs="{'invisible': [('visibility', '!=', 'relations')]}"/>
+                   invisible="visibility != 'relations'"/>
         </field>
     </field>
 </record>
