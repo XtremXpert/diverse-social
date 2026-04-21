@@ -35,7 +35,7 @@ class TestBlogRestricted(common.HttpCase):
             'password': 'user_member',
             'email': 'membre@test.com',
         })
-        self.env.ref('base.group_user').users |= self.user_member
+        self.env.ref('base.group_user').user_ids |= self.user_member
         # Utilisateur portal (non-membre)
         self.user_portal = self.env['res.users'].create({
             'name': 'Portal',
@@ -43,7 +43,7 @@ class TestBlogRestricted(common.HttpCase):
             'password': 'user_portal',
             'email': 'portal@test.com',
         })
-        self.env.ref('base.group_portal').users |= self.user_portal
+        self.env.ref('base.group_portal').user_ids |= self.user_portal
 
         slug = self.env['ir.http']._slug
         self.url_public = '/blog/%s' % slug(self.blog_public)
@@ -141,11 +141,11 @@ class TestBlogVisibilityMixin(common.TransactionCase):
         cls.user_owner = cls.env['res.users'].create({
             'name': 'Owner', 'login': 'owner_blog', 'email': 'owner_blog@test.com',
         })
-        cls.env.ref('base.group_user').users |= cls.user_owner
+        cls.env.ref('base.group_user').user_ids |= cls.user_owner
         cls.user_other = cls.env['res.users'].create({
             'name': 'Other', 'login': 'other_blog', 'email': 'other_blog@test.com',
         })
-        cls.env.ref('base.group_user').users |= cls.user_other
+        cls.env.ref('base.group_user').user_ids |= cls.user_other
         cls.partner_owner = cls.user_owner.partner_id
         cls.partner_other = cls.user_other.partner_id
 
