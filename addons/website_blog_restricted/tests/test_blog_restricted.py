@@ -43,12 +43,8 @@ class TestBlogRestricted(common.HttpCase):
             'password': 'user_portal',
             'email': 'portal@test.com',
         })
-        self.user_portal.write({
-            'groups_id': [
-                (3, self.env.ref('base.group_user').id),
-                (4, self.env.ref('base.group_portal').id),
-            ]
-        })
+        self.env.ref('base.group_user').user_ids -= self.user_portal
+        self.env.ref('base.group_portal').user_ids |= self.user_portal
 
         slug = self.env['ir.http']._slug
         self.url_public = '/blog/%s' % slug(self.blog_public)
