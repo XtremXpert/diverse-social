@@ -8,14 +8,16 @@ class WebsiteBlogRestricted(WebsiteBlog):
         return blog.is_accessible_by(request.env.user)
 
     def _prepare_blog_values(self, blogs, **kwargs):
-        user = request.env.user
+        # Les utilisateurs internes voient tout — on délègue directement sans filtrage.
         if self._is_internal_user():
-            accessible = blogs
-        else:
-            accessible = blogs.filtered(lambda b: b.is_accessible_by(user))
+            return super()._prepare_blog_values(blogs=blogs, **kwargs)
+
+        user = request.env.user
+        accessible = blogs.filtered(lambda b: b.is_accessible_by(user))
         values = super()._prepare_blog_values(blogs=accessible, **kwargs)
-        # Filter posts: _search_with_fuzzy n'est pas conscient des restrictions
-        # de visibilité, donc des articles de blogs inaccessibles peuvent apparaître.
+        # Filtre de sécurité sur les articles : _search_with_fuzzy n'est pas
+        # conscient des restrictions de visibilité et peut inclure des articles
+        # de blogs inaccessibles.
         if isinstance(values, dict) and accessible:
             accessible_ids = set(accessible.ids)
             values['posts'] = values['posts'].filtered(
