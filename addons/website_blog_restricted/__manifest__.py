@@ -1,7 +1,7 @@
 {
     'name': 'Website Blog — Accès restreint',
     'summary': 'Limite la visibilité d\'un blog à des utilisateurs Odoo spécifiques',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.1.0',
     'category': 'Website',
     'depends': ['website_blog', 'club_visibility'],
     'data': [

@@ -5,6 +5,9 @@ class BlogBlog(models.Model):
     _name = 'blog.blog'
     _inherit = ['blog.blog', 'club.visibility.mixin']
 
+    # Les blogs sont publics par défaut (différent du défaut 'members' du mixin)
+    visibility = fields.Selection(default='public')
+
     # Propriétaire du blog — nécessaire pour les niveaux 'connections' et 'relations'
     owner_partner_id = fields.Many2one(
         'res.partner', string="Auteur / Propriétaire",
