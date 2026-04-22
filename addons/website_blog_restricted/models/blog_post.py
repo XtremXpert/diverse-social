@@ -8,10 +8,5 @@ class BlogPost(models.Model):
 
     def _compute_author_login(self):
         for post in self:
-            users = post.author_id.sudo().user_ids
-            portal_users = users.filtered(lambda u: u.share and u.active)
-            internal_users = users.filtered(lambda u: not u.share and u.active)
-            if portal_users and not internal_users:
-                post.author_login = portal_users[:1].login
-            else:
-                post.author_login = post.author_name
+            users = post.author_id.sudo().user_ids.filtered(lambda u: u.active)
+            post.author_login = users[:1].login if users else post.author_name
