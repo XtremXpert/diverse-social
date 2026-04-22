@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Affiche le display_name de l'auteur (login pour les utilisateurs portail via club_base) -->
+<template id="post_author_login" inherit_id="website_blog.post_author">
+    <xpath expr="//span[@t-out='blog_post.author_name']" position="replace">
+        <span t-out="blog_post.author_id.display_name"/>
+    </xpath>
+</template>
+
+</odoo>
