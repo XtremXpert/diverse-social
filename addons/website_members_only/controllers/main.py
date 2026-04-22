@@ -12,24 +12,28 @@ class WebsiteEventMembersOnly(WebsiteEventController):
             return request.redirect(f'/web/login?redirect={redirect_url}')
         return None
 
+    @http.route(inherit=True)
     def events(self, **kwargs):
         redirect = self._redirect_if_login_required()
         if redirect:
             return redirect
         return super().events(**kwargs)
 
+    @http.route(inherit=True)
     def event(self, event, **post):
         redirect = self._redirect_if_login_required()
         if redirect:
             return redirect
         return super().event(event, **post)
 
+    @http.route(inherit=True)
     def event_page(self, event, page, **post):
         redirect = self._redirect_if_login_required()
         if redirect:
             return redirect
         return super().event_page(event, page, **post)
 
+    @http.route(inherit=True)
     def event_register(self, event, **post):
         redirect = self._redirect_if_login_required()
         if redirect:
