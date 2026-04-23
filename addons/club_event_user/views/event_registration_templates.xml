@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Remplacer le champ texte "name" par un sélecteur de membre (res.users) -->
+<template id="registration_question_user_selector"
+          inherit_id="website_event.registration_event_question">
+    <xpath expr="//t[@t-if=\"question.question_type in ['name', 'email', 'phone', 'company_name']\"]"
+           position="replace">
+        <!-- Sélecteur de membre pour le type "name" -->
+        <t t-if="question.question_type == 'name'">
+            <t t-set="all_members" t-value="request.env['res.users'].sudo().search([('share', '=', False), ('active', '=', True)], order='login')"/>
+            <t t-set="current_login" t-value="'' if request.env.user._is_public() else request.env.user.login"/>
+            <select class="form-select"
+                    t-attf-name="#{registration_index}-#{question.question_type}-#{question.id}"
+                    t-att-required="question.is_mandatory_answer">
+                <option value="">— Choisir un membre —</option>
+                <t t-foreach="all_members" t-as="member">
+                    <option t-att-value="member.login"
+                            t-att-selected="'selected' if (counter in (0, 1) and member.login == current_login) else None">
+                        <t t-out="member.login"/>
+                    </option>
+                </t>
+            </select>
+        </t>
+        <!-- Champs email / téléphone / compagnie inchangés -->
+        <t t-elif="question.question_type in ['email', 'phone', 'company_name']">
+            <input class="form-control"
+                   t-att-type="input_type_by_question_type[question.question_type]"
+                   t-attf-name="#{registration_index}-#{question.question_type}-#{question.id}"
+                   t-att-required="question.is_mandatory_answer"
+                   t-att-value="default_first_attendee.get(question.question_type, '') if counter in (0, 1) else ''"/>
+        </t>
+    </xpath>
+</template>
+
+</odoo>
