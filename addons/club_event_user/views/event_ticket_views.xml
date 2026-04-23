@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Ajouter le checkbox "Capturer le membre" dans le formulaire de billet -->
+<record id="event_ticket_require_member_form" model="ir.ui.view">
+    <field name="name">event.event.ticket.require_member</field>
+    <field name="model">event.event.ticket</field>
+    <field name="inherit_id" ref="event.event_event_ticket_view_form_from_event"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='seats_reserved']" position="after">
+            <field name="require_member_name"/>
+        </xpath>
+    </field>
+</record>
+
+<!-- Ajouter la colonne dans la liste inline de l'événement -->
+<record id="event_ticket_require_member_list" model="ir.ui.view">
+    <field name="name">event.event.ticket.require_member.list</field>
+    <field name="model">event.event.ticket</field>
+    <field name="inherit_id" ref="event.event_event_ticket_view_tree_from_event"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='seats_reserved']" position="after">
+            <field name="require_member_name" optional="show"/>
+        </xpath>
+    </field>
+</record>
+
+</odoo>
