@@ -1,9 +1,9 @@
 from odoo import http
 from odoo.http import request
-from odoo.addons.website_event.controllers.main import WebsiteEvent
+from odoo.addons.website_event.controllers.main import WebsiteEventController
 
 
-class WebsiteEventClub(WebsiteEvent):
+class WebsiteEventClub(WebsiteEventController):
 
     def _create_attendees_from_registration_post(self, event, registration_data):
         """Quand user_id est soumis, remplir automatiquement name (login),
