@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<!-- Affiche le login pour les utilisateurs portail, sinon le nom de l'auteur -->
+<!-- post_author : dans l'en-tête de l'article complet -->
 <template id="post_author_login" inherit_id="website_blog.post_author">
     <xpath expr="//span[@t-out='blog_post.author_name']" position="replace">
         <span t-out="blog_post.author_login"/>
+    </xpath>
+</template>
+
+<!-- post_heading : dans les listes/boucles de posts -->
+<template id="post_heading_login" inherit_id="website_blog.post_heading">
+    <xpath expr="//span[@t-field='blog_post.author_id']" position="replace">
+        <span t-out="blog_post.author_login"/>
+    </xpath>
+</template>
+
+<!-- blog_feed : flux RSS Atom -->
+<template id="blog_feed_login" inherit_id="website_blog.blog_feed">
+    <xpath expr="//author/name" position="replace">
+        <name t-out="post.author_login"/>
     </xpath>
 </template>
 
