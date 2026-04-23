@@ -7,6 +7,7 @@
     'license': 'LGPL-3',
     'depends': [
         'event_sale',
+        'website_sale',
     ],
     'installable': True,
     'auto_install': False,
