@@ -26,14 +26,20 @@ class SaleOrderLine(models.Model):
     @api.depends('event_id', 'product_id')
     def _compute_event_related(self):
         """Étend le compute standard pour auto-assigner le type de billet
-        d'après le produit de la ligne, une fois l'événement identifié.
+        et le créneau d'après le produit de la ligne, une fois l'événement identifié.
         """
         super()._compute_event_related()
         for line in self:
-            if line.event_ticket_id or not line.event_id or not line.product_id:
+            if not line.event_id or not line.product_id:
                 continue
-            ticket = line.event_id.event_ticket_ids.filtered(
-                lambda t: t.product_id == line.product_id
-            )[:1]
-            if ticket:
-                line.event_ticket_id = ticket
+            if not line.event_ticket_id:
+                ticket = line.event_id.event_ticket_ids.filtered(
+                    lambda t: t.product_id == line.product_id
+                )[:1]
+                if ticket:
+                    line.event_ticket_id = ticket
+            # Auto-assigner le premier créneau si l'événement est multi-créneaux
+            if not line.event_slot_id and line.event_id.is_multi_slots:
+                slots = line.event_id.event_slot_ids
+                if slots:
+                    line.event_slot_id = slots[0]
