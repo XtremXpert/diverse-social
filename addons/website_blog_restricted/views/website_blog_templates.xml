@@ -3,8 +3,20 @@
 
 <!-- post_author : dans l'en-tête de l'article complet -->
 <template id="post_author_login" inherit_id="website_blog.post_author">
+    <!-- Mode édition (editable=True) : remplacer le span t-field par login -->
+    <xpath expr="//span[@t-if='editable'][@t-field='blog_post.author_id']" position="replace">
+        <span t-if="editable" t-out="blog_post.author_login"/>
+    </xpath>
+    <!-- Mode vue (editable=False) : remplacer le span t-else -->
     <xpath expr="//span[@t-out='blog_post.author_name']" position="replace">
-        <span t-out="blog_post.author_login"/>
+        <span t-else="" t-out="blog_post.author_login"/>
+    </xpath>
+</template>
+
+<!-- s_dynamic_snippet_template_author : snippet auteur dans les listes dynamiques -->
+<template id="s_dynamic_snippet_author_login" inherit_id="website_blog.s_dynamic_snippet_template_author">
+    <xpath expr="//span[@t-field='record.author_id.name']" position="replace">
+        <span t-out="record.author_login"/>
     </xpath>
 </template>
 
