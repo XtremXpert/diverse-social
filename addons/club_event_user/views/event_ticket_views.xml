@@ -19,7 +19,7 @@
     <field name="model">event.event.ticket</field>
     <field name="inherit_id" ref="event.event_event_ticket_view_tree_from_event"/>
     <field name="arch" type="xml">
-        <xpath expr="//field[@name='seats_reserved']" position="after">
+        <xpath expr="//field[@name='seats_taken'][last()]" position="after">
             <field name="require_member_name" optional="show"/>
         </xpath>
     </field>
