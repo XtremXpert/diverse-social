@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Avis paiement à l'arrivée — Page de paiement boutique -->
+<template id="shop_payment_cash_notice" inherit_id="website_sale.payment">
+    <xpath expr="//div[@id='payment_method']" position="before">
+        <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
+            <i class="fa fa-info-circle fa-lg me-3"/>
+            <span>
+                <strong>Paiement à l'arrivée.</strong>
+                Le règlement s'effectue en argent comptant lors de votre arrivée.
+                Aucun paiement en ligne n'est requis.
+            </span>
+        </div>
+    </xpath>
+</template>
+
+<!-- Avis paiement à l'arrivée — Modal d'inscription aux événements -->
+<template id="event_registration_cash_notice" inherit_id="website_event.modal_ticket_registration">
+    <xpath expr="//div[hasclass('modal-footer')]" position="before">
+        <div class="alert alert-info d-flex align-items-center mx-3 mb-0" role="alert">
+            <i class="fa fa-info-circle fa-lg me-3"/>
+            <span>
+                <strong>Paiement à l'arrivée.</strong>
+                Le règlement s'effectue en argent comptant lors de votre arrivée.
+            </span>
+        </div>
+    </xpath>
+</template>
+
+</odoo>
