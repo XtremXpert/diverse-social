@@ -11,15 +11,15 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
             'name': 'Interne Dupont',
             'login': 'interne@test.com',
             'email': 'interne@test.com',
-            'groups_id': [(6, 0, [cls.env.ref('base.group_user').id])],
         })
-        portal_group = cls.env.ref('base.group_portal')
+        cls.env.ref('base.group_user').user_ids |= cls.internal_user
         cls.portal_user = cls.env['res.users'].create({
             'name': 'Portal Tremblay',
             'login': 'portail_login@test.com',
             'email': 'portail@test.com',
-            'groups_id': [(6, 0, [portal_group.id])],
         })
+        cls.env.ref('base.group_user').user_ids -= cls.portal_user
+        cls.env.ref('base.group_portal').user_ids |= cls.portal_user
 
     def test_internal_user_display_name_is_name(self):
         partner = self.internal_user.partner_id
@@ -45,19 +45,20 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         portal_group = self.env.ref('base.group_portal')
         internal_group = self.env.ref('base.group_user')
         partner = self.env['res.partner'].create({'name': 'Partagé Tremblay'})
-        self.env['res.users'].create({
+        u_internal = self.env['res.users'].create({
             'name': 'Partagé Tremblay',
             'login': 'partage_internal@test.com',
             'email': 'partage_internal@test.com',
             'partner_id': partner.id,
-            'groups_id': [(6, 0, [internal_group.id])],
         })
-        self.env['res.users'].create({
+        internal_group.user_ids |= u_internal
+        u_portal = self.env['res.users'].create({
             'name': 'Partagé Tremblay',
             'login': 'partage_portal@test.com',
             'email': 'partage_portal@test.com',
             'partner_id': partner.id,
-            'groups_id': [(6, 0, [portal_group.id])],
         })
+        internal_group.user_ids -= u_portal
+        portal_group.user_ids |= u_portal
         partner.invalidate_recordset(['display_name'])
         self.assertNotEqual(partner.display_name, 'partage_portal@test.com')
