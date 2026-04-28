@@ -7,4 +7,6 @@
     'author': 'Bemade',
     'license': 'LGPL-3',
     'installable': True,
+    'demo': [],
+    'test': [],
 }
