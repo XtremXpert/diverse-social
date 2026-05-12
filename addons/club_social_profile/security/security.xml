@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Profils: lecture de tous les profils membres, écriture du sien -->
+        <record id="profile_user_read_rule" model="ir.rule">
+            <field name="name">Club Social Profile: Lecture membres</field>
+            <field name="model_id" ref="model_club_social_profile_profile"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="profile_user_write_rule" model="ir.rule">
+            <field name="name">Club Social Profile: Écriture profil propre</field>
+            <field name="model_id" ref="model_club_social_profile_profile"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Connexions: l'utilisateur voit les siennes -->
+        <record id="connection_user_rule" model="ir.rule">
+            <field name="name">Club Social Connection: User Access</field>
+            <field name="model_id" ref="model_club_social_profile_connection"/>
+            <field name="domain_force">['|', ('user_id', '=', user.id), ('connected_user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Notifications: chaque utilisateur voit les siennes -->
+        <record id="notification_user_rule" model="ir.rule">
+            <field name="name">Club Social Notification: User Access</field>
+            <field name="model_id" ref="model_club_social_profile_notification"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Modérateurs voient tout -->
+        <record id="profile_moderator_rule" model="ir.rule">
+            <field name="name">Club Social Profile: Moderator Access</field>
+            <field name="model_id" ref="model_club_social_profile_profile"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

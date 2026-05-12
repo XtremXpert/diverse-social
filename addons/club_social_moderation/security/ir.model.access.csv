@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_moderation_ban_moderator,club_social_moderation.ban moderator,model_club_social_moderation_ban,social_base.group_social_moderator,1,1,1,0
+access_moderation_ban_admin,club_social_moderation.ban admin,model_club_social_moderation_ban,social_base.group_social_admin,1,1,1,1
+access_moderation_ban_system,club_social_moderation.ban system,model_club_social_moderation_ban,base.group_system,1,1,1,1
+access_moderation_report_user,club_social_moderation.report user,model_club_social_moderation_report,social_base.group_social_user,1,0,1,0
+access_moderation_report_moderator,club_social_moderation.report moderator,model_club_social_moderation_report,social_base.group_social_moderator,1,1,1,0
+access_moderation_report_admin,club_social_moderation.report admin,model_club_social_moderation_report,social_base.group_social_admin,1,1,1,1
+access_moderation_report_system,club_social_moderation.report system,model_club_social_moderation_report,base.group_system,1,1,1,1

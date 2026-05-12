@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Bans: lecture et gestion par les modérateurs seulement -->
+        <record id="moderation_ban_moderator_rule" model="ir.rule">
+            <field name="name">Club Social Ban: Moderator Access</field>
+            <field name="model_id" ref="model_club_social_moderation_ban"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Reports: l'utilisateur peut créer, les modérateurs gèrent -->
+        <record id="moderation_report_user_rule" model="ir.rule">
+            <field name="name">Club Social Report: User Create</field>
+            <field name="model_id" ref="model_club_social_moderation_report"/>
+            <field name="domain_force">[('reporter_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="moderation_report_moderator_rule" model="ir.rule">
+            <field name="name">Club Social Report: Moderator Access</field>
+            <field name="model_id" ref="model_club_social_moderation_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

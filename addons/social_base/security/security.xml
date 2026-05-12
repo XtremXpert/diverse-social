@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="group_social_user" model="res.groups">
+            <field name="name">Social User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_social_moderator" model="res.groups">
+            <field name="name">Social Moderator</field>
+            <field name="implied_ids" eval="[(4, ref('group_social_user'))]"/>
+        </record>
+
+        <record id="group_social_admin" model="res.groups">
+            <field name="name">Social Administrator</field>
+            <field name="implied_ids" eval="[(4, ref('group_social_moderator')), (4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="group_social_portal" model="res.groups">
+            <field name="name">Social Portal</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
+
+    </data>
+
+    <data>
+
+        <record id="social_post_user_rule" model="ir.rule">
+            <field name="name">Social Post: User Access</field>
+            <field name="model_id" ref="model_social_base_post"/>
+            <field name="domain_force">['|', ('author_id', '=', user.id), ('state', '=', 'published')]</field>
+            <field name="groups" eval="[(4, ref('group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="social_post_moderator_rule" model="ir.rule">
+            <field name="name">Social Post: Moderator Access</field>
+            <field name="model_id" ref="model_social_base_post"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="social_comment_user_rule" model="ir.rule">
+            <field name="name">Social Comment: User Access</field>
+            <field name="model_id" ref="model_social_base_comment"/>
+            <field name="domain_force">['|', ('state', '=', 'published'), ('author_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="social_post_portal_rule" model="ir.rule">
+            <field name="name">Social Post: Portal Access</field>
+            <field name="model_id" ref="model_social_base_post"/>
+            <field name="domain_force">[('visibility', '=', 'public'), ('state', '=', 'published')]</field>
+            <field name="groups" eval="[(4, ref('group_social_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

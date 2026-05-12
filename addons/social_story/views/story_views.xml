@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_social_story_list" model="ir.ui.view">
+            <field name="name">social_story.story.list</field>
+            <field name="model">social_story.story</field>
+            <field name="arch" type="xml">
+                <list string="Stories" default_order="create_date desc">
+                    <field name="name"/>
+                    <field name="author_id"/>
+                    <field name="media_type"/>
+                    <field name="state"/>
+                    <field name="view_count"/>
+                    <field name="expires_at"/>
+                    <field name="create_date"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_social_stories" model="ir.actions.act_window">
+            <field name="name">Stories</field>
+            <field name="res_model">social_story.story</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'active')]</field>
+        </record>
+
+        <menuitem id="menu_social_stories" name="Stories"
+                  parent="social_base.menu_social_base_root"
+                  sequence="40"
+                  action="action_social_stories"/>
+
+    </data>
+</odoo>

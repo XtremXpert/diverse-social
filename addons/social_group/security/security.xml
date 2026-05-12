@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Groupes publics visibles à tous les membres -->
+        <record id="social_group_user_rule" model="ir.rule">
+            <field name="name">Social Group: User Access</field>
+            <field name="model_id" ref="model_social_group_group"/>
+            <field name="domain_force">['|', ('privacy', '=', 'public'), ('member_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Créateur et admins peuvent modifier leur groupe -->
+        <record id="social_group_admin_write_rule" model="ir.rule">
+            <field name="name">Social Group: Admin Write</field>
+            <field name="model_id" ref="model_social_group_group"/>
+            <field name="domain_force">['|', ('creator_id', '=', user.id), ('admin_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Moderateurs voient tout -->
+        <record id="social_group_moderator_rule" model="ir.rule">
+            <field name="name">Social Group: Moderator Access</field>
+            <field name="model_id" ref="model_social_group_group"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Demandes d'adhésion: l'utilisateur voit ses propres demandes -->
+        <record id="social_group_join_request_user_rule" model="ir.rule">
+            <field name="name">Social Group Join Request: User Access</field>
+            <field name="model_id" ref="model_social_group_join_request"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Moderateurs voient toutes les demandes -->
+        <record id="social_group_join_request_moderator_rule" model="ir.rule">
+            <field name="name">Social Group Join Request: Moderator Access</field>
+            <field name="model_id" ref="model_social_group_join_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

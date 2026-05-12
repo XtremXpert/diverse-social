@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extension vue profil avec champs modération -->
+        <record id="view_csp_profile_moderation_form" model="ir.ui.view">
+            <field name="name">club_social_profile.profile.form.moderation</field>
+            <field name="model">club_social_profile.profile</field>
+            <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+            <field name="arch" type="xml">
+                <sheet position="inside">
+                    <div class="alert alert-danger" invisible="not is_banned" role="alert">
+                        Account suspended: <field name="ban_reason" readonly="1"/>
+                    </div>
+                    <div class="alert alert-warning" invisible="not is_shadow_banned" role="alert">
+                        Shadow banned
+                    </div>
+                </sheet>
+                <notebook position="inside">
+                    <page string="Moderation" groups="social_base.group_social_moderator">
+                        <group>
+                            <field name="is_banned" readonly="1"/>
+                            <field name="ban_reason" readonly="1"/>
+                            <field name="is_shadow_banned"/>
+                        </group>
+                        <field name="ban_ids">
+                            <list>
+                                <field name="banned_by"/>
+                                <field name="reason"/>
+                                <field name="banned_until"/>
+                                <field name="is_active"/>
+                                <field name="lifted_at"/>
+                                <button name="action_lift" string="Lift Ban" type="object"
+                                        invisible="not is_active"
+                                        groups="social_base.group_social_moderator"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <!-- Vue reports -->
+        <record id="view_moderation_report_list" model="ir.ui.view">
+            <field name="name">club_social_moderation.report.list</field>
+            <field name="model">club_social_moderation.report</field>
+            <field name="arch" type="xml">
+                <list string="Reports" default_order="create_date desc">
+                    <field name="reporter_id"/>
+                    <field name="ref_model"/>
+                    <field name="ref_id"/>
+                    <field name="reason"/>
+                    <field name="state" decoration-danger="state == 'pending'"/>
+                    <field name="create_date"/>
+                    <button name="action_resolve" string="Resolve" type="object"
+                            invisible="state != 'pending'"
+                            groups="social_base.group_social_moderator"/>
+                    <button name="action_dismiss" string="Dismiss" type="object"
+                            invisible="state != 'pending'"
+                            groups="social_base.group_social_moderator"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_moderation_reports" model="ir.actions.act_window">
+            <field name="name">Content Reports</field>
+            <field name="res_model">club_social_moderation.report</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'pending')]</field>
+            <field name="context">{'search_default_state_pending': 1}</field>
+        </record>
+
+        <menuitem id="menu_moderation_root" name="Moderation"
+                  parent="social_base.menu_social_base_root"
+                  sequence="70"
+                  groups="social_base.group_social_moderator"/>
+        <menuitem id="menu_moderation_reports" name="Reports"
+                  parent="menu_moderation_root"
+                  sequence="10"
+                  action="action_moderation_reports"/>
+
+    </data>
+</odoo>

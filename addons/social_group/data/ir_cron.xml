@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_cleanup_join_requests" model="ir.cron">
+            <field name="name">Social Groups: Cleanup Old Join Requests</field>
+            <field name="model_id" ref="model_social_group_join_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_cleanup_old_requests()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>
