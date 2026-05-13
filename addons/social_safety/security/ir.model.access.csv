@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_safety_block_user,social_safety.block user,model_social_safety_block,social_base.group_social_user,1,1,1,1
+access_safety_block_moderator,social_safety.block moderator,model_social_safety_block,social_base.group_social_moderator,1,1,1,1
+access_safety_mute_user,social_safety.mute user,model_social_safety_mute,social_base.group_social_user,1,1,1,1
+access_safety_mute_moderator,social_safety.mute moderator,model_social_safety_mute,social_base.group_social_moderator,1,1,1,1

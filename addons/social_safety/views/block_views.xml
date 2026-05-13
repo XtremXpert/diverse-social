@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_block_list" model="ir.ui.view">
+        <field name="name">social_safety.block.list</field>
+        <field name="model">social_safety.block</field>
+        <field name="arch" type="xml">
+            <list string="Blocked Users">
+                <field name="blocked_id"/>
+                <field name="create_date" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_block_form" model="ir.ui.view">
+        <field name="name">social_safety.block.form</field>
+        <field name="model">social_safety.block</field>
+        <field name="arch" type="xml">
+            <form string="Block">
+                <sheet>
+                    <group>
+                        <field name="blocked_id"/>
+                        <field name="create_date" readonly="1"/>
+                    </group>
+                    <group string="Private Note">
+                        <field name="reason" nolabel="1"
+                               placeholder="Why you blocked this person (only visible to you)"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_my_blocks" model="ir.actions.act_window">
+        <field name="name">Blocked Users</field>
+        <field name="res_model">social_safety.block</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('blocker_id', '=', uid)]</field>
+        <field name="context">{'default_blocker_id': uid}</field>
+    </record>
+
+    <!-- Panic mode injected into profile form -->
+    <record id="view_profile_panic_inline" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.panic</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div invisible="not panic_mode"
+                     class="alert alert-danger" role="alert">
+                    <strong>Panic Mode is ON</strong> — you are hidden from non-connections.
+                    <button name="action_panic_lift" type="object"
+                            string="Come Back" class="btn btn-sm btn-success ms-3"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='visibility']" position="after">
+                <field name="panic_mode" readonly="1"/>
+                <field name="panic_activated_at" readonly="1"
+                       invisible="not panic_mode"/>
+                <div class="mt-2">
+                    <button name="action_panic" type="object" string="Go Dark"
+                            invisible="panic_mode"
+                            class="btn btn-warning btn-sm"
+                            confirm="Activate panic mode? You will be hidden from all non-connections."/>
+                    <button name="action_panic_lift" type="object" string="Come Back"
+                            invisible="not panic_mode"
+                            class="btn btn-success btn-sm"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

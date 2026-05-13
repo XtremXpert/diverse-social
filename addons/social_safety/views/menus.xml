@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_safety_root" name="Safety" sequence="40"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_blocked_users" name="Blocked Users"
+              parent="menu_safety_root" sequence="10"
+              action="action_my_blocks"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_muted_users" name="Muted Users"
+              parent="menu_safety_root" sequence="20"
+              action="action_my_mutes"
+              groups="social_base.group_social_user"/>
+
+</odoo>
