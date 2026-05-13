@@ -8,7 +8,10 @@ class TestSocialComment(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Comment Test User', 'login': 'comment_test_user', 'email': 'comment@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.post = cls.env['social_base.post'].with_user(cls.user).create({
             'content': 'A post',
         })

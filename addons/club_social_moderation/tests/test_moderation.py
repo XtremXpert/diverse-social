@@ -78,6 +78,7 @@ class TestReport(TransactionCase):
             'name': 'Reporter',
             'login': 'reporter_mod_test',
             'partner_id': partner.id,
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
         })
         self.Report = self.env['club_social_moderation.report']
 
@@ -100,13 +101,13 @@ class TestReport(TransactionCase):
 
     def test_resolve_report(self):
         report = self._make_report(ref_id=3)
-        report.action_resolve(note='Content removed')
+        report.sudo().action_resolve(note='Content removed')
         self.assertEqual(report.state, 'resolved')
         self.assertTrue(report.resolved_at)
         self.assertEqual(report.resolution_note, 'Content removed')
 
     def test_dismiss_report(self):
         report = self._make_report(ref_id=4)
-        report.action_dismiss(note='No violation found')
+        report.sudo().action_dismiss(note='No violation found')
         self.assertEqual(report.state, 'dismissed')
         self.assertEqual(report.resolution_note, 'No violation found')

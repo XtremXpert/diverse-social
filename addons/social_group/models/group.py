@@ -126,8 +126,8 @@ class SocialGroupJoinRequest(models.Model):
 
     def action_approve(self):
         self.ensure_one()
-        self.group_id.write({'member_ids': [(4, self.user_id.id)]})
-        self.write({
+        self.group_id.sudo().write({'member_ids': [(4, self.user_id.id)]})
+        self.sudo().write({
             'state': 'approved',
             'processed_by': self.env.user.id,
             'processed_date': fields.Datetime.now(),

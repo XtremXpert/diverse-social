@@ -8,9 +8,11 @@ class TestSocialMessaging(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user1 = cls.env.ref('base.user_demo')
+        cls.user1 = cls.env['res.users'].create({
+            'name': 'Msg User 1', 'login': 'msg_test_user1', 'email': 'msg1@test.test',
+        })
         cls.user2 = cls.env['res.users'].create({
-            'name': 'Msg User 2', 'login': 'msg_user2', 'email': 'msg2@test.test',
+            'name': 'Msg User 2', 'login': 'msg_test_user2', 'email': 'msg2@test.test',
         })
         cls.Thread = cls.env['social_messaging.thread']
 

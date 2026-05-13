@@ -7,7 +7,10 @@ class TestSocialPost(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Post Test User', 'login': 'post_test_user', 'email': 'post@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.Post = cls.env['social_base.post']
 
     def _make_post(self, content='Test content', visibility='members'):

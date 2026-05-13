@@ -8,9 +8,14 @@ class TestSocialGroup(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user1 = cls.env.ref('base.user_demo')
+        group_user = cls.env.ref('social_base.group_social_user')
+        cls.user1 = cls.env['res.users'].create({
+            'name': 'Group User 1', 'login': 'group_test_user1', 'email': 'group1@test.test',
+            'group_ids': [(4, group_user.id)],
+        })
         cls.user2 = cls.env['res.users'].create({
-            'name': 'Test User 2', 'login': 'test_user2_sg', 'email': 'test2@sg.test',
+            'name': 'Group User 2', 'login': 'group_test_user2', 'email': 'group2@test.test',
+            'group_ids': [(4, group_user.id)],
         })
         cls.Group = cls.env['social_group.group']
 

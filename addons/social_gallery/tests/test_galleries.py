@@ -7,7 +7,10 @@ class TestSocialGallery(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Gallery Test User', 'login': 'gallery_test_user', 'email': 'gallery@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.Gallery = cls.env['social_gallery.gallery']
 
     def _make_gallery(self, is_shared=False, visibility='members'):

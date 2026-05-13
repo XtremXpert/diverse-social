@@ -7,7 +7,10 @@ class TestSocialReaction(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Reaction Test User', 'login': 'reaction_test_user', 'email': 'reaction@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.post = cls.env['social_base.post'].with_user(cls.user).create({'content': 'A post'})
 
     def test_add_reaction(self):

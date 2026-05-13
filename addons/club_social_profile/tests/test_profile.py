@@ -8,7 +8,10 @@ class TestClubSocialProfile(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Profile Test User', 'login': 'profile_test_user', 'email': 'profile@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.Profile = cls.env['club_social_profile.profile']
 
     def test_get_or_create(self):

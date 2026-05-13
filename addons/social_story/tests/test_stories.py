@@ -10,7 +10,12 @@ class TestSocialStory(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = cls.env.ref('base.user_demo')
+        cls.user = cls.env['res.users'].create({
+            'name': 'Story Test User',
+            'login': 'story_test_user',
+            'email': 'story@test.test',
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
         cls.Story = cls.env['social_story.story']
 
     def _make_story(self, name='My Story'):

@@ -8,9 +8,14 @@ class TestClubSocialConnection(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user1 = cls.env.ref('base.user_demo')
+        group_user = cls.env.ref('social_base.group_social_user')
+        cls.user1 = cls.env['res.users'].create({
+            'name': 'Conn User 1', 'login': 'conn_test_user1', 'email': 'conn1@test.test',
+            'group_ids': [(4, group_user.id)],
+        })
         cls.user2 = cls.env['res.users'].create({
-            'name': 'Conn User 2', 'login': 'conn_user2', 'email': 'conn2@test.test',
+            'name': 'Conn User 2', 'login': 'conn_test_user2', 'email': 'conn2@test.test',
+            'group_ids': [(4, group_user.id)],
         })
         cls.Conn = cls.env['club_social_profile.connection']
 
