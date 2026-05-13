@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_club_membership_root"
+              name="Adhésions"
+              sequence="10"
+              groups="club_membership.group_membership_manager"
+              />
+
+    <menuitem id="menu_club_memberships"
+              name="Adhésions"
+              parent="menu_club_membership_root"
+              sequence="10"
+              action="action_club_membership"/>
+
+    <menuitem id="menu_club_membership_types"
+              name="Types d'adhésion"
+              parent="menu_club_membership_root"
+              sequence="20"
+              action="action_club_membership_type"/>
+
+</odoo>

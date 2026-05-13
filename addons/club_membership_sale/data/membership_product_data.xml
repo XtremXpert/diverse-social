@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="product_membership_regular" model="product.template">
+            <field name="name">Adhésion annuelle — Club l'Orage</field>
+            <field name="type">service</field>
+            <field name="membership_type_id" ref="club_membership.membership_type_regular"/>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+        </record>
+
+        <record id="product_membership_trial" model="product.template">
+            <field name="name">Adhésion essai 3 mois — Club l'Orage</field>
+            <field name="type">service</field>
+            <field name="membership_type_id" ref="club_membership.membership_type_trial"/>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+        </record>
+
+    </data>
+</odoo>

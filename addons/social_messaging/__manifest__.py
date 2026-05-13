@@ -8,6 +8,7 @@
     'license': 'LGPL-3',
     'depends': [
         'social_base',
+        'social_safety',
     ],
     'data': [
         'security/security.xml',

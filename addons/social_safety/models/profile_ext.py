@@ -12,7 +12,7 @@ class ClubSocialProfile(models.Model):
         help='When active: profile hidden from non-connections, no new contact requests accepted.',
     )
     panic_activated_at = fields.Datetime('Panic Activated At', readonly=True)
-    _panic_saved_visibility = fields.Char(
+    panic_saved_visibility = fields.Char(
         'Saved Visibility (panic)', default='members',
     )
 
@@ -26,7 +26,7 @@ class ClubSocialProfile(models.Model):
         self.write({
             'panic_mode': True,
             'panic_activated_at': fields.Datetime.now(),
-            '_panic_saved_visibility': self.visibility,
+            'panic_saved_visibility': self.visibility,
             'visibility': 'connections',
         })
 
@@ -35,7 +35,7 @@ class ClubSocialProfile(models.Model):
         self.ensure_one()
         if self.user_id != self.env.user:
             raise UserError(_('You can only deactivate panic mode on your own profile.'))
-        saved = self._panic_saved_visibility or 'members'
+        saved = self.panic_saved_visibility or 'members'
         self.write({
             'panic_mode': False,
             'panic_activated_at': False,

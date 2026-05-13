@@ -1,0 +1,27 @@
+{
+    'name': 'Social Analytics',
+    'version': '19.0.1.0.0',
+    'category': 'Social',
+    'summary': "Tableau de bord modérateur : engagement, adhésions, modération, gouvernance",
+    'author': 'Bemade',
+    'license': 'LGPL-3',
+    'depends': [
+        'social_base',
+        'club_social_profile',
+        'club_social_moderation',
+        'social_gallery',
+        'social_governance',
+        'social_negotiation',
+        'social_reputation',
+        'club_membership',
+        'social_story',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/dashboard_views.xml',
+        'views/menus.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

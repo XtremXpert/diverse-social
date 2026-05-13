@@ -1,0 +1,27 @@
+{
+    'name': 'Social Notifications',
+    'version': '19.0.1.0.0',
+    'category': 'Social',
+    'summary': 'Notifications temps-réel pour toutes les activités sociales',
+    'author': 'Bemade',
+    'license': 'LGPL-3',
+    'depends': [
+        'club_social_profile',
+        'social_circles',
+        'social_events',
+        'social_gallery',
+        'social_governance',
+        'social_group',
+        'social_messaging',
+        'social_negotiation',
+        'social_reputation',
+        'social_story',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/notification_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

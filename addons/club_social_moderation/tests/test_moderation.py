@@ -17,7 +17,6 @@ class TestBan(TransactionCase):
         })
         self.profile = self.env['club_social_profile.profile'].create({
             'user_id': user.id,
-            'display_name': 'TestMember',
         })
 
     def test_permanent_ban(self):

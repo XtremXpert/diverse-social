@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_club_membership_type_manager,club_membership.type manager,model_club_membership_type,club_membership.group_membership_manager,1,1,1,1
+access_club_membership_type_user,club_membership.type user,model_club_membership_type,base.group_user,1,0,0,0
+access_club_membership_manager,club_membership.membership manager,model_club_membership_membership,club_membership.group_membership_manager,1,1,1,1
+access_club_membership_user,club_membership.membership user,model_club_membership_membership,base.group_user,1,0,0,0
+access_club_membership_admin,club_membership.membership admin,model_club_membership_membership,base.group_system,1,1,1,1

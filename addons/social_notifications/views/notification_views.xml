@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_social_notification_list" model="ir.ui.view">
+        <field name="name">club_social_profile.notification.list.social_notif</field>
+        <field name="model">club_social_profile.notification</field>
+        <field name="arch" type="xml">
+            <list string="Notifications" default_order="create_date desc">
+                <field name="create_date" string="Date"/>
+                <field name="actor_id" string="De"/>
+                <field name="type"/>
+                <field name="body"/>
+                <field name="is_read"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_my_notifications" model="ir.actions.act_window">
+        <field name="name">Mes notifications</field>
+        <field name="res_model">club_social_profile.notification</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'default_user_id': uid}</field>
+    </record>
+
+    <menuitem id="menu_my_notifications"
+              name="Notifications"
+              parent="social_base.menu_social_base_root"
+              sequence="60"
+              action="action_my_notifications"/>
+
+</odoo>

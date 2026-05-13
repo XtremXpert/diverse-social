@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_social_analytics_root"
+              name="Analytics"
+              parent="social_base.menu_social_base_root"
+              sequence="90"
+              groups="social_base.group_social_moderator"/>
+
+    <menuitem id="menu_social_analytics_dashboard"
+              name="Tableau de bord"
+              parent="menu_social_analytics_root"
+              sequence="10"
+              action="action_social_analytics_dashboard"/>
+
+    <menuitem id="menu_social_analytics_posts"
+              name="Engagement posts"
+              parent="menu_social_analytics_root"
+              sequence="20"
+              action="action_post_analytics"/>
+
+    <menuitem id="menu_social_analytics_memberships"
+              name="Évolution adhésions"
+              parent="menu_social_analytics_root"
+              sequence="30"
+              action="action_membership_analytics"/>
+
+</odoo>

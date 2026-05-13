@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bannière sur la fiche profil quand l'onboarding n'est pas complété -->
+    <record id="view_csp_profile_form_onboarding_banner" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.form.onboarding_banner</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info d-flex align-items-center justify-content-between"
+                     invisible="onboarding_done">
+                    <span>
+                        <i class="fa fa-info-circle me-2"/>
+                        Profil incomplet — Complétez votre profil pour une meilleure visibilité auprès des autres membres.
+                    </span>
+                    <button name="action_open_onboarding"
+                            string="Compléter mon profil"
+                            type="object"
+                            class="btn btn-sm btn-info ms-3"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

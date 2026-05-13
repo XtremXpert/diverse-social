@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
+
+    <template id="portal_my_home_vouching" name="Portal My Home : Parrainages"
+              inherit_id="portal.portal_my_home" customize_show="False" priority="45">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Parrainages</t>
+                <t t-set="url">/my/vouching</t>
+                <t t-set="placeholder_count">vouching_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ── Mes parrainages ─────────────────────────────────────────────────── -->
+
+    <template id="portal_my_vouching" name="Mes parrainages">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes parrainages</t>
+            </t>
+
+            <div class="container mt-3">
+                <t t-if="error">
+                    <div class="alert alert-danger" t-esc="error"/>
+                </t>
+
+                <!-- Parrainages reçus -->
+                <h5 class="mb-3">Parrainages reçus
+                    <span class="badge bg-secondary ms-2" t-esc="len(received)"/>
+                </h5>
+                <t t-if="not received">
+                    <p class="text-muted">Vous n'avez pas encore de parrain.</p>
+                </t>
+                <div class="list-group mb-4">
+                    <t t-foreach="received" t-as="v">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong t-esc="v.sponsor_id.name"/>
+                                    <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
+                                          t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                    <p t-if="v.statement" class="mb-0 mt-1 text-muted small"
+                                       t-esc="v.statement"/>
+                                </div>
+                                <small class="text-muted" t-field="v.create_date" t-options='{"widget": "date"}'/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Parrainages donnés -->
+                <h5 class="mb-3">Parrainages donnés
+                    <span class="badge bg-secondary ms-2" t-esc="len(given)"/>
+                </h5>
+                <t t-if="not given">
+                    <p class="text-muted">Vous n'avez encore parrainé personne.</p>
+                </t>
+                <div class="list-group">
+                    <t t-foreach="given" t-as="v">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong t-esc="v.newcomer_id.name"/>
+                                    <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
+                                          t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                    <p t-if="v.statement" class="mb-0 mt-1 text-muted small"
+                                       t-esc="v.statement"/>
+                                    <small t-if="v.withdrawn_reason" class="text-danger d-block mt-1"
+                                           t-esc="v.withdrawn_reason"/>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <small class="text-muted" t-field="v.create_date" t-options='{"widget": "date"}'/>
+                                    <t t-if="v.state == 'active'">
+                                        <form t-attf-action="/my/vouching/#{v.id}/withdraw" method="post"
+                                              class="d-inline">
+                                            <input type="hidden" name="csrf_token"
+                                                   t-att-value="request.csrf_token()"/>
+                                            <input type="text" name="reason" class="form-control form-control-sm d-inline w-auto"
+                                                   placeholder="Raison (obligatoire)"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                                                Retirer
+                                            </button>
+                                        </form>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

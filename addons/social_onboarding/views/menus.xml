@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_social_onboarding"
+              name="Compléter mon profil"
+              parent="social_base.menu_social_base_root"
+              sequence="2"
+              action="action_open_social_onboarding"
+              groups="social_base.group_social_user"/>
+
+</odoo>

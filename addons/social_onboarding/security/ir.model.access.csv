@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_social_onboarding_wizard_user,social_onboarding.wizard user,model_social_onboarding_wizard,social_base.group_social_user,1,1,1,1
+access_social_onboarding_wizard_moderator,social_onboarding.wizard moderator,model_social_onboarding_wizard,social_base.group_social_moderator,1,1,1,1

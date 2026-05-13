@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_club_membership_type_list" model="ir.ui.view">
+        <field name="name">club_membership.type.list</field>
+        <field name="model">club_membership.type</field>
+        <field name="arch" type="xml">
+            <list string="Types d'adhésion" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="duration_months"/>
+                <field name="fee"/>
+                <field name="membership_count" string="Adhésions"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_club_membership_type_form" model="ir.ui.view">
+        <field name="name">club_membership.type.form</field>
+        <field name="model">club_membership.type</field>
+        <field name="arch" type="xml">
+            <form string="Type d'adhésion">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nom du type..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="fee"/>
+                            <field name="duration_months"
+                                   help="0 = illimité (membre à vie)"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="membership_count" string="Adhésions actives"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description publique..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_club_membership_type" model="ir.actions.act_window">
+        <field name="name">Types d'adhésion</field>
+        <field name="res_model">club_membership.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

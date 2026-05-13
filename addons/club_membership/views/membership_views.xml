@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_club_membership_list" model="ir.ui.view">
+        <field name="name">club_membership.membership.list</field>
+        <field name="model">club_membership.membership</field>
+        <field name="arch" type="xml">
+            <list string="Adhésions" default_order="start_date desc">
+                <field name="partner_id"/>
+                <field name="membership_type_id"/>
+                <field name="state"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state in ('pending', 'suspended')"
+                       decoration-danger="state in ('expired', 'cancelled')"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="fee_paid"/>
+                <field name="invoice_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_club_membership_form" model="ir.ui.view">
+        <field name="name">club_membership.membership.form</field>
+        <field name="model">club_membership.membership</field>
+        <field name="arch" type="xml">
+            <form string="Adhésion">
+                <header>
+                    <button name="action_activate" string="Activer"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('pending', 'suspended')"/>
+                    <button name="action_suspend" string="Suspendre"
+                            type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" string="Annuler"
+                            type="object"
+                            invisible="state in ('cancelled', 'expired')"/>
+                    <button name="action_renew" string="Renouveler"
+                            type="object"
+                            invisible="state not in ('active', 'expired')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,active,expired"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Membre">
+                            <field name="partner_id"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="membership_type_id"/>
+                        </group>
+                        <group string="Période">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="fee_paid"/>
+                            <field name="invoice_id"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes internes..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_club_membership_search" model="ir.ui.view">
+        <field name="name">club_membership.membership.search</field>
+        <field name="model">club_membership.membership</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="membership_type_id"/>
+                <filter name="active" string="Actifs" domain="[('state','=','active')]"/>
+                <filter name="pending" string="En attente" domain="[('state','=','pending')]"/>
+                <filter name="expired" string="Expirés" domain="[('state','=','expired')]"/>
+                <filter name="suspended" string="Suspendus" domain="[('state','=','suspended')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_type" string="Type"
+                            context="{'group_by': 'membership_type_id'}"/>
+                    <filter name="group_state" string="Statut"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_club_membership" model="ir.actions.act_window">
+        <field name="name">Adhésions</field>
+        <field name="res_model">club_membership.membership</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_club_membership_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+</odoo>

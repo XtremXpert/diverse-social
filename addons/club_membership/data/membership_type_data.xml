@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="membership_type_regular" model="club_membership.type">
+            <field name="name">Membre régulier</field>
+            <field name="sequence">10</field>
+            <field name="duration_months">12</field>
+        </record>
+
+        <record id="membership_type_lifetime" model="club_membership.type">
+            <field name="name">Membre à vie</field>
+            <field name="sequence">20</field>
+            <field name="duration_months">0</field>
+        </record>
+
+        <record id="membership_type_trial" model="club_membership.type">
+            <field name="name">Essai (3 mois)</field>
+            <field name="sequence">5</field>
+            <field name="duration_months">3</field>
+        </record>
+
+    </data>
+</odoo>

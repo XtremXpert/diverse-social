@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
+
+    <template id="portal_my_home_gallery" name="Portal My Home : Gallery"
+              inherit_id="portal.portal_my_home" customize_show="False" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Galeries</t>
+                <t t-set="url">/gallery</t>
+                <t t-set="placeholder_count">gallery_pending_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ── Liste des galeries ──────────────────────────────────────────────── -->
+
+    <template id="portal_gallery_list" name="Galeries">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Galeries</t>
+            </t>
+            <div class="container mt-4">
+                <t t-if="not galleries">
+                    <div class="alert alert-info">Aucune galerie disponible.</div>
+                </t>
+                <div class="row g-3">
+                    <t t-foreach="galleries" t-as="gallery">
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <a t-attf-href="/gallery/#{gallery.id}" class="text-decoration-none">
+                                <div class="card h-100 shadow-sm">
+                                    <t t-if="gallery.cover_photo_id">
+                                        <img t-attf-src="/web/image/social_gallery.photo/#{gallery.cover_photo_id.id}/image_512"
+                                             class="card-img-top" style="height:180px;object-fit:cover;"
+                                             t-att-alt="gallery.name"/>
+                                    </t>
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1" t-esc="gallery.name"/>
+                                        <p class="text-muted small mb-0">
+                                            <t t-esc="gallery.approved_photo_count"/> photo(s)
+                                            <t t-if="gallery.is_shared"> · Galerie participative</t>
+                                        </p>
+                                        <p t-if="gallery.description" class="card-text mt-2 small"
+                                           t-esc="gallery.description"/>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Détail d'une galerie ────────────────────────────────────────────── -->
+
+    <template id="portal_gallery_detail" name="Galerie – détail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/gallery">Galeries</a></li>
+                    <li class="breadcrumb-item active" t-esc="gallery.name"/>
+                </ol>
+            </nav>
+
+            <div class="container mt-3">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h3 t-esc="gallery.name"/>
+                        <p t-if="gallery.description" class="text-muted" t-esc="gallery.description"/>
+                    </div>
+                    <span class="badge bg-secondary ms-2" t-esc="gallery.approved_photo_count + ' photo(s)'"/>
+                </div>
+
+                <t t-if="request.params.get('success')">
+                    <div class="alert alert-success">Votre photo a été soumise et est en attente de modération.</div>
+                </t>
+                <t t-if="request.params.get('error') == 'image_required'">
+                    <div class="alert alert-danger">Veuillez sélectionner une image.</div>
+                </t>
+
+                <t t-if="gallery.is_shared">
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold">Soumettre une photo</div>
+                        <div class="card-body">
+                            <form t-attf-action="/gallery/#{gallery.id}/submit" method="post"
+                                  enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="mb-3">
+                                    <label class="form-label">Image</label>
+                                    <input type="file" name="image" class="form-control" accept="image/*" required="required"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Titre (facultatif)</label>
+                                    <input type="text" name="name" class="form-control" maxlength="128"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Soumettre</button>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-if="not photos">
+                    <div class="alert alert-info">Aucune photo dans cette galerie.</div>
+                </t>
+                <div class="row g-3">
+                    <t t-foreach="photos" t-as="photo">
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <a t-attf-href="/web/image/social_gallery.photo/#{photo.id}/image_1920"
+                               target="_blank">
+                                <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                                     class="img-fluid rounded shadow-sm"
+                                     style="height:160px;width:100%;object-fit:cover;"
+                                     t-att-alt="photo.name or gallery.name"/>
+                            </a>
+                            <p t-if="photo.name" class="small text-muted mt-1 mb-0" t-esc="photo.name"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Mes photos soumises ─────────────────────────────────────────────── -->
+
+    <template id="portal_my_gallery" name="Mes photos">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes photos soumises</t>
+            </t>
+            <div class="container mt-3">
+                <div class="btn-group mb-3">
+                    <a t-attf-href="/my/gallery" t-attf-class="btn btn-sm #{'' if state_filter == 'all' else 'btn-outline-'}secondary">Tout</a>
+                    <a t-attf-href="/my/gallery?state=pending" t-attf-class="btn btn-sm #{'' if state_filter == 'pending' else 'btn-outline-'}warning">En attente</a>
+                    <a t-attf-href="/my/gallery?state=approved" t-attf-class="btn btn-sm #{'' if state_filter == 'approved' else 'btn-outline-'}success">Approuvées</a>
+                    <a t-attf-href="/my/gallery?state=rejected" t-attf-class="btn btn-sm #{'' if state_filter == 'rejected' else 'btn-outline-'}danger">Rejetées</a>
+                </div>
+
+                <t t-if="not photos">
+                    <div class="alert alert-info">Aucune photo soumise.</div>
+                </t>
+                <div class="row g-3">
+                    <t t-foreach="photos" t-as="photo">
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="position-relative">
+                                <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                                     class="img-fluid rounded shadow-sm"
+                                     style="height:160px;width:100%;object-fit:cover;"
+                                     t-att-alt="photo.name or ''"/>
+                                <span t-attf-class="badge position-absolute top-0 end-0 m-1 #{{'pending':'bg-warning','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')}"
+                                      t-esc="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
+                            </div>
+                            <p class="small mt-1 mb-0">
+                                <a t-attf-href="/gallery/#{photo.gallery_id.id}" t-esc="photo.gallery_id.name"/>
+                            </p>
+                        </div>
+                    </t>
+                </div>
+                <t t-call="portal.pager" t-if="pager">
+                    <t t-set="pager" t-value="pager"/>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

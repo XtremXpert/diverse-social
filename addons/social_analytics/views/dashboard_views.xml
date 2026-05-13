@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_social_analytics_dashboard_form" model="ir.ui.view">
+        <field name="name">social_analytics.dashboard.form</field>
+        <field name="model">social_analytics.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Tableau de bord" create="false" delete="false">
+                <header>
+                    <button name="action_refresh" string="Actualiser"
+                            type="object" class="btn-primary"/>
+                    <button name="action_view_pending_reports" string="Voir signalements"
+                            type="object"
+                            invisible="reports_pending == 0"/>
+                    <button name="action_view_posts_moderation" string="Voir modération"
+                            type="object"
+                            invisible="posts_in_moderation == 0"/>
+                </header>
+                <sheet>
+
+                    <!-- Alertes urgentes -->
+                    <div class="alert alert-warning"
+                         invisible="reports_pending == 0 and posts_in_moderation == 0 and photos_pending_moderation == 0">
+                        <b>Action requise : </b>
+                        <field name="reports_pending" readonly="1" nolabel="1"/> signalement(s) —
+                        <field name="posts_in_moderation" readonly="1" nolabel="1"/> post(s) à modérer —
+                        <field name="photos_pending_moderation" readonly="1" nolabel="1"/> photo(s) en attente
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>Tableau de bord</h1>
+                    </div>
+
+                    <!-- Membres -->
+                    <group string="Membres">
+                        <group>
+                            <field name="members_active"/>
+                            <field name="members_new_month"/>
+                        </group>
+                        <group>
+                            <field name="members_pending"/>
+                            <field name="members_expiring_soon"/>
+                        </group>
+                    </group>
+
+                    <!-- Engagement -->
+                    <group string="Engagement (30 derniers jours)">
+                        <group>
+                            <field name="posts_published_month"/>
+                            <field name="reactions_month"/>
+                        </group>
+                        <group>
+                            <field name="comments_month"/>
+                            <field name="stories_active"/>
+                        </group>
+                    </group>
+
+                    <!-- Modération -->
+                    <group string="Modération">
+                        <group>
+                            <field name="reports_pending"/>
+                        </group>
+                        <group>
+                            <field name="posts_in_moderation"/>
+                        </group>
+                    </group>
+
+                    <!-- Gouvernance -->
+                    <group string="Gouvernance">
+                        <group>
+                            <field name="proposals_voting"/>
+                            <field name="proposals_draft"/>
+                        </group>
+                        <group>
+                            <field name="votes_month"/>
+                        </group>
+                    </group>
+
+                    <!-- Activité -->
+                    <group string="Activité">
+                        <group>
+                            <field name="profiles_total"/>
+                        </group>
+                        <group>
+                            <field name="connections_week"/>
+                        </group>
+                    </group>
+
+                    <!-- Galerie -->
+                    <group string="Galerie">
+                        <group>
+                            <field name="galleries_total"/>
+                            <field name="photos_approved_month"/>
+                        </group>
+                        <group>
+                            <field name="photos_pending_moderation"/>
+                        </group>
+                    </group>
+
+                    <!-- Réputation -->
+                    <group string="Réputation communautaire">
+                        <group>
+                            <field name="vouchings_active"/>
+                        </group>
+                        <group>
+                            <field name="vouchings_month"/>
+                        </group>
+                    </group>
+
+                    <!-- Négociations -->
+                    <group string="Négociations">
+                        <group>
+                            <field name="negotiations_active"/>
+                        </group>
+                        <group>
+                            <field name="negotiations_pending_signature"/>
+                        </group>
+                    </group>
+
+                    <!-- Actions rapides -->
+                    <group string="Actions rapides">
+                        <div>
+                            <button name="action_view_pending_memberships"
+                                    string="Adhésions en attente"
+                                    type="object" class="btn-secondary me-2"/>
+                            <button name="action_view_voting_proposals"
+                                    string="Propositions en vote"
+                                    type="object" class="btn-secondary me-2"/>
+                            <button name="action_view_pending_photos"
+                                    string="Photos à modérer"
+                                    type="object" class="btn-secondary"
+                                    invisible="photos_pending_moderation == 0"/>
+                        </div>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_social_analytics_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord</field>
+        <field name="res_model">social_analytics.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'no_breadcrumbs': True}</field>
+    </record>
+
+    <!-- Vues analytiques sur les modèles existants -->
+
+    <record id="view_post_graph_engagement" model="ir.ui.view">
+        <field name="name">social_base.post.graph.engagement</field>
+        <field name="model">social_base.post</field>
+        <field name="arch" type="xml">
+            <graph string="Engagement des posts" type="bar">
+                <field name="create_date" interval="week" type="row"/>
+                <field name="like_count" type="measure"/>
+                <field name="comment_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_post_analytics" model="ir.actions.act_window">
+        <field name="name">Engagement posts</field>
+        <field name="res_model">social_base.post</field>
+        <field name="view_mode">graph,list</field>
+        <field name="domain">[('state', '=', 'published')]</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'graph', 'view_id': ref('view_post_graph_engagement')})]"/>
+    </record>
+
+    <record id="view_membership_graph" model="ir.ui.view">
+        <field name="name">club_membership.membership.graph</field>
+        <field name="model">club_membership.membership</field>
+        <field name="arch" type="xml">
+            <graph string="Nouvelles adhésions" type="bar">
+                <field name="start_date" interval="month" type="row"/>
+                <field name="membership_type_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_membership_analytics" model="ir.actions.act_window">
+        <field name="name">Évolution adhésions</field>
+        <field name="res_model">club_membership.membership</field>
+        <field name="view_mode">graph,list</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'graph', 'view_id': ref('view_membership_graph')})]"/>
+    </record>
+
+</odoo>

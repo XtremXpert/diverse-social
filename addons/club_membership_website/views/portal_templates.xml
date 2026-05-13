@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Entrée dans le menu portail -->
+    <template id="portal_my_home_membership" name="Portail : adhésions" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Mes adhésions</t>
+                <t t-set="url">/my/membership</t>
+                <t t-set="placeholder_count">membership_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Fil d'Ariane pour les pages adhésion -->
+    <template id="portal_breadcrumb_membership" name="Breadcrumb adhésion">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/my/home">Mon espace</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/my/membership">Mes adhésions</a>
+            </li>
+            <li t-if="membership" class="breadcrumb-item active">
+                <t t-esc="membership.membership_type_id.name"/>
+            </li>
+        </ol>
+    </template>
+
+    <!-- Liste des adhésions -->
+    <template id="portal_my_memberships" name="Portail — Mes adhésions">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes adhésions</t>
+            </t>
+
+            <t t-if="not memberships">
+                <div class="alert alert-info">
+                    Vous n'avez pas encore d'adhésion.
+                    <a href="/membership" class="alert-link">Découvrir les offres</a>
+                </div>
+            </t>
+
+            <t t-if="memberships">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>État</th>
+                            <th>Début</th>
+                            <th>Fin</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="memberships" t-as="m">
+                            <tr>
+                                <td><t t-esc="m.membership_type_id.name"/></td>
+                                <td>
+                                    <span t-attf-class="badge rounded-pill
+                                        #{{'active': 'bg-success',
+                                           'pending': 'bg-warning text-dark',
+                                           'expired': 'bg-secondary',
+                                           'suspended': 'bg-warning text-dark',
+                                           'cancelled': 'bg-danger'}.get(m.state, 'bg-secondary')}">
+                                        <t t-esc="m.state"/>
+                                    </span>
+                                </td>
+                                <td><t t-esc="m.start_date"/></td>
+                                <td>
+                                    <t t-if="m.end_date"><t t-esc="m.end_date"/></t>
+                                    <t t-else=""><span class="text-muted">—</span></t>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/membership/#{m.id}" class="btn btn-sm btn-outline-primary">
+                                        Voir
+                                    </a>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Détail d'une adhésion -->
+    <template id="portal_membership_detail" name="Portail — Détail adhésion">
+        <t t-call="portal.portal_layout">
+            <t t-call="club_membership_website.portal_breadcrumb_membership"/>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <t t-esc="membership.membership_type_id.name"/>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">État</dt>
+                        <dd class="col-sm-8">
+                            <span t-attf-class="badge rounded-pill
+                                #{{'active': 'bg-success',
+                                   'pending': 'bg-warning text-dark',
+                                   'expired': 'bg-secondary',
+                                   'suspended': 'bg-warning text-dark',
+                                   'cancelled': 'bg-danger'}.get(membership.state, 'bg-secondary')}">
+                                <t t-esc="membership.state"/>
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Date de début</dt>
+                        <dd class="col-sm-8"><t t-esc="membership.start_date"/></dd>
+
+                        <dt class="col-sm-4">Date de fin</dt>
+                        <dd class="col-sm-8">
+                            <t t-if="membership.end_date"><t t-esc="membership.end_date"/></t>
+                            <t t-else=""><span class="text-muted">Illimité</span></t>
+                        </dd>
+
+                        <dt class="col-sm-4" t-if="membership.fee_paid">Cotisation payée</dt>
+                        <dd class="col-sm-8" t-if="membership.fee_paid">
+                            <t t-esc="'{:,.2f}'.format(membership.fee_paid)"/>
+                            <t t-esc="membership.currency_id.symbol"/>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="card-footer d-flex gap-2" t-if="renewal_product and membership.state in ('active', 'expired')">
+                    <form t-attf-action="/my/membership/#{membership.id}/renew" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="btn btn-primary">
+                            Renouveler
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="/my/membership" class="btn btn-link ps-0">
+                    ← Retour à mes adhésions
+                </a>
+            </div>
+        </t>
+    </template>
+
+</odoo>

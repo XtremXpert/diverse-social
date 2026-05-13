@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class SocialMessageThread(models.Model):
@@ -36,8 +36,13 @@ class SocialMessageThread(models.Model):
 
     @api.model
     def _get_or_create(self, user_ids):
-        """Trouve ou crée un fil entre exactement ces utilisateurs."""
+        """Trouve ou crée un fil entre exactement ces utilisateurs. Lève une erreur si bloqué."""
         user_ids_sorted = sorted(set(user_ids))
+        if len(user_ids_sorted) == 2:
+            users = self.env['res.users'].browse(user_ids_sorted)
+            Block = self.env['social_safety.block']
+            if Block.is_blocked(users[0], users[1]):
+                raise UserError(_('Vous ne pouvez pas envoyer un message à cette personne.'))
         threads = self.search([('participant_ids', 'in', user_ids_sorted)])
         for thread in threads:
             if sorted(thread.participant_ids.ids) == user_ids_sorted:

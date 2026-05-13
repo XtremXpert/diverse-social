@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Les utilisateurs portail ne voient que leurs propres adhésions -->
+    <record id="rule_membership_portal_own" model="ir.rule">
+        <field name="name">Adhésion : lecture portail (propre)</field>
+        <field name="model_id" ref="club_membership.model_club_membership_membership"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

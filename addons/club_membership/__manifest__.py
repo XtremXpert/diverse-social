@@ -1,0 +1,25 @@
+{
+    'name': 'Club — Adhésion',
+    'version': '19.0.1.0.0',
+    'category': 'Club',
+    'summary': "Gestion des adhésions : statut, période, cotisation, accès réseau social",
+    'author': 'Bemade',
+    'license': 'LGPL-3',
+    'depends': [
+        'social_base',
+        'account',
+    ],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/membership_type_data.xml',
+        'data/cron.xml',
+        'views/membership_type_views.xml',
+        'views/membership_views.xml',
+        'views/res_partner_views.xml',
+        'views/menus.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

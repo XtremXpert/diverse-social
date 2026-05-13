@@ -31,11 +31,11 @@ class GovernanceProposal(models.Model):
     implemented_at = fields.Datetime('Implemented At', readonly=True)
 
     vote_ids = fields.One2many('social_governance.vote', 'proposal_id', 'Votes')
-    vote_count = fields.Integer(compute='_compute_vote_stats')
-    yes_count = fields.Integer(compute='_compute_vote_stats')
-    no_count = fields.Integer(compute='_compute_vote_stats')
-    abstain_count = fields.Integer(compute='_compute_vote_stats')
-    approval_pct = fields.Integer(compute='_compute_vote_stats', string='Approval %')
+    vote_count = fields.Integer(compute='_compute_vote_stats', compute_sudo=True)
+    yes_count = fields.Integer(compute='_compute_vote_stats', compute_sudo=True)
+    no_count = fields.Integer(compute='_compute_vote_stats', compute_sudo=True)
+    abstain_count = fields.Integer(compute='_compute_vote_stats', compute_sudo=True)
+    approval_pct = fields.Integer(compute='_compute_vote_stats', compute_sudo=True, string='Approval %')
 
     my_vote = fields.Selection(
         [('yes', 'Yes'), ('no', 'No'), ('abstain', 'Abstain')],

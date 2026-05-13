@@ -7,6 +7,7 @@
     'license': 'LGPL-3',
     'depends': [
         'club_social_profile',
+        'portal',
         'social_discovery',
     ],
     'data': [
@@ -14,6 +15,7 @@
         'security/security.xml',
         'views/vouching_views.xml',
         'views/menus.xml',
+        'views/portal_templates.xml',
     ],
     'installable': True,
     'application': False,

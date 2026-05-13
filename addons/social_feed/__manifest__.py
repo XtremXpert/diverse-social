@@ -1,0 +1,25 @@
+{
+    'name': 'Social Feed',
+    'version': '19.0.1.0.0',
+    'category': 'Social',
+    'summary': "Fil d'actualité agrégé : posts, stories, événements, propositions",
+    'author': 'Bemade',
+    'license': 'LGPL-3',
+    'depends': [
+        'club_social_profile',
+        'social_safety',
+        'social_circles',
+        'social_group',
+        'social_events',
+        'social_base',
+        'social_story',
+        'social_governance',
+        'social_gallery',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}
