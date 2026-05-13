@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_stories" name="Portal My Home: Stories" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="my_stories_count is not None">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Mes stories actives</t>
+                    <t t-set="url">/my/stories</t>
+                    <t t-set="count" t-value="my_stories_count"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_stories" name="My Stories">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes stories</t>
+            </t>
+            <div class="container mt-3">
+                <div class="mb-3">
+                    <a t-attf-href="/my/stories?filter=active"
+                       t-attf-class="btn btn-sm me-1 #{filter == 'active' and 'btn-primary' or 'btn-outline-secondary'}">Actives</a>
+                    <a t-attf-href="/my/stories?filter=expired"
+                       t-attf-class="btn btn-sm me-1 #{filter == 'expired' and 'btn-primary' or 'btn-outline-secondary'}">Expirées</a>
+                    <a t-attf-href="/my/stories?filter=all"
+                       t-attf-class="btn btn-sm #{filter == 'all' and 'btn-primary' or 'btn-outline-secondary'}">Toutes</a>
+                </div>
+                <t t-if="stories">
+                    <div class="row">
+                        <t t-foreach="stories" t-as="story">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title" t-esc="story.name"/>
+                                        <p class="small text-muted">
+                                            <span t-esc="story.view_count"/> vue(s) ·
+                                            <t t-if="story.state == 'active'">
+                                                <span class="text-success">Active</span> · expire <t t-esc="story.expires_at"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">Expirée</span>
+                                            </t>
+                                        </p>
+                                        <t t-if="story.state == 'active'">
+                                            <form t-attf-action="/my/stories/#{story.id}/archive" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Archiver</button>
+                                            </form>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <p class="text-muted text-center">Aucune story dans cette catégorie.</p>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

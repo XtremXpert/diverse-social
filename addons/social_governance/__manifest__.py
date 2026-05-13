@@ -5,7 +5,7 @@
     'summary': 'Community governance: proposals, votes and public decision log',
     'author': 'Bemade',
     'license': 'LGPL-3',
-    'depends': ['social_base'],
+    'depends': ['social_base', 'portal'],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
@@ -13,6 +13,7 @@
         'views/proposal_views.xml',
         'views/decision_log_views.xml',
         'views/menus.xml',
+        'views/portal_templates.xml',
     ],
     'installable': True,
     'application': False,

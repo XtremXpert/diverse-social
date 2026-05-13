@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_governance" name="Portal My Home: Governance" inherit_id="portal.portal_my_home" priority="35">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="proposals_voting_count is not None">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Propositions en vote</t>
+                    <t t-set="url">/governance</t>
+                    <t t-set="count" t-value="proposals_voting_count"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_governance_list" name="Governance Proposals">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Gouvernance communautaire</t>
+            </t>
+            <div class="container mt-3">
+                <div class="mb-3">
+                    <t t-foreach="[('voting','En vote'),('open','Ouvert'),('accepted','Acceptée'),('rejected','Rejetée'),('draft','Brouillon')]" t-as="st">
+                        <a t-attf-href="/governance?state=#{st[0]}"
+                           t-attf-class="btn btn-sm me-1 #{state_filter == st[0] and 'btn-primary' or 'btn-outline-secondary'}">
+                            <t t-esc="st[1]"/>
+                        </a>
+                    </t>
+                </div>
+                <t t-foreach="proposals" t-as="proposal">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-1">
+                                    <a t-attf-href="/governance/#{proposal.id}" t-esc="proposal.name"/>
+                                </h5>
+                                <small class="text-muted">
+                                    Par <t t-esc="proposal.author_id.name"/> ·
+                                    <t t-esc="proposal.category_id.name"/>
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span t-attf-class="badge #{proposal.state == 'voting' and 'bg-warning' or proposal.state == 'accepted' and 'bg-success' or proposal.state == 'rejected' and 'bg-danger' or 'bg-secondary'}">
+                                    <t t-esc="state_labels.get(proposal.state, proposal.state)"/>
+                                </span>
+                                <t t-if="proposal.state == 'voting'">
+                                    <div class="small mt-1">
+                                        <span class="text-success"><t t-esc="proposal.yes_count"/> ✓</span> /
+                                        <span class="text-danger"><t t-esc="proposal.no_count"/> ✗</span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        <t t-if="proposal.voting_closes_at and proposal.state == 'voting'">
+                            <small class="text-muted">Clôture : <t t-esc="proposal.voting_closes_at"/></small>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="not proposals">
+                    <p class="text-muted text-center">Aucune proposition dans cet état.</p>
+                </t>
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/governance/log" class="btn btn-outline-secondary btn-sm">Journal des décisions</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_governance_detail" name="Proposal Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/governance">Gouvernance</a></li>
+                        <li class="breadcrumb-item active" t-esc="proposal.name"/>
+                    </ol>
+                </nav>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 t-esc="proposal.name"/>
+                        <p class="text-muted">
+                            Par <strong t-esc="proposal.author_id.name"/> ·
+                            <t t-esc="proposal.category_id.name"/> ·
+                            <span t-attf-class="badge #{proposal.state == 'voting' and 'bg-warning' or proposal.state == 'accepted' and 'bg-success' or proposal.state == 'rejected' and 'bg-danger' or 'bg-secondary'}">
+                                <t t-esc="state_labels.get(proposal.state, proposal.state)"/>
+                            </span>
+                        </p>
+                        <div t-raw="proposal.description" class="mb-4"/>
+
+                        <t t-if="proposal.state == 'voting'">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Résultats actuels</h5>
+                                    <div class="d-flex gap-4 mb-3">
+                                        <span class="text-success"><strong t-esc="proposal.yes_count"/><br/>Pour</span>
+                                        <span class="text-danger"><strong t-esc="proposal.no_count"/><br/>Contre</span>
+                                        <span class="text-secondary"><strong t-esc="proposal.abstain_count"/><br/>Abstentions</span>
+                                    </div>
+                                    <t t-if="my_vote">
+                                        <div class="alert alert-info">Vous avez voté : <strong t-esc="my_vote"/></div>
+                                    </t>
+                                    <form t-attf-action="/governance/#{proposal.id}/vote" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <div class="btn-group" role="group">
+                                            <button type="submit" name="choice" value="yes" class="btn btn-outline-success">Pour</button>
+                                            <button type="submit" name="choice" value="no" class="btn btn-outline-danger">Contre</button>
+                                            <button type="submit" name="choice" value="abstain" class="btn btn-outline-secondary">Abstention</button>
+                                        </div>
+                                    </form>
+                                    <t t-if="proposal.voting_closes_at">
+                                        <p class="small text-muted mt-2">Clôture : <t t-esc="proposal.voting_closes_at"/></p>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-elif="proposal.state in ('accepted','rejected')">
+                            <div t-attf-class="alert #{proposal.state == 'accepted' and 'alert-success' or 'alert-danger'}">
+                                Proposition <t t-esc="state_labels.get(proposal.state, proposal.state).lower()"/> ·
+                                <t t-esc="proposal.yes_count"/> pour, <t t-esc="proposal.no_count"/> contre
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_governance_log" name="Decision Log">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Journal des décisions</t>
+            </t>
+            <div class="container mt-3">
+                <p class="text-muted">Décisions publiques prises par les modérateurs.</p>
+                <t t-foreach="entries" t-as="entry">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-1" t-esc="entry.title"/>
+                                <small class="text-muted">
+                                    <t t-esc="entry.decision_date"/> ·
+                                    <t t-esc="category_labels.get(entry.category, entry.category)"/>
+                                </small>
+                            </div>
+                        </div>
+                        <div t-raw="entry.body" class="mt-2 small"/>
+                    </div>
+                </t>
+                <t t-if="not entries">
+                    <p class="text-muted text-center">Aucune décision publiée.</p>
+                </t>
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

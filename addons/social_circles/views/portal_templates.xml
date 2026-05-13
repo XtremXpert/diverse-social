@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_circles" name="Portal My Home: Circles" inherit_id="portal.portal_my_home" priority="45">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="my_circles_count is not None">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Mes cercles de confiance</t>
+                    <t t-set="url">/my/circles</t>
+                    <t t-set="count" t-value="my_circles_count"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_circles" name="My Circles">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes cercles de confiance</t>
+            </t>
+            <div class="container mt-3">
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Créer un cercle</strong></div>
+                    <div class="card-body">
+                        <form action="/my/circles/create" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="text" name="name" class="form-control form-control-sm"
+                                           placeholder="Nom du cercle" required="required"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="description" class="form-control form-control-sm"
+                                           placeholder="Description (optionnel)"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">Créer</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <t t-if="circles">
+                    <t t-foreach="circles" t-as="circle">
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <strong t-esc="circle.name"/>
+                                <div>
+                                    <small class="text-muted me-3"><t t-esc="circle.member_count"/> membre(s)</small>
+                                    <form t-attf-action="/my/circles/#{circle.id}/delete" method="post" class="d-inline"
+                                          onsubmit="return confirm('Supprimer ce cercle ?')">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <t t-if="circle.description">
+                                <div class="card-body py-2">
+                                    <small class="text-muted" t-esc="circle.description"/>
+                                </div>
+                            </t>
+                            <t t-if="circle.member_ids">
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="circle.member_ids" t-as="member">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                            <span t-esc="member.name"/>
+                                            <form t-attf-action="/my/circles/#{circle.id}/remove_member" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <input type="hidden" name="user_id" t-att-value="member.id"/>
+                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0">Retirer</button>
+                                            </form>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <p class="text-muted text-center">Vous n'avez pas encore de cercles de confiance.</p>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

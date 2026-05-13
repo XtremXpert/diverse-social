@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_groups" name="Portal My Home: Groups" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="my_groups_count is not None">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Mes groupes</t>
+                    <t t-set="url">/my/groups</t>
+                    <t t-set="count" t-value="my_groups_count"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_group_list" name="Groups">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Groupes communautaires</t>
+            </t>
+            <div class="container mt-3">
+                <div class="row">
+                    <t t-foreach="groups" t-as="group">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a t-attf-href="/groups/#{group.id}"><t t-esc="group.name"/></a>
+                                    </h5>
+                                    <p class="text-muted small">
+                                        <span t-esc="group.member_count"/> membre(s) ·
+                                        <t t-if="group.privacy == 'public'">Public</t>
+                                        <t t-elif="group.privacy == 'private'">Privé</t>
+                                    </p>
+                                    <p t-if="group.description" class="card-text small" t-esc="group.description"/>
+                                    <div class="mt-2">
+                                        <t t-if="group.id in my_group_ids">
+                                            <span class="badge bg-success">Membre</span>
+                                        </t>
+                                        <t t-elif="group.join_type == 'open'">
+                                            <a t-attf-href="/groups/#{group.id}" class="btn btn-sm btn-outline-primary">Rejoindre</a>
+                                        </t>
+                                        <t t-elif="group.join_type == 'approval'">
+                                            <a t-attf-href="/groups/#{group.id}" class="btn btn-sm btn-outline-secondary">Voir</a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <t t-if="not groups">
+                    <p class="text-muted text-center">Aucun groupe disponible.</p>
+                </t>
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_group_detail" name="Group Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 t-esc="group.name"/>
+                        <p class="text-muted">
+                            <span t-esc="group.member_count"/> membre(s) ·
+                            <t t-if="group.privacy == 'public'">Public</t>
+                            <t t-elif="group.privacy == 'private'">Privé (sur demande)</t>
+                        </p>
+                        <p t-if="group.description" t-esc="group.description"/>
+
+                        <t t-if="not is_member">
+                            <t t-if="pending_request">
+                                <div class="alert alert-info">Votre demande d'adhésion est en attente.</div>
+                            </t>
+                            <t t-elif="group.join_type == 'open'">
+                                <form t-attf-action="/groups/#{group.id}/join" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-primary">Rejoindre</button>
+                                </form>
+                            </t>
+                            <t t-elif="group.join_type == 'approval'">
+                                <form t-attf-action="/groups/#{group.id}/join" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-outline-primary">Demander à rejoindre</button>
+                                </form>
+                            </t>
+                            <t t-elif="group.join_type == 'invite'">
+                                <div class="alert alert-warning">Ce groupe est sur invitation uniquement.</div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <form t-attf-action="/groups/#{group.id}/leave" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Quitter le groupe</button>
+                            </form>
+                        </t>
+
+                        <t t-if="is_member and posts">
+                            <hr/>
+                            <h5>Publications récentes</h5>
+                            <t t-foreach="posts" t-as="post">
+                                <div class="border rounded p-3 mb-2">
+                                    <strong t-esc="post.author_id.name"/> ·
+                                    <small class="text-muted" t-esc="post.create_date"/>
+                                    <div t-raw="post.content" class="mt-1"/>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-elif="is_member">
+                            <p class="text-muted mt-3">Aucune publication dans ce groupe.</p>
+                        </t>
+                    </div>
+                    <div class="col-lg-4">
+                        <t t-if="group.rule_ids">
+                            <div class="card">
+                                <div class="card-header"><strong>Règles du groupe</strong></div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="group.rule_ids" t-as="rule">
+                                        <li class="list-group-item">
+                                            <strong t-esc="rule.name"/>
+                                            <p t-if="rule.description" class="small text-muted mb-0" t-esc="rule.description"/>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_groups" name="My Groups">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Mes groupes</t>
+            </t>
+            <div class="container mt-3">
+                <t t-if="groups">
+                    <div class="row">
+                        <t t-foreach="groups" t-as="group">
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">
+                                                <a t-attf-href="/groups/#{group.id}" t-esc="group.name"/>
+                                            </h6>
+                                            <small class="text-muted"><span t-esc="group.member_count"/> membres</small>
+                                        </div>
+                                        <form t-attf-action="/groups/#{group.id}/leave" method="post">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Quitter</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <p class="text-muted text-center">Vous n'êtes membre d'aucun groupe. <a href="/groups">Découvrir les groupes</a></p>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>
