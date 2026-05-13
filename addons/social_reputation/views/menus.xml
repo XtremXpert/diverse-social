@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_reputation_root" name="Reputation" sequence="35"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_vouchings_given" name="Vouchings I Gave"
+              parent="menu_reputation_root" sequence="10"
+              action="action_my_vouchings_given"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_my_sponsors" name="My Sponsors"
+              parent="menu_reputation_root" sequence="20"
+              action="action_my_vouchings_received"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_vouchings_admin" name="All Vouchings"
+              parent="menu_reputation_root" sequence="90"
+              action="action_vouchings_admin"
+              groups="social_base.group_social_moderator"/>
+
+</odoo>

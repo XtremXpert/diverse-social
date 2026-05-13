@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_vouching_form" model="ir.ui.view">
+        <field name="name">social_reputation.vouching.form</field>
+        <field name="model">social_reputation.vouching</field>
+        <field name="arch" type="xml">
+            <form string="Vouching">
+                <header>
+                    <button name="action_withdraw" type="object" string="Withdraw Vouching"
+                            invisible="state != 'active'"
+                            class="btn-danger"
+                            confirm="Withdraw this vouching? You must provide a reason."/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="sponsor_id" readonly="1"/>
+                            <field name="newcomer_id" readonly="state != 'draft'"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                        <group invisible="state != 'withdrawn'">
+                            <field name="withdrawn_at" readonly="1"/>
+                            <field name="withdrawn_reason"/>
+                        </group>
+                    </group>
+                    <group string="Statement">
+                        <field name="statement" nolabel="1"
+                               placeholder="Why are you vouching for this person?"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_vouching_list" model="ir.ui.view">
+        <field name="name">social_reputation.vouching.list</field>
+        <field name="model">social_reputation.vouching</field>
+        <field name="arch" type="xml">
+            <list string="Vouchings"
+                  decoration-muted="state == 'withdrawn'"
+                  decoration-success="state == 'active'">
+                <field name="sponsor_id"/>
+                <field name="newcomer_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <field name="withdrawn_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_my_vouchings_given" model="ir.actions.act_window">
+        <field name="name">Vouchings I Gave</field>
+        <field name="res_model">social_reputation.vouching</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('sponsor_id', '=', uid)]</field>
+        <field name="context">{'default_sponsor_id': uid}</field>
+    </record>
+
+    <record id="action_my_vouchings_received" model="ir.actions.act_window">
+        <field name="name">My Sponsors</field>
+        <field name="res_model">social_reputation.vouching</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('newcomer_id', '=', uid), ('state', '=', 'active')]</field>
+    </record>
+
+    <record id="action_vouchings_admin" model="ir.actions.act_window">
+        <field name="name">All Vouchings</field>
+        <field name="res_model">social_reputation.vouching</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Profile form injection -->
+    <record id="view_profile_vouching_inline" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.vouching</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='onboarding_done']" position="after">
+                <field name="is_vouched" readonly="1"/>
+                <field name="vouching_received_count" readonly="1" string="Sponsors"/>
+                <field name="vouching_given_count" readonly="1" string="Vouched For"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Reputation" name="reputation">
+                    <group string="Sponsors (vouched by)">
+                        <field name="sponsor_ids" widget="many2many_tags" readonly="1" nolabel="1"/>
+                    </group>
+                    <separator string="Vouchings Received"/>
+                    <field name="vouching_received_ids" readonly="1">
+                        <list>
+                            <field name="sponsor_id"/>
+                            <field name="statement"/>
+                            <field name="create_date"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

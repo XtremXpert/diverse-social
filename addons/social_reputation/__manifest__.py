@@ -1,0 +1,21 @@
+{
+    'name': 'Social Reputation',
+    'version': '19.0.1.0.0',
+    'category': 'Social',
+    'summary': 'Community vouching: members sponsor newcomers, creating a chain of accountability',
+    'author': 'Bemade',
+    'license': 'LGPL-3',
+    'depends': [
+        'club_social_profile',
+        'social_discovery',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/security.xml',
+        'views/vouching_views.xml',
+        'views/menus.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}
