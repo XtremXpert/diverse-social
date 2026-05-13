@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Gender values -->
+        <record id="gender_homme" model="social_discovery.gender_value">
+            <field name="name">Man</field><field name="value">homme</field><field name="sequence">10</field>
+        </record>
+        <record id="gender_femme" model="social_discovery.gender_value">
+            <field name="name">Woman</field><field name="value">femme</field><field name="sequence">20</field>
+        </record>
+        <record id="gender_trans_homme" model="social_discovery.gender_value">
+            <field name="name">Trans man</field><field name="value">trans_homme</field><field name="sequence">30</field>
+        </record>
+        <record id="gender_trans_femme" model="social_discovery.gender_value">
+            <field name="name">Trans woman</field><field name="value">trans_femme</field><field name="sequence">40</field>
+        </record>
+        <record id="gender_non_binaire" model="social_discovery.gender_value">
+            <field name="name">Non-binary</field><field name="value">non_binaire</field><field name="sequence">50</field>
+        </record>
+        <record id="gender_autre" model="social_discovery.gender_value">
+            <field name="name">Other</field><field name="value">autre</field><field name="sequence">60</field>
+        </record>
+
+        <!-- Orientation values -->
+        <record id="orient_hetero" model="social_discovery.orientation_value">
+            <field name="name">Straight</field><field name="value">hetero</field><field name="sequence">10</field>
+        </record>
+        <record id="orient_gay" model="social_discovery.orientation_value">
+            <field name="name">Gay / Lesbian</field><field name="value">gay</field><field name="sequence">20</field>
+        </record>
+        <record id="orient_bi" model="social_discovery.orientation_value">
+            <field name="name">Bisexual</field><field name="value">bi</field><field name="sequence">30</field>
+        </record>
+        <record id="orient_pan" model="social_discovery.orientation_value">
+            <field name="name">Pansexual</field><field name="value">pan</field><field name="sequence">40</field>
+        </record>
+        <record id="orient_asexuel" model="social_discovery.orientation_value">
+            <field name="name">Asexual</field><field name="value">asexuel</field><field name="sequence">50</field>
+        </record>
+        <record id="orient_queer" model="social_discovery.orientation_value">
+            <field name="name">Queer</field><field name="value">queer</field><field name="sequence">60</field>
+        </record>
+        <record id="orient_autre" model="social_discovery.orientation_value">
+            <field name="name">Other</field><field name="value">autre</field><field name="sequence">70</field>
+        </record>
+
+        <!-- Availability values -->
+        <record id="avail_disponible" model="social_discovery.availability_value">
+            <field name="name">Available / Looking</field><field name="value">disponible</field><field name="sequence">10</field>
+        </record>
+        <record id="avail_couple_ouvert" model="social_discovery.availability_value">
+            <field name="name">Open relationship</field><field name="value">couple_ouvert</field><field name="sequence">20</field>
+        </record>
+        <record id="avail_couple_ferme" model="social_discovery.availability_value">
+            <field name="name">Closed relationship</field><field name="value">couple_ferme</field><field name="sequence">30</field>
+        </record>
+
+    </data>
+</odoo>

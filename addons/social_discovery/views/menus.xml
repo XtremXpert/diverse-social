@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_discovery_root" name="Discovery" sequence="20"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_my_searches" name="My Searches"
+              parent="menu_discovery_root" sequence="10"
+              action="action_my_searches"
+              groups="social_base.group_social_user"/>
+
+</odoo>
