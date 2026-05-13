@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject a "Community" page into the event form -->
+    <record id="view_event_form_social_ext" model="ir.ui.view">
+        <field name="name">event.event.form.social_ext</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Community" name="social_community">
+                    <group>
+                        <group string="Visibility">
+                            <field name="organizer_user_id"/>
+                            <field name="social_visibility" widget="radio"/>
+                            <field name="allowed_circle_ids"
+                                   widget="many2many_tags"
+                                   invisible="social_visibility != 'circles'"
+                                   required="social_visibility == 'circles'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add visibility badge to the list view -->
+    <record id="view_event_list_social_ext" model="ir.ui.view">
+        <field name="name">event.event.list.social_ext</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="social_visibility" optional="show" string="Community"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search filter for community events -->
+    <record id="view_event_search_social_ext" model="ir.ui.view">
+        <field name="name">event.event.search.social_ext</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="social_members" string="Open to All Members"
+                        domain="[('social_visibility','=','members')]"/>
+                <filter name="social_circles" string="Circle-Gated"
+                        domain="[('social_visibility','=','circles')]"/>
+                <filter name="my_events" string="My Events"
+                        domain="[('organizer_user_id','=',uid)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

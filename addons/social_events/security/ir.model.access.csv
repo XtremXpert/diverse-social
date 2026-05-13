@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_event_social_user,event.event social user,event.model_event_event,social_base.group_social_user,1,0,0,0
+access_event_social_moderator,event.event social moderator,event.model_event_event,social_base.group_social_moderator,1,1,1,0
+access_event_social_admin,event.event social admin,event.model_event_event,social_base.group_social_admin,1,1,1,1
+access_registration_social_user,event.registration social user,event.model_event_registration,social_base.group_social_user,1,1,1,0
+access_registration_social_admin,event.registration social admin,event.model_event_registration,social_base.group_social_admin,1,1,1,1
+access_event_stage_social,event.stage social,event.model_event_stage,social_base.group_social_user,1,0,0,0
+access_event_tag_social,event.tag social,event.model_event_tag,social_base.group_social_user,1,0,0,0
+access_event_tag_category_social,event.tag.category social,event.model_event_tag_category,social_base.group_social_user,1,0,0,0
+access_event_ticket_social,event.event.ticket social,event.model_event_event_ticket,social_base.group_social_user,1,0,0,0
+access_event_type_social,event.type social,event.model_event_type,social_base.group_social_user,1,0,0,0
