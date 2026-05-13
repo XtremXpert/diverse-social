@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_governance_root"
+              name="Governance"
+              sequence="50"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_governance_proposals"
+              name="Proposals"
+              parent="menu_governance_root"
+              action="action_proposals"
+              sequence="10"/>
+
+    <menuitem id="menu_governance_decisions"
+              name="Decision Log"
+              parent="menu_governance_root"
+              action="action_decision_log"
+              sequence="20"/>
+
+    <menuitem id="menu_governance_config"
+              name="Configuration"
+              parent="menu_governance_root"
+              sequence="99"
+              groups="social_base.group_social_admin"/>
+
+    <menuitem id="menu_governance_categories"
+              name="Categories"
+              parent="menu_governance_config"
+              action="action_categories"
+              sequence="10"/>
+
+</odoo>

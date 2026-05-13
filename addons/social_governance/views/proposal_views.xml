@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List ── -->
+    <record id="view_proposal_list" model="ir.ui.view">
+        <field name="name">social_governance.proposal.list</field>
+        <field name="model">social_governance.proposal</field>
+        <field name="arch" type="xml">
+            <list string="Proposals" decoration-info="state == 'open'"
+                  decoration-warning="state == 'voting'"
+                  decoration-success="state == 'accepted'"
+                  decoration-muted="state in ('rejected','withdrawn')">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="author_id"/>
+                <field name="state"/>
+                <field name="voting_closes_at" optional="show"/>
+                <field name="vote_count" optional="show"/>
+                <field name="approval_pct" optional="show" string="Approval %"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form ── -->
+    <record id="view_proposal_form" model="ir.ui.view">
+        <field name="name">social_governance.proposal.form</field>
+        <field name="model">social_governance.proposal</field>
+        <field name="arch" type="xml">
+            <form string="Proposal">
+                <header>
+                    <button name="action_open" string="Open for Comments"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start_voting" string="Start Voting"
+                            type="object" class="oe_highlight"
+                            invisible="state not in ('draft','open')"/>
+                    <button name="action_close_voting" string="Close Vote"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'voting'"/>
+                    <button name="action_implement" string="Mark Implemented"
+                            type="object"
+                            invisible="state != 'accepted'"/>
+                    <button name="action_withdraw" string="Withdraw"
+                            type="object"
+                            invisible="state in ('accepted','rejected','withdrawn')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,open,voting,accepted,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="category_id"/>
+                            <field name="author_id"/>
+                        </group>
+                        <group>
+                            <field name="voting_opens_at"/>
+                            <field name="voting_closes_at"/>
+                            <field name="implemented_at"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+
+                    <notebook>
+                        <page string="Votes" invisible="state not in ('voting','accepted','rejected')">
+                            <group>
+                                <field name="vote_count" string="Total Votes"/>
+                                <field name="yes_count" string="Yes"/>
+                                <field name="no_count" string="No"/>
+                                <field name="abstain_count" string="Abstain"/>
+                                <field name="approval_pct" string="Approval %"/>
+                                <field name="my_vote" string="My Vote"/>
+                            </group>
+                            <group string="Cast your vote" invisible="state != 'voting'">
+                                <button name="action_vote" string="Vote Yes"
+                                        type="object" class="btn-success"
+                                        context="{'default_choice': 'yes'}"
+                                        args="['yes']"/>
+                                <button name="action_vote" string="Vote No"
+                                        type="object" class="btn-danger"
+                                        args="['no']"/>
+                                <button name="action_vote" string="Abstain"
+                                        type="object"
+                                        args="['abstain']"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search ── -->
+    <record id="view_proposal_search" model="ir.ui.view">
+        <field name="name">social_governance.proposal.search</field>
+        <field name="model">social_governance.proposal</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="author_id"/>
+                <field name="category_id"/>
+                <filter name="open" string="Open" domain="[('state','=','open')]"/>
+                <filter name="voting" string="Voting" domain="[('state','=','voting')]"/>
+                <filter name="accepted" string="Accepted" domain="[('state','=','accepted')]"/>
+                <separator/>
+                <filter name="my_proposals" string="My Proposals"
+                        domain="[('author_id','=',uid)]"/>
+                <filter name="by_category" string="Category"
+                        context="{'group_by': 'category_id'}"/>
+                <filter name="by_state" string="State"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ── -->
+    <record id="action_proposals" model="ir.actions.act_window">
+        <field name="name">Proposals</field>
+        <field name="res_model">social_governance.proposal</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_proposal_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <!-- ── Category views ── -->
+    <record id="view_category_list" model="ir.ui.view">
+        <field name="name">social_governance.proposal_category.list</field>
+        <field name="model">social_governance.proposal_category</field>
+        <field name="arch" type="xml">
+            <list string="Proposal Categories" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_categories" model="ir.actions.act_window">
+        <field name="name">Proposal Categories</field>
+        <field name="res_model">social_governance.proposal_category</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_decision_log_list" model="ir.ui.view">
+        <field name="name">social_governance.decision_log.list</field>
+        <field name="model">social_governance.decision_log</field>
+        <field name="arch" type="xml">
+            <list string="Decision Log" decoration-muted="not is_public">
+                <field name="decision_date"/>
+                <field name="category"/>
+                <field name="title"/>
+                <field name="moderator_id"/>
+                <field name="is_public"/>
+                <field name="related_proposal_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_decision_log_form" model="ir.ui.view">
+        <field name="name">social_governance.decision_log.form</field>
+        <field name="model">social_governance.decision_log</field>
+        <field name="arch" type="xml">
+            <form string="Moderation Decision">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="category"/>
+                            <field name="decision_date"/>
+                        </group>
+                        <group>
+                            <field name="moderator_id"/>
+                            <field name="is_public"/>
+                            <field name="related_proposal_id"/>
+                        </group>
+                    </group>
+                    <field name="body"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_decision_log_search" model="ir.ui.view">
+        <field name="name">social_governance.decision_log.search</field>
+        <field name="model">social_governance.decision_log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title"/>
+                <field name="moderator_id"/>
+                <filter name="public" string="Public Only" domain="[('is_public','=',True)]"/>
+                <filter name="ban" string="Bans" domain="[('category','=','ban')]"/>
+                <filter name="rule_change" string="Rule Changes"
+                        domain="[('category','=','rule_change')]"/>
+                <filter name="by_category" string="Category"
+                        context="{'group_by': 'category'}"/>
+                <filter name="by_moderator" string="Moderator"
+                        context="{'group_by': 'moderator_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_decision_log" model="ir.actions.act_window">
+        <field name="name">Decision Log</field>
+        <field name="res_model">social_governance.decision_log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_decision_log_search"/>
+        <field name="context">{'search_default_public': 1}</field>
+    </record>
+
+</odoo>
