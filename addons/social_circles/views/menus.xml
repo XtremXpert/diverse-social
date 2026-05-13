@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_circles_root" name="Circles" sequence="25"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_my_circles" name="My Circles"
+              parent="menu_circles_root" sequence="10"
+              action="action_my_circles"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_circles_admin" name="All Circles (Admin)"
+              parent="menu_circles_root" sequence="90"
+              action="action_circles_admin"
+              groups="social_base.group_social_moderator"/>
+
+</odoo>

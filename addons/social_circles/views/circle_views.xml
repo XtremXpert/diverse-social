@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_circle_form" model="ir.ui.view">
+        <field name="name">social_circles.circle.form</field>
+        <field name="model">social_circles.circle</field>
+        <field name="arch" type="xml">
+            <form string="Circle">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="profile_id"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group>
+                            <field name="member_count"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <separator string="Members"/>
+                    <field name="member_ids" widget="many2many_tags"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_circle_list" model="ir.ui.view">
+        <field name="name">social_circles.circle.list</field>
+        <field name="model">social_circles.circle</field>
+        <field name="arch" type="xml">
+            <list string="Circles">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="member_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_circle_kanban" model="ir.ui.view">
+        <field name="name">social_circles.circle.kanban</field>
+        <field name="model">social_circles.circle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="profile_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="member_count"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_color_#{record.color.raw_value}">
+                            <strong><field name="name"/></strong>
+                            <p class="text-muted"><t t-esc="record.member_count.raw_value"/> member(s)</p>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_my_circles" model="ir.actions.act_window">
+        <field name="name">My Circles</field>
+        <field name="res_model">social_circles.circle</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('profile_id.user_id', '=', uid)]</field>
+    </record>
+
+    <record id="action_circles_admin" model="ir.actions.act_window">
+        <field name="name">All Circles</field>
+        <field name="res_model">social_circles.circle</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Inline view injected into profile form -->
+    <record id="view_profile_circles_inline" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.circles</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='visibility']" position="after">
+                <field name="detailed_visibility"/>
+                <field name="detailed_visibility_circle_id"
+                       invisible="detailed_visibility != 'specific'"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Circles" name="circles">
+                    <field name="circle_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="member_count"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
