@@ -92,7 +92,7 @@
                                     </div>
                                 </t>
                                 <t t-if="is_own">
-                                    <a href="/onboarding?step=about" class="btn btn-outline-secondary btn-sm">
+                                    <a href="/my/profile/edit" class="btn btn-outline-secondary btn-sm">
                                         ✏️ Modifier
                                     </a>
                                 </t>

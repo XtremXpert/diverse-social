@@ -15,6 +15,7 @@
         'data/profile_data.xml',
         'views/profile_views.xml',
         'views/portal_profile_public.xml',
+        'views/portal_profile_edit.xml',
     ],
     'installable': True,
     'application': False,

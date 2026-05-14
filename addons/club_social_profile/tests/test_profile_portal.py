@@ -147,6 +147,84 @@ class TestProfilePortalData(TransactionCase):
         self.assertEqual(display, self.owner.name)
 
 
+@tagged('club_social_profile', 'profile_edit', 'post_install', '-at_install')
+class TestProfileEditHttp(HttpCase):
+
+    def test_edit_unauthenticated_redirects(self):
+        resp = self.url_open('/my/profile/edit', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_edit_authenticated_ok(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/profile/edit')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_edit_preferences_tab(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/profile/edit?section=preferences')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Visibilité', resp.content)
+
+    def test_save_identity_redirects(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/my/profile/edit/identity',
+            data={
+                'csrf_token': self.csrf_token(),
+                'bio': 'Bio test édition',
+                'city': 'Montréal',
+                'gender': 'non_binaire',
+                'orientation': 'queer',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Profil mis à jour', resp.content)
+
+    def test_save_identity_invalid_gender_ignored(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/my/profile/edit/identity',
+            data={
+                'csrf_token': self.csrf_token(),
+                'gender': 'INVALIDE',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+
+    def test_save_identity_underage_returns_error(self):
+        import datetime
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/my/profile/edit/identity',
+            data={
+                'csrf_token': self.csrf_token(),
+                'birth_year': str(datetime.date.today().year - 16),
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'18 ans', resp.content)
+
+    def test_save_preferences_ok(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/my/profile/edit/preferences',
+            data={
+                'csrf_token': self.csrf_token(),
+                'visibility': 'members',
+                'availability': 'disponible',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Préférences enregistrées', resp.content)
+
+    def test_edit_page_has_tabs(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/profile/edit')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Identité', resp.content)
+        self.assertIn(b'Préférences', resp.content)
+
+
 @tagged('club_social_profile', 'profile_portal', 'post_install', '-at_install')
 class TestProfilePortalHttp(HttpCase):
 
