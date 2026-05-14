@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- ══ Assets ════════════════════════════════════════════════════════════ -->
+    <template id="assets_portal_gallery" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script src="/social_gallery/static/src/js/portal_gallery_lightbox.js" type="text/javascript"/>
+        </xpath>
+    </template>
+
     <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
 
     <template id="portal_my_home_gallery" name="Portal My Home : Gallery"
@@ -59,67 +66,120 @@
     <template id="portal_gallery_detail" name="Galerie – détail">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="False"/>
-            <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb" class="container mt-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/gallery">Galeries</a></li>
                     <li class="breadcrumb-item active" t-esc="gallery.name"/>
                 </ol>
             </nav>
 
-            <div class="container mt-3">
-                <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="container mt-2">
+
+                <!-- En-tête galerie -->
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                     <div>
-                        <h3 t-esc="gallery.name"/>
-                        <p t-if="gallery.description" class="text-muted" t-esc="gallery.description"/>
+                        <h3 class="mb-1" t-esc="gallery.name"/>
+                        <p t-if="gallery.description" class="text-muted mb-1" t-esc="gallery.description"/>
+                        <!-- Propriétaire -->
+                        <t t-if="gallery.owner_id">
+                            <small class="text-muted">
+                                Par
+                                <t t-if="owner_profile">
+                                    <a t-attf-href="/profile/#{gallery.owner_id.id}"
+                                       t-esc="owner_profile.stealth_name or gallery.owner_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-esc="gallery.owner_id.name"/>
+                                </t>
+                            </small>
+                        </t>
                     </div>
-                    <span class="badge bg-secondary ms-2" t-esc="gallery.approved_photo_count + ' photo(s)'"/>
+                    <span class="badge bg-secondary" style="font-size:.85rem;">
+                        <t t-esc="gallery.approved_photo_count"/> photo(s)
+                        <t t-if="gallery.is_shared"> · Participative</t>
+                    </span>
                 </div>
 
+                <!-- Alertes -->
                 <t t-if="request.params.get('success')">
                     <div class="alert alert-success">Votre photo a été soumise et est en attente de modération.</div>
                 </t>
                 <t t-if="request.params.get('error') == 'image_required'">
                     <div class="alert alert-danger">Veuillez sélectionner une image.</div>
                 </t>
+                <t t-if="request.params.get('deleted')">
+                    <div class="alert alert-info">Photo supprimée.</div>
+                </t>
 
+                <!-- Formulaire de soumission (galeries partagées) -->
                 <t t-if="gallery.is_shared">
                     <div class="card mb-4">
-                        <div class="card-header fw-bold">Soumettre une photo</div>
+                        <div class="card-header fw-bold" style="background:#1a1a2e;color:white;">
+                            📷 Soumettre une photo
+                        </div>
                         <div class="card-body">
                             <form t-attf-action="/gallery/#{gallery.id}/submit" method="post"
                                   enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                <div class="mb-3">
-                                    <label class="form-label">Image</label>
-                                    <input type="file" name="image" class="form-control" accept="image/*" required="required"/>
+                                <div class="row g-3">
+                                    <div class="col-md-7">
+                                        <label class="form-label">Image</label>
+                                        <input type="file" name="image" class="form-control" accept="image/*" required="required"/>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label">Titre (facultatif)</label>
+                                        <input type="text" name="name" class="form-control" maxlength="128"/>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Titre (facultatif)</label>
-                                    <input type="text" name="name" class="form-control" maxlength="128"/>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Soumettre</button>
+                                <button type="submit" class="btn btn-sm mt-3"
+                                        style="background:#e94560;color:white;">
+                                    Soumettre
+                                </button>
                             </form>
                         </div>
                     </div>
                 </t>
 
+                <!-- Grille photos avec lightbox -->
                 <t t-if="not photos">
-                    <div class="alert alert-info">Aucune photo dans cette galerie.</div>
+                    <div class="text-center py-5">
+                        <div style="font-size:2.5rem;">🖼️</div>
+                        <p class="text-muted mt-2">Aucune photo dans cette galerie.</p>
+                    </div>
                 </t>
-                <div class="row g-3">
+                <div id="sn_gallery_grid" class="row g-2">
                     <t t-foreach="photos" t-as="photo">
                         <div class="col-6 col-md-4 col-lg-3">
-                            <a t-attf-href="/web/image/social_gallery.photo/#{photo.id}/image_1920"
-                               target="_blank">
+                            <a href="#"
+                               t-att-data-lightbox="photo.id"
+                               t-attf-data-src="/web/image/social_gallery.photo/#{photo.id}/image_1920"
+                               t-attf-data-thumb="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                               t-att-data-caption="photo.name or ''"
+                               class="d-block position-relative overflow-hidden rounded"
+                               style="height:160px;">
                                 <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                     class="img-fluid rounded shadow-sm"
-                                     style="height:160px;width:100%;object-fit:cover;"
+                                     class="w-100 h-100" style="object-fit:cover; transition:transform .2s;"
                                      t-att-alt="photo.name or gallery.name"/>
+                                <t t-if="photo.name">
+                                    <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
+                                         style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;">
+                                        <t t-esc="photo.name"/>
+                                    </div>
+                                </t>
                             </a>
-                            <p t-if="photo.name" class="small text-muted mt-1 mb-0" t-esc="photo.name"/>
                         </div>
                     </t>
                 </div>
+
+                <!-- Pagination -->
+                <t t-if="pager and pager['page_count'] &gt; 1">
+                    <div class="mt-4">
+                        <t t-call="portal.pager">
+                            <t t-set="pager" t-value="pager"/>
+                        </t>
+                    </div>
+                </t>
+
             </div>
         </t>
     </template>
@@ -128,20 +188,118 @@
 
     <template id="portal_my_gallery" name="Mes photos">
         <t t-call="portal.portal_layout">
-            <t t-set="breadcrumbs_searchbar" t-value="True"/>
-            <t t-call="portal.portal_searchbar">
-                <t t-set="title">Mes photos soumises</t>
-            </t>
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
             <div class="container mt-3">
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('created')">
+                    <div class="alert alert-success">Galerie créée avec succès.</div>
+                </t>
+                <t t-if="request.params.get('deleted')">
+                    <div class="alert alert-info">Photo supprimée.</div>
+                </t>
+                <t t-if="request.params.get('error') == 'name_required'">
+                    <div class="alert alert-danger">Le nom de la galerie est requis.</div>
+                </t>
+
+                <!-- Mes galeries -->
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h4 class="mb-0" style="color:#1a1a2e;">Mes galeries</h4>
+                    <button class="btn btn-sm" style="background:#e94560;color:white;"
+                            data-bs-toggle="collapse" data-bs-target="#sn_create_gallery_form">
+                        + Créer une galerie
+                    </button>
+                </div>
+
+                <!-- Formulaire création galerie (collapse) -->
+                <div class="collapse mb-4" id="sn_create_gallery_form">
+                    <div class="card card-body">
+                        <form action="/my/gallery/create" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row g-3">
+                                <div class="col-md-5">
+                                    <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+                                    <input type="text" name="name" class="form-control" maxlength="128" required="required"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Visibilité</label>
+                                    <select name="visibility" class="form-select">
+                                        <option value="members">Membres seulement</option>
+                                        <option value="public">Publique</option>
+                                        <option value="private">Privée (moi seul)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-sm w-100"
+                                            style="background:#1a1a2e;color:white;">
+                                        Créer
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="form-label fw-semibold">Description (facultatif)</label>
+                                <textarea name="description" class="form-control" rows="2" maxlength="500"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <t t-if="my_galleries">
+                    <div class="row g-3 mb-5">
+                        <t t-foreach="my_galleries" t-as="gal">
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <a t-attf-href="/gallery/#{gal.id}" class="text-decoration-none">
+                                    <div class="card h-100 shadow-sm">
+                                        <t t-if="gal.cover_photo_id">
+                                            <img t-attf-src="/web/image/social_gallery.photo/#{gal.cover_photo_id.id}/image_512"
+                                                 class="card-img-top" style="height:130px;object-fit:cover;"
+                                                 t-att-alt="gal.name"/>
+                                        </t>
+                                        <div t-else="" class="card-img-top d-flex align-items-center justify-content-center"
+                                             style="height:130px;background:#f8f9fa;font-size:2rem;">
+                                            🖼️
+                                        </div>
+                                        <div class="card-body py-2 px-3">
+                                            <div class="fw-semibold" style="font-size:.9rem;" t-esc="gal.name"/>
+                                            <small class="text-muted">
+                                                <t t-esc="gal.approved_photo_count"/> photo(s)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <p class="text-muted mb-5">Vous n'avez aucune galerie personnelle.</p>
+                </t>
+
+                <!-- Mes photos soumises -->
+                <h4 class="mb-3" style="color:#1a1a2e;">Mes photos soumises</h4>
+
                 <div class="btn-group mb-3">
-                    <a t-attf-href="/my/gallery" t-attf-class="btn btn-sm #{'' if state_filter == 'all' else 'btn-outline-'}secondary">Tout</a>
-                    <a t-attf-href="/my/gallery?state=pending" t-attf-class="btn btn-sm #{'' if state_filter == 'pending' else 'btn-outline-'}warning">En attente</a>
-                    <a t-attf-href="/my/gallery?state=approved" t-attf-class="btn btn-sm #{'' if state_filter == 'approved' else 'btn-outline-'}success">Approuvées</a>
-                    <a t-attf-href="/my/gallery?state=rejected" t-attf-class="btn btn-sm #{'' if state_filter == 'rejected' else 'btn-outline-'}danger">Rejetées</a>
+                    <a t-attf-href="/my/gallery"
+                       t-attf-class="btn btn-sm #{'btn-secondary' if state_filter == 'all' else 'btn-outline-secondary'}">
+                        Tout
+                    </a>
+                    <a t-attf-href="/my/gallery?state=pending"
+                       t-attf-class="btn btn-sm #{'btn-warning' if state_filter == 'pending' else 'btn-outline-warning'}">
+                        En attente
+                    </a>
+                    <a t-attf-href="/my/gallery?state=approved"
+                       t-attf-class="btn btn-sm #{'btn-success' if state_filter == 'approved' else 'btn-outline-success'}">
+                        Approuvées
+                    </a>
+                    <a t-attf-href="/my/gallery?state=rejected"
+                       t-attf-class="btn btn-sm #{'btn-danger' if state_filter == 'rejected' else 'btn-outline-danger'}">
+                        Rejetées
+                    </a>
                 </div>
 
                 <t t-if="not photos">
-                    <div class="alert alert-info">Aucune photo soumise.</div>
+                    <p class="text-muted">Aucune photo soumise.</p>
                 </t>
                 <div class="row g-3">
                     <t t-foreach="photos" t-as="photo">
@@ -151,8 +309,20 @@
                                      class="img-fluid rounded shadow-sm"
                                      style="height:160px;width:100%;object-fit:cover;"
                                      t-att-alt="photo.name or ''"/>
-                                <span t-attf-class="badge position-absolute top-0 end-0 m-1 #{{'pending':'bg-warning','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')}"
+                                <span t-attf-class="badge position-absolute top-0 end-0 m-1 #{{'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')}"
                                       t-esc="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
+                                <!-- Bouton supprimer (pending ou rejected seulement) -->
+                                <t t-if="photo.state != 'approved'">
+                                    <form t-attf-action="/my/gallery/photo/#{photo.id}/delete" method="post"
+                                          class="position-absolute top-0 start-0 m-1">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-danger py-0 px-1"
+                                                style="font-size:.7rem;"
+                                                onclick="return confirm('Supprimer cette photo ?')">
+                                            ✕
+                                        </button>
+                                    </form>
+                                </t>
                             </div>
                             <p class="small mt-1 mb-0">
                                 <a t-attf-href="/gallery/#{photo.gallery_id.id}" t-esc="photo.gallery_id.name"/>
@@ -160,8 +330,12 @@
                         </div>
                     </t>
                 </div>
-                <t t-call="portal.pager" t-if="pager">
-                    <t t-set="pager" t-value="pager"/>
+                <t t-if="pager">
+                    <div class="mt-4">
+                        <t t-call="portal.pager">
+                            <t t-set="pager" t-value="pager"/>
+                        </t>
+                    </div>
                 </t>
             </div>
         </t>
