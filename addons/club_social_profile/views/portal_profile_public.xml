@@ -171,6 +171,11 @@
                         <!-- ── Colonne latérale ── -->
                         <div class="col-lg-4 mt-4 mt-lg-0">
 
+                            <!-- Compatibilité BDSM (injecté par club_social_profile_bdsm) -->
+                            <div id="profile_compat_widget"
+                                 t-att-data-profile-id="profile.id"
+                                 t-att-data-is-own="'1' if is_own else '0'"/>
+
                             <!-- Galeries -->
                             <t t-if="galleries">
                                 <div class="card mb-4">
