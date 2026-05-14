@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_search" name="Recherche sociale">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3" style="max-width: 820px;">
+
+                <!-- Barre de recherche -->
+                <form action="/search" method="get" class="mb-4">
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" name="q"
+                               t-att-value="q"
+                               placeholder="Rechercher des membres, groupes, publications…"
+                               autofocus="autofocus"/>
+                        <button class="btn btn-primary" type="submit">Rechercher</button>
+                    </div>
+                    <!-- Préserver le filtre de types lors de la soumission -->
+                    <t t-if="active_types">
+                        <input type="hidden" name="types" t-att-value="','.join(active_types)"/>
+                    </t>
+                </form>
+
+                <!-- Filtres de types -->
+                <div class="mb-4 d-flex flex-wrap gap-2" t-if="q">
+                    <a t-attf-href="/search?q=#{q}"
+                       t-attf-class="btn btn-sm #{not active_types and 'btn-primary' or 'btn-outline-secondary'}">
+                        Tout
+                    </a>
+                    <t t-foreach="all_types" t-as="t">
+                        <a t-attf-href="/search?q=#{q}&amp;types=#{t}"
+                           t-attf-class="btn btn-sm #{active_types and active_types == [t] and 'btn-primary' or 'btn-outline-secondary'}">
+                            <t t-esc="type_labels.get(t, t)"/>
+                            <t t-if="results.get(t)">
+                                <span class="badge bg-light text-dark ms-1">
+                                    <t t-esc="len(results[t])"/>
+                                </span>
+                            </t>
+                        </a>
+                    </t>
+                </div>
+
+                <!-- État vide initial -->
+                <t t-if="not q">
+                    <div class="text-center py-5 text-muted">
+                        <p class="fs-5">Entrez un terme pour rechercher dans la communauté.</p>
+                        <p class="small">Membres, groupes, publications, galeries et événements.</p>
+                    </div>
+                </t>
+
+                <!-- Aucun résultat -->
+                <t t-elif="q and total == 0">
+                    <div class="alert alert-info">
+                        Aucun résultat pour <strong><t t-esc="q"/></strong>.
+                    </div>
+                </t>
+
+                <!-- Résultats -->
+                <t t-else="">
+                    <p class="text-muted small mb-3">
+                        <t t-esc="total"/> résultat(s) pour « <strong><t t-esc="q"/></strong> »
+                    </p>
+
+                    <!-- ── Profils ──────────────────────────────────── -->
+                    <t t-if="results.get('profile') and ('profile' in displayed_types)">
+                        <h5 class="mb-3">
+                            <span class="badge bg-secondary me-2">Profils</span>
+                            <span class="text-muted small"><t t-esc="len(results['profile'])"/></span>
+                        </h5>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="results['profile']" t-as="item">
+                                <div class="col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="fw-semibold" t-esc="item['name']"/>
+                                            <div class="text-muted small" t-esc="item.get('login', '')"/>
+                                            <t t-if="item.get('city')">
+                                                <div class="text-muted small">📍 <t t-esc="item['city']"/></div>
+                                            </t>
+                                            <t t-if="item.get('bio')">
+                                                <p class="small mt-1 mb-0" t-esc="item['bio']"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- ── Groupes ─────────────────────────────────── -->
+                    <t t-if="results.get('group') and ('group' in displayed_types)">
+                        <h5 class="mb-3">
+                            <span class="badge bg-secondary me-2">Groupes</span>
+                            <span class="text-muted small"><t t-esc="len(results['group'])"/></span>
+                        </h5>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="results['group']" t-as="item">
+                                <div class="col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="fw-semibold">
+                                                <a t-attf-href="/groups/#{item['id']}" t-esc="item['name']"/>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <t t-esc="item['member_count']"/> membre(s) ·
+                                                <t t-if="item['privacy'] == 'public'">Public</t>
+                                                <t t-elif="item['privacy'] == 'private'">Privé</t>
+                                                <t t-else="">Secret</t>
+                                            </div>
+                                            <t t-if="item.get('description')">
+                                                <p class="small mt-1 mb-0" t-esc="item['description']"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- ── Publications ────────────────────────────── -->
+                    <t t-if="results.get('post') and ('post' in displayed_types)">
+                        <h5 class="mb-3">
+                            <span class="badge bg-secondary me-2">Publications</span>
+                            <span class="text-muted small"><t t-esc="len(results['post'])"/></span>
+                        </h5>
+                        <div class="mb-4">
+                            <t t-foreach="results['post']" t-as="item">
+                                <div class="border rounded p-3 mb-2">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <t t-if="item.get('name')">
+                                                <div class="fw-semibold" t-esc="item['name']"/>
+                                            </t>
+                                            <div class="text-muted small">
+                                                Par <t t-esc="item.get('author', '?')"/>
+                                                <t t-if="item.get('create_date')">
+                                                    · <t t-esc="item['create_date'][:10]"/>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <t t-if="item.get('excerpt')">
+                                        <p class="small mt-1 mb-0 text-muted" t-esc="item['excerpt']"/>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- ── Galeries ────────────────────────────────── -->
+                    <t t-if="results.get('gallery') and ('gallery' in displayed_types)">
+                        <h5 class="mb-3">
+                            <span class="badge bg-secondary me-2">Galeries</span>
+                            <span class="text-muted small"><t t-esc="len(results['gallery'])"/></span>
+                        </h5>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="results['gallery']" t-as="item">
+                                <div class="col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="fw-semibold">
+                                                <a t-att-href="item['url']" t-esc="item['name']"/>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <t t-esc="item.get('photo_count', 0)"/> photo(s)
+                                                <t t-if="item.get('is_shared')"> · Contributions ouvertes</t>
+                                            </div>
+                                            <t t-if="item.get('description')">
+                                                <p class="small mt-1 mb-0" t-esc="item['description']"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- ── Événements ──────────────────────────────── -->
+                    <t t-if="results.get('event') and ('event' in displayed_types)">
+                        <h5 class="mb-3">
+                            <span class="badge bg-secondary me-2">Événements</span>
+                            <span class="text-muted small"><t t-esc="len(results['event'])"/></span>
+                        </h5>
+                        <div class="mb-4">
+                            <t t-foreach="results['event']" t-as="item">
+                                <div class="border rounded p-3 mb-2">
+                                    <div class="fw-semibold" t-esc="item['name']"/>
+                                    <div class="text-muted small">
+                                        <t t-if="item.get('date_begin')">
+                                            <t t-esc="item['date_begin'][:10]"/>
+                                        </t>
+                                        <t t-if="item.get('organizer')">
+                                            · <t t-esc="item['organizer']"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

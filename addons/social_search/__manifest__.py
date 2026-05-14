@@ -12,9 +12,11 @@
         'social_group',
         'social_events',
         'social_base',
+        'portal',
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/portal_templates.xml',
     ],
     'installable': True,
     'application': False,
