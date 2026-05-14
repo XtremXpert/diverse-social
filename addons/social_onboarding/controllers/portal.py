@@ -1,0 +1,109 @@
+import base64
+import datetime
+
+from odoo.http import request, route
+from odoo.addons.portal.controllers.portal import CustomerPortal
+
+_STEPS = ['welcome', 'about', 'preferences', 'done']
+
+_STEP_TITLES = {
+    'welcome': 'Bienvenue',
+    'about': 'À propos de moi',
+    'preferences': 'Mes préférences',
+    'done': 'Profil complété !',
+}
+
+
+class OnboardingPortal(CustomerPortal):
+
+    @route('/onboarding', auth='user', website=True, sitemap=False)
+    def onboarding(self, step=None, **kw):
+        profile = request.env['club_social_profile.profile'].sudo().get_or_create_for_user(
+            request.env.user
+        )
+        if step not in _STEPS:
+            step = 'done' if profile.onboarding_done else 'welcome'
+        return self._render_onboarding(profile, step)
+
+    # ── Étape 1 : photo de profil ─────────────────────────────────────────────
+
+    @route('/onboarding/save/welcome', auth='user', methods=['POST'], website=True, csrf=True)
+    def save_welcome(self, profile_image=None, **kw):
+        profile = request.env['club_social_profile.profile'].sudo().get_or_create_for_user(
+            request.env.user
+        )
+        vals = {}
+        if profile_image and getattr(profile_image, 'filename', None):
+            vals['profile_image'] = base64.b64encode(profile_image.read()).decode('ascii')
+        if vals:
+            profile.write(vals)
+        return request.redirect('/onboarding?step=about')
+
+    # ── Étape 2 : à propos ────────────────────────────────────────────────────
+
+    @route('/onboarding/save/about', auth='user', methods=['POST'], website=True, csrf=True)
+    def save_about(self, pronouns='', bio='', birth_year='', city='', **kw):
+        profile = request.env['club_social_profile.profile'].sudo().get_or_create_for_user(
+            request.env.user
+        )
+        try:
+            birth_year_int = int(birth_year) if birth_year.strip() else 0
+        except (ValueError, AttributeError):
+            birth_year_int = 0
+
+        if birth_year_int:
+            age = datetime.date.today().year - birth_year_int
+            if 0 < age < 18:
+                return self._render_onboarding(
+                    profile, 'about',
+                    error="Vous devez avoir 18 ans ou plus pour accéder au réseau social.",
+                    form_values={'pronouns': pronouns, 'bio': bio,
+                                 'birth_year': birth_year, 'city': city},
+                )
+
+        profile.write({
+            'pronouns': pronouns.strip() or False,
+            'bio': bio.strip() or False,
+            'birth_year': birth_year_int,
+            'city': city.strip() or False,
+        })
+        return request.redirect('/onboarding?step=preferences')
+
+    # ── Étape 3 : préférences ─────────────────────────────────────────────────
+
+    @route('/onboarding/save/preferences', auth='user', methods=['POST'], website=True, csrf=True)
+    def save_preferences(self, visibility='members', availability='non_specifie',
+                         digest_email_enabled=False, **kw):
+        profile = request.env['club_social_profile.profile'].sudo().get_or_create_for_user(
+            request.env.user
+        )
+        valid_visibilities = ('members', 'connections')
+        valid_availabilities = ('disponible', 'couple_ouvert', 'couple_ferme',
+                                'pas_disponible', 'non_specifie')
+        profile.write({
+            'visibility': visibility if visibility in valid_visibilities else 'members',
+            'availability': availability if availability in valid_availabilities else 'non_specifie',
+            'digest_email_enabled': bool(digest_email_enabled),
+        })
+        profile.write({'onboarding_done': True})
+        return request.redirect('/onboarding?step=done')
+
+    # ── Ignorer ───────────────────────────────────────────────────────────────
+
+    @route('/onboarding/skip', auth='user', methods=['POST'], website=True, csrf=True)
+    def skip(self, **kw):
+        return request.redirect('/web')
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
+
+    def _render_onboarding(self, profile, step, error=None, form_values=None):
+        return request.render('social_onboarding.portal_onboarding', {
+            'profile': profile,
+            'step': step,
+            'step_titles': _STEP_TITLES,
+            'steps': _STEPS,
+            'step_index': _STEPS.index(step),
+            'error': error,
+            'form_values': form_values or {},
+            'page_name': 'onboarding',
+        })

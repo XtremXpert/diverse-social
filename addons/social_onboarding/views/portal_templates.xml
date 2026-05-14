@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_onboarding" name="Onboarding — Parcours profil">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4" style="max-width: 640px;">
+
+                <!-- Barre de progression -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <t t-foreach="steps" t-as="s">
+                            <t t-if="s != 'done'">
+                                <span t-attf-class="small #{step_index > steps.index(s) and 'text-success fw-semibold' or step == s and 'text-primary fw-semibold' or 'text-muted'}">
+                                    <t t-esc="step_titles[s]"/>
+                                </span>
+                            </t>
+                        </t>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary"
+                             t-attf-style="width: #{min(100, step_index * 33)}%"/>
+                    </div>
+                </div>
+
+                <h2 class="mb-4"><t t-esc="step_titles[step]"/></h2>
+
+                <!-- Message d'erreur -->
+                <div class="alert alert-danger" t-if="error">
+                    <t t-esc="error"/>
+                </div>
+
+                <!-- ── Étape 1 : Bienvenue / photo ──────────────────────── -->
+                <t t-if="step == 'welcome'">
+                    <p class="text-muted mb-4">
+                        Bienvenue ! Commençons par ajouter une photo de profil.
+                    </p>
+                    <form action="/onboarding/save/welcome" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="mb-4 text-center">
+                            <t t-if="profile.profile_image">
+                                <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                     class="rounded-circle mb-3"
+                                     style="width:120px;height:120px;object-fit:cover;"
+                                     alt="Photo de profil"/>
+                            </t>
+                            <t t-else="">
+                                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width:120px;height:120px;">
+                                    <span class="text-white fs-1">?</span>
+                                </div>
+                            </t>
+                            <div>
+                                <label class="btn btn-outline-primary btn-sm" for="profile_image">
+                                    Choisir une photo
+                                </label>
+                                <input type="file" name="profile_image" id="profile_image"
+                                       accept="image/*" class="d-none"
+                                       onchange="this.previousElementSibling.textContent = this.files[0]?.name || 'Choisir une photo'"/>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <form action="/onboarding/skip" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <button type="submit" class="btn btn-link text-muted ps-0">Ignorer pour l'instant</button>
+                            </form>
+                            <button type="submit" class="btn btn-primary">Suivant →</button>
+                        </div>
+                    </form>
+                </t>
+
+                <!-- ── Étape 2 : À propos ───────────────────────────────── -->
+                <t t-if="step == 'about'">
+                    <form action="/onboarding/save/about" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="pronouns">Pronoms</label>
+                            <input type="text" class="form-control" name="pronouns" id="pronouns"
+                                   placeholder="ex. : il/lui, elle/her, iel/iels"
+                                   t-att-value="form_values.get('pronouns', profile.pronouns or '')"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="bio">Bio</label>
+                            <textarea class="form-control" name="bio" id="bio" rows="4"
+                                      placeholder="Présentez-vous en quelques mots…">
+                                <t t-esc="form_values.get('bio', profile.bio or '')"/>
+                            </textarea>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="birth_year">Année de naissance</label>
+                                <input type="number" class="form-control" name="birth_year" id="birth_year"
+                                       min="1900" max="2010" placeholder="ex. : 1990"
+                                       t-att-value="form_values.get('birth_year', profile.birth_year or '')"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="city">Ville</label>
+                                <input type="text" class="form-control" name="city" id="city"
+                                       placeholder="Montréal, Québec…"
+                                       t-att-value="form_values.get('city', profile.city or '')"/>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/onboarding?step=welcome" class="btn btn-outline-secondary">← Précédent</a>
+                            <button type="submit" class="btn btn-primary">Suivant →</button>
+                        </div>
+                    </form>
+                </t>
+
+                <!-- ── Étape 3 : Préférences ────────────────────────────── -->
+                <t t-if="step == 'preferences'">
+                    <form action="/onboarding/save/preferences" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Visibilité du profil</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="visibility"
+                                           id="vis_members" value="members"
+                                           t-att-checked="profile.visibility == 'members' and 'checked' or None"/>
+                                    <label class="form-check-label" for="vis_members">
+                                        <strong>Membres du club</strong><br/>
+                                        <small class="text-muted">Visible par tous les membres actifs</small>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="visibility"
+                                           id="vis_connections" value="connections"
+                                           t-att-checked="profile.visibility == 'connections' and 'checked' or None"/>
+                                    <label class="form-check-label" for="vis_connections">
+                                        <strong>Connexions uniquement</strong><br/>
+                                        <small class="text-muted">Visible seulement par vos connexions</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" for="availability">Disponibilité</label>
+                            <select class="form-select" name="availability" id="availability">
+                                <option value="non_specifie" t-att-selected="profile.availability == 'non_specifie' and 'selected' or None">Non spécifié</option>
+                                <option value="disponible" t-att-selected="profile.availability == 'disponible' and 'selected' or None">Disponible / En recherche</option>
+                                <option value="couple_ouvert" t-att-selected="profile.availability == 'couple_ouvert' and 'selected' or None">Couple ouvert</option>
+                                <option value="couple_ferme" t-att-selected="profile.availability == 'couple_ferme' and 'selected' or None">Couple fermé</option>
+                                <option value="pas_disponible" t-att-selected="profile.availability == 'pas_disponible' and 'selected' or None">Pas disponible</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       name="digest_email_enabled" id="digest_email"
+                                       t-att-checked="profile.digest_email_enabled and 'checked' or None"/>
+                                <label class="form-check-label" for="digest_email">
+                                    Recevoir le résumé hebdomadaire par courriel
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/onboarding?step=about" class="btn btn-outline-secondary">← Précédent</a>
+                            <button type="submit" class="btn btn-primary">Terminer →</button>
+                        </div>
+                    </form>
+                </t>
+
+                <!-- ── Étape 4 : Terminé ────────────────────────────────── -->
+                <t t-if="step == 'done'">
+                    <div class="text-center py-4">
+                        <div class="mb-4">
+                            <span style="font-size: 4rem;">🎉</span>
+                        </div>
+                        <h3>Votre profil est prêt !</h3>
+                        <p class="text-muted mb-4">
+                            Vous pouvez maintenant explorer la communauté, rejoindre des groupes
+                            et vous connecter avec d'autres membres.
+                        </p>
+                        <t t-if="profile.profile_image">
+                            <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                 class="rounded-circle mb-4"
+                                 style="width:100px;height:100px;object-fit:cover;"
+                                 alt="Photo de profil"/>
+                        </t>
+                        <div class="d-flex flex-column gap-2 align-items-center">
+                            <a href="/groups" class="btn btn-primary">Découvrir les groupes</a>
+                            <a href="/governance" class="btn btn-outline-secondary">Voir les propositions</a>
+                            <a href="/web" class="btn btn-link text-muted">Aller au tableau de bord</a>
+                        </div>
+                        <t t-if="not profile.onboarding_done">
+                            <div class="mt-4">
+                                <a href="/onboarding?step=welcome" class="btn btn-link text-muted small">
+                                    Compléter mon profil quand même
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>
