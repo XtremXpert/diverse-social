@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Assets ════════════════════════════════════════════════════════ -->
+    <template id="assets_portal_chat" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script src="/social_messaging/static/src/js/portal_chat.js" type="text/javascript"/>
+        </xpath>
+    </template>
+
+    <!-- ══ Styles inline chat ════════════════════════════════════════════ -->
+    <template id="assets_portal_chat_css" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <style>
+                #sn_chat_body { height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #f8f9fa; }
+                .sn-bubble-wrap { display: flex; flex-direction: column; max-width: 72%; }
+                .sn-mine { align-self: flex-end; align-items: flex-end; }
+                .sn-theirs { align-self: flex-start; align-items: flex-start; }
+                .sn-bubble { padding: 8px 12px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+                .sn-mine .sn-bubble { background: #e94560; color: white; border-bottom-right-radius: 4px; }
+                .sn-theirs .sn-bubble { background: white; color: #1a1a2e; border: 1px solid #dee2e6; border-bottom-left-radius: 4px; }
+                .sn-bubble-meta { font-size: 0.7rem; color: #adb5bd; margin-top: 2px; padding: 0 4px; }
+            </style>
+        </xpath>
+    </template>
+
+    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
+    <template id="portal_my_home_messages" name="Messages privés"
+              inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Messages</t>
+                <t t-set="url">/my/messages</t>
+                <t t-set="placeholder_count">0</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Liste des conversations ═══════════════════════════════════════ -->
+    <template id="portal_messages_list" name="Mes messages">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:700px;">
+                <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">
+                    💬 Mes messages
+                </h1>
+
+                <t t-if="not thread_data">
+                    <div class="card text-center py-5">
+                        <div style="font-size:2.5rem;" class="mb-2">💬</div>
+                        <p class="text-muted mb-0">Aucune conversation pour l'instant.</p>
+                        <p class="text-muted" style="font-size:0.85rem;">
+                            Visitez le profil d'un membre et cliquez sur « Message » pour démarrer.
+                        </p>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <div class="list-group shadow-sm">
+                        <t t-foreach="thread_data" t-as="td">
+                            <a t-attf-href="/my/messages/#{td['thread'].id}"
+                               t-attf-class="list-group-item list-group-item-action py-3 px-3 #{'' if td['unread'] == 0 else 'bg-light'}">
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- Avatar -->
+                                    <div style="width:46px; height:46px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                                        <t t-if="td.get('other_profile') and td['other_profile'].profile_image">
+                                            <img t-attf-src="/web/image/club_social_profile.profile/#{td['other_profile'].id}/profile_image"
+                                                 class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="d-flex align-items-center justify-content-center h-100"
+                                                 style="color:white; font-size:18px;">
+                                                <t t-out="((td.get('other_profile') and (td['other_profile'].stealth_name or '')) or (td['other'] and td['other'].name) or '?')[0].upper()"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="d-flex justify-content-between align-items-baseline">
+                                            <span class="fw-semibold" style="font-size:0.95rem;">
+                                                <t t-out="(td.get('other_profile') and (td['other_profile'].stealth_name or td['other'].name)) or (td['other'] and td['other'].name) or 'Inconnu'"/>
+                                            </span>
+                                            <span class="text-muted" style="font-size:0.75rem;">
+                                                <t t-if="td['thread'].last_message_date">
+                                                    <t t-out="td['thread'].last_message_date.strftime('%d/%m %H:%M')"/>
+                                                </t>
+                                            </span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted text-truncate" style="font-size:0.82rem; max-width:260px;">
+                                                <t t-out="td['thread'].last_message_preview or '…'"/>
+                                            </span>
+                                            <t t-if="td['unread']">
+                                                <span class="badge rounded-pill" style="background:#e94560; color:white; font-size:0.7rem;">
+                                                    <t t-out="td['unread']"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Fil de discussion ══════════════════════════════════════════════ -->
+    <template id="portal_messages_thread" name="Conversation">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:700px;">
+
+                <!-- En-tête -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <a href="/my/messages" class="btn btn-sm btn-outline-secondary">← Retour</a>
+                    <t t-if="other">
+                        <div style="width:40px; height:40px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                            <t t-if="other_profile and other_profile.profile_image">
+                                <img t-attf-src="/web/image/club_social_profile.profile/#{other_profile.id}/profile_image"
+                                     class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                            </t>
+                            <t t-else="">
+                                <div class="d-flex align-items-center justify-content-center h-100"
+                                     style="color:white; font-size:16px;">
+                                    <t t-out="((other_profile and (other_profile.stealth_name or '')) or other.name or '?')[0].upper()"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div>
+                            <div class="fw-semibold" style="font-size:0.95rem;">
+                                <t t-out="(other_profile and (other_profile.stealth_name or other.name)) or other.name"/>
+                            </div>
+                            <a t-attf-href="/profile/#{other.id}" class="text-muted" style="font-size:0.75rem;">
+                                Voir le profil →
+                            </a>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Fenêtre de chat -->
+                <div class="card shadow-sm"
+                     id="sn_chat_container"
+                     t-att-data-thread-id="thread.id"
+                     t-att-data-last-message-id="last_message_id">
+
+                    <!-- Corps des messages -->
+                    <div id="sn_chat_body">
+                        <t t-foreach="messages" t-as="msg">
+                            <t t-set="_mine" t-value="msg.author_id.id == request.env.user.id"/>
+                            <div t-attf-class="sn-bubble-wrap #{('sn-mine' if _mine else 'sn-theirs')}"
+                                 t-att-data-msg-id="msg.id">
+                                <div class="sn-bubble" t-out="msg.content"/>
+                                <div class="sn-bubble-meta">
+                                    <t t-out="msg.create_date.strftime('%d/%m %H:%M') if msg.create_date else ''"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Formulaire d'envoi -->
+                    <div class="card-footer p-2">
+                        <form id="sn_send_form" class="d-flex gap-2 align-items-end">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <textarea id="sn_message_input" name="content" rows="2"
+                                      class="form-control" placeholder="Votre message…"
+                                      style="resize:none; font-size:0.9rem;"></textarea>
+                            <button id="sn_send_btn" type="submit" class="btn"
+                                    style="background:#e94560; color:white; white-space:nowrap;">
+                                Envoyer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Bouton Message sur la page profil ════════════════════════════ -->
+    <template id="portal_profile_message_start_form"
+              inherit_id="club_social_profile.portal_profile_public">
+        <xpath expr="//a[contains(@href,'action=mail.action_discuss')]" position="replace">
+            <form t-attf-action="/my/messages/start/#{target_user.id}" method="post">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                    💬 Message
+                </button>
+            </form>
+        </xpath>
+    </template>
+
+</odoo>

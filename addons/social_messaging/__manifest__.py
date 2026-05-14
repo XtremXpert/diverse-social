@@ -9,11 +9,14 @@
     'depends': [
         'social_base',
         'social_safety',
+        'portal',
+        'club_social_profile',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/messaging_views.xml',
+        'views/portal_messaging.xml',
     ],
     'installable': True,
     'application': False,
