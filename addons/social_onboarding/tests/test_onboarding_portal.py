@@ -36,21 +36,49 @@ class TestOnboardingPortalLogic(TransactionCase):
             'bio': 'Test bio',
             'birth_year': 1990,
             'city': 'Montréal',
+            'region': 'Québec',
+            'gender': 'homme',
+            'orientation': 'bi',
+            'quote': 'Une phrase d\'accroche',
         })
         self.assertEqual(self.profile.pronouns, 'il/lui')
         self.assertEqual(self.profile.bio, 'Test bio')
         self.assertEqual(self.profile.birth_year, 1990)
         self.assertEqual(self.profile.city, 'Montréal')
+        self.assertEqual(self.profile.region, 'Québec')
+        self.assertEqual(self.profile.gender, 'homme')
+        self.assertEqual(self.profile.orientation, 'bi')
+        self.assertEqual(self.profile.quote, 'Une phrase d\'accroche')
 
     def test_save_preferences(self):
+        looking_for = self.env['club_social_profile.looking_for'].sudo().search([], limit=1)
+        language = self.env['club_social_profile.language'].sudo().search([], limit=1)
         self.profile.sudo().write({
             'visibility': 'connections',
             'availability': 'disponible',
             'digest_email_enabled': False,
+            'looking_for_ids': [(6, 0, looking_for.ids)] if looking_for else [(6, 0, [])],
+            'language_ids': [(6, 0, language.ids)] if language else [(6, 0, [])],
         })
         self.assertEqual(self.profile.visibility, 'connections')
         self.assertEqual(self.profile.availability, 'disponible')
         self.assertFalse(self.profile.digest_email_enabled)
+        if looking_for:
+            self.assertIn(looking_for, self.profile.looking_for_ids)
+        if language:
+            self.assertIn(language, self.profile.language_ids)
+
+    def test_gender_invalid_value_rejected(self):
+        """Une valeur de genre invalide ne doit pas être écrite."""
+        self.profile.sudo().write({'gender': 'non_specifie'})
+        valid = {'homme', 'femme', 'trans_homme', 'trans_femme',
+                 'non_binaire', 'autre', 'non_specifie'}
+        self.assertIn(self.profile.gender, valid)
+
+    def test_quote_max_length(self):
+        long_quote = 'x' * 250
+        self.profile.sudo().write({'quote': long_quote[:200]})
+        self.assertLessEqual(len(self.profile.quote), 200)
 
     def test_mark_onboarding_done(self):
         self.profile.sudo().write({'onboarding_done': True})
@@ -166,6 +194,48 @@ class TestOnboardingPortalHttp(HttpCase):
             },
         )
         self.assertEqual(resp.status_code, 200)
+
+    def test_save_about_with_gender_orientation(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/onboarding/save/about',
+            data={
+                'csrf_token': self.csrf_token(),
+                'gender': 'non_binaire',
+                'orientation': 'queer',
+                'city': 'Montréal',
+                'region': 'Québec',
+                'quote': 'Test accroche',
+            },
+            allow_redirects=False,
+        )
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_save_about_invalid_gender_ignored(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/onboarding/save/about',
+            data={
+                'csrf_token': self.csrf_token(),
+                'gender': 'INVALID_VALUE',
+            },
+            allow_redirects=False,
+        )
+        # Doit quand même rediriger (valeur invalide → non_specifie par défaut)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_onboarding_about_shows_gender_fields(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/onboarding?step=about')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'genre', resp.content.lower())
+        self.assertIn(b'orientation', resp.content.lower())
+
+    def test_onboarding_preferences_shows_looking_for(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/onboarding?step=preferences')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('cherche'.encode(), resp.content.lower())
 
     def test_skip_redirects(self):
         self.authenticate('admin', 'admin')

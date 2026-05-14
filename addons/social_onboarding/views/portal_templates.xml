@@ -113,18 +113,61 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <label class="form-label" for="birth_year">Année de naissance</label>
                                 <input type="number" class="form-control" name="birth_year" id="birth_year"
                                        min="1900" max="2010" placeholder="ex. : 1990"
                                        t-att-value="form_values.get('birth_year', profile.birth_year or '')"/>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <label class="form-label" for="city">Ville</label>
                                 <input type="text" class="form-control" name="city" id="city"
-                                       placeholder="Montréal, Québec…"
+                                       placeholder="Montréal…"
                                        t-att-value="form_values.get('city', profile.city or '')"/>
                             </div>
+                            <div class="col-sm-4">
+                                <label class="form-label" for="region">Province / Région</label>
+                                <input type="text" class="form-control" name="region" id="region"
+                                       placeholder="Québec…"
+                                       t-att-value="form_values.get('region', profile.region or '')"/>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="gender">Genre</label>
+                                <select class="form-select" name="gender" id="gender">
+                                    <t t-set="_gv" t-value="form_values.get('gender', profile.gender or 'non_specifie')"/>
+                                    <option value="non_specifie" t-att-selected="_gv == 'non_specifie' or None">Préfère ne pas préciser</option>
+                                    <option value="homme"        t-att-selected="_gv == 'homme' or None">Homme</option>
+                                    <option value="femme"        t-att-selected="_gv == 'femme' or None">Femme</option>
+                                    <option value="trans_homme"  t-att-selected="_gv == 'trans_homme' or None">Homme trans</option>
+                                    <option value="trans_femme"  t-att-selected="_gv == 'trans_femme' or None">Femme trans</option>
+                                    <option value="non_binaire"  t-att-selected="_gv == 'non_binaire' or None">Non-binaire</option>
+                                    <option value="autre"        t-att-selected="_gv == 'autre' or None">Autre</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="orientation">Orientation</label>
+                                <select class="form-select" name="orientation" id="orientation">
+                                    <t t-set="_ov" t-value="form_values.get('orientation', profile.orientation or 'non_specifie')"/>
+                                    <option value="non_specifie" t-att-selected="_ov == 'non_specifie' or None">Préfère ne pas préciser</option>
+                                    <option value="hetero"       t-att-selected="_ov == 'hetero' or None">Hétérosexuel(le)</option>
+                                    <option value="gay"          t-att-selected="_ov == 'gay' or None">Gai / Lesbienne</option>
+                                    <option value="bi"           t-att-selected="_ov == 'bi' or None">Bisexuel(le)</option>
+                                    <option value="pan"          t-att-selected="_ov == 'pan' or None">Pansexuel(le)</option>
+                                    <option value="asexuel"      t-att-selected="_ov == 'asexuel' or None">Asexuel(le)</option>
+                                    <option value="queer"        t-att-selected="_ov == 'queer' or None">Queer</option>
+                                    <option value="autre"        t-att-selected="_ov == 'autre' or None">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="quote">Phrase d'accroche <small class="text-muted">(200 car. max)</small></label>
+                            <input type="text" class="form-control" name="quote" id="quote"
+                                   maxlength="200" placeholder="Une citation, une intention, un mot-clé…"
+                                   t-att-value="form_values.get('quote', profile.quote or '')"/>
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -173,6 +216,46 @@
                                 <option value="pas_disponible" t-att-selected="profile.availability == 'pas_disponible' and 'selected' or None">Pas disponible</option>
                             </select>
                         </div>
+
+                        <!-- Ce que je cherche -->
+                        <t t-if="looking_for_opts">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Je cherche…</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <t t-foreach="looking_for_opts" t-as="lf">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   name="looking_for_ids"
+                                                   t-att-value="lf.id"
+                                                   t-attf-id="lf_#{lf.id}"
+                                                   t-att-checked="lf.id in profile.looking_for_ids.ids and 'checked' or None"/>
+                                            <label class="form-check-label" t-attf-for="lf_#{lf.id}"
+                                                   t-out="lf.name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Langues parlées -->
+                        <t t-if="language_opts">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Langue(s) parlée(s)</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <t t-foreach="language_opts" t-as="lng">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   name="language_ids"
+                                                   t-att-value="lng.id"
+                                                   t-attf-id="lng_#{lng.id}"
+                                                   t-att-checked="lng.id in profile.language_ids.ids and 'checked' or None"/>
+                                            <label class="form-check-label" t-attf-for="lng_#{lng.id}"
+                                                   t-out="lng.name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
 
                         <div class="mb-4">
                             <div class="form-check form-switch">
