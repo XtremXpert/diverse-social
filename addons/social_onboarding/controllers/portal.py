@@ -16,6 +16,20 @@ _STEP_TITLES = {
 
 class OnboardingPortal(CustomerPortal):
 
+    def home(self, **kw):
+        """Redirige les nouveaux membres actifs vers /onboarding (une fois par session)."""
+        if not request.session.get('onboarding_prompted'):
+            user = request.env.user
+            partner = user.partner_id.sudo()
+            if getattr(partner, 'member_state', None) == 'active':
+                profile = request.env['club_social_profile.profile'].sudo().search(
+                    [('user_id', '=', user.id)], limit=1
+                )
+                if profile and not profile.onboarding_done:
+                    request.session['onboarding_prompted'] = True
+                    return request.redirect('/onboarding')
+        return super().home(**kw)
+
     @route('/onboarding', auth='user', website=True, sitemap=False)
     def onboarding(self, step=None, **kw):
         profile = request.env['club_social_profile.profile'].sudo().get_or_create_for_user(

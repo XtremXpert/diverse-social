@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Banner sur le portal home pour les membres sans onboarding complété -->
+    <template id="portal_home_onboarding_banner"
+              inherit_id="portal.portal_my_home"
+              name="Portal Home — bannière onboarding">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="profile" t-value="request.env['club_social_profile.profile'].sudo().search(
+                [('user_id', '=', request.env.user.id)], limit=1)"/>
+            <t t-if="profile and not profile.onboarding_done
+                     and request.env.user.partner_id.sudo().member_state == 'active'">
+                <div class="alert alert-primary d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <strong>Complétez votre profil !</strong>
+                        Bienvenue dans la communauté — prenez 2 minutes pour personnaliser votre présence.
+                    </div>
+                    <a href="/onboarding" class="btn btn-primary btn-sm ms-3 flex-shrink-0">
+                        Compléter mon profil
+                    </a>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
     <template id="portal_onboarding" name="Onboarding — Parcours profil">
         <t t-call="portal.portal_layout">
             <div class="container py-4" style="max-width: 640px;">
