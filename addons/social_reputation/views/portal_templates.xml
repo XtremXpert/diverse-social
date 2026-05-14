@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
-
+    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
     <template id="portal_my_home_vouching" name="Portal My Home : Parrainages"
               inherit_id="portal.portal_my_home" customize_show="False" priority="45">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
@@ -14,85 +13,273 @@
         </xpath>
     </template>
 
-    <!-- ── Mes parrainages ─────────────────────────────────────────────────── -->
-
+    <!-- ══ Page parrainages ════════════════════════════════════════════════ -->
     <template id="portal_my_vouching" name="Mes parrainages">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="False"/>
-            <t t-call="portal.portal_searchbar">
-                <t t-set="title">Mes parrainages</t>
-            </t>
 
-            <div class="container mt-3">
-                <t t-if="error">
-                    <div class="alert alert-danger" t-esc="error"/>
+            <div class="container py-4" style="max-width:780px;">
+                <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">🏅 Parrainages</h1>
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('vouched')">
+                    <div class="alert alert-success">Parrainage accordé.</div>
+                </t>
+                <t t-if="request.params.get('withdrawn')">
+                    <div class="alert alert-info">Parrainage retiré.</div>
+                </t>
+                <t t-if="error or request.params.get('error')">
+                    <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
                 </t>
 
-                <!-- Parrainages reçus -->
-                <h5 class="mb-3">Parrainages reçus
-                    <span class="badge bg-secondary ms-2" t-esc="len(received)"/>
+                <!-- ── Stats ──────────────────────────────────────────── -->
+                <div class="row g-3 mb-4">
+                    <div class="col-4">
+                        <div class="card text-center" style="border-top:3px solid #1a1a2e;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#1a1a2e;">
+                                    <t t-esc="len(received.filtered(lambda v: v.state == 'active'))"/>
+                                </div>
+                                <div class="text-muted" style="font-size:.8rem;">Parrains actifs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center" style="border-top:3px solid #e94560;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#e94560;">
+                                    <t t-esc="len(given.filtered(lambda v: v.state == 'active'))"/>
+                                </div>
+                                <div class="text-muted" style="font-size:.8rem;">Personnes parrainées</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center" style="border-top:3px solid #27ae60;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#27ae60;">
+                                    <t t-esc="len(chain)"/>
+                                </div>
+                                <div class="text-muted" style="font-size:.8rem;">Niveaux de chaîne</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Parrainer quelqu'un ─────────────────────────── -->
+                <t t-if="vouchable">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0" style="color:#1a1a2e;">Parrainer une connexion</h5>
+                        <button class="btn btn-sm" style="background:#e94560;color:white;"
+                                data-bs-toggle="collapse" data-bs-target="#sn_vouch_form">
+                            + Parrainer
+                        </button>
+                    </div>
+                    <div class="collapse mb-4" id="sn_vouch_form">
+                        <div class="card card-body">
+                            <form action="/my/vouching/give" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <select name="newcomer_id" class="form-select form-select-sm" required="required">
+                                            <option value="">— choisir —</option>
+                                            <t t-foreach="vouchable" t-as="u">
+                                                <option t-att-value="u.id" t-esc="u.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="statement" class="form-control form-control-sm"
+                                               placeholder="Déclaration (recommandé)" maxlength="500"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-sm w-100"
+                                                style="background:#1a1a2e;color:white;">
+                                            Valider
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    En parrainant, vous engagez votre réputation. Ce parrainage peut être retiré mais pas supprimé.
+                                </small>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+                <t t-elif="not vouchable and not received">
+                    <div class="alert alert-info mb-4">
+                        Vous devez avoir des <a href="/my/connections">connexions</a> pour pouvoir parrainer quelqu'un.
+                    </div>
+                </t>
+
+                <!-- ── Chaîne de parrainage ───────────────────────── -->
+                <t t-if="chain">
+                    <div class="card mb-4" style="border-left:3px solid #27ae60;">
+                        <div class="card-header fw-bold" style="background:#1a1a2e;color:white;">
+                            🔗 Ma chaîne de parrainage
+                        </div>
+                        <div class="card-body py-2">
+                            <t t-foreach="chain" t-as="level">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="badge rounded-pill bg-light text-dark border"
+                                          style="font-size:.7rem; min-width:24px;">
+                                        N<t t-esc="level_index + 1"/>
+                                    </span>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <t t-foreach="level" t-as="u">
+                                            <a t-attf-href="/profile/#{u.id}"
+                                               class="badge rounded-pill"
+                                               style="background:#e94560;color:white;text-decoration:none;font-size:.8rem;">
+                                                <t t-esc="u.name"/>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ── Parrainages reçus ──────────────────────────── -->
+                <h5 class="mb-3" style="color:#1a1a2e;">
+                    Parrainages reçus
+                    <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
+                        <t t-esc="len(received)"/>
+                    </span>
                 </h5>
                 <t t-if="not received">
                     <p class="text-muted">Vous n'avez pas encore de parrain.</p>
                 </t>
-                <div class="list-group mb-4">
+                <div class="list-group shadow-sm mb-4">
                     <t t-foreach="received" t-as="v">
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <strong t-esc="v.sponsor_id.name"/>
-                                    <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
-                                          t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
-                                    <p t-if="v.statement" class="mb-0 mt-1 text-muted small"
-                                       t-esc="v.statement"/>
+                        <div t-attf-class="list-group-item py-3 #{'opacity-50' if v.state == 'withdrawn' else ''}">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:36px;height:36px;border-radius:50%;background:#e94560;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">
+                                        <t t-out="(v.sponsor_id.name or '?')[0].upper()"/>
+                                    </div>
+                                    <div>
+                                        <a t-attf-href="/profile/#{v.sponsor_id.id}"
+                                           class="fw-semibold text-decoration-none"
+                                           style="color:#1a1a2e;"
+                                           t-esc="v.sponsor_id.name"/>
+                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
+                                              t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                    </div>
                                 </div>
-                                <small class="text-muted" t-field="v.create_date" t-options='{"widget": "date"}'/>
+                                <small class="text-muted" t-field="v.create_date" t-options='{"widget":"date"}'/>
                             </div>
+                            <t t-if="v.statement">
+                                <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.88rem;">
+                                    « <t t-esc="v.statement"/> »
+                                </p>
+                            </t>
+                            <t t-if="v.state == 'withdrawn' and v.withdrawn_reason">
+                                <small class="text-danger d-block mt-1">
+                                    Motif de retrait : <t t-esc="v.withdrawn_reason"/>
+                                </small>
+                            </t>
                         </div>
                     </t>
                 </div>
 
-                <!-- Parrainages donnés -->
-                <h5 class="mb-3">Parrainages donnés
-                    <span class="badge bg-secondary ms-2" t-esc="len(given)"/>
+                <!-- ── Parrainages donnés ─────────────────────────── -->
+                <h5 class="mb-3" style="color:#1a1a2e;">
+                    Parrainages donnés
+                    <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
+                        <t t-esc="len(given)"/>
+                    </span>
                 </h5>
                 <t t-if="not given">
                     <p class="text-muted">Vous n'avez encore parrainé personne.</p>
                 </t>
-                <div class="list-group">
+                <div class="list-group shadow-sm">
                     <t t-foreach="given" t-as="v">
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong t-esc="v.newcomer_id.name"/>
-                                    <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
-                                          t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
-                                    <p t-if="v.statement" class="mb-0 mt-1 text-muted small"
-                                       t-esc="v.statement"/>
-                                    <small t-if="v.withdrawn_reason" class="text-danger d-block mt-1"
-                                           t-esc="v.withdrawn_reason"/>
+                        <div t-attf-class="list-group-item py-3 #{'opacity-50' if v.state == 'withdrawn' else ''}">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:36px;height:36px;border-radius:50%;background:#1a1a2e;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">
+                                        <t t-out="(v.newcomer_id.name or '?')[0].upper()"/>
+                                    </div>
+                                    <div>
+                                        <a t-attf-href="/profile/#{v.newcomer_id.id}"
+                                           class="fw-semibold text-decoration-none"
+                                           style="color:#1a1a2e;"
+                                           t-esc="v.newcomer_id.name"/>
+                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
+                                              t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                    </div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <small class="text-muted" t-field="v.create_date" t-options='{"widget": "date"}'/>
+                                    <small class="text-muted" t-field="v.create_date" t-options='{"widget":"date"}'/>
                                     <t t-if="v.state == 'active'">
-                                        <form t-attf-action="/my/vouching/#{v.id}/withdraw" method="post"
-                                              class="d-inline">
-                                            <input type="hidden" name="csrf_token"
-                                                   t-att-value="request.csrf_token()"/>
-                                            <input type="text" name="reason" class="form-control form-control-sm d-inline w-auto"
-                                                   placeholder="Raison (obligatoire)"/>
-                                            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
-                                                Retirer
-                                            </button>
-                                        </form>
+                                        <button class="btn btn-sm btn-outline-secondary py-0"
+                                                style="font-size:.75rem;"
+                                                data-bs-toggle="collapse"
+                                                t-attf-data-bs-target="#sn_withdraw_#{v.id}">
+                                            Retirer
+                                        </button>
                                     </t>
                                 </div>
                             </div>
+                            <t t-if="v.statement">
+                                <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.88rem;">
+                                    « <t t-esc="v.statement"/> »
+                                </p>
+                            </t>
+                            <!-- Formulaire retrait (collapse) -->
+                            <t t-if="v.state == 'active'">
+                                <div class="collapse mt-2" t-attf-id="sn_withdraw_#{v.id}">
+                                    <form t-attf-action="/my/vouching/#{v.id}/withdraw" method="post"
+                                          class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="text" name="reason" class="form-control form-control-sm"
+                                               placeholder="Motif (obligatoire)" required="required" maxlength="256"/>
+                                        <button type="submit" class="btn btn-sm btn-danger" style="white-space:nowrap;">
+                                            Confirmer le retrait
+                                        </button>
+                                    </form>
+                                </div>
+                            </t>
+                            <t t-if="v.state == 'withdrawn' and v.withdrawn_reason">
+                                <small class="text-danger d-block mt-1">
+                                    Motif : <t t-esc="v.withdrawn_reason"/>
+                                </small>
+                            </t>
                         </div>
                     </t>
                 </div>
+
             </div>
         </t>
+    </template>
+
+    <!-- ══ Injection bouton Parrainer sur la page profil ════════════════ -->
+    <template id="portal_profile_vouch_button"
+              inherit_id="club_social_profile.portal_profile_public">
+        <xpath expr="//t[@t-if='not is_own']/div[hasclass('d-flex')]" position="inside">
+            <!-- Charger l'état du parrainage -->
+            <t t-set="_my_vouch" t-value="request.env['social_reputation.vouching'].sudo().search([
+                ('sponsor_id', '=', request.env.user.id),
+                ('newcomer_id', '=', target_user.id),
+                ('state', '=', 'active'),
+            ], limit=1)"/>
+            <t t-if="_my_vouch">
+                <form t-attf-action="/my/vouching/#{_my_vouch.id}/withdraw" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="reason" value="Retiré depuis la page profil"/>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm"
+                            onclick="return confirm('Retirer votre parrainage ?')">
+                        🏅 Parrainé
+                    </button>
+                </form>
+            </t>
+            <t t-else="">
+                <a href="/my/vouching" class="btn btn-outline-secondary btn-sm">
+                    🏅 Parrainer
+                </a>
+            </t>
+        </xpath>
     </template>
 
 </odoo>
