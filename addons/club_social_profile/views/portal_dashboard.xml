@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Entrée dans le menu portail home ═══════════════════════════════ -->
+    <template id="portal_my_home_dashboard" name="Tableau de bord social"
+              inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Tableau de bord</t>
+                <t t-set="url">/my/dashboard</t>
+                <t t-set="placeholder_count">0</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Tableau de bord ════════════════════════════════════════════════ -->
+    <template id="portal_dashboard" name="Tableau de bord social">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <t t-set="page_name" t-value="'dashboard'"/>
+
+            <div class="container py-4">
+                <h1 class="mb-4" style="font-size:1.6rem; color:#1a1a2e;">
+                    Tableau de bord
+                </h1>
+
+                <!-- ── Cartes statistiques ─────────────────────────────── -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center h-100" style="border-top:3px solid #e94560;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#e94560;">
+                                    <t t-out="profile_views"/>
+                                </div>
+                                <div class="text-muted" style="font-size:0.8rem;">
+                                    👁️ Vues profil<br/><span style="font-size:0.7rem;">(7 derniers jours)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center h-100" style="border-top:3px solid #1a1a2e;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#1a1a2e;">
+                                    <t t-out="new_connections"/>
+                                </div>
+                                <div class="text-muted" style="font-size:0.8rem;">
+                                    🤝 Nouvelles connexions<br/><span style="font-size:0.7rem;">(7 derniers jours)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center h-100" style="border-top:3px solid #f39c12;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#f39c12;">
+                                    <t t-out="pending_requests"/>
+                                </div>
+                                <div class="text-muted" style="font-size:0.8rem;">
+                                    ⏳ Demandes en attente
+                                </div>
+                                <t t-if="pending_requests">
+                                    <a href="/my/connections" class="btn btn-sm mt-1"
+                                       style="background:#f39c12; color:white; font-size:0.75rem;">
+                                        Voir
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center h-100" style="border-top:3px solid #27ae60;">
+                            <div class="card-body py-3">
+                                <div style="font-size:1.8rem; font-weight:700; color:#27ae60;">
+                                    <t t-out="unread_notifs"/>
+                                </div>
+                                <div class="text-muted" style="font-size:0.8rem;">
+                                    🔔 Notifications non lues
+                                </div>
+                                <t t-if="unread_notifs">
+                                    <a href="/social/notifications" class="btn btn-sm mt-1"
+                                       style="background:#27ae60; color:white; font-size:0.75rem;">
+                                        Voir
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+
+                    <!-- ── Colonne principale ──────────────────────────── -->
+                    <div class="col-lg-8">
+
+                        <!-- Propositions en vote -->
+                        <t t-if="proposals_voting">
+                            <div class="card mb-4">
+                                <div class="card-header fw-bold d-flex justify-content-between align-items-center"
+                                     style="background:#1a1a2e; color:white;">
+                                    <span>🗳️ Propositions en vote</span>
+                                    <a href="/governance" class="text-white" style="font-size:0.8rem;">
+                                        Tout voir →
+                                    </a>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="proposals_voting" t-as="prop">
+                                        <a t-attf-href="/governance/#{prop.id}"
+                                           class="list-group-item list-group-item-action py-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <div class="fw-semibold" style="font-size:0.95rem;"
+                                                         t-out="prop.name"/>
+                                                    <div class="text-muted" style="font-size:0.8rem;">
+                                                        par <t t-out="prop.author_id.name"/>
+                                                    </div>
+                                                </div>
+                                                <t t-if="prop.voting_closes_at">
+                                                    <span class="badge bg-warning text-dark" style="font-size:0.7rem; white-space:nowrap;">
+                                                        Clôt le <t t-out="prop.voting_closes_at.strftime('%d/%m')"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Événements à venir -->
+                        <t t-if="upcoming_events">
+                            <div class="card mb-4">
+                                <div class="card-header fw-bold d-flex justify-content-between align-items-center"
+                                     style="background:#1a1a2e; color:white;">
+                                    <span>📅 Événements à venir</span>
+                                    <a href="/events" class="text-white" style="font-size:0.8rem;">
+                                        Tout voir →
+                                    </a>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="upcoming_events" t-as="ev">
+                                        <a t-attf-href="/event/#{ev.id}/page"
+                                           class="list-group-item list-group-item-action py-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="text-center" style="min-width:44px; background:#e94560; border-radius:8px; padding:4px 0; color:white;">
+                                                    <div style="font-size:1.1rem; font-weight:700; line-height:1.1;">
+                                                        <t t-out="ev.date_begin.strftime('%d')"/>
+                                                    </div>
+                                                    <div style="font-size:0.65rem; text-transform:uppercase;">
+                                                        <t t-out="ev.date_begin.strftime('%b')"/>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold" style="font-size:0.95rem;" t-out="ev.name"/>
+                                                    <div class="text-muted" style="font-size:0.8rem;">
+                                                        <t t-out="ev.date_begin.strftime('%H:%M')"/>
+                                                        <t t-if="ev.address_id">
+                                                            · <t t-out="ev.address_id.city or ''"/>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Dernières notifications -->
+                        <t t-if="recent_notifs">
+                            <div class="card mb-4">
+                                <div class="card-header fw-bold d-flex justify-content-between align-items-center"
+                                     style="background:#1a1a2e; color:white;">
+                                    <span>🔔 Dernières notifications</span>
+                                    <a href="/social/notifications" class="text-white" style="font-size:0.8rem;">
+                                        Tout voir →
+                                    </a>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="recent_notifs" t-as="notif">
+                                        <li t-attf-class="list-group-item py-2 #{'' if notif.is_read else 'bg-light'}">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <span style="font-size:1.2rem;">
+                                                    <t t-out="notif_icons.get(notif.notif_type, '🔔')"/>
+                                                </span>
+                                                <div class="flex-grow-1">
+                                                    <div style="font-size:0.85rem;" t-out="notif.body"/>
+                                                    <div class="text-muted" style="font-size:0.75rem;">
+                                                        <t t-out="notif.create_date.strftime('%d/%m %H:%M')"/>
+                                                    </div>
+                                                </div>
+                                                <t t-if="not notif.is_read">
+                                                    <span class="badge rounded-pill bg-danger" style="font-size:0.6rem;">New</span>
+                                                </t>
+                                            </div>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Vide total -->
+                        <t t-if="not proposals_voting and not upcoming_events and not recent_notifs">
+                            <div class="card text-center py-5">
+                                <div style="font-size:2.5rem;" class="mb-2">🌙</div>
+                                <p class="text-muted mb-0">Tout est calme pour l'instant.</p>
+                            </div>
+                        </t>
+
+                    </div>
+
+                    <!-- ── Colonne latérale ────────────────────────────── -->
+                    <div class="col-lg-4">
+
+                        <!-- Mes groupes -->
+                        <t t-if="my_groups">
+                            <div class="card mb-4">
+                                <div class="card-header fw-bold d-flex justify-content-between align-items-center"
+                                     style="background:#1a1a2e; color:white;">
+                                    <span>👥 Mes groupes</span>
+                                    <a href="/groups" class="text-white" style="font-size:0.8rem;">
+                                        Tout voir →
+                                    </a>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="row g-2">
+                                        <t t-foreach="my_groups" t-as="grp">
+                                            <div class="col-6">
+                                                <a t-attf-href="/groups/#{grp.id}"
+                                                   class="d-block text-decoration-none text-dark text-center p-2 border rounded"
+                                                   style="font-size:0.8rem;">
+                                                    <div style="font-size:1.4rem;">
+                                                        <t t-out="grp.icon or '👥'"/>
+                                                    </div>
+                                                    <div class="text-truncate fw-semibold" t-out="grp.name"/>
+                                                    <div class="text-muted" style="font-size:0.7rem;">
+                                                        <t t-out="grp.member_count or 0"/> membres
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Nouvelles connexions cette semaine -->
+                        <t t-if="recent_conn_profiles">
+                            <div class="card mb-4">
+                                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                                    🤝 Nouvelles connexions
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-foreach="recent_conn_profiles" t-as="cp">
+                                        <a t-attf-href="/profile/#{cp.user_id.id}"
+                                           class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2">
+                                            <div style="width:36px; height:36px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                                                <t t-if="cp.profile_image">
+                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{cp.id}/profile_image"
+                                                         class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="d-flex align-items-center justify-content-center h-100"
+                                                         style="color:white; font-size:14px;">
+                                                        <t t-out="(cp.stealth_name or cp.user_id.name or '?')[0].upper()"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            <span style="font-size:0.9rem;" t-out="cp.stealth_name or cp.user_id.name"/>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Profil rapide -->
+                        <t t-if="profile">
+                            <div class="card">
+                                <div class="card-body text-center py-3">
+                                    <div style="width:60px; height:60px; border-radius:50%; overflow:hidden; background:#e94560; margin:0 auto 8px;">
+                                        <t t-if="profile.profile_image">
+                                            <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                                 class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="d-flex align-items-center justify-content-center h-100"
+                                                 style="color:white; font-size:22px;">
+                                                <t t-out="(profile.stealth_name or request.env.user.name or '?')[0].upper()"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="fw-semibold" t-out="profile.stealth_name or request.env.user.name"/>
+                                    <t t-if="profile.city">
+                                        <div class="text-muted" style="font-size:0.8rem;">
+                                            📍 <t t-out="profile.city"/>
+                                        </div>
+                                    </t>
+                                    <div class="mt-2 d-flex gap-2 justify-content-center flex-wrap">
+                                        <a t-attf-href="/profile/#{request.env.user.id}"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Voir mon profil
+                                        </a>
+                                        <a href="/my/profile/edit" class="btn btn-sm"
+                                           style="background:#e94560; color:white;">
+                                            ✏️ Modifier
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
