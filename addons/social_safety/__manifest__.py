@@ -8,6 +8,7 @@
     'depends': [
         'club_social_profile',
         'social_discovery',
+        'portal',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -16,6 +17,7 @@
         'views/block_views.xml',
         'views/mute_views.xml',
         'views/menus.xml',
+        'views/portal_safety.xml',
     ],
     'installable': True,
     'application': False,

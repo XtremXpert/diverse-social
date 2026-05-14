@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Bouton sortie rapide (toutes les pages portail) ═════════════════ -->
+    <template id="assets_quick_exit" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript"
+                    src="/social_safety/static/src/js/quick_exit.js"/>
+        </xpath>
+    </template>
+
+    <template id="portal_quick_exit_button" inherit_id="portal.portal_layout"
+              name="Sortie rapide">
+        <xpath expr="//header" position="inside">
+            <t t-if="request.env.user and not request.env.user._is_public()">
+                <t t-set="_exit_url" t-value="request.env['ir.config_parameter'].sudo().get_param('social_safety.quick_exit_url', 'https://www.meteomedia.com/')"/>
+                <style>
+                    #social_quick_exit {
+                        position: fixed;
+                        top: 12px;
+                        left: 16px;
+                        z-index: 1050;
+                        background: #555;
+                        border: none;
+                        border-radius: 6px;
+                        width: 42px;
+                        height: 42px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 18px;
+                        color: white;
+                        box-shadow: 0 2px 8px rgba(0,0,0,.3);
+                        opacity: 0.55;
+                        transition: opacity .15s, background .15s;
+                        text-decoration: none;
+                    }
+                    #social_quick_exit:hover {
+                        opacity: 1;
+                        background: #e94560;
+                    }
+                    #social_quick_exit title { display: none; }
+                </style>
+                <button id="social_quick_exit"
+                        t-att-data-exit-url="_exit_url"
+                        title="Sortie rapide (aussi : appuyer 2× sur Échap)">
+                    ⏻
+                </button>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Page sécurité /safety ════════════════════════════════════════════ -->
+    <template id="portal_safety_page" name="Sécurité et confidentialité">
+        <t t-call="web.layout">
+            <t t-set="head_title">Sécurité</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width:720px;">
+
+                    <h2 class="mb-4" style="color:#1a1a2e;">🔐 Sécurité et confidentialité</h2>
+
+                    <!-- ── Mode discret ── -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            🕵️ Mode discret (panic mode)
+                        </div>
+                        <div class="card-body">
+                            <t t-if="profile and profile.panic_mode">
+                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-3">
+                                    <span style="font-size:1.4rem;">⚠️</span>
+                                    <div>
+                                        <strong>Mode discret actif</strong> depuis
+                                        <t t-out="profile.panic_activated_at.strftime('%d/%m/%Y à %H:%M') if profile.panic_activated_at else '?'"/>.
+                                        Votre profil est masqué de la découverte et limité à vos connexions.
+                                    </div>
+                                </div>
+                                <form action="/safety/panic/lift" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        Désactiver le mode discret
+                                    </button>
+                                </form>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted mb-3">
+                                    En mode discret, votre profil disparaît de la découverte et n'est
+                                    visible que par vos connexions. Vous pouvez le réactiver à tout moment.
+                                </p>
+                                <form action="/safety/panic/activate" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn" style="background:#e94560; color:white;">
+                                        🕵️ Activer le mode discret
+                                    </button>
+                                </form>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- ── Sortie rapide ── -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            ⏻ Sortie rapide
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-2">
+                                Le bouton <strong>⏻</strong> en haut à gauche de chaque page vous amène
+                                instantanément vers un site neutre sans laisser de trace dans l'historique.
+                                Vous pouvez aussi appuyer <strong>deux fois sur Échap</strong>.
+                            </p>
+                            <p class="mb-0 text-muted" style="font-size:0.85rem;">
+                                Site de destination :
+                                <strong t-out="exit_url"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ── Utilisateurs bloqués ── -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            🚫 Utilisateurs bloqués
+                            <t t-if="blocks">
+                                <span class="badge ms-2" style="background:#e94560;">
+                                    <t t-out="len(blocks)"/>
+                                </span>
+                            </t>
+                        </div>
+                        <t t-if="blocks">
+                            <ul class="list-group list-group-flush">
+                                <t t-foreach="blocks" t-as="block">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <strong t-out="block.blocked_id.name"/>
+                                            <span class="text-muted ms-2" style="font-size:0.8rem;">
+                                                depuis <t t-out="block.create_date.strftime('%d/%m/%Y') if block.create_date else '?'"/>
+                                            </span>
+                                        </span>
+                                        <form t-attf-action="/safety/block/#{block.id}/remove" method="post" class="m-0">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                Débloquer
+                                            </button>
+                                        </form>
+                                    </li>
+                                </t>
+                            </ul>
+                        </t>
+                        <t t-else="">
+                            <div class="card-body text-muted" style="font-size:0.9rem;">
+                                Aucun utilisateur bloqué.
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- ── Utilisateurs silencés ── -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            🔇 Utilisateurs silencés
+                            <t t-if="mutes">
+                                <span class="badge ms-2" style="background:#666;">
+                                    <t t-out="len(mutes)"/>
+                                </span>
+                            </t>
+                        </div>
+                        <t t-if="mutes">
+                            <ul class="list-group list-group-flush">
+                                <t t-foreach="mutes" t-as="mute">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <strong t-out="mute.muted_id.name"/>
+                                            <t t-if="mute.until">
+                                                <span class="text-muted ms-2" style="font-size:0.8rem;">
+                                                    jusqu'au <t t-out="mute.until.strftime('%d/%m/%Y') if mute.until else ''"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted ms-2" style="font-size:0.8rem;">
+                                                    indéfiniment
+                                                </span>
+                                            </t>
+                                        </span>
+                                        <form t-attf-action="/safety/mute/#{mute.id}/remove" method="post" class="m-0">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                Retirer le silence
+                                            </button>
+                                        </form>
+                                    </li>
+                                </t>
+                            </ul>
+                        </t>
+                        <t t-else="">
+                            <div class="card-body text-muted" style="font-size:0.9rem;">
+                                Aucun utilisateur silencé.
+                            </div>
+                        </t>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Toggle panic mode sur la page profil (propriétaire) ═════════════ -->
+    <template id="portal_profile_panic_inject"
+              inherit_id="club_social_profile.portal_profile_public"
+              name="Profil — Bouton mode discret">
+        <xpath expr="//a[@href='/onboarding?step=about']" position="after">
+            <t t-if="is_own and profile.panic_mode">
+                <form action="/safety/panic/lift" method="post" class="d-inline ms-2">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-warning btn-sm">
+                        🕵️ Mode discret actif — Désactiver
+                    </button>
+                </form>
+            </t>
+            <t t-elif="is_own">
+                <form action="/safety/panic/activate" method="post" class="d-inline ms-2">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        🕵️ Mode discret
+                    </button>
+                </form>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Lien dans la navigation portail ══════════════════════════════════ -->
+    <template id="portal_my_home_safety" inherit_id="portal.portal_my_home"
+              name="Portail — Sécurité">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Sécurité et confidentialité</t>
+                <t t-set="url">/safety</t>
+                <t t-set="placeholder_count">0</t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
