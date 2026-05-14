@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_notifications_page" name="Mes notifications">
+        <t t-call="web.layout">
+            <t t-set="head_title">Mes notifications</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width:700px;">
+
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h2 class="mb-0" style="color:#1a1a2e;">
+                            🔔 Notifications
+                            <t t-if="unread_count">
+                                <span class="badge ms-2"
+                                      style="background:#e94560; color:white; font-size:0.75rem;">
+                                    <t t-out="unread_count"/> non lue(s)
+                                </span>
+                            </t>
+                        </h2>
+                        <t t-if="unread_count">
+                            <form action="/social/api/notifications/read_all" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                    Tout marquer comme lu
+                                </button>
+                            </form>
+                        </t>
+                    </div>
+
+                    <!-- Filtres -->
+                    <div class="d-flex gap-2 mb-4">
+                        <a t-attf-href="/social/notifications?filter=all"
+                           t-attf-class="btn btn-sm #{'btn-dark' if filter == 'all' else 'btn-outline-secondary'}">
+                            Toutes
+                        </a>
+                        <a t-attf-href="/social/notifications?filter=unread"
+                           t-attf-class="btn btn-sm #{'btn-dark' if filter == 'unread' else 'btn-outline-secondary'}">
+                            Non lues
+                            <t t-if="unread_count">
+                                (<t t-out="unread_count"/>)
+                            </t>
+                        </a>
+                    </div>
+
+                    <!-- Liste -->
+                    <t t-set="_type_icons" t-value="{
+                        'connection_request': '🤝',
+                        'connection_accepted': '✅',
+                        'post_like': '❤️',
+                        'post_comment': '💬',
+                        'comment_reply': '↩️',
+                        'new_message': '✉️',
+                        'profile_visit': '👁️',
+                        'daily_digest': '📊',
+                        'event_registration': '📅',
+                        'group_join_request': '👥',
+                        'group_join_approved': '✅',
+                        'proposal_voting': '🗳️',
+                        'story_new': '📖',
+                        'gallery_photo_approved': '🖼️',
+                        'gallery_photo_rejected': '❌',
+                        'vouching_received': '⭐',
+                        'circle_added': '🔵',
+                    }"/>
+
+                    <t t-if="notifications">
+                        <div class="d-flex flex-column gap-2">
+                            <t t-foreach="notifications" t-as="notif">
+                                <t t-set="_is_link" t-value="bool(notif.url)"/>
+                                <t t-set="_tag" t-value="'a' if _is_link else 'div'"/>
+                                <div t-attf-class="d-flex align-items-start gap-3 p-3 rounded border #{'bg-white' if notif.is_read else ''}"
+                                     t-attf-style="#{'background:#fffbf0;' if not notif.is_read else ''}">
+
+                                    <!-- Icône type -->
+                                    <div style="font-size:1.5rem; flex-shrink:0; margin-top:2px;">
+                                        <t t-out="_type_icons.get(notif.type, '🔔')"/>
+                                    </div>
+
+                                    <!-- Contenu -->
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div style="font-size:0.95rem; color:#333; line-height:1.4;">
+                                            <t t-if="notif.url">
+                                                <a t-att-href="notif.url" style="color:#333; text-decoration:none;">
+                                                    <t t-out="notif.body or ''"/>
+                                                </a>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-out="notif.body or ''"/>
+                                            </t>
+                                        </div>
+                                        <div class="text-muted mt-1" style="font-size:0.8rem;">
+                                            <t t-if="notif.actor_id">
+                                                <t t-out="notif.actor_id.name"/> ·
+                                            </t>
+                                            <t t-out="notif.create_date.strftime('%d/%m/%Y à %H:%M') if notif.create_date else ''"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Indicateur non-lu + action -->
+                                    <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                                        <t t-if="not notif.is_read">
+                                            <div style="width:8px; height:8px; background:#e94560; border-radius:50%;"/>
+                                            <form t-attf-action="/social/api/notifications/#{notif.id}/read"
+                                                  method="post" class="m-0">
+                                                <button type="submit"
+                                                        class="btn btn-link p-0 text-muted"
+                                                        style="font-size:0.75rem;">
+                                                    Lu ✓
+                                                </button>
+                                            </form>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-4" t-if="pager['page_count'] > 1">
+                            <t t-call="web.pager">
+                                <t t-set="pager" t-value="pager"/>
+                            </t>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="text-center py-5 text-muted">
+                            <div style="font-size:3rem;" class="mb-2">🔔</div>
+                            <p>
+                                <t t-if="filter == 'unread'">Aucune notification non lue.</t>
+                                <t t-else="">Aucune notification pour l'instant.</t>
+                            </p>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Lien dans la navigation portail -->
+    <template id="portal_my_home_notifications" inherit_id="portal.portal_my_home"
+              name="Portail — Notifications">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Notifications</t>
+                <t t-set="url">/social/notifications</t>
+                <t t-set="placeholder_count">0</t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

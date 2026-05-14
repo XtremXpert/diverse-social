@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Styles cloche ═══════════════════════════════════════════════════ -->
+    <template id="assets_notification_bell" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript"
+                    src="/social_notifications/static/src/js/notification_bell.js"/>
+        </xpath>
+    </template>
+
+    <!-- ══ Widget cloche injecté dans le header portail ════════════════════ -->
+    <template id="portal_notification_bell" inherit_id="portal.portal_layout"
+              name="Cloche de notifications">
+        <xpath expr="//header" position="inside">
+            <t t-if="request.env.user and not request.env.user._is_public()">
+                <style>
+                    #social_notif_bell {
+                        position: fixed;
+                        top: 12px;
+                        right: 16px;
+                        z-index: 1050;
+                    }
+                    #sn_trigger {
+                        background: #1a1a2e;
+                        border: none;
+                        border-radius: 50%;
+                        width: 42px;
+                        height: 42px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 20px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,.3);
+                        position: relative;
+                    }
+                    #sn_badge {
+                        position: absolute;
+                        top: -4px;
+                        right: -4px;
+                        background: #e94560;
+                        color: white;
+                        border-radius: 10px;
+                        min-width: 18px;
+                        height: 18px;
+                        font-size: 11px;
+                        font-weight: bold;
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0 4px;
+                    }
+                    #sn_dropdown {
+                        display: none;
+                        position: absolute;
+                        top: 50px;
+                        right: 0;
+                        width: 320px;
+                        background: white;
+                        border-radius: 10px;
+                        box-shadow: 0 8px 24px rgba(0,0,0,.15);
+                        overflow: hidden;
+                        font-family: Arial, sans-serif;
+                    }
+                    .sn-header {
+                        background: #1a1a2e;
+                        color: white;
+                        padding: 10px 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        font-size: 13px;
+                        font-weight: bold;
+                    }
+                    #sn_read_all {
+                        background: none;
+                        border: 1px solid rgba(255,255,255,.4);
+                        color: white;
+                        border-radius: 4px;
+                        padding: 2px 8px;
+                        font-size: 11px;
+                        cursor: pointer;
+                    }
+                    #sn_list {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        max-height: 380px;
+                        overflow-y: auto;
+                    }
+                    .sn-item {
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 10px;
+                        padding: 12px 16px;
+                        border-bottom: 1px solid #f0f0f0;
+                        cursor: pointer;
+                        background: #fffbf0;
+                        transition: background .1s;
+                    }
+                    .sn-item:hover { background: #fff3e0; }
+                    .sn-item.sn-read { background: white; }
+                    .sn-item.sn-read:hover { background: #f8f8f8; }
+                    .sn-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+                    .sn-content { flex: 1; min-width: 0; }
+                    .sn-body { font-size: 13px; color: #333; line-height: 1.4; }
+                    .sn-time { font-size: 11px; color: #999; margin-top: 3px; }
+                    .sn-dot {
+                        width: 8px; height: 8px;
+                        background: #e94560;
+                        border-radius: 50%;
+                        flex-shrink: 0;
+                        margin-top: 6px;
+                    }
+                    .sn-empty {
+                        padding: 24px;
+                        text-align: center;
+                        color: #999;
+                        font-size: 13px;
+                        list-style: none;
+                    }
+                    .sn-footer {
+                        text-align: center;
+                        padding: 8px;
+                        border-top: 1px solid #eee;
+                    }
+                    .sn-footer a {
+                        font-size: 12px;
+                        color: #e94560;
+                        text-decoration: none;
+                    }
+                </style>
+
+                <div id="social_notif_bell">
+                    <button id="sn_trigger" title="Notifications">
+                        🔔
+                        <span id="sn_badge"></span>
+                    </button>
+                    <div id="sn_dropdown">
+                        <div class="sn-header">
+                            <span>Notifications</span>
+                            <button id="sn_read_all">Tout lire</button>
+                        </div>
+                        <ul id="sn_list">
+                            <li class="sn-empty">Chargement…</li>
+                        </ul>
+                        <div class="sn-footer">
+                            <a href="/social/notifications">Voir toutes les notifications →</a>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

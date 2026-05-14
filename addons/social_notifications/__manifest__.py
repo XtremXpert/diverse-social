@@ -16,10 +16,13 @@
         'social_negotiation',
         'social_reputation',
         'social_story',
+        'portal',
     ],
     'data': [
         'security/ir.model.access.csv',
         'views/notification_views.xml',
+        'views/portal_notification_bell.xml',
+        'views/portal_notifications_page.xml',
     ],
     'installable': True,
     'application': False,
