@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Page profil public ══════════════════════════════════════════════ -->
+    <template id="portal_profile_public" name="Profil membre">
+        <t t-call="web.layout">
+            <t t-set="head_title" t-value="display_name"/>
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+
+                    <!-- Bannière -->
+                    <div class="position-relative mb-4" style="height:200px; background:#1a1a2e; border-radius:12px; overflow:hidden;">
+                        <t t-if="profile.cover_image">
+                            <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/cover_image"
+                                 class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                        </t>
+                        <!-- Avatar -->
+                        <div class="position-absolute" style="bottom:-40px; left:32px;">
+                            <div style="width:88px; height:88px; border-radius:50%; border:3px solid white; overflow:hidden; background:#e94560;">
+                                <t t-if="profile.profile_image">
+                                    <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                         class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                </t>
+                                <t t-else="">
+                                    <div class="d-flex align-items-center justify-content-center h-100"
+                                         style="font-size:32px; color:white;">
+                                        <t t-out="(display_name or '?')[0].upper()"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+
+                        <!-- ── Colonne principale ── -->
+                        <div class="col-lg-8">
+
+                            <!-- Identité -->
+                            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+                                <div>
+                                    <h1 class="mb-1" style="font-size:1.6rem;" t-out="display_name"/>
+                                    <div class="text-muted" style="font-size:0.9rem;">
+                                        <t t-if="profile.pronouns">
+                                            <span class="me-2" t-out="profile.pronouns"/>·
+                                        </t>
+                                        <t t-if="profile.city">
+                                            <span class="ms-2">
+                                                📍 <t t-out="profile.city"/>
+                                                <t t-if="profile.region">, <t t-out="profile.region"/></t>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Actions connexion -->
+                                <t t-if="not is_own">
+                                    <div class="d-flex gap-2">
+                                        <t t-if="connection_state == 'accepted'">
+                                            <form t-attf-action="/api/connections/remove/#{target_user.id}" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                    ✓ Connecté
+                                                </button>
+                                            </form>
+                                        </t>
+                                        <t t-elif="connection_state == 'pending_sent'">
+                                            <button class="btn btn-outline-secondary btn-sm" disabled="1">
+                                                ⏳ Demande envoyée
+                                            </button>
+                                        </t>
+                                        <t t-elif="connection_state == 'pending_received'">
+                                            <form t-attf-action="/api/connections/accept/#{target_user.id}" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
+                                                    Accepter la demande
+                                                </button>
+                                            </form>
+                                        </t>
+                                        <t t-else="">
+                                            <form t-attf-action="/api/connections/request/#{target_user.id}" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
+                                                    + Se connecter
+                                                </button>
+                                            </form>
+                                        </t>
+                                        <a t-attf-href="/web#action=mail.action_discuss&amp;active_id=#{target_user.id}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            💬 Message
+                                        </a>
+                                    </div>
+                                </t>
+                                <t t-if="is_own">
+                                    <a href="/onboarding?step=about" class="btn btn-outline-secondary btn-sm">
+                                        ✏️ Modifier
+                                    </a>
+                                </t>
+                            </div>
+
+                            <!-- Badges -->
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <t t-if="profile.availability and profile.availability != 'non_specifie'">
+                                    <t t-set="_avail_labels" t-value="{
+                                        'disponible': ('🟢', 'Disponible'),
+                                        'couple_ouvert': ('💚', 'Couple ouvert'),
+                                        'couple_ferme': ('🔴', 'Couple fermé'),
+                                        'pas_disponible': ('⛔', 'Non disponible'),
+                                    }"/>
+                                    <t t-set="_av" t-value="_avail_labels.get(profile.availability)"/>
+                                    <t t-if="_av">
+                                        <span class="badge rounded-pill bg-light text-dark border">
+                                            <t t-out="_av[0]"/> <t t-out="_av[1]"/>
+                                        </span>
+                                    </t>
+                                </t>
+                                <t t-if="profile.gender and profile.gender != 'non_specifie'">
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['gender'].selection).get(profile.gender, '')"/>
+                                </t>
+                                <t t-if="profile.orientation and profile.orientation != 'non_specifie'">
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['orientation'].selection).get(profile.orientation, '')"/>
+                                </t>
+                                <t t-foreach="profile.language_ids" t-as="lang">
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="lang.name"/>
+                                </t>
+                            </div>
+
+                            <!-- Bio -->
+                            <t t-if="profile.bio">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title" style="color:#e94560;">À propos</h5>
+                                        <p class="mb-0" style="white-space:pre-line;" t-out="profile.bio"/>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- Quote -->
+                            <t t-if="profile.quote">
+                                <blockquote class="blockquote mb-4 ps-3" style="border-left:3px solid #e94560;">
+                                    <p class="mb-0 fst-italic text-muted" t-out="profile.quote"/>
+                                </blockquote>
+                            </t>
+
+                            <!-- Section BDSM injectée par club_social_profile_bdsm (XPath) -->
+                            <div id="profile_bdsm_section"/>
+
+                            <!-- Posts récents -->
+                            <t t-if="recent_posts">
+                                <h5 class="mb-3 mt-4" style="color:#1a1a2e;">Publications récentes</h5>
+                                <div class="d-flex flex-column gap-3">
+                                    <t t-foreach="recent_posts" t-as="post">
+                                        <div class="card">
+                                            <div class="card-body py-3">
+                                                <div class="text-muted" style="font-size:0.8rem;" t-out="post.create_date.strftime('%d/%m/%Y') if post.create_date else ''"/>
+                                                <p class="mb-1 mt-1" style="font-size:0.95rem;">
+                                                    <t t-out="(post.content or '')[:300]"/>
+                                                    <t t-if="post.content and len(post.content) > 300">…</t>
+                                                </p>
+                                                <div class="text-muted" style="font-size:0.8rem;">
+                                                    ❤️ <t t-out="post.like_count or 0"/> · 💬 <t t-out="post.comment_count or 0"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+
+                        </div>
+
+                        <!-- ── Colonne latérale ── -->
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+
+                            <!-- Galeries -->
+                            <t t-if="galleries">
+                                <div class="card mb-4">
+                                    <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                                        📷 Galeries
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="row g-2">
+                                            <t t-foreach="galleries" t-as="gallery">
+                                                <div class="col-6">
+                                                    <a t-attf-href="/gallery/#{gallery.id}"
+                                                       class="d-block text-decoration-none text-dark text-center p-2 border rounded"
+                                                       style="font-size:0.85rem;">
+                                                        <div style="font-size:1.5rem;">🖼️</div>
+                                                        <div class="text-truncate" t-out="gallery.name"/>
+                                                        <div class="text-muted" style="font-size:0.75rem;">
+                                                            <t t-out="gallery.approved_photo_count"/> photo(s)
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- Connexions mutuelles -->
+                            <t t-if="mutual_connections">
+                                <div class="card mb-4">
+                                    <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                                        🤝 Connexions en commun
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <t t-foreach="mutual_connections" t-as="mc">
+                                            <a t-attf-href="/profile/#{mc.user_id.id}"
+                                               class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2">
+                                                <div style="width:32px; height:32px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                                                    <t t-if="mc.profile_image">
+                                                        <img t-attf-src="/web/image/club_social_profile.profile/#{mc.id}/profile_image"
+                                                             class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="d-flex align-items-center justify-content-center h-100"
+                                                             style="color:white; font-size:14px;">
+                                                            <t t-out="(mc.stealth_name or mc.user_id.name or '?')[0].upper()"/>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                                <span style="font-size:0.9rem;" t-out="mc.stealth_name or mc.user_id.name"/>
+                                            </a>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+
+                            <!-- Infos profil -->
+                            <div class="card">
+                                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                                    ℹ️ Infos
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <t t-if="profile.age and profile.age >= 18">
+                                        <li class="list-group-item" style="font-size:0.9rem;">
+                                            🎂 <t t-out="profile.age"/> ans
+                                        </li>
+                                    </t>
+                                    <t t-if="profile.looking_for_ids">
+                                        <li class="list-group-item" style="font-size:0.9rem;">
+                                            🔍 <t t-out="', '.join(profile.looking_for_ids.mapped('name'))"/>
+                                        </li>
+                                    </t>
+                                    <t t-if="not is_own">
+                                        <li class="list-group-item text-muted" style="font-size:0.8rem;">
+                                            👁️ <t t-out="profile.profile_view_count"/> visite(s) de profil
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Page profil restreint ═══════════════════════════════════════════ -->
+    <template id="portal_profile_restricted" name="Profil restreint">
+        <t t-call="web.layout">
+            <t t-set="head_title" t-value="display_name"/>
+            <div class="o_portal_wrap">
+                <div class="container py-5 text-center" style="max-width:500px;">
+                    <div style="font-size:3rem;" class="mb-3">🔒</div>
+                    <h2 t-out="display_name"/>
+                    <p class="text-muted">Ce profil est visible uniquement pour les connexions de ce membre.</p>
+
+                    <t t-if="not is_member">
+                        <p>Vous devez être membre actif pour accéder aux profils.</p>
+                        <a href="/membership" class="btn" style="background:#e94560; color:white;">
+                            Devenir membre
+                        </a>
+                    </t>
+                    <t t-elif="connection_state == 'pending_sent'">
+                        <p class="text-muted">Votre demande de connexion est en attente.</p>
+                        <a href="/my/connections" class="btn btn-outline-secondary">
+                            Voir mes demandes
+                        </a>
+                    </t>
+                    <t t-else="">
+                        <form t-attf-action="/api/connections/request/#{profile.user_id.id}" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn" style="background:#e94560; color:white;">
+                                + Demander à se connecter
+                            </button>
+                        </form>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

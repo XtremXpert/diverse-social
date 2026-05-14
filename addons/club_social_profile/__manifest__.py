@@ -7,12 +7,14 @@
     'license': 'LGPL-3',
     'depends': [
         'social_base',
+        'portal',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/profile_data.xml',
         'views/profile_views.xml',
+        'views/portal_profile_public.xml',
     ],
     'installable': True,
     'application': False,
