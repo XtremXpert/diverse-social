@@ -177,3 +177,81 @@ class TestSocialEvents(TransactionCase):
         })
         reg.action_cancel()
         self.assertEqual(reg.state, 'cancel')
+
+    # ── Cas limites _check_social_access ─────────────────────────────────────
+
+    def test_no_visibility_always_accessible(self):
+        """Un événement sans social_visibility est accessible à tous."""
+        event = self._make_event(visibility='members')
+        event.sudo().write({'social_visibility': False})
+        self.assertTrue(event._check_social_access(self.carol))
+
+    def test_members_inaccessible_to_non_social_user(self):
+        """Un utilisateur sans group_social_user n'accède pas à un événement 'members'."""
+        non_social = self.env['res.users'].create({
+            'name': 'Non Social', 'login': 'sevt_nonsocial', 'email': 'nonsocial@evt.test',
+        })
+        event = self._make_event(visibility='members')
+        self.assertFalse(event._check_social_access(non_social))
+
+    def test_circles_access_uses_env_user_when_no_arg(self):
+        """Sans argument, _check_social_access utilise self.env.user."""
+        event = self._make_event(visibility='circles', circles=self.inner_circle)
+        # Bob est dans le cercle : son env doit retourner True
+        self.assertTrue(event.with_user(self.bob)._check_social_access())
+
+    def test_circles_env_user_outsider_returns_false(self):
+        event = self._make_event(visibility='circles', circles=self.inner_circle)
+        self.assertFalse(event.with_user(self.carol)._check_social_access())
+
+    def test_multiple_circles_access_any_match(self):
+        """Accès accordé si l'utilisateur est dans au moins un des cercles autorisés."""
+        Profile = self.env['club_social_profile.profile']
+        alice_profile2 = Profile.get_or_create_for_user(self.alice)
+        second_circle = self.env['social_circles.circle'].create({
+            'profile_id': alice_profile2.id,
+            'name': 'Second Circle',
+        })
+        second_circle.add_member(self.carol)
+        event = self._make_event(
+            visibility='circles',
+            circles=self.inner_circle | second_circle,
+        )
+        # Bob est dans inner_circle, Carol dans second_circle
+        self.assertTrue(event._check_social_access(self.bob))
+        self.assertTrue(event._check_social_access(self.carol))
+
+    def test_update_circles_after_creation(self):
+        """Modifier les cercles autorisés change l'accès."""
+        event = self._make_event(visibility='circles', circles=self.inner_circle)
+        self.assertFalse(event._check_social_access(self.carol))
+        # Ajouter un cercle contenant Carol
+        Profile = self.env['club_social_profile.profile']
+        carol_profile = Profile.get_or_create_for_user(self.alice)
+        new_circle = self.env['social_circles.circle'].create({
+            'profile_id': carol_profile.id,
+            'name': 'Carol Circle',
+        })
+        new_circle.add_member(self.carol)
+        event.sudo().write({'allowed_circle_ids': [(4, new_circle.id)]})
+        self.assertTrue(event._check_social_access(self.carol))
+
+    def test_remove_all_circles_raises_constraint(self):
+        """Retirer tous les cercles d'un événement 'circles' lève une UserError."""
+        event = self._make_event(visibility='circles', circles=self.inner_circle)
+        with self.assertRaises(UserError):
+            event.sudo().write({'allowed_circle_ids': [(5,)]})
+
+    def test_allowed_circle_ids_stored(self):
+        """Les cercles autorisés sont bien persistés."""
+        event = self._make_event(visibility='circles', circles=self.inner_circle)
+        self.assertIn(self.inner_circle, event.allowed_circle_ids)
+
+    def test_members_event_invisible_to_non_social_in_search(self):
+        """Un utilisateur sans groupe social ne trouve pas l'événement 'members' via search."""
+        non_social = self.env['res.users'].create({
+            'name': 'Non Social Search', 'login': 'sevt_nss', 'email': 'nss@evt.test',
+        })
+        event = self._make_event(visibility='members')
+        found = self.Event.with_user(non_social).search([('id', '=', event.id)])
+        self.assertFalse(found)
