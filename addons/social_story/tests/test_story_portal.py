@@ -70,6 +70,38 @@ class TestStoryPortalData(TransactionCase):
         self.assertIn(self.active_story, active_stories)
         self.assertNotIn(expired, active_stories)
 
+    # ── ir.rule : visibilité stories expirées ─────────────────────────────────
+
+    def test_ir_rule_user_can_see_own_expired(self):
+        """Un utilisateur voit ses propres stories expirées (author_id = user.id)."""
+        from odoo import fields
+        import datetime
+        expired = self.env['social_story.story'].sudo().create({
+            'name': 'Own Expired', 'author_id': self.author.id,
+        })
+        expired.sudo().write({'expires_at': fields.Datetime.now() - datetime.timedelta(hours=1)})
+        expired._compute_state()
+        self.assertEqual(expired.state, 'expired')
+        found = self.env['social_story.story'].with_user(self.author).search(
+            [('id', '=', expired.id)]
+        )
+        self.assertTrue(found)
+
+    def test_ir_rule_user_cannot_see_others_expired(self):
+        """Un utilisateur ne voit pas les stories expirées des autres."""
+        from odoo import fields
+        import datetime
+        expired = self.env['social_story.story'].sudo().create({
+            'name': 'Other Expired', 'author_id': self.author.id,
+        })
+        expired.sudo().write({'expires_at': fields.Datetime.now() - datetime.timedelta(hours=1)})
+        expired._compute_state()
+        self.assertEqual(expired.state, 'expired')
+        found = self.env['social_story.story'].with_user(self.other).search(
+            [('id', '=', expired.id)]
+        )
+        self.assertFalse(found)
+
 
 @tagged('social_story', 'story_portal', 'post_install', '-at_install')
 class TestStoryPortalHttp(HttpCase):
@@ -99,7 +131,6 @@ class TestStoryPortalHttp(HttpCase):
         story = self.env['social_story.story'].sudo().create({
             'name': 'Other Story HTTP', 'author_id': admin.id,
         })
-        # Créer un autre utilisateur et tenter l'archivage
         other = self.env['res.users'].sudo().create({
             'name': 'HTTP Other', 'login': 'http_other_story',
             'email': 'http_other@story.test', 'password': 'Test1234!',
@@ -112,3 +143,58 @@ class TestStoryPortalHttp(HttpCase):
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303, 403))
+
+    def test_story_archive_by_owner(self):
+        """Le propriétaire peut archiver sa propre story."""
+        group_social = self.env.ref('social_base.group_social_user')
+        owner = self.env['res.users'].sudo().create({
+            'name': 'Story Owner HTTP', 'login': 'story_owner_http',
+            'email': 'owner@story.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        story = self.env['social_story.story'].sudo().create({
+            'name': 'My Own Story HTTP', 'author_id': owner.id,
+        })
+        self.authenticate('story_owner_http', 'Test1234!')
+        resp = self.url_open(
+            f'/my/stories/{story.id}/archive',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        story.invalidate_recordset()
+        self.assertEqual(story.state, 'archived')
+
+    def test_api_list_stories_returns_json(self):
+        """GET /social/api/stories retourne du JSON avec une liste de stories."""
+        import json
+        group_social = self.env.ref('social_base.group_social_user')
+        api_user = self.env['res.users'].sudo().create({
+            'name': 'API Story User', 'login': 'api_story_user',
+            'email': 'api@story.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        self.authenticate('api_story_user', 'Test1234!')
+        resp = self.url_open('/social/api/stories')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.content)
+        self.assertIn('stories', data)
+        self.assertIsInstance(data['stories'], list)
+
+    def test_api_view_story_increments_count(self):
+        """POST /social/api/stories/<id>/view incrémente view_count."""
+        import json
+        group_social = self.env.ref('social_base.group_social_user')
+        viewer = self.env['res.users'].sudo().create({
+            'name': 'API Viewer', 'login': 'api_viewer_story',
+            'email': 'viewer@story.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        admin = self.env.ref('base.user_admin')
+        story = self.env['social_story.story'].sudo().create({
+            'name': 'API View Story', 'author_id': admin.id,
+        })
+        self.authenticate('api_viewer_story', 'Test1234!')
+        resp = self.url_open(f'/social/api/stories/{story.id}/view', data={})
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.content)
+        self.assertEqual(data.get('view_count'), 1)

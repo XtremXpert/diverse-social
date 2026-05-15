@@ -58,3 +58,66 @@ class TestSocialStory(TransactionCase):
         })
         self.assertEqual(len(story.reaction_ids), 1)
         self.assertEqual(story.reaction_ids.target_model, 'social_story.story')
+
+    def test_action_archive(self):
+        story = self._make_story()
+        story.action_archive()
+        self.assertEqual(story.state, 'archived')
+
+    # ── Media type ────────────────────────────────────────────────────────────
+
+    def test_media_type_defaults_photo(self):
+        story = self._make_story('Photo Story')
+        self.assertEqual(story.media_type, 'photo')
+
+    def test_media_type_video_from_attachment(self):
+        story = self._make_story('Video Story')
+        self.env['ir.attachment'].sudo().create({
+            'name': 'clip.mp4',
+            'res_model': 'social_story.story',
+            'res_id': story.id,
+            'mimetype': 'video/mp4',
+            'datas': b'',
+        })
+        story._compute_media_type()
+        self.assertEqual(story.media_type, 'video')
+
+    # ── Cron ──────────────────────────────────────────────────────────────────
+
+    def test_cron_deletes_stories_expired_over_7_days(self):
+        story = self.Story.sudo().create({'name': 'Old Expired', 'author_id': self.user.id})
+        story.sudo().write({
+            'expires_at': fields.Datetime.now() - timedelta(days=8),
+        })
+        story._compute_state()
+        self.assertEqual(story.state, 'expired')
+        story_id = story.id
+        self.Story.cron_cleanup_expired_stories()
+        self.assertFalse(self.Story.sudo().browse(story_id).exists())
+
+    def test_cron_keeps_stories_expired_under_7_days(self):
+        story = self.Story.sudo().create({'name': 'Recent Expired', 'author_id': self.user.id})
+        story.sudo().write({
+            'expires_at': fields.Datetime.now() - timedelta(hours=2),
+        })
+        story._compute_state()
+        self.assertEqual(story.state, 'expired')
+        self.Story.cron_cleanup_expired_stories()
+        self.assertTrue(self.Story.sudo().browse(story.id).exists())
+
+    def test_cron_keeps_active_stories(self):
+        story = self._make_story('Active Story Cron')
+        self.assertEqual(story.state, 'active')
+        self.Story.cron_cleanup_expired_stories()
+        self.assertTrue(self.Story.sudo().browse(story.id).exists())
+
+    def test_cron_returns_count(self):
+        stories = [
+            self.Story.sudo().create({'name': f'Cron Del {i}', 'author_id': self.user.id})
+            for i in range(3)
+        ]
+        for s in stories:
+            s.sudo().write({'expires_at': fields.Datetime.now() - timedelta(days=8)})
+            s._compute_state()
+        count = self.Story.cron_cleanup_expired_stories()
+        self.assertGreaterEqual(count, 3)
