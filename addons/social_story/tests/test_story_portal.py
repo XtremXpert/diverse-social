@@ -139,7 +139,7 @@ class TestStoryPortalHttp(HttpCase):
         self.authenticate('http_other_story', 'Test1234!')
         resp = self.url_open(
             f'/my/stories/{story.id}/archive',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303, 403))
@@ -158,7 +158,7 @@ class TestStoryPortalHttp(HttpCase):
         self.authenticate('story_owner_http', 'Test1234!')
         resp = self.url_open(
             f'/my/stories/{story.id}/archive',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         story.invalidate_recordset()

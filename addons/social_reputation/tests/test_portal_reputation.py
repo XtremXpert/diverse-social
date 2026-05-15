@@ -171,7 +171,6 @@ class TestPortalReputationHttp(HttpCase):
         resp = self.url_open(
             '/my/vouching/give',
             data={
-                'csrf_token': self.csrf_token(),
                 'newcomer_id': str(newcomer.id),
                 'statement': 'Great person',
             },
@@ -194,7 +193,7 @@ class TestPortalReputationHttp(HttpCase):
         self.authenticate('admin', 'admin')
         self.url_open(
             '/my/vouching/give',
-            data={'csrf_token': self.csrf_token(), 'newcomer_id': str(stranger.id)},
+            data={'newcomer_id': str(stranger.id)},
         )
         admin = self.env.ref('base.user_admin')
         v = self.env['social_reputation.vouching'].sudo().search([
@@ -213,7 +212,7 @@ class TestPortalReputationHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/my/vouching/{v.id}/withdraw',
-            data={'csrf_token': self.csrf_token(), 'reason': 'Test withdrawal'},
+            data={'reason': 'Test withdrawal'},
         )
         self.assertEqual(resp.status_code, 200)
         v.invalidate_recordset()

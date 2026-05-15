@@ -218,7 +218,6 @@ class TestGovernancePortalHttp(HttpCase):
         resp = self.url_open(
             '/governance/create',
             data={
-                'csrf_token': self.csrf_token(),
                 'name': 'HTTP Created Proposal',
                 'description': 'Description test HTTP',
                 'category_id': str(category.id),
@@ -236,7 +235,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/governance/create',
-            data={'csrf_token': self.csrf_token(), 'name': '', 'description': '', 'category_id': ''},
+            data={'name': '', 'description': '', 'category_id': ''},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'error', resp.url.encode())
@@ -253,7 +252,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/vote',
-            data={'csrf_token': self.csrf_token(), 'choice': 'yes'},
+            data={'choice': 'yes'},
         )
         self.assertEqual(resp.status_code, 200)
         admin = self.env.ref('base.user_admin')
@@ -268,7 +267,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/vote',
-            data={'csrf_token': self.csrf_token(), 'choice': 'invalid'},
+            data={'choice': 'invalid'},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'error', resp.url.encode())
@@ -279,7 +278,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/withdraw',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         p.invalidate_recordset()
@@ -291,7 +290,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/withdraw',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 403)
 
@@ -314,7 +313,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/open',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         p.invalidate_recordset()
@@ -331,7 +330,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('gov_member_http', 'Test1234!')
         resp = self.url_open(
             f'/governance/{p.id}/open',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 403)
 
@@ -345,7 +344,7 @@ class TestGovernancePortalHttp(HttpCase):
         closes = (fields.Datetime.now() + dt.timedelta(days=3)).strftime('%Y-%m-%dT%H:%M')
         resp = self.url_open(
             f'/governance/{p.id}/start_voting',
-            data={'csrf_token': self.csrf_token(), 'voting_closes_at': closes},
+            data={'voting_closes_at': closes},
         )
         self.assertEqual(resp.status_code, 200)
         p.invalidate_recordset()
@@ -357,7 +356,7 @@ class TestGovernancePortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/governance/{p.id}/start_voting',
-            data={'csrf_token': self.csrf_token(), 'voting_closes_at': 'not-a-date'},
+            data={'voting_closes_at': 'not-a-date'},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'invalid_date', resp.url.encode())

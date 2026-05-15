@@ -168,7 +168,7 @@ class TestOnboardingPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/onboarding/save/welcome',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -177,7 +177,7 @@ class TestOnboardingPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/onboarding/save/about',
-            data={'csrf_token': self.csrf_token(), 'bio': 'Test', 'city': 'Mtl'},
+            data={'bio': 'Test', 'city': 'Mtl'},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -189,7 +189,6 @@ class TestOnboardingPortalHttp(HttpCase):
         resp = self.url_open(
             '/onboarding/save/about',
             data={
-                'csrf_token': self.csrf_token(),
                 'birth_year': str(current_year - 16),
             },
         )
@@ -200,7 +199,6 @@ class TestOnboardingPortalHttp(HttpCase):
         resp = self.url_open(
             '/onboarding/save/about',
             data={
-                'csrf_token': self.csrf_token(),
                 'gender': 'non_binaire',
                 'orientation': 'queer',
                 'city': 'Montréal',
@@ -216,7 +214,6 @@ class TestOnboardingPortalHttp(HttpCase):
         resp = self.url_open(
             '/onboarding/save/about',
             data={
-                'csrf_token': self.csrf_token(),
                 'gender': 'INVALID_VALUE',
             },
             allow_redirects=False,
@@ -241,7 +238,7 @@ class TestOnboardingPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/onboarding/skip',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -251,7 +248,6 @@ class TestOnboardingPortalHttp(HttpCase):
         resp = self.url_open(
             '/onboarding/save/preferences',
             data={
-                'csrf_token': self.csrf_token(),
                 'visibility': 'connections',
                 'availability': 'disponible',
             },
@@ -264,7 +260,6 @@ class TestOnboardingPortalHttp(HttpCase):
         self.url_open(
             '/onboarding/save/preferences',
             data={
-                'csrf_token': self.csrf_token(),
                 'visibility': 'connections',
                 'availability': 'non_specifie',
             },
@@ -282,7 +277,6 @@ class TestOnboardingPortalHttp(HttpCase):
         self.url_open(
             '/onboarding/save/preferences',
             data={
-                'csrf_token': self.csrf_token(),
                 'visibility': 'members',
                 # digest_email_enabled absent = décoché
             },

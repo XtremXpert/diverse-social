@@ -234,7 +234,7 @@ class TestMembershipWebsiteHttp(HttpCase):
         """POST /membership/join/999999 retourne 404 si le type n'existe pas."""
         self.authenticate('admin', 'admin')
         response = self.url_open('/membership/join/999999',
-                                 data={'csrf_token': self.csrf_token()},
+                                 data={},
                                  allow_redirects=False)
         self.assertEqual(response.status_code, 404)
 

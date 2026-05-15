@@ -97,5 +97,5 @@ class TestSocialComment(TransactionCase):
             'content': 'Child', 'post_id': post.id, 'author_id': self.user.id,
         })
         child_id = child_comment.id
-        post.unlink()
+        post.sudo().unlink()
         self.assertFalse(self.env['social_base.comment'].browse(child_id).exists())

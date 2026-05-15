@@ -160,7 +160,6 @@ class TestPortalGalleryHttp(HttpCase):
         resp = self.url_open(
             '/my/gallery/create',
             data={
-                'csrf_token': self.csrf_token(),
                 'name': 'Galerie HTTP Test',
                 'visibility': 'members',
             },
@@ -175,7 +174,7 @@ class TestPortalGalleryHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/my/gallery/create',
-            data={'csrf_token': self.csrf_token(), 'name': ''},
+            data={'name': ''},
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -214,7 +213,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open(
             f'/my/gallery/photo/{photo.id}/delete',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(
@@ -256,7 +255,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open(
             f'/my/gallery/photo/{photo.id}/delete',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (403, 302, 303))
@@ -353,7 +352,6 @@ class TestPortalGalleryHttp(HttpCase):
         resp = self.url_open(
             f'/gallery/{gallery.id}/submit',
             data={
-                'csrf_token': self.csrf_token(),
                 'name': 'Submitted Photo',
             },
             files={'image': ('test.png', _TINY_PNG, 'image/png')},
@@ -372,7 +370,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open(
             f'/gallery/{gallery.id}/submit',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (403, 302, 303))

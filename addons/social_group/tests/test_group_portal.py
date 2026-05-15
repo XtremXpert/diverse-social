@@ -136,7 +136,7 @@ class TestGroupPortalHttp(HttpCase):
         })
         resp = self.url_open(
             f'/groups/{group.id}/join',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -148,7 +148,6 @@ class TestGroupPortalHttp(HttpCase):
         resp = self.url_open(
             '/groups/create',
             data={
-                'csrf_token': self.csrf_token(),
                 'name': 'HTTP Created Group',
                 'description': 'Created from portal',
                 'privacy': 'private',
@@ -163,7 +162,7 @@ class TestGroupPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/groups/create',
-            data={'csrf_token': self.csrf_token(), 'name': ''},
+            data={'name': ''},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'name_required', resp.url.encode())
@@ -181,7 +180,6 @@ class TestGroupPortalHttp(HttpCase):
         resp = self.url_open(
             f'/groups/{group.id}/edit',
             data={
-                'csrf_token': self.csrf_token(),
                 'name': 'Edited Group Name',
                 'privacy': 'private',
                 'join_type': 'approval',
@@ -208,7 +206,7 @@ class TestGroupPortalHttp(HttpCase):
         self.authenticate('non_admin_http', 'Test1234!')
         resp = self.url_open(
             f'/groups/{group.id}/edit',
-            data={'csrf_token': self.csrf_token(), 'name': 'Hacked Name'},
+            data={'name': 'Hacked Name'},
         )
         self.assertEqual(resp.status_code, 403)
 
@@ -237,7 +235,7 @@ class TestGroupPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/approve',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         req.invalidate_recordset()
@@ -260,7 +258,7 @@ class TestGroupPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/reject',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         req.invalidate_recordset()
@@ -288,7 +286,7 @@ class TestGroupPortalHttp(HttpCase):
         self.authenticate('requester3_http', 'Test1234!')
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/approve',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 403)
 
@@ -313,7 +311,7 @@ class TestGroupPortalHttp(HttpCase):
         # Try to approve group_b's request via group_a's URL
         resp = self.url_open(
             f'/groups/{group_a.id}/requests/{req_b.id}/approve',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 404)
         req_b.invalidate_recordset()

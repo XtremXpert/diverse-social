@@ -2,7 +2,7 @@ from odoo.tests import TransactionCase, tagged
 from odoo.exceptions import ValidationError
 
 
-@tagged('club_social_profile', 'profile')
+@tagged('club_social_profile', 'profile', 'post_install', '-at_install')
 class TestClubSocialProfile(TransactionCase):
 
     @classmethod

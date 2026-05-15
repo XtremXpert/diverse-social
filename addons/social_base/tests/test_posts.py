@@ -79,10 +79,12 @@ class TestSocialPost(TransactionCase):
         att = self.env['ir.attachment'].sudo().create({
             'name': 'img.jpg', 'mimetype': 'image/jpeg', 'datas': b'',
         })
-        post = self.Post.with_user(self.user).create({
-            'content': '',
-            'attachment_ids': [(4, att.id)],
+        post = self.Post.sudo().create({
+            'author_id': self.user.id,
+            'content': 'temp',
         })
+        att.sudo().write({'res_model': 'social_base.post', 'res_id': post.id})
+        post.sudo().write({'content': ''})
         self.assertTrue(post)
 
     # ── Engagement ────────────────────────────────────────────────────────────

@@ -122,7 +122,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/safety/panic/activate',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -131,7 +131,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/safety/panic/lift',
-            data={'csrf_token': self.csrf_token()},
+            data={},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -151,7 +151,7 @@ class TestSafetyPortalHttp(HttpCase):
         })
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         self.authenticate('panic_owner_http', 'Test1234!')
-        self.url_open('/safety/panic/activate', data={'csrf_token': self.csrf_token()})
+        self.url_open('/safety/panic/activate', data={})
         profile.invalidate_recordset()
         self.assertTrue(profile.panic_mode)
 
@@ -165,7 +165,7 @@ class TestSafetyPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         profile.sudo().write({'panic_mode': True, 'panic_saved_visibility': 'members'})
         self.authenticate('panic_lifter_http', 'Test1234!')
-        self.url_open('/safety/panic/lift', data={'csrf_token': self.csrf_token()})
+        self.url_open('/safety/panic/lift', data={})
         profile.invalidate_recordset()
         self.assertFalse(profile.panic_mode)
 
@@ -186,7 +186,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.authenticate('block_remover_http', 'Test1234!')
         resp = self.url_open(
             f'/safety/block/{block.id}/remove',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(self.env['social_safety.block'].sudo().browse(block.id).exists())
@@ -213,7 +213,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.authenticate('intruder_block_http', 'Test1234!')
         self.url_open(
             f'/safety/block/{block.id}/remove',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertTrue(self.env['social_safety.block'].sudo().browse(block.id).exists())
 
@@ -234,7 +234,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.authenticate('mute_remover_http', 'Test1234!')
         resp = self.url_open(
             f'/safety/mute/{mute.id}/remove',
-            data={'csrf_token': self.csrf_token()},
+            data={},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(self.env['social_safety.mute'].sudo().browse(mute.id).exists())

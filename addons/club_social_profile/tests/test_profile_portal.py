@@ -163,14 +163,13 @@ class TestProfileEditHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/profile/edit?section=preferences')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Visibilité', resp.content)
+        self.assertIn('Visibilité', resp.text)
 
     def test_save_identity_redirects(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/my/profile/edit/identity',
             data={
-                'csrf_token': self.csrf_token(),
                 'bio': 'Bio test édition',
                 'city': 'Montréal',
                 'gender': 'non_binaire',
@@ -178,16 +177,13 @@ class TestProfileEditHttp(HttpCase):
             },
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Profil mis à jour', resp.content)
+        self.assertIn('Profil mis à jour', resp.text)
 
     def test_save_identity_invalid_gender_ignored(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/my/profile/edit/identity',
-            data={
-                'csrf_token': self.csrf_token(),
-                'gender': 'INVALIDE',
-            },
+            data={'gender': 'INVALIDE'},
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -196,33 +192,29 @@ class TestProfileEditHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/my/profile/edit/identity',
-            data={
-                'csrf_token': self.csrf_token(),
-                'birth_year': str(datetime.date.today().year - 16),
-            },
+            data={'birth_year': str(datetime.date.today().year - 16)},
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'18 ans', resp.content)
+        self.assertIn('18 ans', resp.text)
 
     def test_save_preferences_ok(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open(
             '/my/profile/edit/preferences',
             data={
-                'csrf_token': self.csrf_token(),
                 'visibility': 'members',
                 'availability': 'disponible',
             },
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Préférences enregistrées', resp.content)
+        self.assertIn('Préférences enregistrées', resp.text)
 
     def test_edit_page_has_tabs(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Identité', resp.content)
-        self.assertIn(b'Préférences', resp.content)
+        self.assertIn('Identité', resp.text)
+        self.assertIn('Préférences', resp.text)
 
 
 @tagged('club_social_profile', 'profile_portal', 'post_install', '-at_install')
