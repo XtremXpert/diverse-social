@@ -288,3 +288,26 @@ class TestCirclesPortalHttp(HttpCase):
         )
         circle.invalidate_recordset()
         self.assertNotIn(stranger, circle.member_ids)
+
+    def test_others_circles_section_visible_when_member(self):
+        """La section 'Cercles où je figure' s'affiche si on est membre d'un cercle d'un autre."""
+        group_social = self.env.ref('social_base.group_social_user')
+        other_owner = self.env['res.users'].sudo().create({
+            'name': 'OtherOwner', 'login': 'other_owner_circ',
+            'email': 'other_owner@circles.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        admin = self.env.ref('base.user_admin')
+        other_profile = self.env['club_social_profile.profile'].sudo().create({
+            'user_id': other_owner.id,
+        })
+        circle = self.env['social_circles.circle'].sudo().create({
+            'profile_id': other_profile.id,
+            'name': 'Other Owner Circle',
+            'member_ids': [(4, admin.id)],
+        })
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/circles')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Other Owner Circle', resp.content)
+        self.assertIn(b'Cercles o\xc3\xb9 je figure', resp.content)

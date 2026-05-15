@@ -252,6 +252,27 @@
 
             </div>
 
+                <!-- ── Dans quels cercles des autres suis-je ? ──────── -->
+                <t t-if="others_circles">
+                    <h5 class="mt-4 mb-3" style="color:#1a1a2e;">Cercles où je figure</h5>
+                    <div class="list-group shadow-sm mb-4">
+                        <t t-foreach="others_circles" t-as="oc">
+                            <div class="list-group-item py-2 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span style="font-size:.9rem;" class="text-muted">🔵</span>
+                                    <span class="fw-semibold" style="font-size:.9rem;" t-esc="oc.name"/>
+                                    <span class="text-muted" style="font-size:.8rem;">
+                                        — <t t-esc="oc.profile_id.user_id.name"/>
+                                    </span>
+                                </div>
+                                <t t-if="oc.description">
+                                    <small class="text-muted" t-esc="oc.description"/>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
             <!-- JS : afficher/masquer la sélection de cercle spécifique -->
             <script type="text/javascript">
                 (function () {

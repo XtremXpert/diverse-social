@@ -37,9 +37,16 @@ class CirclesPortal(CustomerPortal):
             addable = connections.filtered(lambda u: u not in in_circle)
             circles_with_addable.append((circle, addable))
 
+        # Cercles d'autres utilisateurs dont je suis membre (lecture autorisée par rule_circle_member_read)
+        others_circles = request.env['social_circles.circle'].search([
+            ('member_ids', 'in', user.id),
+            ('profile_id.user_id', '!=', user.id),
+        ], order='profile_id, sequence, id')
+
         return request.render('social_circles.portal_my_circles', {
             'circles': circles,
             'circles_with_addable': circles_with_addable,
+            'others_circles': others_circles,
             'profile': profile,
             'page_name': 'circles',
             'error': kw.get('error'),
