@@ -143,3 +143,60 @@ class TestSocialMessaging(TransactionCase):
         thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
         found = self.Thread.with_user(self.user3).search([('id', '=', thread.id)])
         self.assertFalse(found)
+
+    # ── Block supplémentaires ─────────────────────────────────────────────────
+
+    def test_reverse_block_prevents_send(self):
+        """Si user2 bloque user1, user1 ne peut pas envoyer de message."""
+        thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
+        self.Block.with_user(self.user2).block_user(self.user1)
+        try:
+            with self.assertRaises(UserError):
+                self.env['social_messaging.message'].sudo().create({
+                    'thread_id': thread.id,
+                    'author_id': self.user1.id,
+                    'content': 'Should be blocked by reverse',
+                })
+        finally:
+            self.Block.with_user(self.user2).unblock_user(self.user1)
+
+    def test_group_thread_block_not_checked(self):
+        """Un fil à 3 participants n'est pas bloqué même si deux participants se bloquent."""
+        thread = self.Thread.sudo().create({
+            'participant_ids': [(6, 0, [self.user1.id, self.user2.id, self.user3.id])],
+        })
+        self.Block.with_user(self.user1).block_user(self.user2)
+        try:
+            msg = self.env['social_messaging.message'].sudo().create({
+                'thread_id': thread.id,
+                'author_id': self.user1.id,
+                'content': 'Group message despite block',
+            })
+            self.assertTrue(msg)
+        finally:
+            self.Block.with_user(self.user1).unblock_user(self.user2)
+
+    # ── Computed ──────────────────────────────────────────────────────────────
+
+    def test_last_message_date_updated(self):
+        thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
+        self.env['social_messaging.message'].sudo().create({
+            'thread_id': thread.id, 'author_id': self.user1.id, 'content': 'Hello',
+        })
+        self.assertTrue(thread.last_message_date)
+
+    def test_preview_truncated_at_80_chars(self):
+        thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
+        long_content = 'A' * 100
+        self.env['social_messaging.message'].sudo().create({
+            'thread_id': thread.id, 'author_id': self.user1.id, 'content': long_content,
+        })
+        self.assertLessEqual(len(thread.last_message_preview), 80)
+
+    def test_author_unread_count_zero(self):
+        """Les messages envoyés par user1 ne comptent pas comme non-lus pour user1."""
+        thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
+        self.env['social_messaging.message'].sudo().create({
+            'thread_id': thread.id, 'author_id': self.user1.id, 'content': 'My message',
+        })
+        self.assertEqual(thread.unread_count_for(self.user1), 0)
