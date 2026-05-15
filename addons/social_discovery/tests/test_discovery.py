@@ -164,6 +164,97 @@ class TestDiscovery(TransactionCase):
         crit = self._make_criteria()
         self.assertGreater(crit.result_count, 0)
 
+    # ── Orientation filter ────────────────────────────────────────────────────
+
+    def test_orientation_filter(self):
+        bi_val = self.env.ref('social_discovery.orient_bi')
+        crit = self._make_criteria(orientation_ids=[(4, bi_val.id)])
+        profiles = crit._find_profiles()
+        self.assertIn(self.alice_p, profiles)
+        self.assertNotIn(self.bob_p, profiles)
+
+    # ── age_verified / onboarding_done filters ────────────────────────────────
+
+    def test_age_verified_filter(self):
+        """Filtre age_verified : seuls les profils vérifiés retenus."""
+        self.alice_p.sudo().write({'birth_year': 1990})
+        self.carol_p.sudo().write({'birth_year': 0})
+        crit = self._make_criteria(age_verified=True)
+        profiles = crit._find_profiles()
+        for p in profiles:
+            self.assertTrue(p.age_verified)
+
+    def test_onboarding_done_filter(self):
+        self.alice_p.sudo().write({'onboarding_done': True})
+        self.bob_p.sudo().write({'onboarding_done': False})
+        crit = self._make_criteria(onboarding_done=True)
+        profiles = crit._find_profiles()
+        self.assertNotIn(self.bob_p, profiles)
+        for p in profiles:
+            self.assertTrue(p.onboarding_done)
+
+    # ── max_age=0 allowed ─────────────────────────────────────────────────────
+
+    def test_max_age_zero_no_upper_limit(self):
+        """max_age=0 (défaut) ne doit pas lever d'erreur et ne filtre pas."""
+        crit = self._make_criteria(max_age=0)
+        profiles = crit._find_profiles()
+        self.assertIn(self.alice_p, profiles)
+        self.assertIn(self.bob_p, profiles)
+
+    # ── reachable_only / _is_reachable ────────────────────────────────────────
+
+    def test_is_reachable_no_gate(self):
+        """_is_reachable retourne True si le profil cible n'a pas de gate active."""
+        crit = self._make_criteria()
+        result = crit._is_reachable(self.alice_p, self.searcher_user)
+        self.assertTrue(result)
+
+    def test_is_reachable_with_gate_no_request(self):
+        """_is_reachable retourne False si gate active sans demande approuvée."""
+        if 'social_consent.gate' not in self.env:
+            self.skipTest('social_consent not installed')
+        gate = self.env['social_consent.gate'].sudo().create({
+            'profile_id': self.bob_p.id,
+            'is_active': True,
+        })
+        crit = self._make_criteria()
+        result = crit._is_reachable(self.bob_p, self.searcher_user)
+        self.assertFalse(result)
+
+    def test_reachable_only_excludes_gated(self):
+        if 'social_consent.gate' not in self.env:
+            self.skipTest('social_consent not installed')
+        self.env['social_consent.gate'].sudo().create({
+            'profile_id': self.carol_p.id,
+            'is_active': True,
+        })
+        crit = self._make_criteria(reachable_only=True)
+        profiles = crit._find_profiles()
+        self.assertNotIn(self.carol_p, profiles)
+        self.assertIn(self.alice_p, profiles)
+
+    # ── action_open_discovery ─────────────────────────────────────────────────
+
+    def test_action_open_discovery_no_default_returns_list(self):
+        """Sans recherche par défaut → action liste les critères."""
+        action = self.searcher.action_open_discovery()
+        self.assertEqual(action['type'], 'ir.actions.act_window')
+        self.assertEqual(action['res_model'], 'social_discovery.criteria')
+
+    def test_action_open_discovery_with_default_runs_search(self):
+        crit = self._make_criteria(name='Défaut', is_default=True)
+        action = self.searcher.action_open_discovery()
+        self.assertEqual(action['res_model'], 'club_social_profile.profile')
+
+    # ── discovery_criteria_count ──────────────────────────────────────────────
+
+    def test_discovery_criteria_count(self):
+        before = self.searcher.discovery_criteria_count
+        self._make_criteria(name='Count Test')
+        self.searcher.invalidate_recordset(['discovery_criteria_count'])
+        self.assertEqual(self.searcher.discovery_criteria_count, before + 1)
+
     # ── action_search returns act_window ──────────────────────────────────────
 
     def test_action_search_returns_window(self):
@@ -171,3 +262,10 @@ class TestDiscovery(TransactionCase):
         action = crit.action_search()
         self.assertEqual(action['type'], 'ir.actions.act_window')
         self.assertEqual(action['res_model'], 'club_social_profile.profile')
+
+    def test_action_search_domain_contains_matching_ids(self):
+        crit = self._make_criteria(city='Montréal')
+        action = crit.action_search()
+        domain_ids = dict(action['domain'])['id__in'] if 'id__in' in dict(action.get('domain', [])) else None
+        # Vérifie que le domaine restreint bien aux profils trouvés
+        self.assertIn(('id', 'in', crit._find_profiles().ids), action['domain'])
