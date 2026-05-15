@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_social_circles_circle_user,social_circles.circle user,model_social_circles_circle,social_base.group_social_user,1,1,1,1
 access_social_circles_circle_moderator,social_circles.circle moderator,model_social_circles_circle,social_base.group_social_moderator,1,1,1,1
 access_social_circles_circle_admin,social_circles.circle admin,model_social_circles_circle,social_base.group_social_admin,1,1,1,1
+access_social_circles_circle_system,social_circles.circle system,model_social_circles_circle,base.group_system,1,1,1,1

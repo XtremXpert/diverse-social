@@ -1,3 +1,4 @@
+from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.exceptions import UserError
 
@@ -154,6 +155,7 @@ class TestPortalReputationHttp(HttpCase):
 
     def test_vouching_page_authenticated_ok(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/vouching')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Parrainages', resp.content)
@@ -161,6 +163,7 @@ class TestPortalReputationHttp(HttpCase):
     def test_vouching_page_has_form_for_connections(self):
         self._setup()
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/vouching')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'vouching/give', resp.content)
@@ -168,9 +171,10 @@ class TestPortalReputationHttp(HttpCase):
     def test_give_vouching(self):
         newcomer = self._setup()
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/vouching/give',
-            data={
+            data={'csrf_token': _csrf, 
                 'newcomer_id': str(newcomer.id),
                 'statement': 'Great person',
             },
@@ -191,9 +195,10 @@ class TestPortalReputationHttp(HttpCase):
             'email': 'rep_stranger@rep.test', 'password': 'Test1234!',
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         self.url_open(
             '/my/vouching/give',
-            data={'newcomer_id': str(stranger.id)},
+            data={'csrf_token': _csrf, 'newcomer_id': str(stranger.id)},
         )
         admin = self.env.ref('base.user_admin')
         v = self.env['social_reputation.vouching'].sudo().search([
@@ -210,9 +215,10 @@ class TestPortalReputationHttp(HttpCase):
             'statement': 'To be withdrawn',
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             f'/my/vouching/{v.id}/withdraw',
-            data={'reason': 'Test withdrawal'},
+            data={'csrf_token': _csrf, 'reason': 'Test withdrawal'},
         )
         self.assertEqual(resp.status_code, 200)
         v.invalidate_recordset()
@@ -221,6 +227,7 @@ class TestPortalReputationHttp(HttpCase):
     def test_profile_page_has_vouch_button(self):
         newcomer = self._setup()
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/profile/{newcomer.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Parrainer', resp.content)
@@ -233,6 +240,7 @@ class TestPortalReputationHttp(HttpCase):
             'newcomer_id': newcomer.id,
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/vouching')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Personnes parrain', resp.content)

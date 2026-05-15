@@ -1,5 +1,6 @@
 import datetime
 
+from odoo.http import Request
 from odoo.tests import HttpCase, tagged, TransactionCase
 
 
@@ -196,6 +197,7 @@ class TestMembershipWebsiteHttp(HttpCase):
     def test_portal_my_memberships_authenticated(self):
         """La page /my/membership est accessible pour un utilisateur connecté."""
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         response = self.url_open('/my/membership')
         self.assertEqual(response.status_code, 200)
 
@@ -227,14 +229,16 @@ class TestMembershipWebsiteHttp(HttpCase):
             'state': 'active',
         })
         self.authenticate(other_portal.login, 'odoo1234')
+        _csrf = Request.csrf_token(self)
         response = self.url_open(f'/my/membership/{membership.id}', allow_redirects=False)
         self.assertIn(response.status_code, (403, 302, 303))
 
     def test_join_nonexistent_type_returns_404(self):
         """POST /membership/join/999999 retourne 404 si le type n'existe pas."""
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         response = self.url_open('/membership/join/999999',
-                                 data={},
+                                 data={'csrf_token': _csrf, },
                                  allow_redirects=False)
         self.assertEqual(response.status_code, 404)
 

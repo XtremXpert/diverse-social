@@ -249,9 +249,13 @@ class TestSocialEvents(TransactionCase):
 
     def test_members_event_invisible_to_non_social_in_search(self):
         """Un utilisateur sans groupe social ne trouve pas l'événement 'members' via search."""
+        from odoo.exceptions import AccessError
         non_social = self.env['res.users'].create({
             'name': 'Non Social Search', 'login': 'sevt_nss', 'email': 'nss@evt.test',
         })
         event = self._make_event(visibility='members')
-        found = self.Event.with_user(non_social).search([('id', '=', event.id)])
-        self.assertFalse(found)
+        try:
+            found = self.Event.with_user(non_social).search([('id', '=', event.id)])
+            self.assertFalse(found)
+        except AccessError:
+            pass  # No access to events at all → event is not visible

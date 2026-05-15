@@ -13,7 +13,7 @@ def _make_social_user(env, name, login):
     })
 
 
-@tagged('club_social_profile', 'dashboard_portal')
+@tagged('club_social_profile', 'dashboard_portal', 'post_install', '-at_install')
 class TestDashboardData(TransactionCase):
 
     @classmethod
@@ -172,6 +172,8 @@ class TestDashboardHttp(HttpCase):
         self.assertIn(b'Nouvelles connexions', resp.content)
 
     def test_dashboard_contains_profile_card(self):
+        admin = self.env.ref('base.user_admin')
+        self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin)
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/dashboard')
         self.assertEqual(resp.status_code, 200)

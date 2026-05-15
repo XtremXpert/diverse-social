@@ -63,7 +63,7 @@ class TestClubSocialProfile(TransactionCase):
         self.assertEqual(profile.partner_id, self.user.partner_id)
 
 
-@tagged('club_social_profile', 'notification')
+@tagged('club_social_profile', 'notification', 'post_install', '-at_install')
 class TestClubSocialNotification(TransactionCase):
 
     @classmethod
@@ -157,7 +157,7 @@ class TestClubSocialNotification(TransactionCase):
         self.assertEqual(remaining, 0)
 
 
-@tagged('club_social_profile', 'profile_visit')
+@tagged('club_social_profile', 'profile_visit', 'post_install', '-at_install')
 class TestProfileVisit(TransactionCase):
 
     @classmethod

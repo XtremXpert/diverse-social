@@ -21,7 +21,7 @@ def _connect(env, user_a, user_b):
     ])
 
 
-@tagged('club_social_profile', 'portal_discover')
+@tagged('club_social_profile', 'portal_discover', 'post_install', '-at_install')
 class TestPortalDiscoverData(TransactionCase):
 
     @classmethod

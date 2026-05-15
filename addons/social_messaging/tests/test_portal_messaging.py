@@ -1,3 +1,4 @@
+from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -102,21 +103,24 @@ class TestPortalMessagingHttp(HttpCase):
 
     def test_messages_list_authenticated_ok(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/messages')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'messages', resp.content.lower())
 
     def test_messages_thread_invalid_id_404(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/messages/999999999')
         self.assertEqual(resp.status_code, 404)
 
     def test_messages_start_self_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         admin = self.env.ref('base.user_admin')
         resp = self.url_open(
             f'/my/messages/start/{admin.id}',
-            data={},
+            data={'csrf_token': _csrf, },
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -129,9 +133,10 @@ class TestPortalMessagingHttp(HttpCase):
             'group_ids': [(4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             f'/my/messages/start/{other.id}',
-            data={},
+            data={'csrf_token': _csrf, },
         )
         self.assertEqual(resp.status_code, 200)
         thread = self.env['social_messaging.thread'].sudo().search([
@@ -148,13 +153,14 @@ class TestPortalMessagingHttp(HttpCase):
             'group_ids': [(4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         admin = self.env.ref('base.user_admin')
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [admin.id, other.id]
         )
         resp = self.url_open(
             f'/my/messages/{thread.id}/send',
-            data={'content': 'Test AJAX send'},
+            data={'csrf_token': _csrf, 'content': 'Test AJAX send'},
         )
         self.assertEqual(resp.status_code, 200)
         import json
@@ -171,6 +177,7 @@ class TestPortalMessagingHttp(HttpCase):
             'group_ids': [(4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         admin = self.env.ref('base.user_admin')
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [admin.id, other.id]
@@ -194,6 +201,7 @@ class TestPortalMessagingHttp(HttpCase):
             [admin.id, participant.id]
         )
         self.authenticate('thread_participant_http', 'Test1234!')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/my/messages/{thread.id}')
         self.assertEqual(resp.status_code, 200)
 
@@ -218,6 +226,7 @@ class TestPortalMessagingHttp(HttpCase):
             [user_x.id, user_y.id]
         )
         self.authenticate('thread_outsider_http', 'Test1234!')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/my/messages/{thread.id}')
         self.assertEqual(resp.status_code, 404)
 
@@ -234,9 +243,10 @@ class TestPortalMessagingHttp(HttpCase):
             [admin.id, other.id]
         )
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             f'/my/messages/{thread.id}/send',
-            data={'content': '   '},
+            data={'csrf_token': _csrf, 'content': '   '},
         )
         self.assertEqual(resp.status_code, 200)
         data = json.loads(resp.content)
@@ -262,9 +272,10 @@ class TestPortalMessagingHttp(HttpCase):
             'blocker_id': blocked.id, 'blocked_id': blocker.id,
         })
         self.authenticate('blocker_send_http', 'Test1234!')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             f'/my/messages/{thread.id}/send',
-            data={'content': 'Blocked message'},
+            data={'csrf_token': _csrf, 'content': 'Blocked message'},
         )
         data = json.loads(resp.content)
         self.assertFalse(data.get('ok'))
@@ -291,6 +302,7 @@ class TestPortalMessagingHttp(HttpCase):
             [px.id, py.id]
         )
         self.authenticate('poll_outsider_http', 'Test1234!')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/my/messages/{thread.id}/poll?since_id=0')
         data = json.loads(resp.content)
         self.assertFalse(data.get('ok'))

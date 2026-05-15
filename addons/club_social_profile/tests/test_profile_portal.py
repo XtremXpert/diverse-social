@@ -1,3 +1,4 @@
+from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -10,7 +11,7 @@ def _make_social_user(env, name, login):
     })
 
 
-@tagged('club_social_profile', 'profile_portal')
+@tagged('club_social_profile', 'profile_portal', 'post_install', '-at_install')
 class TestProfilePortalData(TransactionCase):
 
     @classmethod
@@ -156,20 +157,23 @@ class TestProfileEditHttp(HttpCase):
 
     def test_edit_authenticated_ok(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
 
     def test_edit_preferences_tab(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit?section=preferences')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Visibilité', resp.text)
 
     def test_save_identity_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/profile/edit/identity',
-            data={
+            data={'csrf_token': _csrf, 
                 'bio': 'Bio test édition',
                 'city': 'Montréal',
                 'gender': 'non_binaire',
@@ -181,27 +185,30 @@ class TestProfileEditHttp(HttpCase):
 
     def test_save_identity_invalid_gender_ignored(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/profile/edit/identity',
-            data={'gender': 'INVALIDE'},
+            data={'csrf_token': _csrf, 'gender': 'INVALIDE'},
         )
         self.assertEqual(resp.status_code, 200)
 
     def test_save_identity_underage_returns_error(self):
         import datetime
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/profile/edit/identity',
-            data={'birth_year': str(datetime.date.today().year - 16)},
+            data={'csrf_token': _csrf, 'birth_year': str(datetime.date.today().year - 16)},
         )
         self.assertEqual(resp.status_code, 200)
         self.assertIn('18 ans', resp.text)
 
     def test_save_preferences_ok(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/profile/edit/preferences',
-            data={
+            data={'csrf_token': _csrf, 
                 'visibility': 'members',
                 'availability': 'disponible',
             },
@@ -211,6 +218,7 @@ class TestProfileEditHttp(HttpCase):
 
     def test_edit_page_has_tabs(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Identité', resp.text)
@@ -225,30 +233,33 @@ class TestProfilePortalHttp(HttpCase):
         self.assertIn(resp.status_code, (302, 303))
 
     def test_own_profile_authenticated_ok(self):
-        self.authenticate('admin', 'admin')
         admin_user = self.env.ref('base.user_admin')
+        self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)
 
     def test_nonexistent_profile_returns_404(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/profile/999999999')
         self.assertEqual(resp.status_code, 404)
 
     def test_profile_page_shows_display_name(self):
-        self.authenticate('admin', 'admin')
         admin_user = self.env.ref('base.user_admin')
+        self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(admin_user.name.encode(), resp.content)
 
     def test_profile_with_bio(self):
-        self.authenticate('admin', 'admin')
         admin_user = self.env.ref('base.user_admin')
-        profile = self.env['club_social_profile.profile'].sudo().search(
-            [('user_id', '=', admin_user.id)], limit=1
-        )
-        if profile:
-            profile.sudo().write({'bio': 'Bio test HTTP portail'})
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
+        profile.sudo().write({'bio': 'Bio test HTTP portail'})
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)

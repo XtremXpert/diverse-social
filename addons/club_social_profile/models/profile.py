@@ -82,7 +82,7 @@ class ClubSocialProfile(models.Model):
     profile_visit_ids = fields.One2many('club_social_profile.profile_visit', 'profile_id', string='Visits')
 
     # ── Age verification ─────────────────────────────────────────────────────
-    age_verified = fields.Boolean(compute='_compute_age_verified', string='Age Verified (18+)')
+    age_verified = fields.Boolean(compute='_compute_age_verified', string='Age Verified (18+)', store=True)
 
     @api.depends('birth_year')
     def _compute_age_verified(self):

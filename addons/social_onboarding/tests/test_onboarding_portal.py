@@ -1,5 +1,6 @@
 import datetime
 
+from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -141,43 +142,50 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_onboarding_authenticated_ok(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding')
         self.assertEqual(resp.status_code, 200)
 
     def test_onboarding_step_welcome(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=welcome')
         self.assertEqual(resp.status_code, 200)
 
     def test_onboarding_step_about(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=about')
         self.assertEqual(resp.status_code, 200)
 
     def test_onboarding_step_preferences(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=preferences')
         self.assertEqual(resp.status_code, 200)
 
     def test_onboarding_step_done(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=done')
         self.assertEqual(resp.status_code, 200)
 
     def test_save_welcome_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/save/welcome',
-            data={},
+            data={'csrf_token': _csrf, },
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
 
     def test_save_about_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/save/about',
-            data={'bio': 'Test', 'city': 'Mtl'},
+            data={'csrf_token': _csrf, 'bio': 'Test', 'city': 'Mtl'},
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
@@ -185,10 +193,11 @@ class TestOnboardingPortalHttp(HttpCase):
     def test_save_about_underage_returns_200(self):
         """Année de naissance invalide → réaffichage du formulaire (200), pas de redirect."""
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         current_year = datetime.date.today().year
         resp = self.url_open(
             '/onboarding/save/about',
-            data={
+            data={'csrf_token': _csrf, 
                 'birth_year': str(current_year - 16),
             },
         )
@@ -196,9 +205,10 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_save_about_with_gender_orientation(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/save/about',
-            data={
+            data={'csrf_token': _csrf, 
                 'gender': 'non_binaire',
                 'orientation': 'queer',
                 'city': 'Montréal',
@@ -211,9 +221,10 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_save_about_invalid_gender_ignored(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/save/about',
-            data={
+            data={'csrf_token': _csrf, 
                 'gender': 'INVALID_VALUE',
             },
             allow_redirects=False,
@@ -223,6 +234,7 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_onboarding_about_shows_gender_fields(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=about')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'genre', resp.content.lower())
@@ -230,24 +242,27 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_onboarding_preferences_shows_looking_for(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=preferences')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('cherche'.encode(), resp.content.lower())
 
     def test_skip_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/skip',
-            data={},
+            data={'csrf_token': _csrf, },
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
 
     def test_save_preferences_redirects(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/onboarding/save/preferences',
-            data={
+            data={'csrf_token': _csrf, 
                 'visibility': 'connections',
                 'availability': 'disponible',
             },
@@ -257,9 +272,10 @@ class TestOnboardingPortalHttp(HttpCase):
 
     def test_save_preferences_persists_visibility(self):
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         self.url_open(
             '/onboarding/save/preferences',
-            data={
+            data={'csrf_token': _csrf, 
                 'visibility': 'connections',
                 'availability': 'non_specifie',
             },
@@ -274,9 +290,10 @@ class TestOnboardingPortalHttp(HttpCase):
     def test_save_preferences_digest_unchecked_is_false(self):
         """digest_email_enabled absent du POST → False en base."""
         self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
         self.url_open(
             '/onboarding/save/preferences',
-            data={
+            data={'csrf_token': _csrf, 
                 'visibility': 'members',
                 # digest_email_enabled absent = décoché
             },

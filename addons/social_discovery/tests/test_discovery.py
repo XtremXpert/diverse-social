@@ -266,6 +266,4 @@ class TestDiscovery(TransactionCase):
     def test_action_search_domain_contains_matching_ids(self):
         crit = self._make_criteria(city='Montréal')
         action = crit.action_search()
-        domain_ids = dict(action['domain'])['id__in'] if 'id__in' in dict(action.get('domain', [])) else None
-        # Vérifie que le domaine restreint bien aux profils trouvés
         self.assertIn(('id', 'in', crit._find_profiles().ids), action['domain'])
