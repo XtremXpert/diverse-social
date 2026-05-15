@@ -9,3 +9,10 @@ access_event_tag_social,event.tag social,event.model_event_tag,social_base.group
 access_event_tag_category_social,event.tag.category social,event.model_event_tag_category,social_base.group_social_user,1,0,0,0
 access_event_ticket_social,event.event.ticket social,event.model_event_event_ticket,social_base.group_social_user,1,0,0,0
 access_event_type_social,event.type social,event.model_event_type,social_base.group_social_user,1,0,0,0
+access_event.event_event_system,event.event social system,event.model_event_event,base.group_system,1,0,0,0
+access_event.event_registration_system,event.registration social system,event.model_event_registration,base.group_system,1,1,1,0
+access_event.event_stage_system,event.stage social,event.model_event_stage,base.group_system,1,0,0,0
+access_event.event_tag_system,event.tag social,event.model_event_tag,base.group_system,1,0,0,0
+access_event.event_tag_category_system,event.tag.category social,event.model_event_tag_category,base.group_system,1,0,0,0
+access_event.event_event_ticket_system,event.event.ticket social,event.model_event_event_ticket,base.group_system,1,0,0,0
+access_event.event_type_system,event.type social,event.model_event_type,base.group_system,1,0,0,0

@@ -3,3 +3,5 @@ access_safety_block_user,social_safety.block user,model_social_safety_block,soci
 access_safety_block_moderator,social_safety.block moderator,model_social_safety_block,social_base.group_social_moderator,1,1,1,1
 access_safety_mute_user,social_safety.mute user,model_social_safety_mute,social_base.group_social_user,1,1,1,1
 access_safety_mute_moderator,social_safety.mute moderator,model_social_safety_mute,social_base.group_social_moderator,1,1,1,1
+access_social_safety_block_system,social_safety.block system,model_social_safety_block,base.group_system,1,1,1,1
+access_social_safety_mute_system,social_safety.mute system,model_social_safety_mute,base.group_system,1,1,1,1

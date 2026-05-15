@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_vouching_user,social_reputation.vouching user,model_social_reputation_vouching,social_base.group_social_user,1,1,1,0
 access_vouching_moderator,social_reputation.vouching moderator,model_social_reputation_vouching,social_base.group_social_moderator,1,1,1,1
 access_vouching_admin,social_reputation.vouching admin,model_social_reputation_vouching,social_base.group_social_admin,1,1,1,1
+access_social_reputation_vouching_system,social_reputation.vouching system,model_social_reputation_vouching,base.group_system,1,1,1,0

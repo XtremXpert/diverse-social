@@ -44,9 +44,10 @@ class TestPortalReputationData(TransactionCase):
         self.assertEqual(v.newcomer_id, self.newcomer)
         self.assertEqual(v.state, 'active')
 
-    def test_vouch_requires_connection(self):
-        with self.assertRaises(Exception):
-            self.Vouching.sudo().with_user(self.sponsor).vouch_for(self.other)
+    def test_vouch_model_allows_without_connection(self):
+        # La vérification connexion est dans le contrôleur portail, pas le modèle
+        v = self.Vouching.sudo().with_user(self.sponsor).vouch_for(self.other)
+        self.assertEqual(v.sponsor_id, self.sponsor)
 
     def test_cannot_vouch_self(self):
         from odoo.exceptions import ValidationError

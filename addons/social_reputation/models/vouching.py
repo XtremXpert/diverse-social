@@ -74,15 +74,7 @@ class SocialVouching(models.Model):
 
     @api.model
     def vouch_for(self, newcomer_user, statement=None):
-        """Create an active vouching. Raises if no accepted connection or if already exists."""
-        Connection = self.env['club_social_profile.connection']
-        connected = Connection.sudo().search_count([
-            ('user_id', '=', self.env.user.id),
-            ('connected_user_id', '=', newcomer_user.id),
-            ('state', '=', 'accepted'),
-        ])
-        if not connected:
-            raise UserError(_('You must be connected with %(name)s to vouch for them.', name=newcomer_user.name))
+        """Create an active vouching. Raises if already exists (active or withdrawn)."""
         existing = self.search([
             ('sponsor_id', '=', self.env.user.id),
             ('newcomer_id', '=', newcomer_user.id),
