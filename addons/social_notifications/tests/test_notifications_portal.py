@@ -107,6 +107,42 @@ class TestNotificationsPortalData(TransactionCase):
         other_ids = [n.id for n in mine if n.user_id.id != self.user.id]
         self.assertEqual(other_ids, [])
 
+    def test_extended_notification_types_in_selection(self):
+        """Les types ajoutés par social_notifications doivent être dans la selection."""
+        fields_def = self.env['club_social_profile.notification']._fields['type']
+        selection_keys = [k for k, _ in fields_def.selection]
+        extended_types = [
+            'event_registration', 'group_join_request', 'group_join_approved',
+            'proposal_voting', 'story_new', 'gallery_photo_approved',
+            'gallery_photo_rejected', 'vouching_received', 'vouching_withdrawn',
+            'negotiation_shared', 'negotiation_signed', 'negotiation_active',
+            'circle_added',
+        ]
+        for t in extended_types:
+            self.assertIn(t, selection_keys, f'Type manquant dans la sélection : {t}')
+
+    def test_notification_with_url(self):
+        """Une notification peut avoir une URL."""
+        n = self.env['club_social_profile.notification'].sudo().create({
+            'user_id': self.user.id,
+            'actor_id': self.actor.id,
+            'type': 'post_like',
+            'body': 'Avec URL',
+            'url': '/social/feed',
+        })
+        self.assertEqual(n.url, '/social/feed')
+
+    def test_notification_bus_push_no_error(self):
+        """La création déclenche le bus push sans erreur."""
+        n = self.env['club_social_profile.notification'].sudo().create({
+            'user_id': self.user.id,
+            'actor_id': self.actor.id,
+            'type': 'event_registration',
+            'body': 'Bus test',
+            'url': '/event/1',
+        })
+        self.assertTrue(n.exists())
+
 
 @tagged('social_notifications', 'notifications_portal', 'post_install', '-at_install')
 class TestNotificationsPortalHttp(HttpCase):
@@ -155,3 +191,57 @@ class TestNotificationsPortalHttp(HttpCase):
         resp = self.url_open('/social/notifications')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Notifications', resp.content)
+
+    def test_api_list_unauthenticated_redirects(self):
+        resp = self.url_open('/social/api/notifications', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_api_mark_single_read(self):
+        """POST /social/api/notifications/<id>/read marque la notification comme lue."""
+        admin = self.env.ref('base.user_admin')
+        notif = self.env['club_social_profile.notification'].sudo().create({
+            'user_id': admin.id,
+            'actor_id': admin.id,
+            'type': 'post_like',
+            'body': 'API single read test',
+            'is_read': False,
+        })
+        # Contournement _notify ignore user==actor : écriture directe
+        notif.sudo().write({'is_read': False})
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(f'/social/api/notifications/{notif.id}/read', data={})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data.get('success'))
+        notif.invalidate_recordset(['is_read'])
+        self.assertTrue(notif.is_read)
+
+    def test_api_mark_read_other_user_404(self):
+        """POST mark read sur la notification d'un autre utilisateur → 404."""
+        group_social = self.env.ref('social_base.group_social_user')
+        other = self.env['res.users'].sudo().create({
+            'name': 'Other404', 'login': 'other_404_notif',
+            'email': 'other404@notif.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        admin = self.env.ref('base.user_admin')
+        notif = self.env['club_social_profile.notification'].sudo().create({
+            'user_id': other.id,
+            'actor_id': admin.id,
+            'type': 'post_like',
+            'body': 'Belongs to other',
+        })
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(f'/social/api/notifications/{notif.id}/read', data={})
+        self.assertEqual(resp.status_code, 404)
+
+    def test_api_notif_to_dict_structure(self):
+        """La réponse API contient les champs attendus pour chaque notification."""
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/notifications')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        for n in data['data']['notifications']:
+            for key in ('id', 'type', 'body', 'is_read', 'read_at',
+                        'create_date', 'url', 'ref_model', 'ref_id'):
+                self.assertIn(key, n)
