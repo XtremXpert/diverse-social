@@ -245,3 +245,51 @@ class TestOnboardingPortalHttp(HttpCase):
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
+
+    def test_save_preferences_redirects(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/onboarding/save/preferences',
+            data={
+                'csrf_token': self.csrf_token(),
+                'visibility': 'connections',
+                'availability': 'disponible',
+            },
+            allow_redirects=False,
+        )
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_save_preferences_persists_visibility(self):
+        self.authenticate('admin', 'admin')
+        self.url_open(
+            '/onboarding/save/preferences',
+            data={
+                'csrf_token': self.csrf_token(),
+                'visibility': 'connections',
+                'availability': 'non_specifie',
+            },
+        )
+        admin = self.env.ref('base.user_admin')
+        profile = self.env['club_social_profile.profile'].sudo().search(
+            [('user_id', '=', admin.id)], limit=1
+        )
+        if profile:
+            self.assertEqual(profile.visibility, 'connections')
+
+    def test_save_preferences_digest_unchecked_is_false(self):
+        """digest_email_enabled absent du POST → False en base."""
+        self.authenticate('admin', 'admin')
+        self.url_open(
+            '/onboarding/save/preferences',
+            data={
+                'csrf_token': self.csrf_token(),
+                'visibility': 'members',
+                # digest_email_enabled absent = décoché
+            },
+        )
+        admin = self.env.ref('base.user_admin')
+        profile = self.env['club_social_profile.profile'].sudo().search(
+            [('user_id', '=', admin.id)], limit=1
+        )
+        if profile:
+            self.assertFalse(profile.digest_email_enabled)

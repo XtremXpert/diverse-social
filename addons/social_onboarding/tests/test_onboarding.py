@@ -234,3 +234,40 @@ class TestSocialOnboarding(TransactionCase):
         action = profile.with_user(self.user).action_open_onboarding()
         self.assertEqual(action['type'], 'ir.actions.act_window')
         self.assertEqual(action['res_model'], 'social_onboarding.wizard')
+
+    def test_action_open_loads_profile_data(self):
+        """action_open pré-remplit le wizard avec les données existantes du profil."""
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.user)
+        profile.sudo().write({'bio': 'Bio existante', 'city': 'Québec', 'birth_year': 1985})
+        action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
+        wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        self.assertEqual(wizard.bio, 'Bio existante')
+        self.assertEqual(wizard.city, 'Québec')
+        self.assertEqual(wizard.birth_year, 1985)
+
+    def test_skip_saves_to_profile(self):
+        """action_skip sauvegarde les champs remplis vers le profil."""
+        action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
+        wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        wizard.write({'bio': 'Bio via skip', 'city': 'Laval'})
+        wizard.action_skip()
+        profile = wizard.profile_id
+        self.assertEqual(profile.bio, 'Bio via skip')
+        self.assertEqual(profile.city, 'Laval')
+
+    def test_action_next_at_done_stays_done(self):
+        """action_next à l'étape 'done' ne dépasse pas 'done'."""
+        action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
+        wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        wizard.step = 'done'
+        wizard.action_next()
+        self.assertEqual(wizard.step, 'done')
+
+    def test_finish_returns_client_action(self):
+        """action_finish retourne une action client (notification)."""
+        action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
+        wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        wizard.step = 'preferences'
+        result = wizard.action_finish()
+        self.assertEqual(result['type'], 'ir.actions.client')
+        self.assertEqual(result['tag'], 'display_notification')
