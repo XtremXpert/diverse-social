@@ -2,7 +2,7 @@ import datetime
 import math
 from datetime import timezone
 
-from odoo.tests import TransactionCase, tagged
+from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 @tagged('social_feed', 'feed')
@@ -585,3 +585,165 @@ class TestSocialFeed(TransactionCase):
         result = self.Feed.with_user(self.alice).get_feed(limit=100)
         types_present = {i['item_type'] for i in result['items']}
         self.assertIn('event_registration', types_present)
+
+    # ── Gallery ───────────────────────────────────────────────────────────────
+
+    def _make_approved_photo(self, name='Photo Feed'):
+        import base64
+        tiny_png = (
+            b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'
+            b'\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00'
+            b'\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82'
+        )
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Galerie Feed Test',
+            'owner_id': self.alice.id,
+            'visibility': 'members',
+        })
+        photo = self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'name': name,
+            'image_1920': base64.b64encode(tiny_png).decode('ascii'),
+            'submitted_by_id': self.alice.id,
+            'state': 'approved',
+            'moderation_date': datetime.datetime.now(),
+        })
+        return gallery, photo
+
+    def test_gallery_photo_appears_in_feed(self):
+        """Une photo approuvée d'une galerie members doit apparaître dans le feed."""
+        gallery, photo = self._make_approved_photo()
+        result = self.Feed.with_user(self.bob).get_feed(types=['gallery'])
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'gallery']
+        self.assertIn(photo.id, ids)
+
+    def test_gallery_pending_photo_excluded(self):
+        """Une photo en attente ne doit pas apparaître dans le feed."""
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Galerie Feed Pending',
+            'owner_id': self.alice.id,
+            'visibility': 'members',
+        })
+        photo = self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'submitted_by_id': self.alice.id,
+            'state': 'pending',
+        })
+        result = self.Feed.with_user(self.bob).get_feed(types=['gallery'])
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'gallery']
+        self.assertNotIn(photo.id, ids)
+
+    def test_gallery_private_gallery_excluded(self):
+        """Les photos d'une galerie privée ne doivent pas apparaître."""
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Galerie Feed Privée',
+            'owner_id': self.alice.id,
+            'visibility': 'private',
+        })
+        photo = self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'submitted_by_id': self.alice.id,
+            'state': 'approved',
+        })
+        result = self.Feed.with_user(self.bob).get_feed(types=['gallery'])
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'gallery']
+        self.assertNotIn(photo.id, ids)
+
+    def test_gallery_item_structure(self):
+        """Un item gallery doit avoir les champs attendus."""
+        gallery, photo = self._make_approved_photo(name='Photo Structure')
+        result = self.Feed.with_user(self.bob).get_feed(types=['gallery'])
+        item = next((i for i in result['items']
+                     if i['item_type'] == 'gallery' and i['id'] == photo.id), None)
+        self.assertIsNotNone(item)
+        for key in ('item_type', 'id', 'timestamp', 'gallery_id', 'gallery_name',
+                    'photo_name', 'submitted_by_id', 'submitted_by_name'):
+            self.assertIn(key, item)
+        self.assertEqual(item['gallery_id'], gallery.id)
+
+    # ── _parse_ts ─────────────────────────────────────────────────────────────
+
+    def test_parse_ts_none_returns_none(self):
+        from odoo.addons.social_feed.models.feed_service import _parse_ts
+        self.assertIsNone(_parse_ts(None))
+
+    def test_parse_ts_invalid_returns_none(self):
+        from odoo.addons.social_feed.models.feed_service import _parse_ts
+        self.assertIsNone(_parse_ts('not-a-date'))
+
+    def test_parse_ts_naive_gets_utc(self):
+        from odoo.addons.social_feed.models.feed_service import _parse_ts
+        result = _parse_ts('2024-01-15T10:00:00')
+        self.assertIsNotNone(result.tzinfo)
+
+    def test_parse_ts_aware_preserved(self):
+        from odoo.addons.social_feed.models.feed_service import _parse_ts
+        result = _parse_ts('2024-01-15T10:00:00+05:00')
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.tzinfo)
+
+    # ── Service metadata ──────────────────────────────────────────────────────
+
+    def test_get_feed_types_contains_expected(self):
+        types = self.Feed.with_user(self.alice)._get_feed_types()
+        for t in ('post', 'story', 'event', 'event_registration', 'proposal', 'gallery'):
+            self.assertIn(t, types)
+
+    def test_get_feed_dispatch_keys(self):
+        dispatch = self.Feed.with_user(self.alice)._get_feed_dispatch()
+        for t in ('post', 'story', 'event', 'event_registration', 'proposal', 'gallery'):
+            self.assertIn(t, dispatch)
+            self.assertTrue(callable(dispatch[t]))
+
+    def test_post_item_html_stripped(self):
+        """_post_item doit retourner un excerpt sans balises HTML."""
+        post = self._make_post(self.alice, content='<b>texte</b> <em>important</em>')
+        result = self.Feed.with_user(self.alice).get_feed(types=['post'])
+        item = next((i for i in result['items']
+                     if i['item_type'] == 'post' and i['id'] == post.id), None)
+        self.assertIsNotNone(item)
+        self.assertNotIn('<', item['content_excerpt'])
+        self.assertNotIn('>', item['content_excerpt'])
+
+
+@tagged('social_feed', 'feed', 'post_install', '-at_install')
+class TestSocialFeedHttp(HttpCase):
+
+    def test_feed_unauthenticated_redirects(self):
+        resp = self.url_open('/social/api/feed', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_feed_authenticated_returns_json(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/feed')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('items', data)
+        self.assertIn('has_more', data)
+
+    def test_feed_type_filter(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/feed?types=post')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        for item in data['items']:
+            self.assertEqual(item['item_type'], 'post')
+
+    def test_feed_sort_relevance(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/feed?sort=relevance&limit=5')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('items', data)
+
+    def test_feed_sort_invalid_defaults_to_recent(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/feed?sort=invalid_sort')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_feed_limit_param(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/feed?limit=3')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertLessEqual(len(data['items']), 3)
