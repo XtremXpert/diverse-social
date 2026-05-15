@@ -232,3 +232,100 @@ class TestSocialSearch(TransactionCase):
         results = self.Search.with_user(self.alice).search_all('', limit=999)
         for items in results.values():
             self.assertLessEqual(len(items), 50)
+
+    # ── Dict helpers ──────────────────────────────────────────────────────────
+
+    def test_profile_to_dict_bio_truncated(self):
+        """bio tronquée à 120 caractères."""
+        self.alice_profile.sudo().write({'bio': 'A' * 200})
+        results = self.Search.with_user(self.alice)._search_profiles('Alice Recherche', 20, 0)
+        item = next(r for r in results if r['id'] == self.alice_profile.id)
+        self.assertEqual(len(item['bio']), 120)
+
+    def test_profile_to_dict_keys(self):
+        results = self.Search.with_user(self.alice)._search_profiles('Bob Recherche', 20, 0)
+        item = next(r for r in results if r['id'] == self.bob_profile.id)
+        for key in ('type', 'id', 'user_id', 'name', 'login', 'city', 'bio', 'url'):
+            self.assertIn(key, item)
+        self.assertEqual(item['type'], 'profile')
+        self.assertTrue(item['url'].startswith('/profile/'))
+
+    def test_post_to_dict_html_stripped(self):
+        """excerpt ne contient pas de balises HTML."""
+        post = self.env['social_base.post'].sudo().create({
+            'name': 'Post HTML Strip',
+            'content': '<p>Contenu <b>en gras</b> test strip</p>',
+            'author_id': self.alice.id,
+            'visibility': 'members',
+            'state': 'published',
+        })
+        results = self.Search.with_user(self.alice)._search_posts('test strip', 20, 0)
+        item = next((r for r in results if r['id'] == post.id), None)
+        self.assertIsNotNone(item)
+        self.assertNotIn('<', item['excerpt'])
+        self.assertNotIn('>', item['excerpt'])
+
+    def test_post_to_dict_keys_and_visibility(self):
+        post = self.env['social_base.post'].sudo().create({
+            'name': 'Post Dict Keys',
+            'content': '<p>Contenu clés</p>',
+            'author_id': self.alice.id,
+            'visibility': 'public',
+            'state': 'published',
+        })
+        results = self.Search.with_user(self.alice)._search_posts('Contenu clés', 20, 0)
+        item = next((r for r in results if r['id'] == post.id), None)
+        self.assertIsNotNone(item)
+        for key in ('type', 'id', 'name', 'excerpt', 'author', 'create_date', 'visibility'):
+            self.assertIn(key, item)
+        self.assertEqual(item['visibility'], 'public')
+
+    def test_event_to_dict_organizer(self):
+        import datetime
+        now = datetime.datetime.now()
+        event = self.env['event.event'].with_user(self.alice).create({
+            'name': 'Événement Organisateur Srch',
+            'date_begin': now,
+            'date_end': now + datetime.timedelta(hours=2),
+            'organizer_user_id': self.alice.id,
+            'social_visibility': 'members',
+        })
+        results = self.Search.with_user(self.alice)._search_events('Organisateur Srch', 20, 0)
+        item = next((r for r in results if r['id'] == event.id), None)
+        self.assertIsNotNone(item)
+        self.assertEqual(item['organizer'], self.alice.name)
+
+    def test_gallery_to_dict_is_shared(self):
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Galerie Partagée Srch',
+            'owner_id': self.alice.id,
+            'visibility': 'members',
+            'is_shared': True,
+        })
+        results = self.Search.with_user(self.alice)._search_galleries('Partagée Srch', 20, 0)
+        item = next((r for r in results if r['id'] == gallery.id), None)
+        self.assertIsNotNone(item)
+        self.assertTrue(item['is_shared'])
+
+    def test_gallery_private_excluded(self):
+        """Les galeries privées ne sont pas retournées."""
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Galerie Privée Srch',
+            'owner_id': self.alice.id,
+            'visibility': 'private',
+        })
+        results = self.Search.with_user(self.alice)._search_galleries('Privée Srch', 20, 0)
+        ids = [r['id'] for r in results]
+        self.assertNotIn(gallery.id, ids)
+
+    def test_offset_pagination(self):
+        """offset décale les résultats de manière cohérente."""
+        results_p0 = self.Search.with_user(self.alice)._search_profiles('', 1, 0)
+        results_p1 = self.Search.with_user(self.alice)._search_profiles('', 1, 1)
+        if results_p0 and results_p1:
+            self.assertNotEqual(results_p0[0]['id'], results_p1[0]['id'])
+
+    def test_get_search_types_returns_expected(self):
+        types = self.Search.with_user(self.alice)._get_search_types()
+        for t in ('profile', 'group', 'event', 'post', 'gallery'):
+            self.assertIn(t, types)

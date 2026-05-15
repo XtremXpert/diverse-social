@@ -164,3 +164,46 @@ class TestSearchPortalHttp(HttpCase):
         resp = self.url_open('/search')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Entrez un terme', resp.content)
+
+    # ── API /social/api/search ────────────────────────────────────────────────
+
+    def test_api_search_unauthenticated_redirects(self):
+        resp = self.url_open('/social/api/search', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_api_search_authenticated_returns_json(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/search?q=admin')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('results', data)
+        self.assertIn('total', data)
+
+    def test_api_search_type_filter(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/search?q=&types=profile')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('profile', data['results'])
+        self.assertNotIn('post', data['results'])
+
+    def test_api_search_empty_query_returns_results(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/search')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIsInstance(data['total'], int)
+
+    def test_api_search_limit_param(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/search?q=&limit=2&types=profile')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertLessEqual(len(data['results'].get('profile', [])), 2)
+
+    def test_api_search_query_field_in_response(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/search?q=test')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['query'], 'test')
