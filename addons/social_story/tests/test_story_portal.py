@@ -180,6 +180,15 @@ class TestStoryPortalHttp(HttpCase):
         self.assertIn('stories', data)
         self.assertIsInstance(data['stories'], list)
 
+    def test_api_stories_unauthenticated_redirects(self):
+        resp = self.url_open('/social/api/stories', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_api_view_story_nonexistent_404(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/stories/999999999/view', data={})
+        self.assertEqual(resp.status_code, 404)
+
     def test_api_view_story_increments_count(self):
         """POST /social/api/stories/<id>/view incrémente view_count."""
         import json

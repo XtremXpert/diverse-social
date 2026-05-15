@@ -121,3 +121,68 @@ class TestSocialStory(TransactionCase):
             s._compute_state()
         count = self.Story.cron_cleanup_expired_stories()
         self.assertGreaterEqual(count, 3)
+
+    def test_cron_keeps_archived_stories(self):
+        """Le cron ne supprime pas les stories archivées (seulement les expirées >7j)."""
+        story = self.Story.sudo().create({'name': 'Archived Kept', 'author_id': self.user.id})
+        story.action_archive()
+        story_id = story.id
+        self.Story.cron_cleanup_expired_stories()
+        self.assertTrue(self.Story.sudo().browse(story_id).exists())
+
+    def test_mark_as_viewed_multiple_users(self):
+        """Deux utilisateurs distincts incrémentent view_count à 2."""
+        other_user = self.env['res.users'].create({
+            'name': 'Other Viewer', 'login': 'story_other_viewer',
+            'email': 'otherview@test.test',
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+        })
+        story = self._make_story('Multi Viewer Story')
+        story.mark_as_viewed(self.user)
+        story.mark_as_viewed(other_user)
+        self.assertEqual(story.view_count, 2)
+        self.assertIn(self.user, story.viewer_ids)
+        self.assertIn(other_user, story.viewer_ids)
+
+    def test_media_type_photo_from_image_attachment(self):
+        """Un attachement image/jpeg → media_type reste 'photo'."""
+        story = self._make_story('Image Story')
+        self.env['ir.attachment'].sudo().create({
+            'name': 'pic.jpg',
+            'res_model': 'social_story.story',
+            'res_id': story.id,
+            'mimetype': 'image/jpeg',
+            'datas': b'',
+        })
+        story._compute_media_type()
+        self.assertEqual(story.media_type, 'photo')
+
+    def test_reaction_no_target_model_false(self):
+        """Une réaction sans post, comment ou story → target_model False."""
+        reaction = self.env['social_base.reaction'].create({
+            'user_id': self.user.id,
+            'type': 'like',
+        })
+        self.assertFalse(reaction.target_model)
+
+    def test_story_to_dict_viewed_field(self):
+        """_story_to_dict retourne viewed=True après mark_as_viewed."""
+        story = self._make_story('Dict Viewed Story')
+        story.mark_as_viewed(self.user)
+        Feed = self.env['social_story.story'].sudo()
+        self.assertIn(self.user, story.viewer_ids)
+
+    def test_multiple_reactions_from_different_users(self):
+        other_user = self.env['res.users'].create({
+            'name': 'Reactor 2', 'login': 'story_reactor2',
+            'email': 'react2@test.test',
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+        })
+        story = self._make_story('Multi Reaction Story')
+        self.env['social_base.reaction'].create({
+            'story_id': story.id, 'user_id': self.user.id, 'type': 'love',
+        })
+        self.env['social_base.reaction'].create({
+            'story_id': story.id, 'user_id': other_user.id, 'type': 'like',
+        })
+        self.assertEqual(len(story.reaction_ids), 2)
