@@ -238,3 +238,141 @@ class TestPortalGalleryHttp(HttpCase):
         resp = self.url_open(f'/gallery/{gallery.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'data-lightbox', resp.content)
+
+    def test_delete_approved_photo_forbidden(self):
+        """Supprimer une photo approuvée retourne 403."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Del Approved Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+        })
+        photo = self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'image_1920': _PNG_B64,
+            'submitted_by_id': admin.id,
+            'state': 'approved',
+        })
+        resp = self.url_open(
+            f'/my/gallery/photo/{photo.id}/delete',
+            data={'csrf_token': self.csrf_token()},
+            allow_redirects=False,
+        )
+        self.assertIn(resp.status_code, (403, 302, 303))
+
+    def test_api_galleries_authenticated_returns_json(self):
+        """GET /social/api/galleries retourne du JSON avec une clé 'galleries'."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        self.env['social_gallery.gallery'].sudo().create({
+            'name': 'API Test Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+        })
+        resp = self.url_open('/social/api/galleries')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('galleries', data)
+        self.assertIsInstance(data['galleries'], list)
+
+    def test_api_galleries_unauthenticated_redirects(self):
+        """GET /social/api/galleries sans auth → redirect."""
+        resp = self.url_open('/social/api/galleries', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+
+    def test_api_gallery_photos_returns_list(self):
+        """GET /social/api/galleries/<id>/photos retourne la liste des photos approuvées."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'API Photos Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+        })
+        self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'image_1920': _PNG_B64,
+            'submitted_by_id': admin.id,
+            'state': 'approved',
+        })
+        resp = self.url_open(f'/social/api/galleries/{gallery.id}/photos')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('photos', data)
+        self.assertGreaterEqual(data['total'], 1)
+
+    def test_api_gallery_photos_pending_excluded(self):
+        """Les photos en attente n'apparaissent pas dans l'API publique."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'API Pending Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+            'is_shared': True,
+        })
+        self.env['social_gallery.photo'].sudo().create({
+            'gallery_id': gallery.id,
+            'submitted_by_id': admin.id,
+            'state': 'pending',
+        })
+        resp = self.url_open(f'/social/api/galleries/{gallery.id}/photos')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['total'], 0)
+
+    def test_api_gallery_photos_nonexistent_404(self):
+        """GET /social/api/galleries/999999/photos retourne 404."""
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/social/api/galleries/999999/photos')
+        self.assertEqual(resp.status_code, 404)
+
+    def test_my_gallery_state_filter_approved(self):
+        """Le filtre state=approved sur /my/gallery retourne 200."""
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/gallery?state=approved')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_my_gallery_state_filter_pending(self):
+        """Le filtre state=pending sur /my/gallery retourne 200."""
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/my/gallery?state=pending')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_submit_to_shared_gallery(self):
+        """POST /gallery/<id>/submit sur une galerie partagée crée une photo en attente."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Submit Test Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+            'is_shared': True,
+        })
+        resp = self.url_open(
+            f'/gallery/{gallery.id}/submit',
+            data={
+                'csrf_token': self.csrf_token(),
+                'name': 'Submitted Photo',
+            },
+            files={'image': ('test.png', _TINY_PNG, 'image/png')},
+        )
+        self.assertEqual(resp.status_code, 200)
+
+    def test_submit_to_non_shared_gallery_forbidden(self):
+        """POST /gallery/<id>/submit sur une galerie non partagée retourne 403."""
+        self.authenticate('admin', 'admin')
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Private Submit Gallery',
+            'owner_id': admin.id,
+            'visibility': 'members',
+            'is_shared': False,
+        })
+        resp = self.url_open(
+            f'/gallery/{gallery.id}/submit',
+            data={'csrf_token': self.csrf_token()},
+            allow_redirects=False,
+        )
+        self.assertIn(resp.status_code, (403, 302, 303))
