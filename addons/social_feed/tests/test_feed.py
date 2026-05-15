@@ -1,4 +1,6 @@
 import datetime
+import math
+from datetime import timezone
 
 from odoo.tests import TransactionCase, tagged
 
@@ -262,3 +264,192 @@ class TestSocialFeed(TransactionCase):
     def test_limit_capped(self):
         result = self.Feed.with_user(self.alice).get_feed(limit=999)
         self.assertLessEqual(len(result['items']), 100)
+
+    # ── Relevance scoring : tests unitaires sur _score_item ───────────────────
+
+    def _fake_ctx(self, connection_ids=None):
+        return {
+            'user': self.alice,
+            'blocked_ids': [],
+            'connection_user_ids': list(connection_ids or []),
+            'member_group_ids': [],
+            'circle_ids': [],
+        }
+
+    def _now_utc(self):
+        return datetime.datetime.now(tz=timezone.utc)
+
+    def _ts(self, hours_ago=0, hours_from_now=None):
+        """Retourne un timestamp ISO en UTC décalé d'un nombre d'heures."""
+        now = self._now_utc()
+        if hours_from_now is not None:
+            dt = now + datetime.timedelta(hours=hours_from_now)
+        else:
+            dt = now - datetime.timedelta(hours=hours_ago)
+        return dt.isoformat()
+
+    def test_score_recent_higher_than_old(self):
+        """Un item récent doit scorer plus haut qu'un item identique mais ancien."""
+        ctx = self._fake_ctx()
+        now = self._now_utc()
+        conn_set = set()
+        Feed = self.Feed.with_user(self.alice)
+        recent = {'item_type': 'post', 'timestamp': self._ts(hours_ago=1),
+                  'author_id': 999, 'like_count': 0, 'comment_count': 0,
+                  'view_count': 0, 'vote_count': 0}
+        old = {'item_type': 'post', 'timestamp': self._ts(hours_ago=72),
+               'author_id': 999, 'like_count': 0, 'comment_count': 0,
+               'view_count': 0, 'vote_count': 0}
+        self.assertGreater(
+            Feed._score_item(recent, ctx, now, conn_set),
+            Feed._score_item(old, ctx, now, conn_set),
+        )
+
+    def test_score_connection_boost(self):
+        """Un post d'une connexion doit scorer ×1.5 vs. un étranger, toutes choses égales."""
+        ctx = self._fake_ctx(connection_ids=[42])
+        now = self._now_utc()
+        conn_set = {42}
+        Feed = self.Feed.with_user(self.alice)
+        ts = self._ts(hours_ago=5)
+        base_item = {'item_type': 'post', 'timestamp': ts,
+                     'like_count': 0, 'comment_count': 0,
+                     'view_count': 0, 'vote_count': 0}
+        from_connection = dict(base_item, author_id=42)
+        from_stranger = dict(base_item, author_id=99)
+        score_conn = Feed._score_item(from_connection, ctx, now, conn_set)
+        score_str = Feed._score_item(from_stranger, ctx, now, conn_set)
+        self.assertAlmostEqual(score_conn / score_str, 1.5, places=5)
+
+    def test_score_engagement_boost(self):
+        """Plus d'engagement (likes, comments) → score plus élevé."""
+        ctx = self._fake_ctx()
+        now = self._now_utc()
+        conn_set = set()
+        Feed = self.Feed.with_user(self.alice)
+        ts = self._ts(hours_ago=5)
+        no_engage = {'item_type': 'post', 'timestamp': ts, 'author_id': 1,
+                     'like_count': 0, 'comment_count': 0,
+                     'view_count': 0, 'vote_count': 0}
+        high_engage = {'item_type': 'post', 'timestamp': ts, 'author_id': 1,
+                       'like_count': 50, 'comment_count': 20,
+                       'view_count': 0, 'vote_count': 0}
+        self.assertGreater(
+            Feed._score_item(high_engage, ctx, now, conn_set),
+            Feed._score_item(no_engage, ctx, now, conn_set),
+        )
+
+    def test_score_event_close_boost(self):
+        """Un event dans 3 jours doit scorer ×2 vs. un event dans 60 jours."""
+        ctx = self._fake_ctx()
+        now = self._now_utc()
+        conn_set = set()
+        Feed = self.Feed.with_user(self.alice)
+        soon = {'item_type': 'event',
+                'timestamp': self._ts(hours_from_now=72),
+                'date_begin': self._ts(hours_from_now=72),
+                'like_count': 0, 'comment_count': 0,
+                'view_count': 0, 'vote_count': 0}
+        far = {'item_type': 'event',
+               'timestamp': self._ts(hours_from_now=1440),
+               'date_begin': self._ts(hours_from_now=1440),
+               'like_count': 0, 'comment_count': 0,
+               'view_count': 0, 'vote_count': 0}
+        # soon has type_boost=2.0, far has type_boost=1.0 (>30 days)
+        # both have decay≈1.0 (future timestamps → age_hours=0)
+        self.assertGreater(
+            Feed._score_item(soon, ctx, now, conn_set),
+            Feed._score_item(far, ctx, now, conn_set),
+        )
+
+    def test_score_proposal_closing_soon_boost(self):
+        """Une proposition qui ferme dans 12h doit scorer ×2 vs. dans 7 jours."""
+        ctx = self._fake_ctx()
+        now = self._now_utc()
+        conn_set = set()
+        Feed = self.Feed.with_user(self.alice)
+        base = {'item_type': 'proposal',
+                'timestamp': self._ts(hours_ago=5),
+                'like_count': 0, 'comment_count': 0,
+                'view_count': 0, 'vote_count': 0}
+        closing_soon = dict(base, voting_closes_at=self._ts(hours_from_now=12))
+        closing_far = dict(base, voting_closes_at=self._ts(hours_from_now=168))
+        self.assertGreater(
+            Feed._score_item(closing_soon, ctx, now, conn_set),
+            Feed._score_item(closing_far, ctx, now, conn_set),
+        )
+
+    def test_score_story_boost(self):
+        """Les stories ont un boost fixe ×1.2 vs. un post identique."""
+        ctx = self._fake_ctx()
+        now = self._now_utc()
+        conn_set = set()
+        Feed = self.Feed.with_user(self.alice)
+        ts = self._ts(hours_ago=2)
+        story = {'item_type': 'story', 'timestamp': ts, 'author_id': 1,
+                 'like_count': 0, 'comment_count': 0,
+                 'view_count': 0, 'vote_count': 0}
+        post = {'item_type': 'post', 'timestamp': ts, 'author_id': 1,
+                'like_count': 0, 'comment_count': 0,
+                'view_count': 0, 'vote_count': 0}
+        self.assertAlmostEqual(
+            Feed._score_item(story, ctx, now, conn_set) /
+            Feed._score_item(post, ctx, now, conn_set),
+            1.2,
+            places=5,
+        )
+
+    # ── Relevance sort : tests d'intégration ─────────────────────────────────
+
+    def test_relevance_sort_items_have_score_field(self):
+        """Avec sort='relevance', chaque item doit avoir un champ 'score'."""
+        result = self.Feed.with_user(self.alice).get_feed(limit=10, sort='relevance')
+        for item in result['items']:
+            self.assertIn('score', item)
+            self.assertIsInstance(item['score'], float)
+
+    def test_recent_sort_items_have_no_score_field(self):
+        """Avec sort='recent', les items ne doivent pas avoir de champ 'score'."""
+        result = self.Feed.with_user(self.alice).get_feed(limit=10, sort='recent')
+        for item in result['items']:
+            self.assertNotIn('score', item)
+
+    def test_relevance_sort_result_structure(self):
+        """get_feed(sort='relevance') doit retourner la même structure que 'recent'."""
+        result = self.Feed.with_user(self.alice).get_feed(limit=5, sort='relevance')
+        self.assertIn('items', result)
+        self.assertIn('has_more', result)
+        self.assertIsInstance(result['items'], list)
+
+    def test_relevance_sort_pagination_no_overlap(self):
+        """La pagination doit fonctionner sans chevauchement avec sort='relevance'."""
+        result_p1 = self.Feed.with_user(self.alice).get_feed(limit=5, offset=0, sort='relevance')
+        result_p2 = self.Feed.with_user(self.alice).get_feed(limit=5, offset=5, sort='relevance')
+        ids_p1 = [(i['item_type'], i['id']) for i in result_p1['items']]
+        ids_p2 = [(i['item_type'], i['id']) for i in result_p2['items']]
+        self.assertFalse(set(ids_p1) & set(ids_p2), 'Les pages ne doivent pas se chevaucher')
+
+    def test_relevance_connection_post_ranks_above_stranger(self):
+        """Un post d'une connexion doit apparaître avant le même post d'un inconnu."""
+        # Bob est connecté à Alice ; Carol est inconnue d'Alice
+        self.env['club_social_profile.connection'].sudo().create({
+            'user_id': self.alice.id,
+            'connected_user_id': self.bob.id,
+            'connection_type': 'friend',
+            'state': 'accepted',
+        })
+        post_from_connection = self._make_post(self.bob, visibility='members',
+                                               content='post connexion relevance')
+        post_from_stranger = self._make_post(self.carol, visibility='members',
+                                             content='post inconnu relevance')
+        result = self.Feed.with_user(self.alice).get_feed(
+            types=['post'], sort='relevance'
+        )
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'post']
+        # Les deux posts doivent être présents
+        self.assertIn(post_from_connection.id, ids)
+        self.assertIn(post_from_stranger.id, ids)
+        # Le post de la connexion doit apparaître avant celui de l'inconnu
+        idx_conn = ids.index(post_from_connection.id)
+        idx_str = ids.index(post_from_stranger.id)
+        self.assertLess(idx_conn, idx_str)

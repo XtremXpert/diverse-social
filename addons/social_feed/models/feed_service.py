@@ -1,11 +1,29 @@
+import math
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 from odoo import api, fields, models
 
 DEFAULT_LIMIT = 20
 MAX_LIMIT = 100
 VALID_TYPES = frozenset({'post', 'story', 'event', 'proposal', 'gallery'})
+
+# Relevance scoring constants
+_FEED_GRAVITY = 1.2       # decay exponent — higher = faster drop-off
+_HALF_LIFE_HOURS = 24.0   # hours for content value to halve (before engagement/boosts)
+
+
+def _parse_ts(ts_str):
+    """Parse ISO timestamp string to UTC-aware datetime, or None on failure."""
+    if not ts_str:
+        return None
+    try:
+        dt = datetime.fromisoformat(ts_str)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
+    except (ValueError, TypeError):
+        return None
 
 
 class SocialFeedService(models.AbstractModel):
@@ -29,11 +47,15 @@ class SocialFeedService(models.AbstractModel):
         }
 
     @api.model
-    def get_feed(self, limit=DEFAULT_LIMIT, offset=0, types=None):
+    def get_feed(self, limit=DEFAULT_LIMIT, offset=0, types=None, sort='recent'):
         """Retourne le fil d'actualité de l'utilisateur courant.
 
-        Items triés par timestamp DESC, avec respect de toutes les règles de
-        visibilité (blocs, amis, cercles, groupes secrets, vie privée).
+        sort='recent'    — tri chronologique DESC (comportement historique, défaut)
+        sort='relevance' — tri algorithmique : recency × engagement × connexion × type
+
+        Note : chaque type est fetché depuis sa propre table dans un buffer limité.
+        Avec sort='relevance', du contenu populaire mais hors-buffer peut être absent.
+        Le buffer est agrandi automatiquement pour atténuer cet effet.
         """
         limit = min(int(limit), MAX_LIMIT)
         offset = int(offset)
@@ -42,8 +64,13 @@ class SocialFeedService(models.AbstractModel):
             [t for t in types if t in valid_types] if types else list(valid_types)
         )
 
-        # Fetch a generous buffer from each type to cover the requested slice
-        fetch_n = (limit + offset) * 2 + 20
+        # Buffer plus généreux en mode relevance pour capturer du contenu engageant
+        # qui serait autrement écarté par le tri chronologique natif de chaque source.
+        if sort == 'relevance':
+            fetch_n = (limit + offset) * 3 + 50
+        else:
+            fetch_n = (limit + offset) * 2 + 20
+
         ctx = self._feed_context()
 
         items = []
@@ -51,11 +78,78 @@ class SocialFeedService(models.AbstractModel):
         for t in active_types:
             items.extend(dispatch[t](ctx, fetch_n))
 
-        items.sort(key=lambda x: x['timestamp'], reverse=True)
+        if sort == 'relevance':
+            now = datetime.now(tz=timezone.utc)
+            connection_set = set(ctx['connection_user_ids'])
+            for item in items:
+                item['score'] = self._score_item(item, ctx, now, connection_set)
+            items.sort(key=lambda x: (x['score'], x['timestamp']), reverse=True)
+        else:
+            items.sort(key=lambda x: x['timestamp'], reverse=True)
+
         return {
             'items': items[offset: offset + limit],
             'has_more': len(items) > offset + limit,
         }
+
+    # ── Relevance scoring ─────────────────────────────────────────────────────
+
+    @api.model
+    def _score_item(self, item, ctx, now, connection_set):
+        """Calcule un score de pertinence pour un item du feed.
+
+        score = (1 + engagement) × recency_decay × connection_factor × type_boost
+
+        Signals :
+        - Recency : décroissance HN-style avec demi-vie _HALF_LIFE_HOURS
+        - Engagement : log-scale sur likes, comments, votes, views
+        - Connexion : ×1.5 si l'auteur est une connexion acceptée
+        - Type : boost urgence pour events proches et propositions qui ferment bientôt
+        """
+        # 1. Recency decay ────────────────────────────────────────────────────
+        # Pour les events, timestamp = date_begin (futur) → age_hours = 0, decay = 1.0.
+        # Le type_boost différencie les events proches (×2) vs. lointains (×1).
+        ts = _parse_ts(item.get('timestamp', ''))
+        if ts:
+            age_hours = max(0.0, (now - ts).total_seconds() / 3600.0)
+        else:
+            age_hours = 8760.0  # fallback 1 an si pas de timestamp
+        decay = 1.0 / (1.0 + age_hours / _HALF_LIFE_HOURS) ** _FEED_GRAVITY
+
+        # 2. Engagement ───────────────────────────────────────────────────────
+        likes = item.get('like_count') or 0
+        comments = item.get('comment_count') or 0
+        views = item.get('view_count') or 0
+        votes = item.get('vote_count') or 0
+        engagement = math.log1p(likes + comments * 2 + votes * 3 + views * 0.1)
+
+        # 3. Connection affinity ───────────────────────────────────────────────
+        author_id = item.get('author_id') or item.get('submitted_by_id')
+        connection_factor = 1.5 if author_id in connection_set else 1.0
+
+        # 4. Type-specific boosts ─────────────────────────────────────────────
+        type_boost = 1.0
+        itype = item.get('item_type')
+        if itype == 'event':
+            date_begin = _parse_ts(item.get('date_begin'))
+            if date_begin:
+                days_until = (date_begin - now).total_seconds() / 86400.0
+                if 0.0 <= days_until <= 7.0:
+                    type_boost = 2.0
+                elif 0.0 <= days_until <= 30.0:
+                    type_boost = 1.3
+        elif itype == 'proposal':
+            closes_at = _parse_ts(item.get('voting_closes_at'))
+            if closes_at:
+                hours_until = (closes_at - now).total_seconds() / 3600.0
+                if 0.0 < hours_until <= 24.0:
+                    type_boost = 2.0
+                elif 0.0 < hours_until <= 72.0:
+                    type_boost = 1.5
+        elif itype == 'story':
+            type_boost = 1.2
+
+        return (1.0 + engagement) * decay * connection_factor * type_boost
 
     # ── Context helpers ───────────────────────────────────────────────────────
 
