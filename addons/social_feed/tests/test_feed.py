@@ -453,3 +453,135 @@ class TestSocialFeed(TransactionCase):
         idx_conn = ids.index(post_from_connection.id)
         idx_str = ids.index(post_from_stranger.id)
         self.assertLess(idx_conn, idx_str)
+
+    # ── RSVP / event_registration ─────────────────────────────────────────────
+
+    def _make_event(self, organizer, days_from_now=7, name='Événement Test Feed'):
+        now = datetime.datetime.now()
+        return self.env['event.event'].with_user(organizer).create({
+            'name': name,
+            'date_begin': now + datetime.timedelta(days=days_from_now),
+            'date_end': now + datetime.timedelta(days=days_from_now, hours=3),
+            'organizer_user_id': organizer.id,
+            'social_visibility': 'members',
+        })
+
+    def _register(self, event, user):
+        return self.env['event.registration'].sudo().create({
+            'event_id': event.id,
+            'partner_id': user.partner_id.id,
+            'state': 'open',
+        })
+
+    def _connect(self, user_a, user_b):
+        self.env['club_social_profile.connection'].sudo().create({
+            'user_id': user_a.id,
+            'connected_user_id': user_b.id,
+            'connection_type': 'friend',
+            'state': 'accepted',
+        })
+
+    def test_rsvp_from_connection_in_feed(self):
+        """L'inscription d'une connexion doit apparaître dans le feed."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice)
+        reg = self._register(event, self.bob)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event_registration'])
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'event_registration']
+        self.assertIn(reg.id, ids)
+
+    def test_rsvp_from_stranger_excluded(self):
+        """L'inscription d'un non-connexion ne doit pas apparaître."""
+        event = self._make_event(self.alice)
+        self._register(event, self.carol)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event_registration'])
+        registrant_names = [i['registrant_name'] for i in result['items']
+                            if i['item_type'] == 'event_registration']
+        self.assertNotIn(self.carol.name, registrant_names)
+
+    def test_rsvp_cancelled_excluded(self):
+        """Une inscription annulée (state=cancel) ne doit pas apparaître."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice)
+        reg = self._register(event, self.bob)
+        reg.sudo().write({'state': 'cancel'})
+        result = self.Feed.with_user(self.alice).get_feed(types=['event_registration'])
+        ids = [i['id'] for i in result['items'] if i['item_type'] == 'event_registration']
+        self.assertNotIn(reg.id, ids)
+
+    def test_rsvp_no_connections_returns_empty(self):
+        """Sans connexions, le type event_registration retourne une liste vide."""
+        event = self._make_event(self.alice)
+        self._register(event, self.carol)
+        result = self.Feed.with_user(self.carol).get_feed(types=['event_registration'])
+        self.assertEqual(result['items'], [])
+
+    def test_rsvp_item_structure(self):
+        """Un item event_registration doit avoir tous les champs attendus."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice, name='Soirée Structure')
+        reg = self._register(event, self.bob)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event_registration'])
+        items = [i for i in result['items'] if i['item_type'] == 'event_registration'
+                 and i['id'] == reg.id]
+        self.assertEqual(len(items), 1)
+        item = items[0]
+        self.assertEqual(item['registrant_name'], self.bob.name)
+        self.assertEqual(item['event_id'], event.id)
+        self.assertEqual(item['event_name'], 'Soirée Structure')
+        self.assertIn('event_date_begin', item)
+        self.assertIn('timestamp', item)
+
+    def test_event_item_has_attendee_count(self):
+        """Un item event doit inclure le nombre d'inscrits confirmés."""
+        event = self._make_event(self.alice, name='Événement Compteur')
+        self._register(event, self.bob)
+        self._register(event, self.carol)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event'])
+        items = [i for i in result['items']
+                 if i['item_type'] == 'event' and i['id'] == event.id]
+        self.assertEqual(len(items), 1)
+        self.assertGreaterEqual(items[0]['attendee_count'], 2)
+
+    def test_event_item_connection_attendee_names(self):
+        """Un item event doit lister les noms des connexions inscrites (max 3)."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice, name='Événement Connexions')
+        self._register(event, self.bob)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event'])
+        items = [i for i in result['items']
+                 if i['item_type'] == 'event' and i['id'] == event.id]
+        self.assertEqual(len(items), 1)
+        self.assertIn(self.bob.name, items[0]['connection_attendee_names'])
+
+    def test_event_item_non_connection_not_in_connection_names(self):
+        """Les inscrits non-connexion ne doivent pas apparaître dans connection_attendee_names."""
+        event = self._make_event(self.alice, name='Événement Carol')
+        self._register(event, self.carol)
+        result = self.Feed.with_user(self.alice).get_feed(types=['event'])
+        items = [i for i in result['items']
+                 if i['item_type'] == 'event' and i['id'] == event.id]
+        if items:
+            self.assertNotIn(self.carol.name, items[0]['connection_attendee_names'])
+
+    def test_rsvp_blocked_user_excluded(self):
+        """L'inscription d'un utilisateur bloqué ne doit pas apparaître."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice, name='Événement Bloqué')
+        reg = self._register(event, self.bob)
+        self.env['social_safety.block'].with_user(self.alice).block_user(self.bob)
+        try:
+            result = self.Feed.with_user(self.alice).get_feed(types=['event_registration'])
+            ids = [i['id'] for i in result['items'] if i['item_type'] == 'event_registration']
+            self.assertNotIn(reg.id, ids)
+        finally:
+            self.env['social_safety.block'].with_user(self.alice).unblock_user(self.bob)
+
+    def test_rsvp_in_full_feed(self):
+        """Le type event_registration est inclus dans le feed complet (sans filtre)."""
+        self._connect(self.alice, self.bob)
+        event = self._make_event(self.alice, name='Événement Feed Complet')
+        reg = self._register(event, self.bob)
+        result = self.Feed.with_user(self.alice).get_feed(limit=100)
+        types_present = {i['item_type'] for i in result['items']}
+        self.assertIn('event_registration', types_present)

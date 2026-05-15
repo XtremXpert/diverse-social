@@ -1,12 +1,13 @@
 import math
 import re
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from odoo import api, fields, models
 
 DEFAULT_LIMIT = 20
 MAX_LIMIT = 100
-VALID_TYPES = frozenset({'post', 'story', 'event', 'proposal', 'gallery'})
+VALID_TYPES = frozenset({'post', 'story', 'event', 'event_registration', 'proposal', 'gallery'})
 
 # Relevance scoring constants
 _FEED_GRAVITY = 1.2       # decay exponent — higher = faster drop-off
@@ -42,6 +43,7 @@ class SocialFeedService(models.AbstractModel):
             'post': self._feed_posts,
             'story': self._feed_stories,
             'event': self._feed_events,
+            'event_registration': self._feed_event_registrations,
             'proposal': self._feed_proposals,
             'gallery': self._feed_gallery,
         }
@@ -138,6 +140,16 @@ class SocialFeedService(models.AbstractModel):
                     type_boost = 2.0
                 elif 0.0 <= days_until <= 30.0:
                     type_boost = 1.3
+        elif itype == 'event_registration':
+            # Les inscriptions de connexions sont toujours du contenu social pertinent.
+            # Boost léger pour refléter l'urgence sociale (event à venir).
+            event_date = _parse_ts(item.get('event_date_begin'))
+            if event_date:
+                days_until = (event_date - now).total_seconds() / 86400.0
+                if 0.0 <= days_until <= 7.0:
+                    type_boost = 1.8
+                elif 0.0 <= days_until <= 30.0:
+                    type_boost = 1.2
         elif itype == 'proposal':
             closes_at = _parse_ts(item.get('voting_closes_at'))
             if closes_at:
@@ -274,7 +286,6 @@ class SocialFeedService(models.AbstractModel):
 
     @api.model
     def _feed_events(self, ctx, limit):
-        user = ctx['user']
         circle_ids = ctx['circle_ids']
         now = fields.Datetime.now()
 
@@ -289,9 +300,36 @@ class SocialFeedService(models.AbstractModel):
         events = self.env['event.event'].search(
             domain, limit=limit, order='date_begin asc'
         )
-        return [self._event_item(e) for e in events]
+        if not events:
+            return []
 
-    def _event_item(self, e):
+        # Batch-fetch attendee counts and connection attendee names (2 queries total)
+        event_ids = events.ids
+        all_regs = self.env['event.registration'].sudo().search([
+            ('event_id', 'in', event_ids),
+            ('state', '=', 'open'),
+        ])
+        attendee_counts = defaultdict(int)
+        for reg in all_regs:
+            attendee_counts[reg.event_id.id] += 1
+
+        connection_user_ids = ctx['connection_user_ids']
+        conn_names_by_event = defaultdict(list)
+        if connection_user_ids:
+            conn_partners = set(
+                self.env['res.users'].browse(connection_user_ids).mapped('partner_id.id')
+            )
+            for reg in all_regs:
+                if (reg.partner_id.id in conn_partners
+                        and len(conn_names_by_event[reg.event_id.id]) < 3):
+                    conn_names_by_event[reg.event_id.id].append(reg.partner_id.name)
+
+        return [
+            self._event_item(e, attendee_counts, conn_names_by_event)
+            for e in events
+        ]
+
+    def _event_item(self, e, attendee_counts=None, conn_names_by_event=None):
         return {
             'item_type': 'event',
             'id': e.id,
@@ -301,6 +339,59 @@ class SocialFeedService(models.AbstractModel):
             'date_end': e.date_end.isoformat() if e.date_end else None,
             'organizer_name': e.organizer_user_id.name if e.organizer_user_id else None,
             'social_visibility': e.social_visibility or None,
+            'attendee_count': (attendee_counts or {}).get(e.id, 0),
+            'connection_attendee_names': list((conn_names_by_event or {}).get(e.id, [])),
+        }
+
+    # ── Event registrations (RSVP des connexions) ─────────────────────────────
+
+    @api.model
+    def _feed_event_registrations(self, ctx, limit):
+        """Retourne les inscriptions d'événements des connexions de l'utilisateur.
+
+        Seules les inscriptions confirmées (state='open') à des événements futurs
+        par des connexions acceptées sont incluses. Les utilisateurs bloqués sont exclus.
+        """
+        connection_user_ids = ctx['connection_user_ids']
+        if not connection_user_ids:
+            return []
+
+        blocked_ids = set(ctx['blocked_ids'])
+        connection_users = self.env['res.users'].browse(connection_user_ids)
+
+        # Mapping partner_id → user_id pour le champ author_id (scoring connexion)
+        partner_to_user = {}
+        conn_partner_ids = []
+        for u in connection_users:
+            if u.id not in blocked_ids:
+                conn_partner_ids.append(u.partner_id.id)
+                partner_to_user[u.partner_id.id] = u.id
+
+        if not conn_partner_ids:
+            return []
+
+        now = fields.Datetime.now()
+        regs = self.env['event.registration'].sudo().search([
+            ('partner_id', 'in', conn_partner_ids),
+            ('state', '=', 'open'),
+            ('event_id.date_begin', '>=', now),
+        ], limit=limit, order='create_date desc')
+
+        return [self._event_registration_item(reg, partner_to_user) for reg in regs]
+
+    def _event_registration_item(self, reg, partner_to_user=None):
+        return {
+            'item_type': 'event_registration',
+            'id': reg.id,
+            'timestamp': reg.create_date.isoformat() if reg.create_date else '',
+            # author_id = user_id du membre inscrit (pour scoring connexion)
+            'author_id': (partner_to_user or {}).get(reg.partner_id.id),
+            'registrant_name': reg.partner_id.name,
+            'registrant_partner_id': reg.partner_id.id,
+            'event_id': reg.event_id.id,
+            'event_name': reg.event_id.name,
+            'event_date_begin': reg.event_id.date_begin.isoformat() if reg.event_id.date_begin else None,
+            'event_date_end': reg.event_id.date_end.isoformat() if reg.event_id.date_end else None,
         }
 
     # ── Governance proposals ──────────────────────────────────────────────────
