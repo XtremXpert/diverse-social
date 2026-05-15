@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
+    <template id="portal_my_home_discover" name="Portal My Home : Découvrir"
+              inherit_id="portal.portal_my_home" customize_show="False" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Découvrir des membres</t>
+                <t t-set="url">/discover</t>
+                <t t-set="placeholder_count">discover_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Page découverte ════════════════════════════════════════════════ -->
+    <template id="portal_discover" name="Découvrir des membres">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:1100px;">
+                <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">🔍 Découvrir des membres</h1>
+
+                <!-- ── Filtres ────────────────────────────────────────── -->
+                <form method="get" action="/discover" class="card card-body mb-4 p-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Ville</label>
+                            <input type="text" name="city" class="form-control form-control-sm"
+                                   placeholder="Montréal…" t-att-value="city"/>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Genre</label>
+                            <select name="gender" class="form-select form-select-sm">
+                                <option value="">— Tous —</option>
+                                <t t-foreach="gender_labels.items()" t-as="item">
+                                    <option t-att-value="item[0]"
+                                            t-att-selected="item[0] == gender and 'selected' or None"
+                                            t-esc="item[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Orientation</label>
+                            <select name="orientation" class="form-select form-select-sm">
+                                <option value="">— Toutes —</option>
+                                <t t-foreach="orientation_labels.items()" t-as="item">
+                                    <option t-att-value="item[0]"
+                                            t-att-selected="item[0] == orientation and 'selected' or None"
+                                            t-esc="item[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Disponibilité</label>
+                            <select name="availability" class="form-select form-select-sm">
+                                <option value="">— Toutes —</option>
+                                <t t-foreach="availability_labels.items()" t-as="item">
+                                    <option t-att-value="item[0]"
+                                            t-att-selected="item[0] == availability and 'selected' or None"
+                                            t-esc="item[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                        <t t-if="has_bdsm">
+                            <div class="col-md-2">
+                                <label class="form-label form-label-sm text-muted mb-1">Rôle BDSM</label>
+                                <select name="bdsm_role" class="form-select form-select-sm">
+                                    <option value="">— Tous —</option>
+                                    <t t-foreach="bdsm_role_labels.items()" t-as="item">
+                                        <option t-att-value="item[0]"
+                                                t-att-selected="item[0] == bdsm_role and 'selected' or None"
+                                                t-esc="item[1]"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </t>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-sm w-100"
+                                    style="background:#e94560;color:white;">
+                                Filtrer
+                            </button>
+                        </div>
+                        <t t-if="city or gender or orientation or availability or bdsm_role">
+                            <div class="col-12">
+                                <a href="/discover" class="btn btn-sm btn-outline-secondary">
+                                    ✕ Effacer les filtres
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </form>
+
+                <!-- ── Compteur ───────────────────────────────────────── -->
+                <p class="text-muted mb-3" style="font-size:.85rem;">
+                    <t t-esc="total"/> membre<t t-if="total > 1">s</t> trouvé<t t-if="total > 1">s</t>
+                </p>
+
+                <!-- ── Grille de profils ──────────────────────────────── -->
+                <div class="row g-3 mb-4">
+                    <t t-foreach="profiles" t-as="profile">
+                        <div class="col-sm-6 col-md-4 col-lg-3">
+                            <a t-attf-href="/profile/#{profile.user_id.id}"
+                               class="card h-100 text-decoration-none"
+                               style="border-top:3px solid #1a1a2e; transition:.15s;">
+                                <!-- Avatar -->
+                                <div class="text-center pt-3 pb-1">
+                                    <t t-if="profile.profile_image">
+                                        <img t-att-src="'/web/image/club_social_profile.profile/' + str(profile.id) + '/profile_image/80x80'"
+                                             class="rounded-circle"
+                                             style="width:72px;height:72px;object-fit:cover;border:2px solid #e94560;"/>
+                                    </t>
+                                    <t t-else="">
+                                        <div style="width:72px;height:72px;border-radius:50%;background:#1a1a2e;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:28px;border:2px solid #e94560;">
+                                            <t t-out="((profile.stealth_name or profile.login or '?')[0]).upper()"/>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <div class="card-body pt-1 pb-2 text-center">
+                                    <!-- Nom -->
+                                    <div class="fw-semibold text-truncate" style="color:#1a1a2e; font-size:.95rem;">
+                                        <t t-esc="profile.stealth_name or profile.login"/>
+                                    </div>
+
+                                    <!-- Ville -->
+                                    <t t-if="profile.city">
+                                        <div class="text-muted" style="font-size:.78rem;">
+                                            📍 <t t-esc="profile.city"/>
+                                        </div>
+                                    </t>
+
+                                    <!-- Disponibilité -->
+                                    <t t-if="profile.availability and profile.availability != 'non_specifie'">
+                                        <div class="mt-1">
+                                            <span t-attf-class="badge #{profile.availability == 'disponible' and 'bg-success' or profile.availability == 'couple_ouvert' and 'bg-info text-dark' or 'bg-secondary'}"
+                                                  style="font-size:.7rem;">
+                                                <t t-esc="availability_labels.get(profile.availability, '')"/>
+                                            </span>
+                                        </div>
+                                    </t>
+
+                                    <!-- Rôle BDSM -->
+                                    <t t-if="has_bdsm and profile.bdsm_role">
+                                        <div class="mt-1">
+                                            <span class="badge" style="background:#e94560;color:white;font-size:.7rem;">
+                                                <t t-esc="bdsm_role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
+                                            </span>
+                                        </div>
+                                    </t>
+
+                                    <!-- Connexion badge -->
+                                    <t t-if="profile.user_id.id in connected_user_ids">
+                                        <div class="mt-1">
+                                            <span class="badge bg-light text-dark border" style="font-size:.7rem;">
+                                                🤝 Connexion
+                                            </span>
+                                        </div>
+                                    </t>
+
+                                    <!-- Score compatibilité -->
+                                    <t t-if="compat_map.get(profile.id)">
+                                        <t t-set="_compat" t-value="compat_map[profile.id]"/>
+                                        <div class="mt-2">
+                                            <div class="progress" style="height:5px; border-radius:3px;">
+                                                <div class="progress-bar"
+                                                     role="progressbar"
+                                                     style="background:#e94560;"
+                                                     t-attf-style="width:#{_compat.get('score', 0)}%; background:#e94560;"/>
+                                            </div>
+                                            <div style="font-size:.7rem; color:#e94560; margin-top:2px;">
+                                                Compatibilité <t t-esc="_compat.get('score', 0)"/>%
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </a>
+                        </div>
+                    </t>
+                </div>
+
+                <t t-if="not profiles">
+                    <div class="text-center py-5 text-muted">
+                        <div style="font-size:2rem;">👤</div>
+                        <p>Aucun membre ne correspond à ces critères.</p>
+                        <a href="/discover" class="btn btn-sm btn-outline-secondary">
+                            Voir tous les membres
+                        </a>
+                    </div>
+                </t>
+
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

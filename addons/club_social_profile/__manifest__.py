@@ -17,6 +17,7 @@
         'views/portal_profile_public.xml',
         'views/portal_profile_edit.xml',
         'views/portal_dashboard.xml',
+        'views/portal_discover.xml',
     ],
     'installable': True,
     'application': False,
