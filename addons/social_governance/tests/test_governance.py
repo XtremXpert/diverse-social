@@ -1,3 +1,6 @@
+import datetime
+
+from odoo import fields
 from odoo.tests import TransactionCase, tagged
 from odoo.exceptions import ValidationError, UserError
 
@@ -31,6 +34,9 @@ class TestGovernance(TransactionCase):
         cls.category = cls.env['social_governance.proposal_category'].create({
             'name': 'Test Category',
         })
+
+    def _future(self, days=7):
+        return fields.Datetime.now() + datetime.timedelta(days=days)
 
     def _make_proposal(self, user=None, state='draft'):
         user = user or self.alice
@@ -228,3 +234,120 @@ class TestGovernance(TransactionCase):
         titles = [r['title'] for r in public]
         self.assertIn('Public decision', titles)
         self.assertNotIn('Private decision', titles)
+
+    # ── my_vote computed ──────────────────────────────────────────────────────
+
+    def test_my_vote_returns_choice(self):
+        """my_vote retourne le choix de l'utilisateur courant."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        self.assertEqual(p.with_user(self.alice).my_vote, 'yes')
+
+    def test_my_vote_false_when_not_voted(self):
+        """my_vote retourne False si l'utilisateur n'a pas voté."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        self.assertFalse(p.with_user(self.bob).my_vote)
+
+    def test_my_vote_updates_on_change(self):
+        """my_vote reflète le nouveau choix après changement de vote."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        p.with_user(self.alice).action_vote('no')
+        self.assertEqual(p.with_user(self.alice).my_vote, 'no')
+
+    # ── Approbation edge cases ────────────────────────────────────────────────
+
+    def test_approval_pct_all_abstain(self):
+        """Que des abstentions → aucun vote décisif → 0%."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('abstain')
+        p.with_user(self.bob).action_vote('abstain')
+        self.assertEqual(p.approval_pct, 0)
+
+    def test_approval_pct_all_yes(self):
+        """Que des oui → 100%."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        p.with_user(self.bob).action_vote('yes')
+        self.assertEqual(p.approval_pct, 100)
+
+    def test_multiple_voters_correct_counts(self):
+        """Trois votants différents : compteurs cohérents."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        p.with_user(self.bob).action_vote('no')
+        p.with_user(self.moderator).action_vote('abstain')
+        self.assertEqual(p.yes_count, 1)
+        self.assertEqual(p.no_count, 1)
+        self.assertEqual(p.abstain_count, 1)
+        self.assertEqual(p.vote_count, 3)
+
+    def test_vote_upsert_no_duplicate(self):
+        """Changer de vote ne crée pas d'enregistrement supplémentaire."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        p.with_user(self.alice).action_vote('no')
+        votes = self.Vote.sudo().search([('proposal_id', '=', p.id), ('voter_id', '=', self.alice.id)])
+        self.assertEqual(len(votes), 1)
+
+    # ── Log de décision ───────────────────────────────────────────────────────
+
+    def test_decision_log_pagination(self):
+        """get_public_log supporte le paramètre offset."""
+        for i in range(3):
+            self.Log.with_user(self.moderator).create({
+                'title': f'Log pagination {i}',
+                'body': '<p>test</p>',
+                'category': 'other',
+                'decision_date': f'2026-03-{10 + i:02d}',
+                'is_public': True,
+            })
+        page1 = self.Log.get_public_log(limit=2, offset=0)
+        page2 = self.Log.get_public_log(limit=2, offset=2)
+        ids1 = {r['id'] for r in page1}
+        ids2 = {r['id'] for r in page2}
+        self.assertEqual(len(page1), 2)
+        self.assertTrue(ids1.isdisjoint(ids2))
+
+    def test_decision_all_categories_accepted(self):
+        """Chaque valeur de category est acceptée."""
+        categories = ['ban', 'warning', 'rule_change', 'content_removal', 'dispute', 'other']
+        for cat in categories:
+            log = self.Log.with_user(self.moderator).create({
+                'title': f'Décision {cat}',
+                'body': '<p>test</p>',
+                'category': cat,
+                'decision_date': '2026-04-01',
+            })
+            self.assertEqual(log.category, cat)
+
+    def test_implement_sets_implemented_at(self):
+        """action_implement() renseigne implemented_at."""
+        p = self._make_proposal()
+        p.sudo().write({'voting_closes_at': self._future()})
+        p.action_start_voting()
+        p.with_user(self.alice).action_vote('yes')
+        p.action_close_voting()
+        self.assertEqual(p.state, 'accepted')
+        p.action_implement()
+        self.assertTrue(p.implemented_at)
+
+    def test_cron_returns_count(self):
+        """cron_close_expired_votes retourne un entier >= 0."""
+        count = self.Proposal.cron_close_expired_votes()
+        self.assertIsInstance(count, int)
+        self.assertGreaterEqual(count, 0)
