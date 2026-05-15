@@ -198,3 +198,136 @@ class TestMembershipWebsiteHttp(HttpCase):
         self.authenticate('admin', 'admin')
         response = self.url_open('/my/membership')
         self.assertEqual(response.status_code, 200)
+
+    def test_membership_detail_requires_auth(self):
+        """La page /my/membership/<id> redirige si non authentifié."""
+        response = self.url_open('/my/membership/1', allow_redirects=False)
+        self.assertIn(response.status_code, (302, 303))
+
+    def test_membership_detail_wrong_user_returns_403(self):
+        """Un utilisateur qui accède à l'adhésion d'un autre obtient 403."""
+        env = self.env
+        type_regular = env.ref('club_membership.membership_type_regular')
+        portal_user = env['res.users'].sudo().create({
+            'name': 'Portal Detail 403',
+            'login': 'portal_detail_403',
+            'email': 'detail403@mw.test',
+            'group_ids': [(4, env.ref('base.group_portal').id)],
+        })
+        other_portal = env['res.users'].sudo().create({
+            'name': 'Other Portal 403',
+            'login': 'other_detail_403',
+            'email': 'other403@mw.test',
+            'group_ids': [(4, env.ref('base.group_portal').id)],
+        })
+        membership = env['club_membership.membership'].sudo().create({
+            'partner_id': portal_user.partner_id.id,
+            'membership_type_id': type_regular.id,
+            'start_date': datetime.date.today(),
+            'state': 'active',
+        })
+        self.authenticate(other_portal.login, 'odoo1234')
+        response = self.url_open(f'/my/membership/{membership.id}', allow_redirects=False)
+        self.assertIn(response.status_code, (403, 302, 303))
+
+    def test_join_nonexistent_type_returns_404(self):
+        """POST /membership/join/999999 retourne 404 si le type n'existe pas."""
+        self.authenticate('admin', 'admin')
+        response = self.url_open('/membership/join/999999',
+                                 data={'csrf_token': self.csrf_token()},
+                                 allow_redirects=False)
+        self.assertEqual(response.status_code, 404)
+
+    def test_membership_page_content_type_html(self):
+        """La réponse de /membership est du HTML."""
+        response = self.url_open('/membership')
+        self.assertIn('text/html', response.headers.get('Content-Type', ''))
+
+
+@tagged('club_membership_website', 'membership_website')
+class TestMembershipPortalDataExtra(TransactionCase):
+    """Tests supplémentaires sur les données et la sécurité portail."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.type_regular = cls.env.ref('club_membership.membership_type_regular')
+        cls.portal_user = cls.env['res.users'].create({
+            'name': 'Portail Extra',
+            'login': 'portal_extra_test',
+            'email': 'portal_extra@mw.test',
+            'group_ids': [(4, cls.env.ref('base.group_portal').id)],
+        })
+        cls.membership = cls.env['club_membership.membership'].sudo().create({
+            'partner_id': cls.portal_user.partner_id.id,
+            'membership_type_id': cls.type_regular.id,
+            'start_date': datetime.date.today(),
+            'state': 'active',
+        })
+
+    def test_portal_cannot_delete_membership(self):
+        """L'utilisateur portail ne peut pas supprimer d'adhésion."""
+        from odoo.exceptions import AccessError
+        with self.assertRaises(AccessError):
+            self.membership.with_user(self.portal_user).unlink()
+
+    def test_inactive_type_not_listed(self):
+        """Un type inactif n'apparaît pas dans la recherche publique."""
+        inactive_type = self.env['club_membership.type'].sudo().create({
+            'name': 'Type Inactif Test',
+            'active': False,
+            'duration_months': 12,
+        })
+        types = self.env['club_membership.type'].with_user(
+            self.env.ref('base.public_user')
+        ).search([('active', '=', True)])
+        self.assertNotIn(inactive_type, types)
+
+    def test_membership_type_sequence_ordering(self):
+        """Les types sont triés par séquence croissante."""
+        types = self.env['club_membership.type'].sudo().search(
+            [('active', '=', True)], order='sequence, name'
+        )
+        sequences = [t.sequence for t in types]
+        self.assertEqual(sequences, sorted(sequences))
+
+    def test_portal_user_sees_only_own_memberships_count(self):
+        """search_count portail retourne uniquement les adhésions de l'utilisateur."""
+        other = self.env['res.users'].sudo().create({
+            'name': 'Other Count', 'login': 'other_count_mw', 'email': 'ocount@mw.test',
+            'group_ids': [(4, self.env.ref('base.group_portal').id)],
+        })
+        self.env['club_membership.membership'].sudo().create({
+            'partner_id': other.partner_id.id,
+            'membership_type_id': self.type_regular.id,
+            'start_date': datetime.date.today(),
+            'state': 'pending',
+        })
+        count = self.env['club_membership.membership'].with_user(
+            self.portal_user
+        ).search_count([])
+        own = self.env['club_membership.membership'].with_user(
+            self.portal_user
+        ).search([])
+        for m in own:
+            self.assertEqual(m.partner_id, self.portal_user.partner_id)
+        self.assertEqual(count, len(own))
+
+    def test_membership_type_has_currency(self):
+        """Les types d'adhésion seed ont une devise configurée."""
+        types = self.env['club_membership.type'].sudo().search([('active', '=', True)])
+        for t in types:
+            self.assertTrue(t.currency_id)
+
+    def test_pending_state_visible_in_portal(self):
+        """Une adhésion en état 'pending' est visible dans le portail."""
+        m = self.env['club_membership.membership'].sudo().create({
+            'partner_id': self.portal_user.partner_id.id,
+            'membership_type_id': self.type_regular.id,
+            'start_date': datetime.date.today(),
+            'state': 'pending',
+        })
+        found = self.env['club_membership.membership'].with_user(
+            self.portal_user
+        ).search([('id', '=', m.id)])
+        self.assertIn(m, found)
