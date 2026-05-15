@@ -187,3 +187,77 @@ class TestBlock(TransactionCase):
         self.assertNotIn(self.carol_p, profiles)
         # Cleanup
         self.carol_p.with_user(self.carol).action_panic_lift()
+
+    # ── Mute — cas supplémentaires ────────────────────────────────────────────
+
+    def test_mute_idempotent(self):
+        self.Mute.with_user(self.alice).mute_user(self.bob)
+        self.Mute.with_user(self.alice).mute_user(self.bob)
+        count = self.Mute.search_count([
+            ('muter_id', '=', self.alice.id), ('muted_id', '=', self.bob.id),
+        ])
+        self.assertEqual(count, 1)
+
+    def test_mute_update_until(self):
+        future1 = fields.Datetime.now() + timedelta(hours=1)
+        future2 = fields.Datetime.now() + timedelta(hours=48)
+        self.Mute.with_user(self.alice).mute_user(self.bob, until=future1)
+        self.Mute.with_user(self.alice).mute_user(self.bob, until=future2)
+        rec = self.Mute.search([
+            ('muter_id', '=', self.alice.id), ('muted_id', '=', self.bob.id),
+        ], limit=1)
+        self.assertEqual(rec.until, future2)
+
+    def test_cron_keeps_permanent_mutes(self):
+        self.Mute.with_user(self.alice).mute_user(self.carol)
+        rec = self.Mute.search([
+            ('muter_id', '=', self.alice.id), ('muted_id', '=', self.carol.id),
+        ], limit=1)
+        self.Mute.cron_expire_mutes()
+        self.assertTrue(self.Mute.browse(rec.id).exists())
+
+    def test_cron_keeps_future_mutes(self):
+        future = fields.Datetime.now() + timedelta(hours=24)
+        self.Mute.sudo().create({
+            'muter_id': self.alice.id, 'muted_id': self.carol.id, 'until': future,
+        })
+        self.Mute.cron_expire_mutes()
+        self.assertTrue(self.Mute.is_muted(self.alice, self.carol))
+
+    def test_cron_returns_count(self):
+        past = fields.Datetime.now() - timedelta(minutes=1)
+        self.Mute.sudo().create({
+            'muter_id': self.bob.id, 'muted_id': self.carol.id, 'until': past,
+        })
+        count = self.Mute.cron_expire_mutes()
+        self.assertGreaterEqual(count, 1)
+
+    # ── Panic — cas supplémentaires ───────────────────────────────────────────
+
+    def test_panic_saves_previous_visibility(self):
+        self.alice_p.write({'visibility': 'connections'})
+        self.alice_p.with_user(self.alice).action_panic()
+        self.assertEqual(self.alice_p.panic_saved_visibility, 'connections')
+        self.alice_p.with_user(self.alice).action_panic_lift()
+
+    # ── Profile helpers actions ───────────────────────────────────────────────
+
+    def test_profile_action_block_unblock(self):
+        self.alice_p.with_user(self.alice).action_block_user(self.bob)
+        self.assertTrue(self.Block.is_blocked(self.alice, self.bob))
+        self.alice_p.with_user(self.alice).action_unblock_user(self.bob)
+        self.assertFalse(self.Block.is_blocked(self.alice, self.bob))
+
+    def test_profile_action_block_wrong_owner_raises(self):
+        with self.assertRaises(UserError):
+            self.alice_p.with_user(self.bob).action_block_user(self.carol)
+
+    def test_profile_action_mute_unmute(self):
+        self.alice_p.with_user(self.alice).action_mute_user(self.carol)
+        self.assertTrue(self.Mute.is_muted(self.alice, self.carol))
+        self.alice_p.with_user(self.alice).action_unmute_user(self.carol)
+        self.assertFalse(self.Mute.is_muted(self.alice, self.carol))
+
+    def test_profile_action_mute_wrong_owner_raises(self):
+        with self.assertRaises(UserError):
+            self.alice_p.with_user(self.bob).action_mute_user(self.carol)

@@ -91,6 +91,12 @@ class TestSafetyPortalData(TransactionCase):
         safe = other_profile.is_safe_to_contact(self.user)
         self.assertTrue(safe)
 
+    def test_panic_saves_visibility(self):
+        self.profile.sudo().write({'visibility': 'members'})
+        self.profile.sudo().with_user(self.user).action_panic()
+        self.assertEqual(self.profile.panic_saved_visibility, 'members')
+        self.profile.sudo().with_user(self.user).action_panic_lift()
+
 
 @tagged('social_safety', 'safety_portal', 'post_install', '-at_install')
 class TestSafetyPortalHttp(HttpCase):
@@ -110,7 +116,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Mode discret', resp.content)
         self.assertIn(b'Sortie rapide', resp.content)
-        self.assertIn(b'bloqués', resp.content)
+        self.assertIn('bloqués'.encode(), resp.content)
 
     def test_panic_activate_redirects(self):
         self.authenticate('admin', 'admin')
@@ -135,3 +141,100 @@ class TestSafetyPortalHttp(HttpCase):
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Échap'.encode(), resp.content)
+
+    def test_panic_activate_changes_db_state(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        owner = self.env['res.users'].sudo().create({
+            'name': 'Panic Owner', 'login': 'panic_owner_http',
+            'email': 'panic@safety.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
+        self.authenticate('panic_owner_http', 'Test1234!')
+        self.url_open('/safety/panic/activate', data={'csrf_token': self.csrf_token()})
+        profile.invalidate_recordset()
+        self.assertTrue(profile.panic_mode)
+
+    def test_panic_lift_changes_db_state(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        owner = self.env['res.users'].sudo().create({
+            'name': 'Panic Lifter', 'login': 'panic_lifter_http',
+            'email': 'lifter@safety.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
+        profile.sudo().write({'panic_mode': True, 'panic_saved_visibility': 'members'})
+        self.authenticate('panic_lifter_http', 'Test1234!')
+        self.url_open('/safety/panic/lift', data={'csrf_token': self.csrf_token()})
+        profile.invalidate_recordset()
+        self.assertFalse(profile.panic_mode)
+
+    def test_remove_block_via_portal(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        blocker = self.env['res.users'].sudo().create({
+            'name': 'Block Remover', 'login': 'block_remover_http',
+            'email': 'remover@safety.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        blocked = self.env['res.users'].sudo().create({
+            'name': 'Blocked User', 'login': 'blocked_user_http',
+            'email': 'blocked@safety.test', 'password': 'Test1234!',
+        })
+        block = self.env['social_safety.block'].sudo().create({
+            'blocker_id': blocker.id, 'blocked_id': blocked.id,
+        })
+        self.authenticate('block_remover_http', 'Test1234!')
+        resp = self.url_open(
+            f'/safety/block/{block.id}/remove',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(self.env['social_safety.block'].sudo().browse(block.id).exists())
+
+    def test_remove_block_by_non_owner_ignored(self):
+        """Un utilisateur ne peut pas supprimer le bloc d'un autre."""
+        group_social = self.env.ref('social_base.group_social_user')
+        blocker = self.env['res.users'].sudo().create({
+            'name': 'Block Owner2', 'login': 'block_owner2_http',
+            'email': 'owner2@safety.test', 'password': 'Test1234!',
+        })
+        blocked = self.env['res.users'].sudo().create({
+            'name': 'Blocked2', 'login': 'blocked2_http',
+            'email': 'blocked2@safety.test', 'password': 'Test1234!',
+        })
+        intruder = self.env['res.users'].sudo().create({
+            'name': 'Intruder', 'login': 'intruder_block_http',
+            'email': 'intruder@safety.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        block = self.env['social_safety.block'].sudo().create({
+            'blocker_id': blocker.id, 'blocked_id': blocked.id,
+        })
+        self.authenticate('intruder_block_http', 'Test1234!')
+        self.url_open(
+            f'/safety/block/{block.id}/remove',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertTrue(self.env['social_safety.block'].sudo().browse(block.id).exists())
+
+    def test_remove_mute_via_portal(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        muter = self.env['res.users'].sudo().create({
+            'name': 'Mute Remover', 'login': 'mute_remover_http',
+            'email': 'mute_remover@safety.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        muted = self.env['res.users'].sudo().create({
+            'name': 'Muted User', 'login': 'muted_user_http',
+            'email': 'muted@safety.test', 'password': 'Test1234!',
+        })
+        mute = self.env['social_safety.mute'].sudo().create({
+            'muter_id': muter.id, 'muted_id': muted.id,
+        })
+        self.authenticate('mute_remover_http', 'Test1234!')
+        resp = self.url_open(
+            f'/safety/mute/{mute.id}/remove',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(self.env['social_safety.mute'].sudo().browse(mute.id).exists())
