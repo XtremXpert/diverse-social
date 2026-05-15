@@ -103,3 +103,40 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         (plain | portal_partner).invalidate_recordset(['display_name'])
         self.assertEqual(plain.display_name, 'Plain Partner')
         self.assertEqual(portal_partner.display_name, self.portal_user.login)
+
+    def test_inactive_internal_and_active_portal_shows_login(self):
+        """Interne inactif + portail actif → le filtre retire l'interne → login portail affiché."""
+        partner = self.env['res.partner'].create({'name': 'Interne Inactif'})
+        portal_group = self.env.ref('base.group_portal')
+        internal_group = self.env.ref('base.group_user')
+        u_internal = self.env['res.users'].sudo().create({
+            'name': 'Interne Inactif', 'login': 'interne_inactif2@test.com',
+            'email': 'interne_inactif2@test.com', 'partner_id': partner.id,
+            'active': False,
+        })
+        u_portal = self.env['res.users'].create({
+            'name': 'Interne Inactif', 'login': 'portail_actif2@test.com',
+            'email': 'portail_actif2@test.com', 'partner_id': partner.id,
+        })
+        internal_group.user_ids -= u_portal
+        portal_group.user_ids |= u_portal
+        partner.invalidate_recordset(['display_name'])
+        self.assertEqual(partner.display_name, 'portail_actif2@test.com')
+
+    def test_portal_user_deactivated_reverts_to_name(self):
+        """Après désactivation du portail, display_name revient au nom du partenaire."""
+        partner = self.env['res.partner'].create({'name': 'Portail Désactivé'})
+        portal_group = self.env.ref('base.group_portal')
+        internal_group = self.env.ref('base.group_user')
+        u = self.env['res.users'].create({
+            'name': 'Portail Désactivé', 'login': 'portail_desactive@test.com',
+            'email': 'portail_desactive@test.com', 'partner_id': partner.id,
+        })
+        internal_group.user_ids -= u
+        portal_group.user_ids |= u
+        partner.invalidate_recordset(['display_name'])
+        self.assertEqual(partner.display_name, 'portail_desactive@test.com')
+        # Désactivation
+        u.sudo().write({'active': False})
+        partner.invalidate_recordset(['display_name'])
+        self.assertEqual(partner.display_name, 'Portail Désactivé')
