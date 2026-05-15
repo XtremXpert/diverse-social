@@ -62,3 +62,44 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         portal_group.user_ids |= u_portal
         partner.invalidate_recordset(['display_name'])
         self.assertNotEqual(partner.display_name, 'partage_portal@test.com')
+
+    def test_portal_display_name_is_login_not_name(self):
+        """Le login diffère du nom — vérifier que c'est bien le login affiché."""
+        partner = self.portal_user.partner_id
+        partner.invalidate_recordset(['display_name'])
+        self.assertEqual(partner.display_name, 'portail_login@test.com')
+        self.assertNotEqual(partner.display_name, 'Portal Tremblay')
+
+    def test_inactive_portal_user_not_used(self):
+        """Un utilisateur portail inactif ne déclenche pas le remplacement."""
+        partner = self.env['res.partner'].create({'name': 'Portail Inactif'})
+        u = self.env['res.users'].sudo().create({
+            'name': 'Portail Inactif', 'login': 'portail_inactif@test.com',
+            'email': 'portail_inactif@test.com', 'partner_id': partner.id,
+            'active': False,
+        })
+        partner.invalidate_recordset(['display_name'])
+        self.assertEqual(partner.display_name, 'Portail Inactif')
+
+    def test_multiple_portal_users_uses_first_login(self):
+        """Deux utilisateurs portail actifs → display_name = login du premier."""
+        partner = self.env['res.partner'].create({'name': 'Multi Portail'})
+        portal_group = self.env.ref('base.group_portal')
+        internal_group = self.env.ref('base.group_user')
+        for login in ('multi_p1@test.com', 'multi_p2@test.com'):
+            u = self.env['res.users'].create({
+                'name': 'Multi Portail', 'login': login,
+                'email': login, 'partner_id': partner.id,
+            })
+            internal_group.user_ids -= u
+            portal_group.user_ids |= u
+        partner.invalidate_recordset(['display_name'])
+        self.assertIn(partner.display_name, {'multi_p1@test.com', 'multi_p2@test.com'})
+
+    def test_batch_compute_mixed_partners(self):
+        """Batch avec partenaires portail et sans utilisateur — résultats corrects."""
+        plain = self.env['res.partner'].create({'name': 'Plain Partner'})
+        portal_partner = self.portal_user.partner_id
+        (plain | portal_partner).invalidate_recordset(['display_name'])
+        self.assertEqual(plain.display_name, 'Plain Partner')
+        self.assertEqual(portal_partner.display_name, self.portal_user.login)
