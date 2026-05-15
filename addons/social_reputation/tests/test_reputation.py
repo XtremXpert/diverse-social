@@ -155,3 +155,73 @@ class TestReputation(TransactionCase):
         profiles = crit._find_profiles()
         self.assertIn(self.bob_p, profiles)
         self.assertNotIn(self.alice_p, profiles)  # alice has no sponsor
+
+    # ── Modérateur peut retirer n'importe quel parrainage ─────────────────────
+
+    def test_moderator_can_withdraw_any(self):
+        """Un modérateur peut retirer un parrainage dont il n'est pas le sponsor."""
+        group_mod = self.env.ref('social_base.group_social_moderator')
+        moderator = self.env['res.users'].create({
+            'name': 'Modo Rep', 'login': 'rep_modo', 'email': 'modo@rep.test',
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id), (4, group_mod.id)],
+        })
+        v = self.Vouching.with_user(self.alice).vouch_for(self.carol)
+        v.with_user(moderator).action_withdraw(reason='Modération')
+        self.assertEqual(v.state, 'withdrawn')
+
+    def test_withdraw_stores_reason(self):
+        v = self.Vouching.with_user(self.alice).vouch_for(self.carol)
+        v.with_user(self.alice).action_withdraw(reason='Raison de retrait')
+        self.assertEqual(v.withdrawn_reason, 'Raison de retrait')
+
+    # ── Compteurs après retrait ───────────────────────────────────────────────
+
+    def test_given_count_decrements_after_withdraw(self):
+        """vouching_given_count diminue après retrait."""
+        v = self.Vouching.with_user(self.alice).vouch_for(self.carol)
+        self.alice_p.invalidate_recordset()
+        before = self.alice_p.vouching_given_count
+        v.with_user(self.alice).action_withdraw(reason='Retrait test')
+        self.alice_p.invalidate_recordset()
+        self.assertLess(self.alice_p.vouching_given_count, before)
+
+    def test_received_count_decrements_after_withdraw(self):
+        """vouching_received_count diminue après retrait."""
+        v = self.Vouching.with_user(self.alice).vouch_for(self.carol)
+        self.carol_p.invalidate_recordset()
+        v.with_user(self.alice).action_withdraw(reason='Test décrémentation')
+        self.carol_p.invalidate_recordset()
+        self.assertFalse(self.carol_p.is_vouched)
+
+    def test_multiple_sponsors_count(self):
+        """Deux sponsors actifs → vouching_received_count == 2."""
+        v1 = self.Vouching.with_user(self.alice).vouch_for(self.carol)
+        v2 = self.Vouching.with_user(self.bob).vouch_for(self.carol)
+        self.carol_p.invalidate_recordset()
+        self.assertEqual(self.carol_p.vouching_received_count, 2)
+
+    # ── action_vouch sur soi-même ─────────────────────────────────────────────
+
+    def test_action_vouch_self_raises(self):
+        """action_vouch sur son propre profil lève UserError."""
+        with self.assertRaises(UserError):
+            self.alice_p.with_user(self.alice).action_vouch(statement='Moi-même')
+
+    # ── Chaîne sans boucle ────────────────────────────────────────────────────
+
+    def test_vouching_chain_no_revisit(self):
+        """La chaîne ne revisite pas les utilisateurs déjà vus."""
+        self.Vouching.with_user(self.alice).vouch_for(self.dave)
+        chain = self.dave_p.get_vouching_chain(depth=3)
+        all_users = [u for level in chain for u in level]
+        self.assertEqual(len(all_users), len(set(u.id for u in all_users)))
+
+    def test_vouching_chain_empty_returns_list(self):
+        """Un profil sans sponsor retourne une liste vide."""
+        fresh_user = self.env['res.users'].create({
+            'name': 'Fresh User', 'login': 'rep_fresh', 'email': 'fresh@rep.test',
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+        })
+        fresh_p = self.env['club_social_profile.profile'].get_or_create_for_user(fresh_user)
+        chain = fresh_p.get_vouching_chain(depth=3)
+        self.assertEqual(chain, [])
