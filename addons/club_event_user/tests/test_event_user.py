@@ -95,3 +95,74 @@ class TestEventRegistrationUser(common.TransactionCase):
         })
         self.assertEqual(reg1.user_id, reg2.user_id)
         self.assertNotEqual(reg1.event_id, reg2.event_id)
+
+    def test_onchange_user_overwrites_existing_name(self):
+        user2 = self.env['res.users'].create({
+            'name': 'Autre User', 'login': 'autre@test.com', 'email': 'autre@test.com',
+        })
+        reg = self.env['event.registration'].new({
+            'event_id': self.event.id,
+            'name': 'Nom précédent',
+            'user_id': user2.id,
+        })
+        reg._onchange_user_id()
+        self.assertEqual(reg.name, user2.login)
+
+    def test_onchange_user_overwrites_existing_email(self):
+        user2 = self.env['res.users'].create({
+            'name': 'Email User', 'login': 'emailuser@test.com', 'email': 'emailuser@test.com',
+        })
+        reg = self.env['event.registration'].new({
+            'event_id': self.event.id,
+            'email': 'ancien@test.com',
+            'user_id': user2.id,
+        })
+        reg._onchange_user_id()
+        self.assertEqual(reg.email, user2.email)
+
+    def test_onchange_switching_user_updates_all_fields(self):
+        user2 = self.env['res.users'].create({
+            'name': 'Switch User', 'login': 'switch@test.com', 'email': 'switch@test.com',
+        })
+        reg = self.env['event.registration'].new({
+            'event_id': self.event.id,
+            'user_id': self.user.id,
+        })
+        reg._onchange_user_id()
+        self.assertEqual(reg.name, self.user.login)
+        reg.user_id = user2
+        reg._onchange_user_id()
+        self.assertEqual(reg.name, user2.login)
+        self.assertEqual(reg.email, user2.email)
+        self.assertEqual(reg.partner_id, user2.partner_id)
+
+    def test_ticket_require_member_name_field_exists(self):
+        self.assertIn('require_member_name', self.env['event.event.ticket']._fields)
+
+    def test_ticket_require_member_name_default_false(self):
+        ticket = self.env['event.event.ticket'].create({
+            'name': 'Billet Test',
+            'event_id': self.event.id,
+        })
+        self.assertFalse(ticket.require_member_name)
+
+    def test_ticket_require_member_name_can_be_set(self):
+        ticket = self.env['event.event.ticket'].create({
+            'name': 'Billet Membre',
+            'event_id': self.event.id,
+            'require_member_name': True,
+        })
+        self.assertTrue(ticket.require_member_name)
+
+    def test_search_registrations_by_user_id(self):
+        reg = self.env['event.registration'].create({
+            'event_id': self.event.id,
+            'user_id': self.user.id,
+            'name': self.user.login,
+            'email': self.user.email,
+            'partner_id': self.user.partner_id.id,
+        })
+        results = self.env['event.registration'].search([('user_id', '=', self.user.id)])
+        self.assertIn(reg, results)
+        for r in results:
+            self.assertEqual(r.user_id, self.user)
