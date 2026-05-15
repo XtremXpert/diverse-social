@@ -179,3 +179,116 @@ class TestMembershipSale(TransactionCase):
     def test_seed_trial_product(self):
         p = self.env.ref('club_membership_sale.product_membership_trial')
         self.assertEqual(p.membership_type_id, self.type_trial)
+
+    # ── Deux produits d'adhésion ──────────────────────────────────────────────
+
+    def test_confirm_two_membership_products_creates_two_memberships(self):
+        product_trial = self.env['product.template'].create({
+            'name': 'Adhésion Essai Test',
+            'type': 'service',
+            'membership_type_id': self.type_trial.id,
+            'list_price': 20.0,
+        })
+        order = self._make_order([self.product_regular, product_trial])
+        order.action_confirm()
+        memberships = self.Membership.search([('sale_order_id', '=', order.id)])
+        self.assertEqual(len(memberships), 2)
+
+    def test_membership_count_two_products(self):
+        product_trial = self.env['product.template'].create({
+            'name': 'Adhésion Essai Count',
+            'type': 'service',
+            'membership_type_id': self.type_trial.id,
+            'list_price': 20.0,
+        })
+        order = self._make_order([self.product_regular, product_trial])
+        order.action_confirm()
+        self.assertEqual(order.membership_count, 2)
+
+    # ── Champs de la membership créée ────────────────────────────────────────
+
+    def test_start_date_set_to_today(self):
+        from odoo import fields
+        order = self._make_order([self.product_regular])
+        order.action_confirm()
+        membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
+        self.assertEqual(membership.start_date, fields.Date.today())
+
+    def test_sale_order_id_linked(self):
+        order = self._make_order([self.product_regular])
+        order.action_confirm()
+        membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
+        self.assertEqual(membership.sale_order_id, order)
+
+    def test_notes_contain_order_name(self):
+        order = self._make_order([self.product_regular])
+        order.action_confirm()
+        membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
+        self.assertIn(order.name, membership.notes or '')
+
+    # ── Activation multiple ───────────────────────────────────────────────────
+
+    def test_activate_multiple_pending_memberships(self):
+        product_trial = self.env['product.template'].create({
+            'name': 'Essai Multi Activate',
+            'type': 'service',
+            'membership_type_id': self.type_trial.id,
+            'list_price': 20.0,
+        })
+        order = self._make_order([self.product_regular, product_trial])
+        order.action_confirm()
+        memberships = self.Membership.search([('sale_order_id', '=', order.id)])
+        self.assertEqual(len(memberships), 2)
+        invoice = self.env['account.move'].sudo().create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner.id,
+            'invoice_line_ids': [(0, 0, {
+                'name': 'Adhésions', 'quantity': 1, 'price_unit': 120.0,
+            })],
+        })
+        invoice.action_post()
+        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
+        invoice.sudo()._activate_memberships_on_payment()
+        for m in memberships:
+            m.invalidate_recordset()
+            self.assertEqual(m.state, 'active')
+
+    def test_already_active_membership_not_touched(self):
+        """Une membership déjà active n'est pas ré-activée."""
+        order = self._make_order([self.product_regular])
+        order.action_confirm()
+        membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
+        membership.action_activate()
+        self.assertEqual(membership.state, 'active')
+        invoice = self.env['account.move'].sudo().create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner.id,
+            'invoice_line_ids': [(0, 0, {'name': 'Re-test', 'quantity': 1, 'price_unit': 100.0})],
+        })
+        invoice.action_post()
+        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
+        invoice.sudo()._activate_memberships_on_payment()
+        membership.invalidate_recordset()
+        self.assertEqual(membership.state, 'active')
+
+    # ── SaleOrderLine.membership_type_id ─────────────────────────────────────
+
+    def test_order_line_membership_type_related(self):
+        order = self._make_order([self.product_regular])
+        self.assertEqual(order.order_line[:1].membership_type_id, self.type_regular)
+
+    def test_order_line_no_membership_type(self):
+        order = self._make_order([self.product_normal])
+        self.assertFalse(order.order_line[:1].membership_type_id)
+
+    # ── partner_invoice_id prioritaire ───────────────────────────────────────
+
+    def test_uses_partner_invoice_id_if_set(self):
+        invoice_partner = self.env['res.partner'].create({
+            'name': 'Facturation Test', 'email': 'billing@sale.test',
+        })
+        order = self._make_order([self.product_regular])
+        order.write({'partner_invoice_id': invoice_partner.id})
+        order.action_confirm()
+        membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
+        self.assertEqual(membership.partner_id, invoice_partner)
