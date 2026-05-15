@@ -305,3 +305,59 @@ class TestGovernancePortalHttp(HttpCase):
         resp = self.url_open(f'/governance/{p.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'progress-bar', resp.content)
+
+    # ── Ouvrir ────────────────────────────────────────────────────────────
+
+    def test_open_by_author(self):
+        admin = self.env.ref('base.user_admin')
+        p = self._make_proposal(user=admin, state='draft')
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            f'/governance/{p.id}/open',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        p.invalidate_recordset()
+        self.assertEqual(p.state, 'open')
+
+    def test_open_by_non_author_forbidden(self):
+        mod = self._setup_mod()
+        p = self._make_proposal(user=mod, state='draft')
+        member = self.env['res.users'].create({
+            'name': 'GovMemberHTTP', 'login': 'gov_member_http',
+            'email': 'gov_member_http@gov.test', 'password': 'Test1234!',
+            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+        })
+        self.authenticate('gov_member_http', 'Test1234!')
+        resp = self.url_open(
+            f'/governance/{p.id}/open',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    # ── Lancer le vote ────────────────────────────────────────────────────
+
+    def test_start_voting_by_author(self):
+        admin = self.env.ref('base.user_admin')
+        p = self._make_proposal(user=admin, state='draft')
+        self.authenticate('admin', 'admin')
+        import datetime as dt
+        closes = (fields.Datetime.now() + dt.timedelta(days=3)).strftime('%Y-%m-%dT%H:%M')
+        resp = self.url_open(
+            f'/governance/{p.id}/start_voting',
+            data={'csrf_token': self.csrf_token(), 'voting_closes_at': closes},
+        )
+        self.assertEqual(resp.status_code, 200)
+        p.invalidate_recordset()
+        self.assertEqual(p.state, 'voting')
+
+    def test_start_voting_invalid_date_redirects_with_error(self):
+        admin = self.env.ref('base.user_admin')
+        p = self._make_proposal(user=admin, state='draft')
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            f'/governance/{p.id}/start_voting',
+            data={'csrf_token': self.csrf_token(), 'voting_closes_at': 'not-a-date'},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'invalid_date', resp.url.encode())

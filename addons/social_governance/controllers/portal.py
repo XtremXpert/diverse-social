@@ -138,6 +138,46 @@ class GovernancePortal(CustomerPortal):
             return request.redirect(f'/governance/{proposal_id}?error={e}')
         return request.redirect(f'/governance/{proposal_id}?voted=1')
 
+    # ── Ouvrir une proposition ────────────────────────────────────────────────
+
+    @route('/governance/<int:proposal_id>/open', auth='user', methods=['POST'],
+           website=True, csrf=True)
+    def governance_open(self, proposal_id, **kw):
+        proposal = request.env['social_governance.proposal'].sudo().browse(proposal_id).exists()
+        if not proposal:
+            raise NotFound()
+        user = request.env.user
+        if proposal.author_id != user and not user.has_group('social_base.group_social_moderator'):
+            raise Forbidden()
+        try:
+            proposal.with_user(user).action_open()
+        except UserError as e:
+            return request.redirect(f'/governance/{proposal_id}?error={e}')
+        return request.redirect(f'/governance/{proposal_id}?opened=1')
+
+    # ── Lancer le vote ────────────────────────────────────────────────────────
+
+    @route('/governance/<int:proposal_id>/start_voting', auth='user', methods=['POST'],
+           website=True, csrf=True)
+    def governance_start_voting(self, proposal_id, voting_closes_at='', **kw):
+        proposal = request.env['social_governance.proposal'].sudo().browse(proposal_id).exists()
+        if not proposal:
+            raise NotFound()
+        user = request.env.user
+        if proposal.author_id != user and not user.has_group('social_base.group_social_moderator'):
+            raise Forbidden()
+        if voting_closes_at:
+            try:
+                closes = fields.Datetime.from_string(voting_closes_at)
+                proposal.sudo().write({'voting_closes_at': closes})
+            except Exception:
+                return request.redirect(f'/governance/{proposal_id}?error=invalid_date')
+        try:
+            proposal.with_user(user).action_start_voting()
+        except UserError as e:
+            return request.redirect(f'/governance/{proposal_id}?error={e}')
+        return request.redirect(f'/governance/{proposal_id}?voting_started=1')
+
     # ── Retirer une proposition ────────────────────────────────────────────────
 
     @route('/governance/<int:proposal_id>/withdraw', auth='user', methods=['POST'],
