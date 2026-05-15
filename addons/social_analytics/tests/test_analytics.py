@@ -1,7 +1,7 @@
 import datetime
 
 from odoo import fields
-from odoo.tests import TransactionCase, tagged
+from odoo.tests import TransactionCase, HttpCase, tagged
 
 
 @tagged('social_analytics', 'analytics')
@@ -373,3 +373,157 @@ class TestSocialAnalytics(TransactionCase):
         action = record.action_view_pending_photos()
         self.assertEqual(action['res_model'], 'social_gallery.photo')
         self.assertIn(('state', '=', 'pending'), action['domain'])
+
+    # ── Actions navigation restantes ─────────────────────────────────────────
+
+    def test_action_view_posts_moderation(self):
+        record = self.Dashboard.sudo().create({})
+        action = record.action_view_posts_moderation()
+        self.assertEqual(action['res_model'], 'social_base.post')
+        self.assertIn(('state', '=', 'moderation'), action['domain'])
+
+    def test_action_view_voting_proposals(self):
+        record = self.Dashboard.sudo().create({})
+        action = record.action_view_voting_proposals()
+        self.assertEqual(action['res_model'], 'social_governance.proposal')
+
+    # ── action_refresh & open_dashboard ──────────────────────────────────────
+
+    def test_action_refresh_returns_action(self):
+        record = self.Dashboard.sudo().create({})
+        action = record.action_refresh()
+        self.assertEqual(action['type'], 'ir.actions.act_window')
+        self.assertEqual(action['res_model'], 'social_analytics.dashboard')
+
+    def test_open_dashboard_returns_action(self):
+        action = self.Dashboard.sudo().open_dashboard()
+        self.assertEqual(action['type'], 'ir.actions.act_window')
+        self.assertEqual(action['res_model'], 'social_analytics.dashboard')
+
+    # ── Compteurs supplémentaires ─────────────────────────────────────────────
+
+    def test_members_new_month_count(self):
+        before = self.Dashboard._member_stats(
+            datetime.date.today(),
+            datetime.datetime.now() - datetime.timedelta(days=30),
+            datetime.date.today() + datetime.timedelta(days=30),
+        )['new_month']
+        partner = self.env['res.partner'].create({'name': 'New This Month'})
+        m = self.env['club_membership.membership'].sudo().create({
+            'partner_id': partner.id,
+            'membership_type_id': self.type_regular.id,
+            'start_date': datetime.date.today(),
+        })
+        m.action_activate()
+        after = self.Dashboard._member_stats(
+            datetime.date.today(),
+            datetime.datetime.now() - datetime.timedelta(days=30),
+            datetime.date.today() + datetime.timedelta(days=30),
+        )['new_month']
+        self.assertEqual(after, before + 1)
+
+    def test_negotiation_reviewing_in_pending_signature(self):
+        before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.env['social_negotiation.negotiation'].sudo().create({
+            'initiator_id': self.moderator.id,
+            'partner_id': self.user.id,
+            'state': 'reviewing',
+        })
+        after = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.assertEqual(after, before + 1)
+
+    def test_connections_week_count(self):
+        before = self.Dashboard._activity_stats(
+            datetime.datetime.now() - datetime.timedelta(days=7)
+        )['connections_week']
+        profile_a = self.env['club_social_profile.profile'].get_or_create_for_user(self.moderator)
+        profile_b = self.env['club_social_profile.profile'].get_or_create_for_user(self.user)
+        self.env['club_social_profile.connection'].sudo().create({
+            'profile_a_id': profile_a.id,
+            'profile_b_id': profile_b.id,
+        })
+        after = self.Dashboard._activity_stats(
+            datetime.datetime.now() - datetime.timedelta(days=7)
+        )['connections_week']
+        self.assertGreaterEqual(after, before)
+
+    def test_top_posts_has_required_keys(self):
+        """Chaque entrée _top_posts possède les clés attendues."""
+        self.env['social_base.post'].sudo().create({
+            'name': 'Top Post Test',
+            'content': '<p>Contenu analytique</p>',
+            'author_id': self.user.id,
+            'visibility': 'members',
+            'state': 'published',
+        })
+        top = self.Dashboard._top_posts(
+            datetime.datetime.now() - datetime.timedelta(days=30)
+        )
+        if top:
+            entry = top[0]
+            self.assertIn('id', entry)
+            self.assertIn('likes', entry)
+            self.assertIn('comments', entry)
+
+    def test_new_sections_values_non_negative(self):
+        data = self.Dashboard.get_dashboard_data()
+        for section in ('gallery', 'reputation', 'negotiation'):
+            for key, val in data[section].items():
+                if isinstance(val, int):
+                    self.assertGreaterEqual(val, 0, f"{section}.{key} devrait être >= 0")
+
+
+@tagged('social_analytics', 'analytics', 'post_install', '-at_install')
+class TestSocialAnalyticsHttp(HttpCase):
+    """Tests HTTP des endpoints API analytics."""
+
+    def setUp(self):
+        super().setUp()
+        group_social = self.env.ref('social_base.group_social_user')
+        group_mod = self.env.ref('social_base.group_social_moderator')
+        self.moderator = self.env['res.users'].sudo().create({
+            'name': 'API Modo', 'login': 'api_modo_anlt',
+            'email': 'api_modo@analytics.test',
+            'password': 'Test1234!',
+            'group_ids': [(4, group_social.id), (4, group_mod.id)],
+        })
+        self.regular_user = self.env['res.users'].sudo().create({
+            'name': 'API User', 'login': 'api_user_anlt',
+            'email': 'api_user@analytics.test',
+            'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+
+    def test_dashboard_api_moderator_200(self):
+        self.authenticate('api_modo_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/dashboard')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_dashboard_api_non_moderator_403(self):
+        self.authenticate('api_user_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/dashboard')
+        self.assertEqual(resp.status_code, 403)
+
+    def test_members_api_moderator_200(self):
+        self.authenticate('api_modo_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/members')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_members_api_non_moderator_403(self):
+        self.authenticate('api_user_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/members')
+        self.assertEqual(resp.status_code, 403)
+
+    def test_engagement_api_moderator_200(self):
+        self.authenticate('api_modo_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/engagement')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_engagement_api_non_moderator_403(self):
+        self.authenticate('api_user_anlt', 'Test1234!')
+        resp = self.url_open('/social/api/analytics/engagement')
+        self.assertEqual(resp.status_code, 403)
+
+    def test_dashboard_api_unauthenticated_redirects(self):
+        resp = self.url_open('/social/api/analytics/dashboard', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
