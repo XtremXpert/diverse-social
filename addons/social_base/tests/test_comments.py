@@ -56,3 +56,46 @@ class TestSocialComment(TransactionCase):
                 'author_id': self.user.id,
                 'parent_id': parent.id,
             })
+
+    def test_delete_comment(self):
+        comment = self._make_comment()
+        comment.action_delete()
+        self.assertEqual(comment.state, 'deleted')
+
+    def test_restore_from_hidden(self):
+        comment = self._make_comment()
+        comment.action_hide()
+        comment.action_restore()
+        self.assertEqual(comment.state, 'published')
+
+    def test_nesting_depth_3_valid(self):
+        """Trois niveaux (L1→L2→L3) sont autorisés."""
+        c1 = self._make_comment('L1')
+        c2 = self._make_comment('L2', parent=c1)
+        c3 = self._make_comment('L3', parent=c2)
+        self.assertEqual(c3.parent_id, c2)
+
+    def test_comment_like_count(self):
+        comment = self._make_comment()
+        self.env['social_base.reaction'].create({
+            'comment_id': comment.id, 'user_id': self.user.id, 'type': 'like',
+        })
+        self.assertEqual(comment.like_count, 1)
+
+    def test_comment_count_on_post(self):
+        self.env['social_base.comment'].create([
+            {'content': f'C{i}', 'post_id': self.post.id, 'author_id': self.user.id}
+            for i in range(3)
+        ])
+        self.assertGreaterEqual(self.post.comment_count, 3)
+
+    def test_cascade_delete_with_post(self):
+        comment = self._make_comment('Will be deleted')
+        comment_id = comment.id
+        post = self.env['social_base.post'].with_user(self.user).create({'content': 'Temp post'})
+        child_comment = self.env['social_base.comment'].create({
+            'content': 'Child', 'post_id': post.id, 'author_id': self.user.id,
+        })
+        child_id = child_comment.id
+        post.unlink()
+        self.assertFalse(self.env['social_base.comment'].browse(child_id).exists())
