@@ -69,10 +69,12 @@ class SocialSearchService(models.AbstractModel):
         return {
             'type': 'profile',
             'id': p.id,
+            'user_id': p.user_id.id,
             'name': p.user_id.name,
             'login': p.login,
             'city': p.city or None,
             'bio': (p.bio or '')[:120] or None,
+            'url': '/profile/%d' % p.user_id.id,
         }
 
     # ── Groups ────────────────────────────────────────────────────────────────
@@ -140,6 +142,7 @@ class SocialSearchService(models.AbstractModel):
             'date_end': e.date_end.isoformat() if e.date_end else None,
             'social_visibility': e.social_visibility or None,
             'organizer': e.organizer_user_id.name if e.organizer_user_id else None,
+            'url': '/event/%d' % e.id,
         }
 
     # ── Posts ─────────────────────────────────────────────────────────────────

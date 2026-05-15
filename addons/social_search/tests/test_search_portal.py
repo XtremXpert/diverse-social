@@ -65,7 +65,7 @@ class TestSearchPortalData(TransactionCase):
     def test_search_group_result_structure(self):
         group = self.env['social_group.group'].sudo().create({
             'name': 'Search Test Group', 'privacy': 'public',
-            'join_type': 'open', 'creator_id': self.user.id,
+            'join_policy': 'open', 'creator_id': self.user.id,
         })
         results = self.env['social_search.service'].with_user(self.user).search_all(
             'Search Test Group', types=['group']
@@ -86,6 +86,32 @@ class TestSearchPortalData(TransactionCase):
         for item in results.get('gallery', []):
             self.assertIn('url', item)
             self.assertTrue(item['url'].startswith('/gallery/'))
+
+    def test_search_profile_result_has_url(self):
+        results = self.env['social_search.service'].with_user(self.user).search_all(
+            'SearchPortalUser', types=['profile']
+        )
+        for item in results.get('profile', []):
+            self.assertIn('url', item)
+            self.assertIn('/profile/', item['url'])
+
+    def test_search_event_result_has_url(self):
+        if 'event.event' not in self.env:
+            self.skipTest('event.event not installed')
+        import datetime
+        now = datetime.datetime.now()
+        event = self.env['event.event'].sudo().create({
+            'name': 'Search URL Test Event',
+            'date_begin': now,
+            'date_end': now + datetime.timedelta(hours=2),
+            'social_visibility': 'members',
+        })
+        results = self.env['social_search.service'].with_user(self.user).search_all(
+            'Search URL Test Event', types=['event']
+        )
+        for item in results.get('event', []):
+            self.assertIn('url', item)
+            self.assertIn('/event/', item['url'])
 
     def test_search_respects_blocked_users(self):
         blocked_user = _make_social_user(self.env, 'BlockedSearchUser', 'blocked_search')
