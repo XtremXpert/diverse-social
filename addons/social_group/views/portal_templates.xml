@@ -20,6 +20,55 @@
                 <t t-set="title">Groupes communautaires</t>
             </t>
             <div class="container mt-3">
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('error') == 'name_required'">
+                    <div class="alert alert-danger">Le nom du groupe est obligatoire.</div>
+                </t>
+                <t t-elif="request.params.get('error') == 'create_failed'">
+                    <div class="alert alert-danger">Impossible de créer le groupe.</div>
+                </t>
+
+                <!-- Créer un groupe -->
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-sm btn-primary"
+                            data-bs-toggle="collapse" data-bs-target="#sn_create_group">
+                        + Créer un groupe
+                    </button>
+                </div>
+                <div class="collapse mb-4" id="sn_create_group">
+                    <div class="card card-body">
+                        <form action="/groups/create" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-2">
+                                <input type="text" name="name" class="form-control form-control-sm"
+                                       placeholder="Nom du groupe" required="required" maxlength="200"/>
+                            </div>
+                            <div class="mb-2">
+                                <textarea name="description" class="form-control form-control-sm" rows="3"
+                                          placeholder="Description (optionnel)" maxlength="2000"/>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <select name="privacy" class="form-select form-select-sm">
+                                        <option value="public">Public</option>
+                                        <option value="private" selected="selected">Privé</option>
+                                        <option value="secret">Secret</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="join_type" class="form-select form-select-sm">
+                                        <option value="open">Ouvert</option>
+                                        <option value="approval" selected="selected">Sur demande</option>
+                                        <option value="invite">Sur invitation</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">Créer</button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="row">
                     <t t-foreach="groups" t-as="group">
                         <div class="col-md-4 mb-4">
@@ -63,6 +112,24 @@
     <template id="portal_group_detail" name="Group Detail">
         <t t-call="portal.portal_layout">
             <div class="container mt-3">
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('created')">
+                    <div class="alert alert-success">Groupe créé avec succès.</div>
+                </t>
+                <t t-if="request.params.get('edited')">
+                    <div class="alert alert-success">Groupe mis à jour.</div>
+                </t>
+                <t t-if="request.params.get('approved')">
+                    <div class="alert alert-success">Demande approuvée.</div>
+                </t>
+                <t t-if="request.params.get('rejected')">
+                    <div class="alert alert-info">Demande rejetée.</div>
+                </t>
+                <t t-if="error or request.params.get('error')">
+                    <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
+                </t>
+
                 <div class="row">
                     <div class="col-lg-8">
                         <h2 t-esc="group.name"/>
@@ -70,6 +137,7 @@
                             <span t-esc="group.member_count"/> membre(s) ·
                             <t t-if="group.privacy == 'public'">Public</t>
                             <t t-elif="group.privacy == 'private'">Privé (sur demande)</t>
+                            <t t-elif="group.privacy == 'secret'">Secret</t>
                         </p>
                         <p t-if="group.description" t-esc="group.description"/>
 
@@ -100,6 +168,36 @@
                             </form>
                         </t>
 
+                        <!-- Demandes en attente (modérateurs du groupe) -->
+                        <t t-if="is_mod and pending_requests">
+                            <hr/>
+                            <h5>Demandes d'adhésion en attente (<t t-esc="len(pending_requests)"/>)</h5>
+                            <div class="list-group mb-3">
+                                <t t-foreach="pending_requests" t-as="req">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                        <span>
+                                            <strong t-esc="req.user_id.name"/>
+                                            <small class="text-muted ms-2">
+                                                <t t-field="req.create_date" t-options='{"widget":"date"}'/>
+                                            </small>
+                                        </span>
+                                        <div class="d-flex gap-2">
+                                            <form t-attf-action="/groups/#{group.id}/requests/#{req.id}/approve"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm btn-success">Accepter</button>
+                                            </form>
+                                            <form t-attf-action="/groups/#{group.id}/requests/#{req.id}/reject"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Refuser</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
                         <t t-if="is_member and posts">
                             <hr/>
                             <h5>Publications récentes</h5>
@@ -116,6 +214,49 @@
                         </t>
                     </div>
                     <div class="col-lg-4">
+                        <!-- Éditer le groupe (admins) -->
+                        <t t-if="is_mod">
+                            <div class="card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <strong>Paramètres du groupe</strong>
+                                    <button class="btn btn-sm btn-outline-secondary"
+                                            data-bs-toggle="collapse" data-bs-target="#sn_edit_group">
+                                        Modifier
+                                    </button>
+                                </div>
+                                <div class="collapse" id="sn_edit_group">
+                                    <div class="card-body">
+                                        <form t-attf-action="/groups/#{group.id}/edit" method="post">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <div class="mb-2">
+                                                <input type="text" name="name" class="form-control form-control-sm"
+                                                       t-att-value="group.name" required="required" maxlength="200"/>
+                                            </div>
+                                            <div class="mb-2">
+                                                <textarea name="description" class="form-control form-control-sm"
+                                                          rows="3" maxlength="2000"><t t-esc="group.description or ''"/></textarea>
+                                            </div>
+                                            <div class="mb-2">
+                                                <select name="privacy" class="form-select form-select-sm">
+                                                    <option value="public" t-att-selected="group.privacy == 'public'">Public</option>
+                                                    <option value="private" t-att-selected="group.privacy == 'private'">Privé</option>
+                                                    <option value="secret" t-att-selected="group.privacy == 'secret'">Secret</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <select name="join_type" class="form-select form-select-sm">
+                                                    <option value="open" t-att-selected="group.join_type == 'open'">Ouvert</option>
+                                                    <option value="approval" t-att-selected="group.join_type == 'approval'">Sur demande</option>
+                                                    <option value="invite" t-att-selected="group.join_type == 'invite'">Sur invitation</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-primary w-100">Enregistrer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
                         <t t-if="group.rule_ids">
                             <div class="card">
                                 <div class="card-header"><strong>Règles du groupe</strong></div>

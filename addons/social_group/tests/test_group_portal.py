@@ -140,3 +140,181 @@ class TestGroupPortalHttp(HttpCase):
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
+
+    # ── Créer un groupe ───────────────────────────────────────────────────
+
+    def test_create_group_ok(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/groups/create',
+            data={
+                'csrf_token': self.csrf_token(),
+                'name': 'HTTP Created Group',
+                'description': 'Created from portal',
+                'privacy': 'private',
+                'join_type': 'approval',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        g = self.env['social_group.group'].sudo().search([('name', '=', 'HTTP Created Group')], limit=1)
+        self.assertTrue(g)
+
+    def test_create_group_missing_name_redirects_with_error(self):
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            '/groups/create',
+            data={'csrf_token': self.csrf_token(), 'name': ''},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'name_required', resp.url.encode())
+
+    # ── Éditer un groupe ──────────────────────────────────────────────────
+
+    def test_edit_group_by_admin(self):
+        admin = self.env.ref('base.user_admin')
+        group = self.env['social_group.group'].sudo().create({
+            'name': 'Edit Test Group', 'privacy': 'public',
+            'join_type': 'open', 'creator_id': admin.id,
+            'admin_ids': [(4, admin.id)],
+        })
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            f'/groups/{group.id}/edit',
+            data={
+                'csrf_token': self.csrf_token(),
+                'name': 'Edited Group Name',
+                'privacy': 'private',
+                'join_type': 'approval',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        group.invalidate_recordset()
+        self.assertEqual(group.name, 'Edited Group Name')
+        self.assertEqual(group.privacy, 'private')
+
+    def test_edit_group_by_non_admin_forbidden(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        other = self.env['res.users'].create({
+            'name': 'NonAdmin', 'login': 'non_admin_http',
+            'email': 'non_admin@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        admin = self.env.ref('base.user_admin')
+        group = self.env['social_group.group'].sudo().create({
+            'name': 'Admin Group', 'privacy': 'public',
+            'join_type': 'open', 'creator_id': admin.id,
+            'admin_ids': [(4, admin.id)],
+        })
+        self.authenticate('non_admin_http', 'Test1234!')
+        resp = self.url_open(
+            f'/groups/{group.id}/edit',
+            data={'csrf_token': self.csrf_token(), 'name': 'Hacked Name'},
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    # ── Approuver / rejeter les demandes ─────────────────────────────────
+
+    def _make_join_request(self, group, user):
+        return self.env['social_group.join_request'].sudo().create({
+            'group_id': group.id,
+            'user_id': user.id,
+            'state': 'pending',
+        })
+
+    def test_approve_request_by_creator(self):
+        admin = self.env.ref('base.user_admin')
+        group_social = self.env.ref('social_base.group_social_user')
+        requester = self.env['res.users'].create({
+            'name': 'Requester', 'login': 'requester_http',
+            'email': 'req@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        group = self.env['social_group.group'].sudo().create({
+            'name': 'Approval Group', 'privacy': 'private',
+            'join_type': 'approval', 'creator_id': admin.id,
+        })
+        req = self._make_join_request(group, requester)
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            f'/groups/{group.id}/requests/{req.id}/approve',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        req.invalidate_recordset()
+        self.assertEqual(req.state, 'approved')
+        self.assertIn(requester, group.member_ids)
+
+    def test_reject_request_by_creator(self):
+        admin = self.env.ref('base.user_admin')
+        group_social = self.env.ref('social_base.group_social_user')
+        requester2 = self.env['res.users'].create({
+            'name': 'Requester2', 'login': 'requester2_http',
+            'email': 'req2@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        group = self.env['social_group.group'].sudo().create({
+            'name': 'Reject Test Group', 'privacy': 'private',
+            'join_type': 'approval', 'creator_id': admin.id,
+        })
+        req = self._make_join_request(group, requester2)
+        self.authenticate('admin', 'admin')
+        resp = self.url_open(
+            f'/groups/{group.id}/requests/{req.id}/reject',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 200)
+        req.invalidate_recordset()
+        self.assertEqual(req.state, 'rejected')
+
+    def test_approve_request_by_non_mod_forbidden(self):
+        group_social = self.env.ref('social_base.group_social_user')
+        creator = self.env['res.users'].create({
+            'name': 'Creator', 'login': 'creator_http',
+            'email': 'creator@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        requester3 = self.env['res.users'].create({
+            'name': 'Requester3', 'login': 'requester3_http',
+            'email': 'req3@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        group = self.env['social_group.group'].sudo().create({
+            'name': 'Non-mod Test Group', 'privacy': 'private',
+            'join_type': 'approval', 'creator_id': creator.id,
+        })
+        req = self._make_join_request(group, requester3)
+        # Authenticate as admin who is NOT creator/admin of this group
+        # (admin has group_social_moderator by default - let's use a plain member)
+        self.authenticate('requester3_http', 'Test1234!')
+        resp = self.url_open(
+            f'/groups/{group.id}/requests/{req.id}/approve',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_approve_cross_group_injection_raises(self):
+        admin = self.env.ref('base.user_admin')
+        group_social = self.env.ref('social_base.group_social_user')
+        other_user = self.env['res.users'].create({
+            'name': 'CrossUser', 'login': 'cross_user_http',
+            'email': 'cross@test.com', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        group_a = self.env['social_group.group'].sudo().create({
+            'name': 'Group A', 'privacy': 'private',
+            'join_type': 'approval', 'creator_id': admin.id,
+        })
+        group_b = self.env['social_group.group'].sudo().create({
+            'name': 'Group B', 'privacy': 'private',
+            'join_type': 'approval', 'creator_id': admin.id,
+        })
+        req_b = self._make_join_request(group_b, other_user)
+        self.authenticate('admin', 'admin')
+        # Try to approve group_b's request via group_a's URL
+        resp = self.url_open(
+            f'/groups/{group_a.id}/requests/{req_b.id}/approve',
+            data={'csrf_token': self.csrf_token()},
+        )
+        self.assertEqual(resp.status_code, 404)
+        req_b.invalidate_recordset()
+        self.assertEqual(req_b.state, 'pending')
