@@ -73,7 +73,7 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
     def test_inactive_portal_user_not_used(self):
         """Un utilisateur portail inactif ne déclenche pas le remplacement."""
         partner = self.env['res.partner'].create({'name': 'Portail Inactif'})
-        u = self.env['res.users'].sudo().create({
+        u = self.env['res.users'].sudo().with_context(no_reset_password=True).create({
             'name': 'Portail Inactif', 'login': 'portail_inactif@test.com',
             'email': 'portail_inactif@test.com', 'partner_id': partner.id,
             'active': False,
@@ -109,7 +109,7 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         partner = self.env['res.partner'].create({'name': 'Interne Inactif'})
         portal_group = self.env.ref('base.group_portal')
         internal_group = self.env.ref('base.group_user')
-        u_internal = self.env['res.users'].sudo().create({
+        u_internal = self.env['res.users'].sudo().with_context(no_reset_password=True).create({
             'name': 'Interne Inactif', 'login': 'interne_inactif2@test.com',
             'email': 'interne_inactif2@test.com', 'partner_id': partner.id,
             'active': False,
