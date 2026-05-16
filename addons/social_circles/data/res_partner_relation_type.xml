@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+        Types de relations entre membres — Club l'Orage
+        ─────────────────────────────────────────────────
+        Conventions :
+          left_partner_type / right_partner_type :
+            'p' = personne (is_company=False)
+            'c' = compagnie (is_company=True)
+            (vide) = tous types
+          is_symmetric = True  → le label est identique dans les deux sens
+    -->
+
+    <!-- ── Romantique / Affectif ─────────────────────────────────────── -->
+
+    <record id="rel_type_partner" model="res.partner.relation.type">
+        <field name="name">Partenaire de</field>
+        <field name="name_inverse">Partenaire de</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_spouse" model="res.partner.relation.type">
+        <field name="name">Conjoint(e) de</field>
+        <field name="name_inverse">Conjoint(e) de</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_poly" model="res.partner.relation.type">
+        <field name="name">En relation poly avec</field>
+        <field name="name_inverse">En relation poly avec</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <!-- ── Dynamique D/s ─────────────────────────────────────────────── -->
+
+    <record id="rel_type_dominant" model="res.partner.relation.type">
+        <field name="name">Dominant(e) de</field>
+        <field name="name_inverse">Soumis(e) à</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_switch" model="res.partner.relation.type">
+        <field name="name">Switch avec</field>
+        <field name="name_inverse">Switch avec</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <!-- ── Dynamique M/e (TPE / 24-7) ───────────────────────────────── -->
+
+    <record id="rel_type_master" model="res.partner.relation.type">
+        <field name="name">Maître/Maîtresse de</field>
+        <field name="name_inverse">Esclave de</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_owner" model="res.partner.relation.type">
+        <field name="name">Propriétaire de</field>
+        <field name="name_inverse">Appartient à</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_collar" model="res.partner.relation.type">
+        <field name="name">A mis le collier à</field>
+        <field name="name_inverse">Porte le collier de</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <!-- ── Jeu / Scène ───────────────────────────────────────────────── -->
+
+    <record id="rel_type_play_partner" model="res.partner.relation.type">
+        <field name="name">Partenaire de jeu de</field>
+        <field name="name_inverse">Partenaire de jeu de</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_top" model="res.partner.relation.type">
+        <field name="name">Top de</field>
+        <field name="name_inverse">Bottom de</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_rigger" model="res.partner.relation.type">
+        <field name="name">Rigger de</field>
+        <field name="name_inverse">Model de</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <!-- ── Mentorat / Communauté ─────────────────────────────────────── -->
+
+    <record id="rel_type_mentor" model="res.partner.relation.type">
+        <field name="name">Mentor de</field>
+        <field name="name_inverse">Protégé(e) de</field>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_friend" model="res.partner.relation.type">
+        <field name="name">Ami(e) de</field>
+        <field name="name_inverse">Ami(e) de</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+    <record id="rel_type_scene_friend" model="res.partner.relation.type">
+        <field name="name">Ami(e) de scène de</field>
+        <field name="name_inverse">Ami(e) de scène de</field>
+        <field name="is_symmetric" eval="True"/>
+        <field name="left_partner_type">p</field>
+        <field name="right_partner_type">p</field>
+    </record>
+
+</odoo>

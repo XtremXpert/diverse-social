@@ -1,17 +1,19 @@
 {
     'name': 'Social Circles',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
-    'summary': 'Trust circles: organise your connections into named tiers and gate profile sections accordingly',
+    'summary': 'Trust circles and relationship types: organise connections into named tiers and define relationship dynamics',
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
         'club_social_profile',
+        'partner_multi_relation',
         'portal',
     ],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'data/res_partner_relation_type.xml',
         'views/circle_views.xml',
         'views/menus.xml',
         'views/portal_templates.xml',
