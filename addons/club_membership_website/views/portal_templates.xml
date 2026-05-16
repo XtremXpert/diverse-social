@@ -58,12 +58,7 @@
                             <tr>
                                 <td><t t-esc="m.membership_type_id.name"/></td>
                                 <td>
-                                    <span t-attf-class="badge rounded-pill
-                                        #{{'active': 'bg-success',
-                                           'pending': 'bg-warning text-dark',
-                                           'expired': 'bg-secondary',
-                                           'suspended': 'bg-warning text-dark',
-                                           'cancelled': 'bg-danger'}.get(m.state, 'bg-secondary')}">
+                                    <span t-att-class="'badge rounded-pill ' + {'active': 'bg-success', 'pending': 'bg-warning text-dark', 'expired': 'bg-secondary', 'suspended': 'bg-warning text-dark', 'cancelled': 'bg-danger'}.get(m.state, 'bg-secondary')">
                                         <t t-esc="m.state"/>
                                     </span>
                                 </td>
@@ -104,12 +99,7 @@
                     <dl class="row">
                         <dt class="col-sm-4">État</dt>
                         <dd class="col-sm-8">
-                            <span t-attf-class="badge rounded-pill
-                                #{{'active': 'bg-success',
-                                   'pending': 'bg-warning text-dark',
-                                   'expired': 'bg-secondary',
-                                   'suspended': 'bg-warning text-dark',
-                                   'cancelled': 'bg-danger'}.get(membership.state, 'bg-secondary')}">
+                            <span t-att-class="'badge rounded-pill ' + {'active': 'bg-success', 'pending': 'bg-warning text-dark', 'expired': 'bg-secondary', 'suspended': 'bg-warning text-dark', 'cancelled': 'bg-danger'}.get(membership.state, 'bg-secondary')">
                                 <t t-esc="membership.state"/>
                             </span>
                         </dd>

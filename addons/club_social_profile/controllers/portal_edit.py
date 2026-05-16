@@ -98,8 +98,8 @@ class ProfileEditPortal(CustomerPortal):
     # ── Préférences ───────────────────────────────────────────────────────────
 
     @route('/my/profile/edit/preferences', auth='user', methods=['POST'], website=True, csrf=True)
-    def save_preferences(self, visibility='members', availability='non_specifie',
-                         digest_email_enabled=False, stealth_name='', **kw):
+    def save_profile_preferences(self, visibility='members', availability='non_specifie',
+                                 digest_email_enabled=False, stealth_name='', **kw):
         profile = self._get_own_profile()
         form = request.httprequest.form
         looking_for_raw = [int(x) for x in form.getlist('looking_for_ids') if x.isdigit()]

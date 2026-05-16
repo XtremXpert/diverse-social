@@ -98,7 +98,7 @@ class MessagingPortal(CustomerPortal):
 
         content = (content or '').strip()
         if not content:
-            return self._json_error('Message vide', 400)
+            return self._json_error('Message vide', 200)
 
         try:
             msg = request.env['social_messaging.message'].sudo().create({
@@ -108,7 +108,7 @@ class MessagingPortal(CustomerPortal):
                 'read_by_ids': [(4, user.id)],
             })
         except (UserError, Exception) as e:
-            return self._json_error(str(e), 400)
+            return self._json_error(str(e), 200)
 
         return request.make_response(
             json.dumps({'ok': True, 'message': self._msg_dict(msg, user)}),
