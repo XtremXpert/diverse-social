@@ -219,7 +219,7 @@ class SocialFeedService(models.AbstractModel):
             '|',
             ('group_id', '=', False),
             ('group_id', 'in', member_group_ids),
-            '|', '|', '|',
+            '|', '|',
             ('visibility', 'in', ['public', 'members']),
             '&', ('visibility', '=', 'friends'),
                  ('author_id', 'in', connection_user_ids + [user.id]),

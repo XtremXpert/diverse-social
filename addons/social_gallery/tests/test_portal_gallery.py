@@ -282,7 +282,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open('/social/api/galleries')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('galleries', data)
         self.assertIsInstance(data['galleries'], list)
 
@@ -309,7 +309,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open(f'/social/api/galleries/{gallery.id}/photos')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('photos', data)
         self.assertGreaterEqual(data['total'], 1)
 
@@ -331,7 +331,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         resp = self.url_open(f'/social/api/galleries/{gallery.id}/photos')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertEqual(data['total'], 0)
 
     def test_api_gallery_photos_nonexistent_404(self):

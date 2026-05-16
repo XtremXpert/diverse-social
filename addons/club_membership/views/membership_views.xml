@@ -76,7 +76,7 @@
                 <filter name="pending" string="En attente" domain="[('state','=','pending')]"/>
                 <filter name="expired" string="Expirés" domain="[('state','=','expired')]"/>
                 <filter name="suspended" string="Suspendus" domain="[('state','=','suspended')]"/>
-                <group expand="0" string="Grouper par">
+                <group>
                     <filter name="group_type" string="Type"
                             context="{'group_by': 'membership_type_id'}"/>
                     <filter name="group_state" string="Statut"

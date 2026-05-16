@@ -109,8 +109,7 @@ class TestSocialOnboarding(TransactionCase):
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         # Simuler l'upload d'une image (1x1 pixel PNG en base64)
         fake_image = b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
-        import base64
-        wizard.write({'profile_image': base64.b64encode(fake_image)})
+        wizard.write({'profile_image': fake_image})
         wizard.action_next()
         self.assertIsNotNone(wizard.profile_id.profile_image)
 

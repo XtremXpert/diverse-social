@@ -1,6 +1,6 @@
 import logging
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ class SaleOrder(models.Model):
     )
     membership_count = fields.Integer(compute='_compute_membership_count')
 
+    @api.depends('membership_ids')
     def _compute_membership_count(self):
         for order in self:
             order.membership_count = len(order.membership_ids)

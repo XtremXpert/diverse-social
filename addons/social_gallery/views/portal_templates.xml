@@ -2,11 +2,11 @@
 <odoo>
 
     <!-- ══ Assets ════════════════════════════════════════════════════════════ -->
-    <template id="assets_portal_gallery" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <script src="/social_gallery/static/src/js/portal_gallery_lightbox.js" type="text/javascript"/>
-        </xpath>
-    </template>
+    <record id="assets_portal_gallery" model="ir.asset">
+        <field name="name">Social Gallery Portal JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_gallery/static/src/js/portal_gallery_lightbox.js</field>
+    </record>
 
     <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
 

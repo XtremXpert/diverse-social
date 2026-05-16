@@ -98,7 +98,7 @@ class TestMembershipSale(TransactionCase):
     def test_no_social_access_on_pending(self):
         order = self._make_order([self.product_regular])
         order.action_confirm()
-        self.assertNotIn(self.group_social, self.user.sudo().groups_id)
+        self.assertNotIn(self.group_social, self.user.sudo().all_group_ids)
 
     # ── Activation au paiement de la facture ──────────────────────────────────
 
@@ -116,11 +116,10 @@ class TestMembershipSale(TransactionCase):
                 'name': 'Adhésion',
                 'quantity': 1,
                 'price_unit': 100.0,
+                'sale_line_ids': [(4, order.order_line[:1].id)],
             })],
         })
         invoice.action_post()
-        # Lier la commande à la facture
-        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
 
         # Simuler payment_state = 'paid' en appelant la méthode directement
         invoice.sudo()._activate_memberships_on_payment()
@@ -139,13 +138,13 @@ class TestMembershipSale(TransactionCase):
                 'name': 'Adhésion',
                 'quantity': 1,
                 'price_unit': 100.0,
+                'sale_line_ids': [(4, order.order_line[:1].id)],
             })],
         })
         invoice.action_post()
-        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
         invoice.sudo()._activate_memberships_on_payment()
 
-        self.assertIn(self.group_social, self.user.sudo().groups_id)
+        self.assertIn(self.group_social, self.user.sudo().all_group_ids)
 
     # ── Stat button & stat count ──────────────────────────────────────────────
 
@@ -244,10 +243,10 @@ class TestMembershipSale(TransactionCase):
             'partner_id': self.partner.id,
             'invoice_line_ids': [(0, 0, {
                 'name': 'Adhésions', 'quantity': 1, 'price_unit': 120.0,
+                'sale_line_ids': [(4, order.order_line[:1].id)],
             })],
         })
         invoice.action_post()
-        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
         invoice.sudo()._activate_memberships_on_payment()
         for m in memberships:
             m.invalidate_recordset()
@@ -263,10 +262,12 @@ class TestMembershipSale(TransactionCase):
         invoice = self.env['account.move'].sudo().create({
             'move_type': 'out_invoice',
             'partner_id': self.partner.id,
-            'invoice_line_ids': [(0, 0, {'name': 'Re-test', 'quantity': 1, 'price_unit': 100.0})],
+            'invoice_line_ids': [(0, 0, {
+                'name': 'Re-test', 'quantity': 1, 'price_unit': 100.0,
+                'sale_line_ids': [(4, order.order_line[:1].id)],
+            })],
         })
         invoice.action_post()
-        order.sudo().write({'invoice_ids': [(4, invoice.id)]})
         invoice.sudo()._activate_memberships_on_payment()
         membership.invalidate_recordset()
         self.assertEqual(membership.state, 'active')

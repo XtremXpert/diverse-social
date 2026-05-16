@@ -2,27 +2,16 @@
 <odoo>
 
     <!-- ══ Assets ════════════════════════════════════════════════════════ -->
-    <template id="assets_portal_chat" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <script src="/social_messaging/static/src/js/portal_chat.js" type="text/javascript"/>
-        </xpath>
-    </template>
-
-    <!-- ══ Styles inline chat ════════════════════════════════════════════ -->
-    <template id="assets_portal_chat_css" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <style>
-                #sn_chat_body { height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #f8f9fa; }
-                .sn-bubble-wrap { display: flex; flex-direction: column; max-width: 72%; }
-                .sn-mine { align-self: flex-end; align-items: flex-end; }
-                .sn-theirs { align-self: flex-start; align-items: flex-start; }
-                .sn-bubble { padding: 8px 12px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-                .sn-mine .sn-bubble { background: #e94560; color: white; border-bottom-right-radius: 4px; }
-                .sn-theirs .sn-bubble { background: white; color: #1a1a2e; border: 1px solid #dee2e6; border-bottom-left-radius: 4px; }
-                .sn-bubble-meta { font-size: 0.7rem; color: #adb5bd; margin-top: 2px; padding: 0 4px; }
-            </style>
-        </xpath>
-    </template>
+    <record id="assets_portal_chat" model="ir.asset">
+        <field name="name">Social Messaging Portal JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_messaging/static/src/js/portal_chat.js</field>
+    </record>
+    <record id="assets_portal_chat_css" model="ir.asset">
+        <field name="name">Social Messaging Portal CSS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_messaging/static/src/css/portal_chat.css</field>
+    </record>
 
     <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
     <template id="portal_my_home_messages" name="Messages privés"
@@ -183,7 +172,7 @@
     <!-- ══ Bouton Message sur la page profil ════════════════════════════ -->
     <template id="portal_profile_message_start_form"
               inherit_id="club_social_profile.portal_profile_public">
-        <xpath expr="//a[contains(@href,'action=mail.action_discuss')]" position="replace">
+        <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">
             <form t-attf-action="/my/messages/start/#{target_user.id}" method="post">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <button type="submit" class="btn btn-outline-secondary btn-sm">

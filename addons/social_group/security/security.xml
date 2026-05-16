@@ -6,7 +6,7 @@
         <record id="social_group_user_rule" model="ir.rule">
             <field name="name">Social Group: User Access</field>
             <field name="model_id" ref="model_social_group_group"/>
-            <field name="domain_force">['|', ('privacy', '=', 'public'), ('member_ids', 'in', [user.id])]</field>
+            <field name="domain_force">['|', ('privacy', 'in', ['public', 'private']), ('member_ids', 'in', [user.id])]</field>
             <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>

@@ -7,7 +7,8 @@ class SocialProposal(models.Model):
     def action_start_voting(self):
         res = super().action_start_voting()
         Notif = self.env['club_social_profile.notification']
-        social_users = self.env.ref('social_base.group_social_user').users
+        group = self.env.ref('social_base.group_social_user')
+        social_users = self.env['res.users'].search([('all_group_ids', 'in', [group.id])])
         for proposal in self:
             for user in social_users - proposal.author_id:
                 Notif._notify(

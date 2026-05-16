@@ -44,6 +44,8 @@ class ClubVisibilityMixinRelations(models.AbstractModel):
             owner = self._visibility_owner_partner()
             if not owner:
                 return False
+            if owner == partner:
+                return True
             return self._visibility_has_relation(owner, partner)
 
         # Delegate to parent for other levels

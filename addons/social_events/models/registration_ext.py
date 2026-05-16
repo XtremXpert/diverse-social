@@ -9,7 +9,7 @@ class EventRegistration(models.Model):
     def create(self, vals_list):
         records = super().create(vals_list)
         for reg in records:
-            if reg.event_id.social_visibility \
+            if not self.env.su and reg.event_id.social_visibility \
                     and not reg.event_id._check_social_access(self.env.user):
                 raise UserError(_(
                     'You are not allowed to register for "%s".',

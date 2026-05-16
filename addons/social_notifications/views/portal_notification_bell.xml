@@ -2,17 +2,16 @@
 <odoo>
 
     <!-- ══ Styles cloche ═══════════════════════════════════════════════════ -->
-    <template id="assets_notification_bell" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <script type="text/javascript"
-                    src="/social_notifications/static/src/js/notification_bell.js"/>
-        </xpath>
-    </template>
+    <record id="assets_notification_bell" model="ir.asset">
+        <field name="name">Social Notifications Bell JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_notifications/static/src/js/notification_bell.js</field>
+    </record>
 
     <!-- ══ Widget cloche injecté dans le header portail ════════════════════ -->
     <template id="portal_notification_bell" inherit_id="portal.portal_layout"
               name="Cloche de notifications">
-        <xpath expr="//header" position="inside">
+        <xpath expr="//div[@id='wrap']" position="before">
             <t t-if="request.env.user and not request.env.user._is_public()">
                 <style>
                     #social_notif_bell {

@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_social_gallery_gallery_user,social_gallery.gallery user,model_social_gallery_gallery,social_base.group_social_user,1,0,1,0
+access_social_gallery_gallery_user,social_gallery.gallery user,model_social_gallery_gallery,social_base.group_social_user,1,1,1,1
 access_social_gallery_gallery_moderator,social_gallery.gallery moderator,model_social_gallery_gallery,social_base.group_social_moderator,1,1,1,1
 access_social_gallery_gallery_admin,social_gallery.gallery admin,model_social_gallery_gallery,social_base.group_social_admin,1,1,1,1
 access_social_gallery_gallery_system,social_gallery.gallery system,model_social_gallery_gallery,base.group_system,1,1,1,1

@@ -34,8 +34,8 @@ class TestStoryPortalData(TransactionCase):
         stories = self.env['social_story.story'].with_user(self.other).search([
             ('author_id', '=', self.author.id),
         ])
-        # With default ir.rule: only own active stories visible
-        self.assertFalse(stories)
+        # Active stories are visible to all social members per ir.rule
+        self.assertIn(self.active_story, stories)
 
     def test_active_story_state(self):
         self.assertEqual(self.active_story.state, 'active')
@@ -50,7 +50,7 @@ class TestStoryPortalData(TransactionCase):
 
     def test_cannot_archive_other_story(self):
         from odoo.exceptions import AccessError
-        with self.assertRaises((AccessError, Exception)):
+        with self.assertRaises(AccessError):
             self.active_story.with_user(self.other).action_archive()
 
     def test_filter_active_excludes_expired(self):
@@ -183,7 +183,7 @@ class TestStoryPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/social/api/stories')
         self.assertEqual(resp.status_code, 200)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content)['data']
         self.assertIn('stories', data)
         self.assertIsInstance(data['stories'], list)
 
@@ -214,5 +214,5 @@ class TestStoryPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open(f'/social/api/stories/{story.id}/view', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 200)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content)['data']
         self.assertEqual(data.get('view_count'), 1)

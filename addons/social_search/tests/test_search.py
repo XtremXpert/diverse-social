@@ -87,7 +87,7 @@ class TestSocialSearch(TransactionCase):
             'name': 'Groupe Public Srch',
             'creator_id': self.alice.id,
             'privacy': 'public',
-            'join_policy': 'open',
+            'join_type': 'open',
         })
         results = self.Search.with_user(self.bob)._search_groups('Groupe Public Srch', 20, 0)
         ids = [r['id'] for r in results]
@@ -98,7 +98,7 @@ class TestSocialSearch(TransactionCase):
             'name': 'Groupe Privé Srch',
             'creator_id': self.alice.id,
             'privacy': 'private',
-            'join_policy': 'approval',
+            'join_type': 'approval',
         })
         results = self.Search.with_user(self.bob)._search_groups('Groupe Privé Srch', 20, 0)
         ids = [r['id'] for r in results]
@@ -109,7 +109,7 @@ class TestSocialSearch(TransactionCase):
             'name': 'Groupe Secret Srch',
             'creator_id': self.alice.id,
             'privacy': 'secret',
-            'join_policy': 'approval',
+            'join_type': 'approval',
         })
         results = self.Search.with_user(self.bob)._search_groups('Groupe Secret Srch', 20, 0)
         ids = [r['id'] for r in results]
@@ -121,7 +121,7 @@ class TestSocialSearch(TransactionCase):
             'creator_id': self.alice.id,
             'member_ids': [(4, self.bob.id)],
             'privacy': 'secret',
-            'join_policy': 'approval',
+            'join_type': 'approval',
         })
         results = self.Search.with_user(self.bob)._search_groups('Groupe Secret Membre Srch', 20, 0)
         ids = [r['id'] for r in results]

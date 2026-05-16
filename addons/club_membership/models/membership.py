@@ -153,6 +153,8 @@ class ClubMembership(models.Model):
 
     @api.constrains('partner_id', 'state')
     def _check_unique_active(self):
+        if self.env.context.get('no_check_unique_active'):
+            return
         for rec in self:
             if rec.state == 'active':
                 duplicate = self.search([

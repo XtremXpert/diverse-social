@@ -30,7 +30,7 @@ class ClubSocialNotification(models.Model):
     def _notify(self, user_id, actor_id, notif_type, body, url=False, ref_model=False, ref_id=False):
         if user_id == actor_id:
             return
-        self.create({
+        self.sudo().create({
             'user_id': user_id,
             'actor_id': actor_id,
             'type': notif_type,

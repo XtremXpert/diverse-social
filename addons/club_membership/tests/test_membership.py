@@ -96,28 +96,28 @@ class TestClubMembership(TransactionCase):
 
     def test_activate_grants_social_access(self):
         m = self._make_membership(self.partner_bob)
-        self.assertNotIn(self.group_social, self.user_bob.groups_id)
+        self.assertNotIn(self.group_social, self.user_bob.sudo().all_group_ids)
         m.action_activate()
-        self.assertIn(self.group_social, self.user_bob.sudo().groups_id)
+        self.assertIn(self.group_social, self.user_bob.sudo().all_group_ids)
 
     def test_suspend_revokes_social_access(self):
         m = self._make_membership(self.partner_bob)
         m.action_activate()
-        self.assertIn(self.group_social, self.user_bob.sudo().groups_id)
+        self.assertIn(self.group_social, self.user_bob.sudo().all_group_ids)
         m.action_suspend()
-        self.assertNotIn(self.group_social, self.user_bob.sudo().groups_id)
+        self.assertNotIn(self.group_social, self.user_bob.sudo().all_group_ids)
 
     def test_cancel_revokes_social_access(self):
         m = self._make_membership(self.partner_bob)
         m.action_activate()
         m.action_cancel()
-        self.assertNotIn(self.group_social, self.user_bob.sudo().groups_id)
+        self.assertNotIn(self.group_social, self.user_bob.sudo().all_group_ids)
 
     def test_two_active_memberships_keep_access_on_cancel_one(self):
         m1 = self._make_membership(self.partner_alice)
         m1.action_activate()
         # Manually create a second active (bypass unique constraint for test)
-        m2 = self.Membership.sudo().create({
+        m2 = self.Membership.sudo().with_context(no_check_unique_active=True).create({
             'partner_id': self.partner_alice.id,
             'membership_type_id': self.type_trial.id,
             'state': 'active',
@@ -125,7 +125,7 @@ class TestClubMembership(TransactionCase):
         })
         m1.action_cancel()
         # Alice still has m2 active → should keep social access
-        self.assertIn(self.group_social, self.user_alice.sudo().groups_id)
+        self.assertIn(self.group_social, self.user_alice.sudo().all_group_ids)
 
     # ── Durée automatique ─────────────────────────────────────────────────────
 
@@ -169,7 +169,7 @@ class TestClubMembership(TransactionCase):
         self.user_alice.sudo().write({'group_ids': [(4, self.group_social.id)]})
         self.Membership.cron_check_expiry()
         self.assertEqual(m.state, 'expired')
-        self.assertNotIn(self.group_social, self.user_alice.sudo().groups_id)
+        self.assertNotIn(self.group_social, self.user_alice.sudo().all_group_ids)
 
     def test_cron_ignores_future_end_date(self):
         m = self._make_membership(self.partner_bob)

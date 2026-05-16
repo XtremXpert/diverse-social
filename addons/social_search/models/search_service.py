@@ -24,9 +24,11 @@ class SocialSearchService(models.AbstractModel):
             [t for t in types if t in valid_types]
             if types else list(valid_types)
         )
+        _plural = {'gallery': 'galleries'}
         results = {}
         for t in active_types:
-            results[t] = getattr(self, f'_search_{t}s')(query, limit, offset)
+            plural = _plural.get(t, f'{t}s')
+            results[t] = getattr(self, f'_search_{plural}')(query, limit, offset)
         return results
 
     # ── Profiles ──────────────────────────────────────────────────────────────

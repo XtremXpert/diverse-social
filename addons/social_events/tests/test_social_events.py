@@ -248,10 +248,13 @@ class TestSocialEvents(TransactionCase):
         self.assertIn(self.inner_circle, event.allowed_circle_ids)
 
     def test_members_event_invisible_to_non_social_in_search(self):
-        """Un utilisateur sans groupe social ne trouve pas l'événement 'members' via search."""
+        """Un utilisateur portail (sans groupe social) ne trouve pas l'événement 'members'."""
         from odoo.exceptions import AccessError
+        # Portail: website_event limite la lecture aux événements publiés → l'événement de test
+        # n'étant pas publié, il est invisible pour les non-membres sociaux.
         non_social = self.env['res.users'].create({
             'name': 'Non Social Search', 'login': 'sevt_nss', 'email': 'nss@evt.test',
+            'group_ids': [(4, self.env.ref('base.group_portal').id)],
         })
         event = self._make_event(visibility='members')
         try:

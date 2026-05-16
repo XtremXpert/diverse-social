@@ -18,7 +18,21 @@ class ClubSocialNotification(models.Model):
         ('negotiation_signed', 'Document de négociation signé'),
         ('negotiation_active', 'Document de négociation actif'),
         ('circle_added', 'Ajouté à un cercle'),
-    ])
+    ], ondelete={
+        'event_registration': 'cascade',
+        'group_join_request': 'cascade',
+        'group_join_approved': 'cascade',
+        'proposal_voting': 'cascade',
+        'story_new': 'cascade',
+        'gallery_photo_approved': 'cascade',
+        'gallery_photo_rejected': 'cascade',
+        'vouching_received': 'cascade',
+        'vouching_withdrawn': 'cascade',
+        'negotiation_shared': 'cascade',
+        'negotiation_signed': 'cascade',
+        'negotiation_active': 'cascade',
+        'circle_added': 'cascade',
+    })
 
     @api.model_create_multi
     def create(self, vals_list):

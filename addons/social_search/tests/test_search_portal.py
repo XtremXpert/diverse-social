@@ -65,7 +65,7 @@ class TestSearchPortalData(TransactionCase):
     def test_search_group_result_structure(self):
         group = self.env['social_group.group'].sudo().create({
             'name': 'Search Test Group', 'privacy': 'public',
-            'join_policy': 'open', 'creator_id': self.user.id,
+            'join_type': 'open', 'creator_id': self.user.id,
         })
         results = self.env['social_search.service'].with_user(self.user).search_all(
             'Search Test Group', types=['group']
@@ -175,7 +175,7 @@ class TestSearchPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/search?q=admin')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('results', data)
         self.assertIn('total', data)
 
@@ -183,7 +183,7 @@ class TestSearchPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/search?q=&types=profile')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('profile', data['results'])
         self.assertNotIn('post', data['results'])
 
@@ -191,19 +191,19 @@ class TestSearchPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/search')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIsInstance(data['total'], int)
 
     def test_api_search_limit_param(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/search?q=&limit=2&types=profile')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertLessEqual(len(data['results'].get('profile', [])), 2)
 
     def test_api_search_query_field_in_response(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/search?q=test')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertEqual(data['query'], 'test')

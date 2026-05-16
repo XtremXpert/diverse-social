@@ -135,7 +135,7 @@ class SocialGroupJoinRequest(models.Model):
 
     def action_reject(self):
         self.ensure_one()
-        self.write({
+        self.sudo().write({
             'state': 'rejected',
             'processed_by': self.env.user.id,
             'processed_date': fields.Datetime.now(),

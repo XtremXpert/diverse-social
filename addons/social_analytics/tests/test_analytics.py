@@ -142,7 +142,7 @@ class TestSocialAnalytics(TransactionCase):
         before = self.Dashboard._moderation_stats()['reports_pending']
         self.env['club_social_moderation.report'].sudo().create({
             'reporter_id': self.user.id,
-            'ref_model': 'post',
+            'ref_model': 'social_base.post',
             'ref_id': 1,
             'reason': 'spam',
             'state': 'pending',
@@ -439,8 +439,10 @@ class TestSocialAnalytics(TransactionCase):
         profile_a = self.env['club_social_profile.profile'].get_or_create_for_user(self.moderator)
         profile_b = self.env['club_social_profile.profile'].get_or_create_for_user(self.user)
         self.env['club_social_profile.connection'].sudo().create({
-            'profile_a_id': profile_a.id,
-            'profile_b_id': profile_b.id,
+            'user_id': self.moderator.id,
+            'connected_user_id': self.user.id,
+            'connection_type': 'friend',
+            'state': 'accepted',
         })
         after = self.Dashboard._activity_stats(
             datetime.datetime.now() - datetime.timedelta(days=7)

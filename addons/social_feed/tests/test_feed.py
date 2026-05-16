@@ -2,6 +2,7 @@ import datetime
 import math
 from datetime import timezone
 
+from odoo import fields
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -108,7 +109,7 @@ class TestSocialFeed(TransactionCase):
             'name': 'Secret Group Feed',
             'creator_id': self.alice.id,
             'privacy': 'secret',
-            'join_policy': 'approval',
+            'join_type': 'approval',
         })
         post = self.env['social_base.post'].sudo().create({
             'name': 'Group Secret Post',
@@ -128,7 +129,7 @@ class TestSocialFeed(TransactionCase):
             'creator_id': self.alice.id,
             'member_ids': [(4, self.bob.id)],
             'privacy': 'secret',
-            'join_policy': 'approval',
+            'join_type': 'approval',
         })
         post = self.env['social_base.post'].sudo().create({
             'name': 'Group Secret Post Visible',
@@ -221,6 +222,8 @@ class TestSocialFeed(TransactionCase):
             'name': 'Proposition Feed',
             'description': '<p>détails</p>',
             'author_id': self.alice.id,
+            'category_id': self.env.ref('social_governance.category_other').id,
+            'voting_closes_at': fields.Datetime.now() + datetime.timedelta(days=7),
         })
         proposal.action_start_voting()
         result = self.Feed.with_user(self.bob).get_feed(types=['proposal'])
@@ -232,6 +235,8 @@ class TestSocialFeed(TransactionCase):
             'name': 'Proposition Brouillon Feed',
             'description': '<p>détails</p>',
             'author_id': self.alice.id,
+            'category_id': self.env.ref('social_governance.category_other').id,
+            'voting_closes_at': fields.Datetime.now() + datetime.timedelta(days=7),
         })
         result = self.Feed.with_user(self.bob).get_feed(types=['proposal'])
         ids = [i['id'] for i in result['items'] if i['item_type'] == 'proposal']
@@ -717,7 +722,7 @@ class TestSocialFeedHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/feed')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('items', data)
         self.assertIn('has_more', data)
 
@@ -725,7 +730,7 @@ class TestSocialFeedHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/feed?types=post')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         for item in data['items']:
             self.assertEqual(item['item_type'], 'post')
 
@@ -733,7 +738,7 @@ class TestSocialFeedHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/feed?sort=relevance&limit=5')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertIn('items', data)
 
     def test_feed_sort_invalid_defaults_to_recent(self):
@@ -745,5 +750,5 @@ class TestSocialFeedHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/social/api/feed?limit=3')
         self.assertEqual(resp.status_code, 200)
-        data = resp.json()
+        data = resp.json()['data']
         self.assertLessEqual(len(data['items']), 3)
