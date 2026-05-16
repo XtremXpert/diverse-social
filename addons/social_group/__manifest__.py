@@ -1,6 +1,6 @@
 {
     'name': 'Social Groups',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
     'summary': 'Groups and communities for social networks',
     'author': 'Bemade, Odoo Community Association (OCA)',
@@ -8,12 +8,14 @@
     'license': 'LGPL-3',
     'depends': [
         'social_base',
+        'club_social_profile',
         'portal',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/ir_cron.xml',
+        'data/website_menu.xml',
         'views/group_views.xml',
         'views/portal_templates.xml',
     ],

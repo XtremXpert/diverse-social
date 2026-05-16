@@ -15,6 +15,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/website_menu.xml',
         'views/messaging_views.xml',
         'views/portal_messaging.xml',
     ],

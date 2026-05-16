@@ -1,6 +1,6 @@
 {
     'name': 'Club Social Profile',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
     'summary': 'Member profiles, connections, and notifications for private clubs',
     'author': 'Bemade',
@@ -8,11 +8,13 @@
     'depends': [
         'social_base',
         'portal',
+        'website',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/profile_data.xml',
+        'data/website_menu.xml',
         'views/profile_views.xml',
         'views/portal_profile_public.xml',
         'views/portal_profile_edit.xml',
