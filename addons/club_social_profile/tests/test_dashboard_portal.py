@@ -90,7 +90,7 @@ class TestDashboardData(TransactionCase):
         self.env['club_social_profile.notification'].sudo().create({
             'user_id': self.user.id,
             'actor_id': self.other.id,
-            'notif_type': 'connection_request',
+            'type': 'connection_request',
             'body': 'Test notif dashboard',
             'is_read': False,
         })

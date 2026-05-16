@@ -143,6 +143,32 @@ class TestPortalDiscoverData(TransactionCase):
 @tagged('club_social_profile', 'portal_discover', 'post_install', '-at_install')
 class TestPortalDiscoverHttp(HttpCase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        admin = cls.env.ref('base.user_admin')
+        group_social = cls.env.ref('social_base.group_social_user')
+        admin.sudo().write({'group_ids': [(4, group_social.id)]})
+        cls.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin)
+        u1, p1 = cls._create_disc_user(cls.env)
+        cls.disc_user = u1
+        cls.disc_profile = p1
+
+    @classmethod
+    def _create_disc_user(cls, env):
+        group_social = env.ref('social_base.group_social_user')
+        u1 = env['res.users'].create({
+            'name': 'DiscHTTP1', 'login': 'disc_http1_class',
+            'email': 'disc_http1_class@disc.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        p1 = env['club_social_profile.profile'].sudo().get_or_create_for_user(u1)
+        p1.sudo().write({
+            'city': 'Laval', 'gender': 'homme',
+            'availability': 'disponible', 'visibility': 'members',
+        })
+        return u1, p1
+
     def _setup(self):
         group_social = self.env.ref('social_base.group_social_user')
         u1 = self.env['res.users'].create({
@@ -168,39 +194,34 @@ class TestPortalDiscoverHttp(HttpCase):
         self.assertIn(b'couvrir', resp.content)
 
     def test_discover_shows_member_profiles(self):
-        self._setup()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertIn(b'disc_http1_class', resp.content)
 
     def test_discover_filter_by_city(self):
-        self._setup()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?city=Laval')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertIn(b'disc_http1_class', resp.content)
 
     def test_discover_filter_city_no_match(self):
-        self._setup()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?city=ZZZVilleInexistante')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'0 membre', resp.content)
 
     def test_discover_filter_gender(self):
-        self._setup()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?gender=homme')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertIn(b'disc_http1_class', resp.content)
 
     def test_discover_filter_availability(self):
-        self._setup()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?availability=disponible')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertIn(b'disc_http1_class', resp.content)
 
     def test_discover_connections_only_not_shown(self):
         group_social = self.env.ref('social_base.group_social_user')

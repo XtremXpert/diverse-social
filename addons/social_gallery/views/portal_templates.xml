@@ -309,7 +309,7 @@
                                      class="img-fluid rounded shadow-sm"
                                      style="height:160px;width:100%;object-fit:cover;"
                                      t-att-alt="photo.name or ''"/>
-                                <span t-attf-class="badge position-absolute top-0 end-0 m-1 #{{'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')}"
+                                <span t-att-class="'badge position-absolute top-0 end-0 m-1 ' + {'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')"
                                       t-esc="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
                                 <!-- Bouton supprimer (pending ou rejected seulement) -->
                                 <t t-if="photo.state != 'approved'">

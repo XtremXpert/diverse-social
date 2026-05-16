@@ -17,9 +17,7 @@ class SocialBlock(models.Model):
     reason = fields.Text('Private Note')
     create_date = fields.Datetime('Blocked On', readonly=True)
 
-    _sql_constraints = [
-        ('unique_block', 'UNIQUE(blocker_id, blocked_id)', 'Already blocked.'),
-    ]
+    _unique_block = models.Constraint('UNIQUE(blocker_id, blocked_id)', 'Already blocked.')
 
     @api.constrains('blocker_id', 'blocked_id')
     def _check_not_self(self):
@@ -72,4 +70,4 @@ class SocialBlock(models.Model):
             ids.add(r.blocker_id.id)
             ids.add(r.blocked_id.id)
         ids.discard(user.id)
-        return list(ids)
+        return ids

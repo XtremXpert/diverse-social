@@ -144,10 +144,14 @@ class TestPortalReputationHttp(HttpCase):
             'group_ids': [(4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
+        group_social = self.env.ref('social_base.group_social_user')
+        admin.sudo().write({'group_ids': [(4, group_social.id)]})
         self.env['club_social_profile.connection'].sudo().create([
             {'user_id': admin.id, 'connected_user_id': newcomer.id, 'state': 'accepted'},
             {'user_id': newcomer.id, 'connected_user_id': admin.id, 'state': 'accepted'},
         ])
+        self.env['club_social_profile.profile'].sudo().get_or_create_for_user(newcomer)
+        self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin)
         return newcomer
 
     def test_vouching_page_unauthenticated_redirects(self):

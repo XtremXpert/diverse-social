@@ -118,7 +118,7 @@
                                     <t t-if="proposal.state == 'voting' and proposal.voting_closes_at">
                                         <div class="text-muted" style="font-size:.72rem; margin-top:2px;">
                                             Clôture :
-                                            <t t-field="proposal.voting_closes_at" t-options='{"widget":"date"}'/>
+                                            <span t-field="proposal.voting_closes_at" t-options='{"widget":"date"}'/>
                                         </div>
                                     </t>
                                 </div>
@@ -237,7 +237,7 @@
                         <p class="text-muted mb-0" style="font-size:.85rem;">
                             Par <strong t-esc="proposal.author_id.name"/> ·
                             <t t-esc="proposal.category_id.name"/> ·
-                            <t t-field="proposal.create_date" t-options='{"widget":"date"}'/>
+                            <span t-field="proposal.create_date" t-options='{"widget":"date"}'/>
                         </p>
                     </div>
                 </div>
@@ -374,7 +374,7 @@
                                 <div>
                                     <div class="fw-semibold" style="color:#1a1a2e;" t-esc="entry.title"/>
                                     <small class="text-muted">
-                                        <t t-field="entry.decision_date" t-options='{"widget":"date"}'/> ·
+                                        <span t-field="entry.decision_date" t-options='{"widget":"date"}'/> ·
                                         <t t-esc="entry.category"/>
                                     </small>
                                 </div>

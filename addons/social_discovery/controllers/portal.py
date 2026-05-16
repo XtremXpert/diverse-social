@@ -7,7 +7,7 @@ _PAGE_SIZE = 24
 _SORT_MAP = {
     'recent':  'write_date desc',
     'new':     'create_date desc',
-    'alpha':   'user_id.name asc',
+    'alpha':   'login asc',
 }
 _SORT_DEFAULT = 'recent'
 
@@ -44,7 +44,7 @@ class MembersPortal(CustomerPortal):
         total = Profile.search_count(domain)
         pager = portal_pager(
             url='/members',
-            url_args=dict(sort=sort, q=q, **{k: v for k, v in args.items(multi=True)}),
+            url_args=dict(sort=sort, q=q, **{k: v for k, v in args.items(multi=True) if k not in ('sort', 'q', 'page')}),
             total=total,
             page=page,
             step=_PAGE_SIZE,

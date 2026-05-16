@@ -2,14 +2,13 @@
 <odoo>
 
     <!-- ══ Bouton sortie rapide (toutes les pages portail) ═════════════════ -->
-    <template id="assets_quick_exit" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <script type="text/javascript"
-                    src="/social_safety/static/src/js/quick_exit.js"/>
-        </xpath>
-    </template>
+    <record id="assets_quick_exit" model="ir.asset">
+        <field name="name">Social Safety Quick Exit JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_safety/static/src/js/quick_exit.js</field>
+    </record>
 
-    <template id="portal_quick_exit_button" inherit_id="portal.portal_layout"
+    <template id="portal_quick_exit_button" inherit_id="web.frontend_layout"
               name="Sortie rapide">
         <xpath expr="//header" position="inside">
             <t t-if="request.env.user and not request.env.user._is_public()">
@@ -205,7 +204,7 @@
     <template id="portal_profile_panic_inject"
               inherit_id="club_social_profile.portal_profile_public"
               name="Profil — Bouton mode discret">
-        <xpath expr="//a[@href='/onboarding?step=about']" position="after">
+        <xpath expr="//a[@href='/my/profile/edit']" position="after">
             <t t-if="is_own and profile.panic_mode">
                 <form action="/safety/panic/lift" method="post" class="d-inline ms-2">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>

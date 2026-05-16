@@ -29,10 +29,9 @@ class SocialVouching(models.Model):
     withdrawn_at = fields.Datetime('Withdrawn On', readonly=True)
     withdrawn_reason = fields.Text('Withdrawal Reason')
 
-    _sql_constraints = [
-        ('unique_vouching', 'UNIQUE(sponsor_id, newcomer_id)',
-         'You have already vouched for this person.'),
-    ]
+    _unique_vouching = models.Constraint(
+        'UNIQUE(sponsor_id, newcomer_id)', 'You have already vouched for this person.'
+    )
 
     @api.constrains('sponsor_id', 'newcomer_id')
     def _check_not_self(self):

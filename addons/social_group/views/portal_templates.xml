@@ -178,7 +178,7 @@
                                         <span>
                                             <strong t-esc="req.user_id.name"/>
                                             <small class="text-muted ms-2">
-                                                <t t-field="req.create_date" t-options='{"widget":"date"}'/>
+                                                <span t-field="req.create_date" t-options='{"widget":"date"}'/>
                                             </small>
                                         </span>
                                         <div class="d-flex gap-2">

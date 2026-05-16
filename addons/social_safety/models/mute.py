@@ -21,9 +21,7 @@ class SocialMute(models.Model):
     is_active = fields.Boolean(compute='_compute_is_active', store=False)
     create_date = fields.Datetime('Muted On', readonly=True)
 
-    _sql_constraints = [
-        ('unique_mute', 'UNIQUE(muter_id, muted_id)', 'Already muted.'),
-    ]
+    _unique_mute = models.Constraint('UNIQUE(muter_id, muted_id)', 'Already muted.')
 
     @api.constrains('muter_id', 'muted_id')
     def _check_not_self(self):

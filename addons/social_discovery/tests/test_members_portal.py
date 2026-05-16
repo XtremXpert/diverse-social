@@ -147,6 +147,14 @@ class TestMembersPortalData(TransactionCase):
 @tagged('social_discovery', 'members_portal', 'post_install', '-at_install')
 class TestMembersPortalHttp(HttpCase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        admin = cls.env.ref('base.user_admin')
+        group_social = cls.env.ref('social_base.group_social_user')
+        admin.sudo().write({'group_ids': [(4, group_social.id)]})
+        cls.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin)
+
     def test_members_unauthenticated_redirects(self):
         resp = self.url_open('/members', allow_redirects=False)
         self.assertIn(resp.status_code, (302, 303))

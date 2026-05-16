@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from werkzeug.exceptions import Forbidden, NotFound
 
@@ -75,7 +75,7 @@ class GovernancePortal(CustomerPortal):
         closes = None
         if voting_closes_at:
             try:
-                closes = fields.Datetime.from_string(voting_closes_at)
+                closes = datetime.fromisoformat(voting_closes_at.replace('T', ' '))
             except Exception:
                 closes = None
 
@@ -168,7 +168,7 @@ class GovernancePortal(CustomerPortal):
             raise Forbidden()
         if voting_closes_at:
             try:
-                closes = fields.Datetime.from_string(voting_closes_at)
+                closes = datetime.fromisoformat(voting_closes_at.replace('T', ' '))
                 proposal.sudo().write({'voting_closes_at': closes})
             except Exception:
                 return request.redirect(f'/governance/{proposal_id}?error=invalid_date')

@@ -153,9 +153,7 @@ class GovernanceVote(models.Model):
     ], required=True)
     create_date = fields.Datetime(readonly=True)
 
-    _sql_constraints = [
-        ('unique_vote', 'UNIQUE(proposal_id, voter_id)', 'You have already voted on this proposal.'),
-    ]
+    _unique_vote = models.Constraint('UNIQUE(proposal_id, voter_id)', 'You have already voted on this proposal.')
 
 
 class GovernanceProposalCategory(models.Model):
