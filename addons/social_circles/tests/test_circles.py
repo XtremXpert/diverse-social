@@ -27,13 +27,33 @@ class TestSocialCircles(TransactionCase):
         })
         cls.Profile = cls.env['club_social_profile.profile']
         cls.owner_profile = cls.Profile.get_or_create_for_user(cls.owner)
+        # Circle types used across tests — created here to avoid depending on demo data
+        CircleType = cls.env['social_circles.circle_type']
+        cls.type_close = CircleType.create({'name': 'Close Friends T', 'sequence': 10})
+        cls.type_play = CircleType.create({'name': 'Play Partners T', 'sequence': 20})
+        cls.type_trusted = CircleType.create({'name': 'Trusted T', 'sequence': 30})
+        cls.type_vip = CircleType.create({'name': 'VIP T', 'sequence': 5})
+        cls.type_inner = CircleType.create({'name': 'Inner T', 'sequence': 40})
+        cls.type_outer = CircleType.create({'name': 'Outer T', 'sequence': 50})
+        cls.type_besties = CircleType.create({'name': 'Besties T', 'sequence': 15})
+        cls.type_count = CircleType.create({'name': 'Count Test T', 'sequence': 60})
+        cls.type_seq = CircleType.create({'name': 'Seq Circle T', 'sequence': 70})
+        cls.type_stable = CircleType.create({'name': 'Stable T', 'sequence': 80})
+        cls.type_shared = CircleType.create({'name': 'Shared Name T', 'sequence': 90})
+        cls.type_foreign = CircleType.create({'name': 'Foreign T', 'sequence': 95})
+        cls.type_proches = CircleType.create({'name': 'Proches Test T', 'sequence': 25})
+        cls.type_generic = CircleType.create({'name': 'Generic T', 'sequence': 100, 'is_default': False})
 
-    def _make_circle(self, name, members=None, sequence=10):
-        circle = self.env['social_circles.circle'].sudo().create({
+    def _make_circle(self, type_id, members=None, sequence=10, nickname=None):
+        """Helper: create a circle for owner_profile with the given type."""
+        vals = {
             'profile_id': self.owner_profile.id,
-            'name': name,
+            'type_id': type_id.id,
             'sequence': sequence,
-        })
+        }
+        if nickname:
+            vals['name'] = nickname
+        circle = self.env['social_circles.circle'].sudo().create(vals)
         if members:
             circle.write({'member_ids': [(4, u.id) for u in members]})
         return circle
@@ -41,42 +61,43 @@ class TestSocialCircles(TransactionCase):
     # ── Circle CRUD ───────────────────────────────────────────────────────────
 
     def test_create_circle(self):
-        circle = self._make_circle('Close Friends', members=[self.friend])
+        circle = self._make_circle(self.type_close, members=[self.friend])
         self.assertEqual(circle.profile_id, self.owner_profile)
         self.assertIn(self.friend, circle.member_ids)
         self.assertEqual(circle.member_count, 1)
 
     def test_duplicate_name_raises(self):
-        self._make_circle('Play Partners')
+        """Two circles of the same type on the same profile raises ValidationError."""
+        self._make_circle(self.type_play)
         with self.assertRaises(ValidationError):
-            self._make_circle('Play Partners')
+            self._make_circle(self.type_play)
 
     def test_add_remove_member(self):
-        circle = self._make_circle('Trusted')
+        circle = self._make_circle(self.type_trusted)
         circle.add_member(self.friend)
         self.assertTrue(circle.has_member(self.friend))
         circle.remove_member(self.friend)
         self.assertFalse(circle.has_member(self.friend))
 
     def test_ensure_circle_creates_once(self):
-        c1 = self.owner_profile.ensure_circle('VIP')
-        c2 = self.owner_profile.ensure_circle('VIP')
+        c1 = self.owner_profile.ensure_circle(self.type_vip)
+        c2 = self.owner_profile.ensure_circle(self.type_vip)
         self.assertEqual(c1, c2)
 
     # ── Profile visibility methods ────────────────────────────────────────────
 
     def test_get_circles_for_member(self):
-        circle = self._make_circle('Inner', members=[self.friend])
+        circle = self._make_circle(self.type_inner, members=[self.friend])
         circles = self.owner_profile.get_circles_for(self.friend)
         self.assertIn(circle, circles)
 
     def test_get_circles_for_non_member(self):
-        self._make_circle('Inner', members=[self.friend])
+        self._make_circle(self.type_inner, members=[self.friend])
         circles = self.owner_profile.get_circles_for(self.stranger)
         self.assertFalse(circles)
 
     def test_is_in_any_circle(self):
-        self._make_circle('Inner', members=[self.friend])
+        self._make_circle(self.type_inner, members=[self.friend])
         self.assertTrue(self.owner_profile.is_in_any_circle(self.friend))
         self.assertFalse(self.owner_profile.is_in_any_circle(self.stranger))
 
@@ -93,13 +114,13 @@ class TestSocialCircles(TransactionCase):
 
     def test_visibility_circles_only(self):
         self.owner_profile.detailed_visibility = 'circles'
-        circle = self._make_circle('VIP Circle', members=[self.friend])
+        circle = self._make_circle(self.type_vip, members=[self.friend])
         self.assertTrue(self.owner_profile.can_see_detailed_info(self.friend))
         self.assertFalse(self.owner_profile.can_see_detailed_info(self.acquaintance))
 
     def test_visibility_specific_circle(self):
-        circle = self._make_circle('Inner Circle', members=[self.friend])
-        other_circle = self._make_circle('Outer Circle', members=[self.acquaintance])
+        circle = self._make_circle(self.type_inner, members=[self.friend])
+        other_circle = self._make_circle(self.type_outer, members=[self.acquaintance])
         self.owner_profile.write({
             'detailed_visibility': 'specific',
             'detailed_visibility_circle_id': circle.id,
@@ -132,7 +153,7 @@ class TestSocialCircles(TransactionCase):
         self.assertEqual(self.owner_profile.get_visibility_level_for(self.owner), 'owner')
 
     def test_level_circle(self):
-        self._make_circle('Besties', members=[self.friend])
+        self._make_circle(self.type_besties, members=[self.friend])
         level = self.owner_profile.get_visibility_level_for(self.friend)
         self.assertTrue(level.startswith('circle:'))
 
@@ -159,43 +180,42 @@ class TestSocialCircles(TransactionCase):
         self.assertEqual(level, 'anonymous')
 
     def test_level_circle_contains_name(self):
-        """Le niveau circle: contient le nom du cercle."""
-        self._make_circle('Proches Test', members=[self.friend])
+        """Le niveau circle: contient le display_name du cercle."""
+        self._make_circle(self.type_proches, members=[self.friend])
         level = self.owner_profile.get_visibility_level_for(self.friend)
-        self.assertIn('Proches Test', level)
+        self.assertIn(self.type_proches.name, level)
 
     # ── circle_count et ensure_circle ─────────────────────────────────────────
 
     def test_circle_count_updates(self):
         """circle_count est incrémenté à la création d'un cercle."""
         before = self.owner_profile.circle_count
-        self._make_circle('Count Test Circle')
+        self._make_circle(self.type_count)
         self.owner_profile.invalidate_recordset(['circle_count'])
         self.assertGreater(self.owner_profile.circle_count, before)
 
     def test_ensure_circle_custom_sequence(self):
-        """ensure_circle crée un cercle avec la séquence donnée."""
-        circle = self.owner_profile.ensure_circle('Seq Circle', sequence=50)
-        self.assertEqual(circle.sequence, 50)
+        """ensure_circle uses the type's sequence."""
+        circle = self.owner_profile.ensure_circle(self.type_seq)
+        self.assertEqual(circle.sequence, self.type_seq.sequence)
 
     def test_ensure_circle_existing_not_overwritten(self):
-        """ensure_circle retourne l'existant sans modifier la séquence."""
-        c1 = self.owner_profile.ensure_circle('Stable', sequence=20)
-        c2 = self.owner_profile.ensure_circle('Stable', sequence=99)
+        """ensure_circle returns the existing circle without modifying it."""
+        c1 = self.owner_profile.ensure_circle(self.type_stable)
+        c2 = self.owner_profile.ensure_circle(self.type_stable)
         self.assertEqual(c1, c2)
-        self.assertEqual(c1.sequence, 20)
 
-    def test_duplicate_name_different_profiles_allowed(self):
-        """Deux profils différents peuvent avoir des cercles de même nom."""
+    def test_duplicate_type_different_profiles_allowed(self):
+        """Two different profiles can each have a circle of the same type."""
         other_user = self.env['res.users'].create({
             'name': 'Other Owner', 'login': 'circ_other_owner', 'email': 'other@circles.test',
             'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
         })
         other_profile = self.Profile.get_or_create_for_user(other_user)
-        self._make_circle('Shared Name')
+        self._make_circle(self.type_shared)
         other_circle = self.env['social_circles.circle'].sudo().create({
             'profile_id': other_profile.id,
-            'name': 'Shared Name',
+            'type_id': self.type_shared.id,
         })
         self.assertTrue(other_circle.exists())
 
@@ -214,7 +234,7 @@ class TestSocialCircles(TransactionCase):
         other_profile = self.Profile.get_or_create_for_user(other_user)
         foreign_circle = self.env['social_circles.circle'].sudo().create({
             'profile_id': other_profile.id,
-            'name': 'Foreign Circle',
+            'type_id': self.type_foreign.id,
         })
         with self.assertRaises(ValidationError):
             self.owner_profile.write({

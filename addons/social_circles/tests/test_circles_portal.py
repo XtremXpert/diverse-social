@@ -29,66 +29,88 @@ class TestCirclesPortalData(TransactionCase):
         cls.profile = cls.env['club_social_profile.profile'].sudo().create({
             'user_id': cls.owner.id,
         })
+        # One type per test that needs a unique type to avoid duplicate-type constraint
+        CircleType = cls.env['social_circles.circle_type']
+        cls.type_portal = CircleType.create({'name': 'Portal Test T', 'sequence': 10})
+        cls.type_unique = CircleType.create({'name': 'Unique Circle T', 'sequence': 20})
+        cls.type_old = CircleType.create({'name': 'Old Name T', 'sequence': 30})
+        cls.type_delete = CircleType.create({'name': 'To Delete T', 'sequence': 40})
+        cls.type_protected = CircleType.create({'name': 'Protected T', 'sequence': 50})
+        cls.type_add = CircleType.create({'name': 'Add Member T', 'sequence': 60})
+        cls.type_remove = CircleType.create({'name': 'Remove Member T', 'sequence': 70})
+        cls.type_has = CircleType.create({'name': 'Has Member T', 'sequence': 80})
+        cls.type_count = CircleType.create({'name': 'Count Circle T', 'sequence': 90})
+        cls.type_idem = CircleType.create({'name': 'Idempotent T', 'sequence': 100})
+        cls.type_vis = CircleType.create({'name': 'Vis Circle T', 'sequence': 110})
+        cls.type_specific = CircleType.create({'name': 'Specific Vis T', 'sequence': 120})
+        cls.type_level = CircleType.create({'name': 'Level Circle T', 'sequence': 130})
+        cls.type_auto = CircleType.create({'name': 'AutoCircle T', 'sequence': 140})
+        cls.type_idemp2 = CircleType.create({'name': 'IdempCircle T', 'sequence': 150})
 
-    def _circle(self, name='Test Circle'):
-        return self.env['social_circles.circle'].sudo().create({
-            'profile_id': self.profile.id, 'name': name,
-        })
+    def _circle(self, type_id=None, nickname=None):
+        """Create a circle for this test's profile."""
+        type_id = type_id or self.type_portal
+        vals = {'profile_id': self.profile.id, 'type_id': type_id.id}
+        if nickname:
+            vals['name'] = nickname
+        return self.env['social_circles.circle'].sudo().create(vals)
 
     # ── CRUD cercle ───────────────────────────────────────────────────────
 
     def test_create_circle(self):
-        c = self._circle('Portal Test Circle')
+        c = self._circle(self.type_portal)
         self.assertEqual(c.profile_id, self.profile)
 
     def test_duplicate_circle_name_raises(self):
+        """Two circles of same type on same profile raises ValidationError."""
         from odoo.exceptions import ValidationError
-        self._circle('Unique Circle')
+        self._circle(self.type_unique)
         with self.assertRaises(ValidationError):
-            self._circle('Unique Circle')
+            self._circle(self.type_unique)
 
     def test_update_circle_name(self):
-        c = self._circle('Old Name')
-        c.sudo().write({'name': 'New Name'})
-        self.assertEqual(c.name, 'New Name')
+        """The optional nickname field can be updated freely."""
+        c = self._circle(self.type_old, nickname='Old Nickname')
+        c.sudo().write({'name': 'New Nickname'})
+        self.assertEqual(c.name, 'New Nickname')
 
     def test_delete_circle(self):
-        c = self._circle('To Delete')
+        c = self._circle(self.type_delete)
         c_id = c.id
         c.sudo().unlink()
         self.assertFalse(self.env['social_circles.circle'].sudo().browse(c_id).exists())
 
     def test_circle_owner_only_can_delete(self):
         from odoo.exceptions import AccessError
-        c = self._circle('Protected Circle')
+        c = self._circle(self.type_protected)
         with self.assertRaises(AccessError):
             c.with_user(self.member).unlink()
 
     # ── Membres ───────────────────────────────────────────────────────────
 
     def test_add_member(self):
-        c = self._circle('Add Member Circle')
+        c = self._circle(self.type_add)
         c.add_member(self.member)
         self.assertIn(self.member, c.member_ids)
 
     def test_remove_member(self):
-        c = self._circle('Remove Member Circle')
+        c = self._circle(self.type_remove)
         c.add_member(self.member)
         c.remove_member(self.member)
         self.assertNotIn(self.member, c.member_ids)
 
     def test_has_member(self):
-        c = self._circle('Has Member Circle')
+        c = self._circle(self.type_has)
         c.add_member(self.member)
         self.assertTrue(c.has_member(self.member))
 
     def test_member_count_computed(self):
-        c = self._circle('Count Circle')
+        c = self._circle(self.type_count)
         c.add_member(self.member)
         self.assertEqual(c.member_count, 1)
 
     def test_add_member_idempotent(self):
-        c = self._circle('Idempotent Circle')
+        c = self._circle(self.type_idem)
         c.add_member(self.member)
         c.add_member(self.member)
         self.assertEqual(c.member_count, 1)
@@ -105,7 +127,7 @@ class TestCirclesPortalData(TransactionCase):
 
     def test_can_see_detailed_circles(self):
         self.profile.sudo().write({'detailed_visibility': 'circles'})
-        c = self._circle('Vis Circle')
+        c = self._circle(self.type_vis)
         c.add_member(self.member)
         self.assertTrue(self.profile.can_see_detailed_info(self.member))
 
@@ -115,8 +137,7 @@ class TestCirclesPortalData(TransactionCase):
         self.assertFalse(self.profile.can_see_detailed_info(outsider))
 
     def test_specific_circle_visibility(self):
-        from odoo.exceptions import ValidationError
-        c = self._circle('Specific Vis Circle')
+        c = self._circle(self.type_specific)
         self.profile.sudo().write({
             'detailed_visibility': 'specific',
             'detailed_visibility_circle_id': c.id,
@@ -129,18 +150,18 @@ class TestCirclesPortalData(TransactionCase):
         self.assertEqual(level, 'owner')
 
     def test_get_visibility_level_circle(self):
-        c = self._circle('Level Circle')
+        c = self._circle(self.type_level)
         c.add_member(self.member)
         level = self.profile.get_visibility_level_for(self.member)
         self.assertIn('circle:', level)
 
     def test_ensure_circle_creates_if_absent(self):
-        c = self.profile.ensure_circle('AutoCircle')
-        self.assertEqual(c.name, 'AutoCircle')
+        c = self.profile.ensure_circle(self.type_auto)
+        self.assertEqual(c.type_id, self.type_auto)
 
     def test_ensure_circle_idempotent(self):
-        c1 = self.profile.ensure_circle('IdempCircle')
-        c2 = self.profile.ensure_circle('IdempCircle')
+        c1 = self.profile.ensure_circle(self.type_idemp2)
+        c2 = self.profile.ensure_circle(self.type_idemp2)
         self.assertEqual(c1, c2)
 
     # ── Connexions → addable ──────────────────────────────────────────────
@@ -154,6 +175,14 @@ class TestCirclesPortalData(TransactionCase):
         recv = Connection.search([('connected_user_id', '=', self.owner.id), ('state', '=', 'accepted')])
         user_ids = set(sent.mapped('connected_user_id.id')) | set(recv.mapped('user_id.id'))
         self.assertIn(self.member.id, user_ids)
+
+
+def _get_or_create_http_type(env, name):
+    """Return (or create) a circle_type for use in HTTP tests."""
+    t = env['social_circles.circle_type'].sudo().search([('name', '=', name)], limit=1)
+    if not t:
+        t = env['social_circles.circle_type'].sudo().create({'name': name, 'sequence': 200})
+    return t
 
 
 @tagged('social_circles', 'circles_portal', 'post_install', '-at_install')
@@ -180,22 +209,24 @@ class TestCirclesPortalHttp(HttpCase):
     def test_circle_create_post(self):
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
+        ct = _get_or_create_http_type(self.env, 'HTTP Create Type')
         resp = self.url_open(
             '/my/circles/create',
-            data={'csrf_token': _csrf, 'name': 'HTTP Create Circle'},
+            data={'csrf_token': _csrf, 'type_id': str(ct.id), 'name': 'My Nickname'},
         )
         self.assertEqual(resp.status_code, 200)
         circle = self.env['social_circles.circle'].sudo().search(
-            [('name', '=', 'HTTP Create Circle')], limit=1
+            [('type_id', '=', ct.id)], limit=1
         )
         self.assertTrue(circle)
 
-    def test_circle_create_no_name_redirects(self):
+    def test_circle_create_no_type_redirects(self):
+        """Submitting without a type_id redirects with error."""
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         resp = self.url_open(
             '/my/circles/create',
-            data={'csrf_token': _csrf, 'name': ''},
+            data={'csrf_token': _csrf, 'type_id': ''},
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -206,8 +237,9 @@ class TestCirclesPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
         ) or self.env['club_social_profile.profile'].sudo().create({'user_id': admin.id})
+        ct_update = _get_or_create_http_type(self.env, 'HTTP Update Type')
         circle = self.env['social_circles.circle'].sudo().create({
-            'profile_id': profile.id, 'name': 'Before Update',
+            'profile_id': profile.id, 'type_id': ct_update.id,
         })
         resp = self.url_open(
             f'/my/circles/{circle.id}/update',
@@ -227,8 +259,9 @@ class TestCirclesPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
         ) or self.env['club_social_profile.profile'].sudo().create({'user_id': admin.id})
+        ct_del = _get_or_create_http_type(self.env, 'HTTP Delete Type')
         circle = self.env['social_circles.circle'].sudo().create({
-            'profile_id': profile.id, 'name': 'HTTP Delete Me',
+            'profile_id': profile.id, 'type_id': ct_del.id,
         })
         resp = self.url_open(
             f'/my/circles/{circle.id}/delete',
@@ -242,8 +275,9 @@ class TestCirclesPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
         ) or self.env['club_social_profile.profile'].sudo().create({'user_id': admin.id})
+        ct_forbidden = _get_or_create_http_type(self.env, 'HTTP Forbidden Type')
         circle = self.env['social_circles.circle'].sudo().create({
-            'profile_id': profile.id, 'name': 'HTTP Forbidden Delete',
+            'profile_id': profile.id, 'type_id': ct_forbidden.id,
         })
         other = self.env['res.users'].sudo().create({
             'name': 'HTTP Circle Other', 'login': 'http_circ_other2',
@@ -283,8 +317,9 @@ class TestCirclesPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
         ) or self.env['club_social_profile.profile'].sudo().create({'user_id': admin.id})
+        ct_noconn = _get_or_create_http_type(self.env, 'HTTP NoConn Type')
         circle = self.env['social_circles.circle'].sudo().create({
-            'profile_id': profile.id, 'name': 'Add Non-Conn Circle',
+            'profile_id': profile.id, 'type_id': ct_noconn.id,
         })
         stranger = self.env['res.users'].sudo().create({
             'name': 'Stranger User', 'login': 'stranger_circ',
@@ -309,8 +344,10 @@ class TestCirclesPortalHttp(HttpCase):
         other_profile = self.env['club_social_profile.profile'].sudo().create({
             'user_id': other_owner.id,
         })
+        ct_other = _get_or_create_http_type(self.env, 'HTTP OtherOwner Type')
         circle = self.env['social_circles.circle'].sudo().create({
             'profile_id': other_profile.id,
+            'type_id': ct_other.id,
             'name': 'Other Owner Circle',
             'member_ids': [(4, admin.id)],
         })

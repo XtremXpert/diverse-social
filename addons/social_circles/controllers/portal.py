@@ -43,10 +43,18 @@ class CirclesPortal(CustomerPortal):
             ('profile_id.user_id', '!=', user.id),
         ], order='profile_id, sequence, id')
 
+        # Circle types already used by this profile (to hide from the "add" list)
+        used_type_ids = circles.mapped('type_id').ids
+        available_types = request.env['social_circles.circle_type'].search([
+            ('active', '=', True),
+            ('id', 'not in', used_type_ids),
+        ], order='sequence, id')
+
         return request.render('social_circles.portal_my_circles', {
             'circles': circles,
             'circles_with_addable': circles_with_addable,
             'others_circles': others_circles,
+            'available_types': available_types,
             'profile': profile,
             'page_name': 'circles',
             'error': kw.get('error'),
@@ -55,19 +63,25 @@ class CirclesPortal(CustomerPortal):
     # ── Créer ──────────────────────────────────────────────────────────────
 
     @route('/my/circles/create', auth='user', methods=['POST'], website=True, csrf=True)
-    def circle_create(self, name='', description='', **kw):
-        name = (name or '').strip()
-        if not name:
-            return request.redirect('/my/circles?error=name_required')
+    def circle_create(self, type_id='', name='', description='', **kw):
+        """Create a circle from a type_id (required) with an optional nickname."""
+        try:
+            type_id = int(type_id)
+        except (ValueError, TypeError):
+            return request.redirect('/my/circles?error=type_required')
+        circle_type = request.env['social_circles.circle_type'].sudo().browse(type_id).exists()
+        if not circle_type:
+            return request.redirect('/my/circles?error=type_required')
         profile = request.env['club_social_profile.profile'].get_or_create_for_user(request.env.user)
         try:
             request.env['social_circles.circle'].create({
                 'profile_id': profile.id,
-                'name': name,
-                'description': description.strip() or False,
+                'type_id': circle_type.id,
+                'name': (name or '').strip() or False,
+                'description': (description or '').strip() or False,
             })
         except ValidationError:
-            return request.redirect('/my/circles?error=duplicate_name')
+            return request.redirect('/my/circles?error=duplicate_type')
         return request.redirect('/my/circles?created=1')
 
     # ── Modifier nom / description ─────────────────────────────────────────
