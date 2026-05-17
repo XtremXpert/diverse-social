@@ -46,6 +46,9 @@ class ClubSocialReport(models.Model):
             'resolved_at': fields.Datetime.now(),
             'resolution_note': note or self.resolution_note,
         })
+        # When the reported content is a post or comment, archive it automatically
+        # so the moderator does not have to act in two separate places.
+        self._archive_reported_content()
 
     def action_dismiss(self, note=None):
         self.write({
@@ -54,3 +57,19 @@ class ClubSocialReport(models.Model):
             'resolved_at': fields.Datetime.now(),
             'resolution_note': note or self.resolution_note,
         })
+
+    def _archive_reported_content(self):
+        """Archive the reported post or comment after a report is resolved."""
+        archivable = {
+            'social_base.post': 'action_archive',   # sets state='archived'
+            'social_base.comment': 'action_hide',   # sets state='hidden'
+        }
+        method_name = archivable.get(self.ref_model)
+        if not method_name:
+            return
+        Model = self.env.get(self.ref_model)
+        if not Model:
+            return
+        record = Model.sudo().browse(self.ref_id).exists()
+        if record and hasattr(record, method_name):
+            getattr(record, method_name)()
