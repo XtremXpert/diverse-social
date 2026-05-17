@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+        Default circle types — admin-managed, members choose from this list.
+        noupdate="1": admin changes are preserved on module upgrade.
+    -->
+
+    <record id="circle_type_connaissances" model="social_circles.circle_type">
+        <field name="name">Connaissances</field>
+        <field name="description">Personnes que vous connaissez — cercle par défaut pour les nouvelles connexions.</field>
+        <field name="sequence">100</field>
+        <field name="color">0</field>
+        <field name="is_default" eval="True"/>
+    </record>
+
+    <record id="circle_type_amis" model="social_circles.circle_type">
+        <field name="name">Amis proches</field>
+        <field name="description">Personnes en qui vous avez une confiance particulière.</field>
+        <field name="sequence">20</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="circle_type_partenaires" model="social_circles.circle_type">
+        <field name="name">Partenaires</field>
+        <field name="description">Partenaires intimes ou romantiques.</field>
+        <field name="sequence">10</field>
+        <field name="color">1</field>
+    </record>
+
+    <record id="circle_type_vip" model="social_circles.circle_type">
+        <field name="name">VIP</field>
+        <field name="description">Accès privilégié — personnes à qui vous accordez une visibilité maximale.</field>
+        <field name="sequence">5</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="circle_type_famille" model="social_circles.circle_type">
+        <field name="name">Famille choisie</field>
+        <field name="description">Famille au sens large — liens forts non-romantiques.</field>
+        <field name="sequence">30</field>
+        <field name="color">6</field>
+    </record>
+
+</odoo>

@@ -1,3 +1,4 @@
+from . import circle_type
 from . import circle
 from . import connection_ext
 from . import profile_ext

@@ -1,11 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-# Default circle automatically created for every new profile.
-# Used as the landing circle for accepted friend connections.
-DEFAULT_CIRCLE_NAME = 'Connaissances'
-DEFAULT_CIRCLE_SEQUENCE = 100  # low priority — shows after user-defined circles
-
 
 class ClubSocialProfile(models.Model):
     _inherit = 'club_social_profile.profile'
@@ -89,35 +84,44 @@ class ClubSocialProfile(models.Model):
             return 'owner'
         circles = self.get_circles_for(viewer_user)
         if circles:
-            return 'circle:%s' % ','.join(circles.mapped('name'))
+            return 'circle:%s' % ','.join(circles.mapped('display_name'))
         if self.env['club_social_profile.connection'].is_connected(self.user_id, viewer_user):
             return 'connection'
         if viewer_user.has_group('social_base.group_social_user'):
             return 'member'
         return 'anonymous'
 
-    def ensure_circle(self, name, sequence=10):
-        """Return the named circle, creating it if absent."""
+    def ensure_circle(self, type_id):
+        """Return the circle of the given type for this profile, creating it if absent."""
         self.ensure_one()
-        circle = self.circle_ids.filtered(lambda c: c.name == name)
+        circle = self.circle_ids.filtered(lambda c: c.type_id.id == type_id.id)
         if not circle:
             circle = self.env['social_circles.circle'].sudo().create({
                 'profile_id': self.id,
-                'name': name,
-                'sequence': sequence,
+                'type_id': type_id.id,
+                'sequence': type_id.sequence,
             })
         return circle
+
+    def _get_default_circle_type(self):
+        """Return the default circle type (is_default=True), or False."""
+        return self.env['social_circles.circle_type'].sudo().search(
+            [('is_default', '=', True)], limit=1
+        )
 
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
+        default_type = records._get_default_circle_type()
+        if not default_type:
+            return records
         # Provision the default circle for every new profile so that
         # accepted connections have a landing circle immediately.
         Circle = self.env['social_circles.circle'].sudo()
         for profile in records:
             Circle.create({
                 'profile_id': profile.id,
-                'name': DEFAULT_CIRCLE_NAME,
-                'sequence': DEFAULT_CIRCLE_SEQUENCE,
+                'type_id': default_type.id,
+                'sequence': default_type.sequence,
             })
         return records

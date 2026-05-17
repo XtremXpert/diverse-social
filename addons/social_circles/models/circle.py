@@ -11,10 +11,28 @@ class SocialCircle(models.Model):
         'club_social_profile.profile', required=True,
         ondelete='cascade', index=True,
     )
-    name = fields.Char(required=True, translate=True)
+
+    # Type from the admin catalogue — mandatory, defines the canonical name
+    type_id = fields.Many2one(
+        'social_circles.circle_type', string='Circle Type',
+        required=True, ondelete='restrict', index=True,
+    )
+
+    # Optional personal nickname; if blank, the type name is displayed
+    name = fields.Char(
+        string='Nickname (optional)',
+        help='Leave blank to use the type name as-is.',
+        translate=True,
+    )
+
+    # Computed label shown everywhere in the UI
+    display_name = fields.Char(
+        compute='_compute_display_name', store=True, string='Label',
+    )
+
     description = fields.Text(translate=True)
     sequence = fields.Integer(default=10)
-    color = fields.Integer(default=0)
+    color = fields.Integer(compute='_compute_color', store=True)
 
     member_ids = fields.Many2many(
         'res.users',
@@ -24,22 +42,33 @@ class SocialCircle(models.Model):
     )
     member_count = fields.Integer(compute='_compute_member_count', store=True)
 
+    @api.depends('name', 'type_id', 'type_id.name')
+    def _compute_display_name(self):
+        for circle in self:
+            circle.display_name = circle.name or (circle.type_id.name if circle.type_id else '')
+
+    @api.depends('type_id', 'type_id.color')
+    def _compute_color(self):
+        for circle in self:
+            # Inherit color from type unless overridden via a future field
+            circle.color = circle.type_id.color if circle.type_id else 0
+
     @api.depends('member_ids')
     def _compute_member_count(self):
         for circle in self:
             circle.member_count = len(circle.member_ids)
 
-    @api.constrains('profile_id', 'name')
-    def _check_unique_name(self):
+    @api.constrains('profile_id', 'type_id')
+    def _check_unique_type(self):
         for circle in self:
             if self.search_count([
                 ('profile_id', '=', circle.profile_id.id),
-                ('name', '=', circle.name),
+                ('type_id', '=', circle.type_id.id),
                 ('id', '!=', circle.id),
             ]):
                 raise ValidationError(_(
-                    'A circle named "%(name)s" already exists for this profile.',
-                    name=circle.name,
+                    'A circle of type "%(name)s" already exists for this profile.',
+                    name=circle.type_id.name,
                 ))
 
     def add_member(self, user):
