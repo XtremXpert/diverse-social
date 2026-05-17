@@ -143,7 +143,10 @@ class TestDiscovery(TransactionCase):
 
     def test_in_circles_only(self):
         # Alice puts searcher in a circle; bob does not
-        alice_circle = self.alice_p.ensure_circle('Friends')
+        friends_type = self.env['social_circles.circle_type'].sudo().create({
+            'name': 'Friends',
+        })
+        alice_circle = self.alice_p.ensure_circle(friends_type)
         alice_circle.add_member(self.searcher_user)
 
         crit = self._make_criteria(in_circles_only=True)
