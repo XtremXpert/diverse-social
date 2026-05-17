@@ -1,3 +1,5 @@
+import re
+
 from odoo import api, models
 
 VALID_TYPES = frozenset({'profile', 'group', 'event', 'post', 'gallery'})
@@ -24,19 +26,24 @@ class SocialSearchService(models.AbstractModel):
             [t for t in types if t in valid_types]
             if types else list(valid_types)
         )
+
+        # Fetch blocked IDs once for the whole search request
+        blocked_ids = self.env['social_safety.block'].get_blocked_ids_for(self.env.user)
+
         _plural = {'gallery': 'galleries'}
         results = {}
         for t in active_types:
             plural = _plural.get(t, f'{t}s')
-            results[t] = getattr(self, f'_search_{plural}')(query, limit, offset)
+            results[t] = getattr(self, f'_search_{plural}')(query, limit, offset, blocked_ids)
         return results
 
     # ── Profiles ──────────────────────────────────────────────────────────────
 
     @api.model
-    def _search_profiles(self, query, limit, offset):
+    def _search_profiles(self, query, limit, offset, blocked_ids=None):
         user = self.env.user
-        blocked_ids = self.env['social_safety.block'].get_blocked_ids_for(user)
+        if blocked_ids is None:
+            blocked_ids = self.env['social_safety.block'].get_blocked_ids_for(user)
 
         connection_user_ids = self.env['club_social_profile.connection'].search([
             ('user_id', '=', user.id),
@@ -82,7 +89,7 @@ class SocialSearchService(models.AbstractModel):
     # ── Groups ────────────────────────────────────────────────────────────────
 
     @api.model
-    def _search_groups(self, query, limit, offset):
+    def _search_groups(self, query, limit, offset, blocked_ids=None):
         user = self.env.user
         q = (query or '').strip()
         text_domain = (
@@ -114,7 +121,7 @@ class SocialSearchService(models.AbstractModel):
     # ── Events ────────────────────────────────────────────────────────────────
 
     @api.model
-    def _search_events(self, query, limit, offset):
+    def _search_events(self, query, limit, offset, blocked_ids=None):
         user = self.env.user
         q = (query or '').strip()
         text_domain = (
@@ -150,31 +157,29 @@ class SocialSearchService(models.AbstractModel):
     # ── Posts ─────────────────────────────────────────────────────────────────
 
     @api.model
-    def _search_posts(self, query, limit, offset):
+    def _search_posts(self, query, limit, offset, blocked_ids=None):
         user = self.env.user
-        blocked_ids = self.env['social_safety.block'].get_blocked_ids_for(user)
+        if blocked_ids is None:
+            blocked_ids = self.env['social_safety.block'].get_blocked_ids_for(user)
 
         q = (query or '').strip()
         text_domain = (
             ['|', ('name', 'ilike', q), ('content', 'ilike', q)]
             if q else []
         )
-        visibility_domain = [
-            ('state', '=', 'published'),
-            '|',
-            ('visibility', '=', 'public'),
-            ('visibility', '=', 'members'),
-        ]
-        exclusion_domain = [('author_id', 'not in', blocked_ids)] if blocked_ids else []
 
-        domain = text_domain + visibility_domain + exclusion_domain
+        # Use the single source of truth for post visibility rules
+        visibility_domain = self.env['social_base.post']._visibility_domain(
+            user, blocked_user_ids=blocked_ids,
+        )
+
+        domain = text_domain + visibility_domain
         posts = self.env['social_base.post'].search(
             domain, limit=limit, offset=offset, order='create_date desc'
         )
         return [self._post_to_dict(p) for p in posts]
 
     def _post_to_dict(self, p):
-        import re
         plain = re.sub(r'<[^>]+>', '', p.content or '')[:120] if p.content else None
         return {
             'type': 'post',
@@ -189,7 +194,7 @@ class SocialSearchService(models.AbstractModel):
     # ── Galleries ─────────────────────────────────────────────────────────────
 
     @api.model
-    def _search_galleries(self, query, limit, offset):
+    def _search_galleries(self, query, limit, offset, blocked_ids=None):
         q = (query or '').strip()
         text_domain = (
             ['|', ('name', 'ilike', q), ('description', 'ilike', q)]
