@@ -111,6 +111,56 @@ class SocialPost(models.Model):
     def increment_share_count(self):
         self.write({'share_count': self.share_count + 1})
 
+    @api.model
+    def _visibility_domain(self, user, connection_user_ids=None, member_group_ids=None, blocked_user_ids=None):
+        """Return an Odoo domain restricting posts to those visible by `user`.
+
+        This is the single source of truth for post visibility rules.
+        Callers (feed, search, portals, …) must use this method instead of
+        re-implementing the logic inline.
+
+        Rules (evaluated in order, OR'd together at the post level):
+          - public / members  → visible to all social users
+          - friends           → visible only if the author is an accepted connection
+          - private           → visible only to the author themselves
+          Group dimension (AND'd on top):
+          - group post        → visible only to group members (member_group_ids)
+          - non-group post    → falls through to the visibility rule above
+
+        :param user: res.users record of the viewer
+        :param connection_user_ids: list of accepted connection user IDs (int)
+        :param member_group_ids: list of group IDs the user belongs to (int)
+        :param blocked_user_ids: set/list of user IDs to exclude from results
+        :returns: list — Odoo domain
+        """
+        connection_user_ids = list(connection_user_ids or [])
+        member_group_ids = list(member_group_ids or [])
+        blocked_user_ids = list(blocked_user_ids or [])
+
+        # Group filter: non-group posts OR posts in a group the user belongs to
+        group_domain = [
+            '|',
+            ('group_id', '=', False),
+            ('group_id', 'in', member_group_ids),
+        ]
+
+        # Visibility filter
+        visibility_domain = [
+            '|', '|',
+            ('visibility', 'in', ['public', 'members']),
+            '&', ('visibility', '=', 'friends'),
+                 ('author_id', 'in', connection_user_ids + [user.id]),
+            '&', ('visibility', '=', 'private'),
+                 ('author_id', '=', user.id),
+        ]
+
+        domain = [('state', '=', 'published')] + group_domain + visibility_domain
+
+        if blocked_user_ids:
+            domain.append(('author_id', 'not in', blocked_user_ids))
+
+        return domain
+
     @api.constrains('content', 'attachment_ids')
     def _check_content_or_attachment(self):
         for post in self:

@@ -192,44 +192,14 @@ class SocialFeedService(models.AbstractModel):
     @api.model
     def _feed_posts(self, ctx, limit):
         user = ctx['user']
-        blocked_ids = ctx['blocked_ids']
-        connection_user_ids = ctx['connection_user_ids']
-        member_group_ids = ctx['member_group_ids']
 
-        # visibility rules (OR'd together):
-        #   public / members  → all social users
-        #   friends           → author is a connection
-        #   private           → only the author themselves
-        # group_id set + group is secret → only group members see it
-        visibility_domain = [
-            '|', '|', '|',
-            ('visibility', 'in', ['public', 'members']),
-            '&', ('visibility', '=', 'friends'),
-                 ('author_id', 'in', connection_user_ids + [user.id]),
-            ('visibility', '=', 'private'), ('author_id', '=', user.id),
-            '&', ('group_id', '!=', False),
-                 ('group_id', 'in', member_group_ids),
-        ]
-        # For non-group posts, exclude posts whose group is secret and user isn't a member
-        # This is already handled: secret group posts have group_id set, and we only include
-        # group posts where group_id in member_group_ids.
-        # Non-group posts (group_id=False) fall through to visibility check only.
-        # So we need to also allow non-group posts:
-        visibility_domain = [
-            '|',
-            ('group_id', '=', False),
-            ('group_id', 'in', member_group_ids),
-            '|', '|',
-            ('visibility', 'in', ['public', 'members']),
-            '&', ('visibility', '=', 'friends'),
-                 ('author_id', 'in', connection_user_ids + [user.id]),
-            '&', ('visibility', '=', 'private'),
-                 ('author_id', '=', user.id),
-        ]
-
-        domain = [('state', '=', 'published')] + visibility_domain
-        if blocked_ids:
-            domain.append(('author_id', 'not in', blocked_ids))
+        # Delegate visibility rules to the single source of truth on the post model
+        domain = self.env['social_base.post']._visibility_domain(
+            user,
+            connection_user_ids=ctx['connection_user_ids'],
+            member_group_ids=ctx['member_group_ids'],
+            blocked_user_ids=ctx['blocked_ids'],
+        )
 
         posts = self.env['social_base.post'].search(domain, limit=limit)
         return [self._post_item(p) for p in posts]
