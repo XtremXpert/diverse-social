@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_social_onboarding_wizard_form_privacy_ext" model="ir.ui.view">
+        <field name="name">social_onboarding.wizard.form.privacy.ext</field>
+        <field name="model">social_onboarding.wizard</field>
+        <field name="inherit_id" ref="social_onboarding.view_social_onboarding_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@invisible=&quot;step != 'preferences'&quot;]/group[last()]" position="after">
+                <group string="Privacy Policy" colspan="2">
+                    <field name="privacy_policy_accepted" widget="boolean_toggle"
+                           string="I have read and accept the privacy policy"/>
+                    <field name="privacy_policy_version" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

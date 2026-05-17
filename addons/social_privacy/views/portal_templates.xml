@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_privacy_dashboard" name="My Privacy Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="container py-5">
+                <h1 class="mb-4">My Privacy</h1>
+                <div class="row g-4">
+                    <!-- Data Export Card -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Export My Data</h5>
+                                <p class="card-text">Download all your personal data in a structured JSON format.</p>
+                                <a href="/my/privacy/export" class="btn btn-primary">Request Export</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Delete Account Card -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Delete My Account</h5>
+                                <p class="card-text">Permanently anonymize or delete all your personal data.</p>
+                                <a href="/my/privacy/delete" class="btn btn-danger">Delete Account</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <h3>Privacy Policy &amp; Consent</h3>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Privacy Policy</h6>
+                                    <p class="card-text small">Read the current privacy policy.</p>
+                                    <a href="/my/privacy/policy" class="btn btn-sm btn-outline-secondary">Read</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Manage Consent</h6>
+                                    <p class="card-text small">Withdraw your consent at any time.</p>
+                                    <a href="/my/privacy/withdraw" class="btn btn-sm btn-outline-warning">Withdraw</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Processing Restriction</h6>
+                                    <p class="card-text small">Request a limitation of processing.</p>
+                                    <a href="/my/privacy" class="btn btn-sm btn-outline-info">Request</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

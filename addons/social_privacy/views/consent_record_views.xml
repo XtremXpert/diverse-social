@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_consent_record_list" model="ir.ui.view">
+        <field name="name">social_privacy.consent.list</field>
+        <field name="model">social_privacy.consent</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="user_id"/>
+                <field name="policy_version_id"/>
+                <field name="policy_version_number"/>
+                <field name="state"/>
+                <field name="consented_at"/>
+                <field name="source"/>
+                <field name="ip_address"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_consent_record_form" model="ir.ui.view">
+        <field name="name">social_privacy.consent.form</field>
+        <field name="model">social_privacy.consent</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_withdraw" string="Withdraw Consent" type="object" invisible="state != 'accepted'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="policy_version_id"/>
+                            <field name="policy_version_number"/>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="consented_at"/>
+                            <field name="withdrawn_at" invisible="state != 'withdrawn'"/>
+                            <field name="withdrawal_reason" invisible="state != 'withdrawn'"/>
+                            <field name="source"/>
+                            <field name="ip_address"/>
+                            <field name="user_agent"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_consent_record" model="ir.actions.act_window">
+        <field name="name">Consent Records</field>
+        <field name="res_model">social_privacy.consent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_consent_record"
+              name="Consent Records"
+              parent="social_privacy.menu_privacy_root"
+              action="action_consent_record"
+              sequence="15"/>
+</odoo>

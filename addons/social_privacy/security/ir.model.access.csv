@@ -1,0 +1,20 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_privacy_officer,Privacy Officer,model_social_privacy_officer,social_privacy.group_privacy_officer,1,1,1,0
+access_privacy_officer_admin,Privacy Officer Admin,model_social_privacy_officer,social_privacy.group_privacy_admin,1,1,1,1
+access_privacy_breach_officer,Privacy Breach Officer,model_social_privacy_breach,social_privacy.group_privacy_officer,1,1,1,0
+access_privacy_breach_admin,Privacy Breach Admin,model_social_privacy_breach,social_privacy.group_privacy_admin,1,1,1,1
+access_privacy_access_log_officer,Privacy Access Log Officer,model_social_privacy_access_log,social_privacy.group_privacy_officer,1,0,0,0
+access_privacy_access_log_admin,Privacy Access Log Admin,model_social_privacy_access_log,social_privacy.group_privacy_admin,1,1,1,1
+access_data_export_request_user,Data Export Request User,model_social_privacy_export_request,base.group_user,1,1,1,0
+access_data_export_request_admin,Data Export Request Admin,model_social_privacy_export_request,social_privacy.group_privacy_admin,1,1,1,1
+access_social_anonymize_log_admin,Social Anonymize Log Admin,model_social_privacy_anonymize_log,social_privacy.group_privacy_admin,1,1,1,1
+access_social_anonymize_wizard_admin,Social Anonymize Wizard Admin,model_social_privacy_anonymize_wizard,social_privacy.group_privacy_admin,1,1,1,1
+access_policy_version_officer,Policy Version Officer,model_social_privacy_policy_version,social_privacy.group_privacy_officer,1,1,1,0
+access_policy_version_admin,Policy Version Admin,model_social_privacy_policy_version,social_privacy.group_privacy_admin,1,1,1,1
+access_consent_record_user,Consent Record User,model_social_privacy_consent,base.group_user,1,0,0,0
+access_consent_record_officer,Consent Record Officer,model_social_privacy_consent,social_privacy.group_privacy_officer,1,0,0,0
+access_consent_record_admin,Consent Record Admin,model_social_privacy_consent,social_privacy.group_privacy_admin,1,1,1,1
+access_retention_rule_officer,Retention Rule Officer,model_social_privacy_retention_rule,social_privacy.group_privacy_officer,1,1,1,0
+access_retention_rule_admin,Retention Rule Admin,model_social_privacy_retention_rule,social_privacy.group_privacy_admin,1,1,1,1
+access_design_review_officer,Design Review Officer,model_social_privacy_design_review,social_privacy.group_privacy_officer,1,1,1,0
+access_design_review_admin,Design Review Admin,model_social_privacy_design_review,social_privacy.group_privacy_admin,1,1,1,1

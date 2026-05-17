@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_privacy_breach" model="ir.sequence">
+        <field name="name">Privacy Breach Incident</field>
+        <field name="code">social_privacy.breach</field>
+        <field name="prefix">BREACH-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

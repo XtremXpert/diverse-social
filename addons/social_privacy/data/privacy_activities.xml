@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Register social data processing activities for OCA privacy module -->
+    <record id="privacy_activity_social_posts" model="privacy.activity">
+        <field name="name">Social Posts and Comments</field>
+        <field name="description">Processing of user-generated content (posts, comments, reactions) within the social network.</field>
+    </record>
+    <record id="privacy_activity_social_messaging" model="privacy.activity">
+        <field name="name">Private Messaging</field>
+        <field name="description">Processing of direct messages between users.</field>
+    </record>
+    <record id="privacy_activity_social_profiles" model="privacy.activity">
+        <field name="name">Social Profile Data</field>
+        <field name="description">Processing of member profile information including identity, preferences, and visibility settings.</field>
+    </record>
+    <record id="privacy_activity_social_negotiations" model="privacy.activity">
+        <field name="name">Negotiation Documents</field>
+        <field name="description">Processing of co-authored negotiation documents and consent records.</field>
+    </record>
+    <record id="privacy_activity_social_governance" model="privacy.activity">
+        <field name="name">Community Governance</field>
+        <field name="description">Processing of proposals, votes, and decision logs for community governance.</field>
+    </record>
+</odoo>

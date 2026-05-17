@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_profile_form_limitation_ext" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.form.limitation.ext</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[last()]" position="after">
+                <group string="Processing Restriction (Loi 25 Art. 29)" invisible="0">
+                    <field name="processing_restricted" widget="boolean_toggle" />
+                    <field name="processing_restricted_at" invisible="not processing_restricted" />
+                    <field name="processing_restriction_reason" invisible="not processing_restricted" />
+                    <button name="action_restrict_processing" string="Restrict Processing" type="object" invisible="processing_restricted" />
+                    <button name="action_lift_restriction" string="Lift Restriction" type="object" invisible="not processing_restricted" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

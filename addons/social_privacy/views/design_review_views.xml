@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_design_review_list" model="ir.ui.view">
+        <field name="name">social_privacy.design.review.list</field>
+        <field name="model">social_privacy.design.review</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="risk_level" widget="badge"
+                       options="{'bg-warning': risk_level == 'medium', 'bg-danger': risk_level == 'high'}"/>
+                <field name="legal_basis"/>
+                <field name="state"/>
+                <field name="dpo_id"/>
+                <field name="dpo_review_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_design_review_form" model="ir.ui.view">
+        <field name="name">social_privacy.design.review.form</field>
+        <field name="model">social_privacy.design.review</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit_review" string="Submit for Review" type="object" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" invisible="state != 'review'" class="oe_highlight"/>
+                    <button name="action_reject" string="Reject" type="object" invisible="state != 'review'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,review,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="data_collected"/>
+                            <field name="is_sensitive"/>
+                        </group>
+                        <group>
+                            <field name="legal_basis"/>
+                            <field name="retention_duration"/>
+                            <field name="retention_rule_id"/>
+                            <field name="risk_level"/>
+                            <field name="risk_mitigation"/>
+                        </group>
+                    </group>
+                    <group string="DPO Review">
+                        <field name="dpo_id"/>
+                        <field name="dpo_review_date"/>
+                        <field name="dpo_comments"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_design_review" model="ir.actions.act_window">
+        <field name="name">Privacy by Design Reviews</field>
+        <field name="res_model">social_privacy.design.review</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_design_review"
+              name="Privacy by Design"
+              parent="social_privacy.menu_privacy_root"
+              action="action_design_review"
+              sequence="70"/>
+</odoo>

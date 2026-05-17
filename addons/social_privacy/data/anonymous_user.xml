@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="partner_anonymous" model="res.partner">
+        <field name="name">[Anonymized]</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="user_anonymous" model="res.users">
+        <field name="name">[Anonymized]</field>
+        <field name="login">__anonymized__</field>
+        <field name="partner_id" ref="partner_anonymous"/>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

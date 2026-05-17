@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Groups menu under Community -->
-    <record id="menu_social_groups" model="website.menu">
+    <record id="website_menu_social_groups" model="website.menu">
         <field name="name">Groups</field>
         <field name="url">/my/groups</field>
         <field name="parent_id" ref="club_social_profile.menu_social_root"/>

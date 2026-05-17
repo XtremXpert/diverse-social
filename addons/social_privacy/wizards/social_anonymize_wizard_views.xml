@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_social_anonymize_wizard_form" model="ir.ui.view">
+        <field name="name">social_privacy.anonymize_wizard.form</field>
+        <field name="model">social_privacy.anonymize_wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="user_id"/>
+                    </group>
+                    <group string="Data to be anonymized or deleted">
+                        <field name="post_count"/>
+                        <field name="comment_count"/>
+                        <field name="message_count"/>
+                        <field name="negotiation_count"/>
+                        <field name="vote_count"/>
+                        <field name="vouching_given"/>
+                        <field name="vouching_received"/>
+                        <field name="notification_count"/>
+                        <field name="gallery_photo_count"/>
+                        <field name="story_count"/>
+                        <field name="profile_visit_count"/>
+                    </group>
+                    <group string="Confirmation">
+                        <field name="confirm_understand"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_anonymize" string="Anonymize Account" type="object" class="oe_highlight" confirm="This action is irreversible. All personal data will be anonymized or deleted."/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_social_anonymize_wizard" model="ir.actions.act_window">
+        <field name="name">Anonymize Social Account</field>
+        <field name="res_model">social_privacy.anonymize_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

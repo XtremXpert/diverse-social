@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_privacy_ext" model="ir.ui.view">
+        <field name="name">res.partner.form.privacy.ext</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sale']/.." position="after">
+                <group>
+                    <field name="is_anonymized"/>
+                    <field name="anonymization_date" invisible="not is_anonymized"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

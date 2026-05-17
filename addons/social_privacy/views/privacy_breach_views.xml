@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_privacy_breach_list" model="ir.ui.view">
+        <field name="name">social_privacy.breach.list</field>
+        <field name="model">social_privacy.breach</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="discovery_date" />
+                <field name="severity" />
+                <field name="state" />
+                <field name="affected_count" />
+                <field name="cai_notified_in_time" />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_privacy_breach_form" model="ir.ui.view">
+        <field name="name">social_privacy.breach.form</field>
+        <field name="model">social_privacy.breach</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_investigate" string="Investigate" type="object" invisible="state != 'detected'" />
+                    <button name="action_notify_cai" string="Notify CAI" type="object" invisible="state not in ('detected', 'investigating')" />
+                    <button name="action_notify_users" string="Notify Users" type="object" invisible="state != 'notified_cai'" />
+                    <button name="action_resolve" string="Resolve" type="object" invisible="state != 'notified_users'" />
+                    <field name="state" widget="statusbar" statusbar_visible="detected,investigating,notified_cai,notified_users,resolved" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="discovery_date" />
+                        <field name="notification_date" />
+                        <field name="severity" />
+                        <field name="description" />
+                        <field name="affected_user_ids" widget="many2many_tags" />
+                        <field name="affected_count" />
+                        <field name="cai_notified_in_time" />
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_privacy_breach" model="ir.actions.act_window">
+        <field name="name">Privacy Breaches</field>
+        <field name="res_model">social_privacy.breach</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_privacy_breach" name="Breaches" parent="social_privacy.menu_privacy_root" action="action_privacy_breach" sequence="30" />
+</odoo>

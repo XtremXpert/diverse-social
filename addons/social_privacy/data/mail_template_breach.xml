@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_breach_notification" model="mail.template">
+        <field name="name">Privacy Breach: User Notification</field>
+        <field name="model_id" ref="social_privacy.model_social_privacy_breach"/>
+        <field name="subject">Important: Privacy Incident Notification</field>
+        <field name="email_from">${object.company_id.email or 'noreply@example.com'}</field>
+        <field name="email_to">${object.user_id.email}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #c0392b;">Privacy Incident Notification</h2>
+    <p>Dear <t t-out="object.user_id.name"/>,</p>
+    <p>We are writing to inform you of a privacy incident that may have affected your personal data.</p>
+
+    <h3>Incident Details</h3>
+    <ul>
+        <li><strong>Incident ID:</strong> <t t-out="object.name"/></li>
+        <li><strong>Discovered:</strong> <t t-out="object.discovery_date"/></li>
+        <li><strong>Severity:</strong> <t t-out="object.severity"/></li>
+    </ul>
+
+    <h3>What happened?</h3>
+    <p><t t-out="object.description"/></p>
+
+    <h3>What we are doing</h3>
+    <p>We have taken immediate steps to contain the incident and are working with the relevant authorities.</p>
+
+    <h3>Your rights</h3>
+    <p>Under Quebec's Law 25, you have the right to:</p>
+    <ul>
+        <li>Access your personal data</li>
+        <li>Request rectification or deletion</li>
+        <li>Withdraw your consent</li>
+        <li>File a complaint with the Commission d'accès à l'information (CAI)</li>
+    </ul>
+
+    <p>For questions, contact our Privacy Officer:</p>
+    <p><a t-attf-href="mailto:${object.company_id.email}" style="color: #2980b9;">Email us</a></p>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+    <p style="font-size: 12px; color: #666;">
+        This message was sent automatically. Please do not reply directly.
+    </p>
+</div>
+        </field>
+    </record>
+</odoo>
