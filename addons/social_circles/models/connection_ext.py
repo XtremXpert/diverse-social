@@ -1,20 +1,15 @@
 from odoo import models
-
-# Name of the default circle into which new friends are auto-added.
-# Users can rename or delete this circle at any time — it is never re-created.
-_DEFAULT_CIRCLE_NAME = 'Connections'
+from .profile_ext import DEFAULT_CIRCLE_NAME as _DEFAULT_CIRCLE_NAME
 
 
 class ClubSocialConnectionCircleExt(models.Model):
-    """Extend connection acceptance to auto-add the new friend to the owner's
-    default circle, if that circle already exists.
+    """Extend connection acceptance to auto-add the new friend to each party's
+    default 'Connaissances' circle.
 
-    This bridges the UX gap between Connections (bidirectional friendship)
-    and Circles (named trust tiers): accepting a friend request now populates
-    the circle automatically so visibility rules work without extra manual steps.
-
-    The circle is NOT created if absent — only users who have chosen to organise
-    their contacts into circles benefit from this behaviour.
+    The 'Connaissances' circle is provisioned automatically on profile creation
+    (see profile_ext.py), so it will always exist unless the user has manually
+    deleted it. Accepted friends land in that circle immediately, making
+    circle-based visibility rules work out of the box.
     """
     _inherit = 'club_social_profile.connection'
 

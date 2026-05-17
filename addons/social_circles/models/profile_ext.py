@@ -1,6 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+# Default circle automatically created for every new profile.
+# Used as the landing circle for accepted friend connections.
+DEFAULT_CIRCLE_NAME = 'Connaissances'
+DEFAULT_CIRCLE_SEQUENCE = 100  # low priority — shows after user-defined circles
+
 
 class ClubSocialProfile(models.Model):
     _inherit = 'club_social_profile.profile'
@@ -102,3 +107,17 @@ class ClubSocialProfile(models.Model):
                 'sequence': sequence,
             })
         return circle
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        # Provision the default circle for every new profile so that
+        # accepted connections have a landing circle immediately.
+        Circle = self.env['social_circles.circle'].sudo()
+        for profile in records:
+            Circle.create({
+                'profile_id': profile.id,
+                'name': DEFAULT_CIRCLE_NAME,
+                'sequence': DEFAULT_CIRCLE_SEQUENCE,
+            })
+        return records
