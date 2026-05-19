@@ -198,9 +198,11 @@ class TestSocialFeed(TransactionCase):
         self.assertNotIn(event.id, ids)
 
     def test_circle_event_hidden_from_non_member(self):
+        circle_type = self.env['social_circles.circle_type'].create({'name': 'Test Type Feed'})
         circle = self.env['social_circles.circle'].create({
             'profile_id': self.alice_profile.id,
             'name': 'Circle Feed',
+            'type_id': circle_type.id,
         })
         now = datetime.datetime.now()
         event = self.env['event.event'].with_user(self.alice).create({

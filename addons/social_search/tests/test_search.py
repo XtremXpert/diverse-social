@@ -149,9 +149,11 @@ class TestSocialSearch(TransactionCase):
         self.assertIn(event.id, ids)
 
     def test_event_circles_hidden_from_outsider(self):
+        circle_type = self.env['social_circles.circle_type'].create({'name': 'Test Type Search'})
         circle = self.env['social_circles.circle'].create({
             'profile_id': self.alice_profile.id,
             'name': 'Test Circle',
+            'type_id': circle_type.id,
         })
         event = self._make_event('Événement Cercle Srch', visibility='circles', circles=circle)
         results = self.Search.with_user(self.carol)._search_events('Événement Cercle Srch', 20, 0)
@@ -159,9 +161,11 @@ class TestSocialSearch(TransactionCase):
         self.assertNotIn(event.id, ids)
 
     def test_event_circles_visible_to_circle_member(self):
+        circle_type = self.env['social_circles.circle_type'].create({'name': 'Test Type Search Visible'})
         circle = self.env['social_circles.circle'].create({
             'profile_id': self.alice_profile.id,
             'name': 'Test Circle Visible',
+            'type_id': circle_type.id,
         })
         circle.add_member(self.bob)
         event = self._make_event('Événement Cercle Visible Srch', visibility='circles', circles=circle)

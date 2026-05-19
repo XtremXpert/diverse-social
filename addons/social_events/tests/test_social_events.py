@@ -32,10 +32,16 @@ class TestSocialEvents(TransactionCase):
         Profile = cls.env['club_social_profile.profile']
         cls.alice_profile = Profile.get_or_create_for_user(cls.alice)
 
+        # Shared circle type required by social_circles.circle
+        cls.circle_type = cls.env['social_circles.circle_type'].create({
+            'name': 'Test Type',
+        })
+
         # Alice's circle containing Bob (not Carol)
         cls.inner_circle = cls.env['social_circles.circle'].create({
             'profile_id': cls.alice_profile.id,
             'name': 'Inner Circle',
+            'type_id': cls.circle_type.id,
         })
         cls.inner_circle.add_member(cls.bob)
 
@@ -208,9 +214,11 @@ class TestSocialEvents(TransactionCase):
         """Accès accordé si l'utilisateur est dans au moins un des cercles autorisés."""
         Profile = self.env['club_social_profile.profile']
         alice_profile2 = Profile.get_or_create_for_user(self.alice)
+        second_type = self.env['social_circles.circle_type'].create({'name': 'Second Type'})
         second_circle = self.env['social_circles.circle'].create({
             'profile_id': alice_profile2.id,
             'name': 'Second Circle',
+            'type_id': second_type.id,
         })
         second_circle.add_member(self.carol)
         event = self._make_event(
@@ -228,9 +236,11 @@ class TestSocialEvents(TransactionCase):
         # Ajouter un cercle contenant Carol
         Profile = self.env['club_social_profile.profile']
         carol_profile = Profile.get_or_create_for_user(self.alice)
+        new_type = self.env['social_circles.circle_type'].create({'name': 'Carol Type'})
         new_circle = self.env['social_circles.circle'].create({
             'profile_id': carol_profile.id,
             'name': 'Carol Circle',
+            'type_id': new_type.id,
         })
         new_circle.add_member(self.carol)
         event.sudo().write({'allowed_circle_ids': [(4, new_circle.id)]})

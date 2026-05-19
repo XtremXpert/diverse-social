@@ -172,9 +172,13 @@ class TestCirclesHooks(TransactionCase):
         cls.profile = cls.env['club_social_profile.profile'].sudo().create({
             'user_id': cls.owner.id,
         })
+        cls.circle_type = cls.env['social_circles.circle_type'].sudo().create({
+            'name': 'Test Type Hooks',
+        })
         cls.circle = cls.env['social_circles.circle'].sudo().create({
             'profile_id': cls.profile.id,
             'name': 'Cercle Test',
+            'type_id': cls.circle_type.id,
         })
         cls.Notif = cls.env['club_social_profile.notification']
 
