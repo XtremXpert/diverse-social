@@ -62,7 +62,6 @@ class TestSocialNotifications(TransactionCase):
             'date_end': now + datetime.timedelta(hours=2),
             'organizer_user_id': self.alice.id,
             'social_visibility': 'members',
-            'website_visibility': 'public',
         })
         before = len(self._notifs_for(self.alice, 'event_registration'))
         self.env['event.registration'].with_user(self.bob).create({
@@ -81,7 +80,6 @@ class TestSocialNotifications(TransactionCase):
             'date_end': now + datetime.timedelta(hours=2),
             'organizer_user_id': self.alice.id,
             'social_visibility': 'members',
-            'website_visibility': 'public',
         })
         before = len(self._notifs_for(self.alice, 'event_registration'))
         self.env['event.registration'].with_user(self.alice).create({
