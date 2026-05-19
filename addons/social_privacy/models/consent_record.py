@@ -100,7 +100,7 @@ class PrivacyConsent(models.Model):
     @api.model
     def has_valid_consent(self, user):
         """Check if the user has an active consent for the current policy version."""
-        current_policy = self.env['social_privacy.policy.version'].get_current_for_user(user)
+        current_policy = self.env['social_privacy.policy.version'].sudo().get_current_for_user(user)
         if not current_policy:
             return False
         consent = self.search([

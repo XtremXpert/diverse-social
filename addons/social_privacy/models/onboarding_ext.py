@@ -27,7 +27,7 @@ class SocialOnboardingWizard(models.TransientModel):
     @api.model
     def _get_current_privacy_version(self):
         # Load from the active policy version model
-        policy = self.env['social_privacy.policy.version'].get_current_for_user()
+        policy = self.env['social_privacy.policy.version'].sudo().get_current_for_user()
         return policy.version_number if policy else '1.0'
 
     def action_finish(self):
@@ -38,7 +38,7 @@ class SocialOnboardingWizard(models.TransientModel):
                 'You must accept the privacy policy before completing your profile.'
             ))
         # Record formal consent
-        policy = self.env['social_privacy.policy.version'].get_current_for_user()
+        policy = self.env['social_privacy.policy.version'].sudo().get_current_for_user()
         if policy:
             self.env['social_privacy.consent'].sudo().record_consent(
                 user=self.env.user,
