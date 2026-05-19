@@ -229,9 +229,7 @@
                                                 <a t-attf-href="/groups/#{grp.id}"
                                                    class="d-block text-decoration-none text-dark text-center p-2 border rounded"
                                                    style="font-size:0.8rem;">
-                                                    <div style="font-size:1.4rem;">
-                                                        <t t-out="grp.icon or '👥'"/>
-                                                    </div>
+                                                    <div style="font-size:1.4rem;">👥</div>
                                                     <div class="text-truncate fw-semibold" t-out="grp.name"/>
                                                     <div class="text-muted" style="font-size:0.7rem;">
                                                         <t t-out="grp.member_count or 0"/> membres
