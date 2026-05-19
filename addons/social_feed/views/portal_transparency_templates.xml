@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_feed_transparency" name="Feed Transparency">
+        <t t-call="portal.portal_layout">
+            <div class="container py-5">
+                <h1 class="mb-3">How your feed works</h1>
+                <p class="lead text-muted mb-5">
+                    This page explains how your social feed is built and ranked.
+                    You have the right to understand and control the content you see.
+                </p>
+
+                <div class="row g-4">
+                    <!-- Recent vs Relevance -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Sorting modes</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <strong>Recent</strong> — Posts, events and stories shown in chronological order (newest first).
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Relevance</strong> — Items are ranked using a scoring formula based on recency, engagement, your connections and urgency.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scoring factors -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Relevance scoring factors</h5>
+                                <p class="card-text small">
+                                    The score is calculated as:
+                                    <code>(1 + engagement) × recency × connection × type_boost</code>
+                                </p>
+                                <ul>
+                                    <li><strong>Recency</strong> — newer content scores higher (half-life = 24 hours)</li>
+                                    <li><strong>Engagement</strong> — likes, comments, votes and views increase score</li>
+                                    <li><strong>Connections</strong> — content from people you are connected with gets a 1.5× boost</li>
+                                    <li><strong>Type boost</strong> — upcoming events (≤7 days) and closing proposals (≤24h) get extra priority</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Your context -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Your current context</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Accepted connections</span>
+                                        <span class="badge bg-primary" t-out="connection_count"/>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Blocked users</span>
+                                        <span class="badge bg-secondary" t-out="blocked_count"/>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Groups you belong to</span>
+                                        <span class="badge bg-info" t-out="group_count"/>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Circles you are in</span>
+                                        <span class="badge bg-success" t-out="circle_count"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Control -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title">Your controls</h5>
+                                <p class="card-text">
+                                    You can change the sort mode at any time in the feed settings.
+                                    Selecting <strong>Recent</strong> disables all algorithmic ranking.
+                                </p>
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="/social/api/feed?sort=recent" class="btn btn-outline-primary">View recent feed</a>
+                                    <a href="/my/privacy" class="btn btn-outline-secondary">Privacy settings</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

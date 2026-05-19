@@ -18,6 +18,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/portal_transparency_templates.xml',
     ],
     'installable': True,
     'application': False,
