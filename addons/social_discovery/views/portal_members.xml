@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="portal_members" name="Découverte de membres">
-        <t t-call="web.layout">
+        <t t-call="portal.portal_layout">
             <t t-set="head_title">Explorer les membres</t>
             <div class="o_portal_wrap">
                 <div class="container py-4">

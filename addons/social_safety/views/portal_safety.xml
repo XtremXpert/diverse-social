@@ -52,7 +52,7 @@
 
     <!-- ══ Page sécurité /safety ════════════════════════════════════════════ -->
     <template id="portal_safety_page" name="Sécurité et confidentialité">
-        <t t-call="web.layout">
+        <t t-call="portal.portal_layout">
             <t t-set="head_title">Sécurité</t>
             <div class="o_portal_wrap">
                 <div class="container py-4" style="max-width:720px;">

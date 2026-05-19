@@ -3,7 +3,7 @@
 
     <!-- ══ Page profil public ══════════════════════════════════════════════ -->
     <template id="portal_profile_public" name="Profil membre">
-        <t t-call="web.layout">
+        <t t-call="portal.portal_layout">
             <t t-set="head_title" t-value="display_name"/>
             <div class="o_portal_wrap">
                 <div class="container py-4">
@@ -264,7 +264,7 @@
 
     <!-- ══ Page profil restreint ═══════════════════════════════════════════ -->
     <template id="portal_profile_restricted" name="Profil restreint">
-        <t t-call="web.layout">
+        <t t-call="portal.portal_layout">
             <t t-set="head_title" t-value="display_name"/>
             <div class="o_portal_wrap">
                 <div class="container py-5 text-center" style="max-width:500px;">
