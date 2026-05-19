@@ -61,7 +61,7 @@
 
                         <div class="mb-4 text-center">
                             <t t-if="profile.profile_image">
-                                <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image?unique=#{profile.write_date}"
                                      class="rounded-circle mb-3"
                                      style="width:120px;height:120px;object-fit:cover;"
                                      alt="Photo de profil"/>
@@ -287,7 +287,7 @@
                             et vous connecter avec d'autres membres.
                         </p>
                         <t t-if="profile.profile_image">
-                            <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                            <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image?unique=#{profile.write_date}"
                                  class="rounded-circle mb-4"
                                  style="width:100px;height:100px;object-fit:cover;"
                                  alt="Photo de profil"/>
