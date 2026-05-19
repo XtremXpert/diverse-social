@@ -16,6 +16,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/website_menu.xml',
         'views/portal_templates.xml',
     ],
     'installable': True,

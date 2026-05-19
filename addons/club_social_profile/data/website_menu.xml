@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 
-        Website menus for social platform
-        These menus appear in the website header navigation
+    <!--
+        Website top menus for the social platform.
+        Three top-level menus group all social features:
+          - Community: discover content & participate
+          - My Network: personal social activity
+          - My Account: profile & settings
+
+        Other modules (social_story, social_circles, ...) reference these
+        XIDs via club_social_profile.menu_* to add their own entries.
     -->
 
-    <!-- Main Social menu (parent for all social features) -->
+    <!-- ════════ Community (discovery & participation) ════════ -->
     <record id="menu_social_root" model="website.menu">
         <field name="name">Community</field>
         <field name="url">/discover</field>
@@ -13,7 +19,6 @@
         <field name="sequence">20</field>
     </record>
 
-    <!-- Discover / Members -->
     <record id="menu_social_discover" model="website.menu">
         <field name="name">Discover</field>
         <field name="url">/discover</field>
@@ -21,20 +26,34 @@
         <field name="sequence">10</field>
     </record>
 
-    <!-- My Dashboard -->
+    <!-- ════════ My Network (personal social activity) ════════ -->
+    <record id="menu_my_network_root" model="website.menu">
+        <field name="name">My Network</field>
+        <field name="url">/my/dashboard</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">30</field>
+    </record>
+
     <record id="menu_social_dashboard" model="website.menu">
         <field name="name">Dashboard</field>
         <field name="url">/my/dashboard</field>
-        <field name="parent_id" ref="menu_social_root"/>
-        <field name="sequence">20</field>
+        <field name="parent_id" ref="menu_my_network_root"/>
+        <field name="sequence">10</field>
     </record>
 
-    <!-- My Profile -->
+    <!-- ════════ My Account (profile & settings) ════════ -->
+    <record id="menu_my_account_root" model="website.menu">
+        <field name="name">My Account</field>
+        <field name="url">/my/profile/edit</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+    </record>
+
     <record id="menu_social_profile" model="website.menu">
         <field name="name">My Profile</field>
         <field name="url">/my/profile/edit</field>
-        <field name="parent_id" ref="menu_social_root"/>
-        <field name="sequence">30</field>
+        <field name="parent_id" ref="menu_my_account_root"/>
+        <field name="sequence">10</field>
     </record>
 
 </odoo>

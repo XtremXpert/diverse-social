@@ -35,6 +35,7 @@
         'data/ir_sequence.xml',
         'data/privacy_activities.xml',
         'data/ir_cron.xml',
+        'data/website_menu.xml',
         'views/privacy_officer_views.xml',
         'views/privacy_breach_views.xml',
         'views/data_export_views.xml',

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Messages menu under Community -->
+    <!-- Messages menu under My Network -->
     <record id="menu_social_messages" model="website.menu">
         <field name="name">Messages</field>
         <field name="url">/my/messages</field>
-        <field name="parent_id" ref="club_social_profile.menu_social_root"/>
-        <field name="sequence">40</field>
+        <field name="parent_id" ref="club_social_profile.menu_my_network_root"/>
+        <field name="sequence">20</field>
     </record>
 </odoo>

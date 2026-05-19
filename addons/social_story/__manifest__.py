@@ -8,12 +8,14 @@
     'license': 'LGPL-3',
     'depends': [
         'social_base',
+        'club_social_profile',
         'portal',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/ir_cron.xml',
+        'data/website_menu.xml',
         'views/story_views.xml',
         'views/portal_templates.xml',
     ],

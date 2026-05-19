@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="menu_social_circles" model="website.menu">
+        <field name="name">Circles</field>
+        <field name="url">/my/circles</field>
+        <field name="parent_id" ref="club_social_profile.menu_my_network_root"/>
+        <field name="sequence">50</field>
+    </record>
+</odoo>

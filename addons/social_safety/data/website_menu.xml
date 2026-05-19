@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="menu_social_safety" model="website.menu">
+        <field name="name">Safety</field>
+        <field name="url">/safety</field>
+        <field name="parent_id" ref="club_social_profile.menu_my_account_root"/>
+        <field name="sequence">60</field>
+    </record>
+</odoo>

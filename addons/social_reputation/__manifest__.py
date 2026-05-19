@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'data/website_menu.xml',
         'views/vouching_views.xml',
         'views/menus.xml',
         'views/portal_templates.xml',

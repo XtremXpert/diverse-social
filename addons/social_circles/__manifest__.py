@@ -15,6 +15,7 @@
         'security/security.xml',
         'data/circle_type.xml',
         'data/res_partner_relation_type.xml',
+        'data/website_menu.xml',
         'views/circle_views.xml',
         'views/menus.xml',
         'views/portal_templates.xml',

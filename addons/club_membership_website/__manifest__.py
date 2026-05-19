@@ -7,12 +7,14 @@
     'license': 'LGPL-3',
     'depends': [
         'club_membership_sale',
+        'club_social_profile',
         'website_sale',
         'portal',
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/website_menu.xml',
         'views/membership_website_templates.xml',
         'views/portal_templates.xml',
     ],

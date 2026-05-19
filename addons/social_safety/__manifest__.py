@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'security/security.xml',
         'data/cron.xml',
+        'data/website_menu.xml',
         'views/block_views.xml',
         'views/mute_views.xml',
         'views/menus.xml',

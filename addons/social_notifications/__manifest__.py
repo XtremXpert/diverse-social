@@ -20,6 +20,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/website_menu.xml',
         'views/notification_views.xml',
         'views/portal_notification_bell.xml',
         'views/portal_notifications_page.xml',
