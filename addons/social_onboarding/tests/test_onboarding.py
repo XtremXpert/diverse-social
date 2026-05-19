@@ -228,11 +228,11 @@ class TestSocialOnboarding(TransactionCase):
     # ── Méthode profile_ext ───────────────────────────────────────────────────
 
     def test_profile_action_open_onboarding(self):
-        """La méthode action_open_onboarding sur le profil ouvre l'assistant."""
+        """Le bouton "Compléter mon profil" redirige vers le parcours portail."""
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.user)
         action = profile.with_user(self.user).action_open_onboarding()
-        self.assertEqual(action['type'], 'ir.actions.act_window')
-        self.assertEqual(action['res_model'], 'social_onboarding.wizard')
+        self.assertEqual(action['type'], 'ir.actions.act_url')
+        self.assertEqual(action['url'], '/onboarding')
 
     def test_action_open_loads_profile_data(self):
         """action_open pré-remplit le wizard avec les données existantes du profil."""
