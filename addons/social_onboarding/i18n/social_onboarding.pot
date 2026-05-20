@@ -1,0 +1,601 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_onboarding
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 12:20+0000\n"
+"PO-Revision-Date: 2026-05-20 12:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "<i class=\"fa fa-check-circle fa-5x text-success\" title=\"Done\"/>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "<i class=\"fa fa-newspaper-o me-1\" title=\"Feed\"/> View feed"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "<span class=\"text-white fs-1\">?</span>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid ""
+"<span invisible=\"step != 'welcome'\" class=\"badge rounded-pill bg-primary fs-6\">Step 1/4 — Welcome</span>\n"
+"                        <span invisible=\"step != 'about'\" class=\"badge rounded-pill bg-primary fs-6\">Step 2/4 — About</span>\n"
+"                        <span invisible=\"step != 'preferences'\" class=\"badge rounded-pill bg-primary fs-6\">Step 3/4 — Preferences</span>\n"
+"                        <span invisible=\"step != 'done'\" class=\"badge rounded-pill bg-success fs-6\">Profile complete ✓</span>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "<span style=\"font-size: 4rem;\">🎉</span>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_csp_profile_form_onboarding_banner
+msgid ""
+"<span>\n"
+"                        <i class=\"fa fa-info-circle me-2\" title=\"Info\"/>\n"
+"                        Incomplete profile — Complete your profile to be more visible to other members.\n"
+"                    </span>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid ""
+"<strong>Club members</strong><br/>\n"
+"                                        <small class=\"text-muted\">Visible to all active members</small>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_home_onboarding_banner
+msgid ""
+"<strong>Complete your profile!</strong>\n"
+"                        Welcome to the community — take 2 minutes to personalize your presence."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid ""
+"<strong>Connections only</strong><br/>\n"
+"                                        <small class=\"text-muted\">Visible only to your connections</small>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "A quote, an intention, a keyword…"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__step__about
+msgid "About"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/controllers/portal.py:0
+msgid "About me"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "About you"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model,name:social_onboarding.model_club_membership_membership
+msgid "Adhésion au club"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Asexual"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__availability
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Availability"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__availability__disponible
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Available / Looking"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__bio
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Bio"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__birth_year
+msgid "Birth Year"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Birth year"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Bisexual"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Change picture"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Choose a picture"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__city
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "City"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Close"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__availability__couple_ferme
+msgid "Closed Couple"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Closed couple"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__visibility__members
+msgid "Club Members"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/models/wizard.py:0
+#: model:ir.actions.server,name:social_onboarding.action_open_social_onboarding
+#: model:ir.ui.menu,name:social_onboarding.menu_social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_home_onboarding_banner
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_csp_profile_form_onboarding_banner
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Complete my profile"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Complete my profile anyway"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__visibility__connections
+msgid "Connections Only"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Discover groups"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_club_membership_membership__display_name
+#: model:ir.model.fields,field_description:social_onboarding.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__step__done
+msgid "Done"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Finish"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Finish →"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Gay / Lesbian"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Gender"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Go to dashboard"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Heterosexual"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "I'm looking for…"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_club_membership_membership__id
+#: model:ir.model.fields,field_description:social_onboarding.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Language(s) spoken"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Later"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Man"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model,name:social_onboarding.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Montréal…"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/controllers/portal.py:0
+msgid "My preferences"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Next"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Next →"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Non-binary"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__availability__pas_disponible
+msgid "Not Available"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Not available"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Notifications"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__availability__couple_ouvert
+msgid "Open Couple"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Open couple"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Orientation"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Other"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Pansexual"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Prefer not to say"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__step__preferences
+msgid "Preferences"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Previous"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Privacy"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__profile_id
+msgid "Profile"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__profile_image
+msgid "Profile Picture"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__visibility
+msgid "Profile Visibility"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/controllers/portal.py:0
+msgid "Profile complete!"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Profile picture"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Profile visibility"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__pronouns
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Pronouns"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Province / Region"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Queer"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Québec…"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__digest_email_enabled
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Receive the weekly digest by email"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Skip for now"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model,name:social_onboarding.model_social_onboarding_wizard
+msgid "Social Network Onboarding Wizard"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields,field_description:social_onboarding.field_social_onboarding_wizard__step
+msgid "Step"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Tagline <small class=\"text-muted\">(max 200 chars)</small>"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid ""
+"Take a few minutes to personalize your profile.\n"
+"                                You can skip this step and come back later."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Tell us about yourself in a few words…"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Tell us about yourself..."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "This information is shared according to your visibility settings."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Trans man"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Trans woman"
+msgstr ""
+
+#. module: social_onboarding
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__availability__non_specifie
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Unspecified"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "View proposals"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_onboarding.selection__social_onboarding_wizard__step__welcome
+msgid "Welcome"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Welcome to your social network!"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/models/wizard.py:0
+msgid "Welcome!"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Welcome! Let's start by adding a profile picture."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Woman"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "You can change these settings at any time from your profile."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid ""
+"You can now explore the community, join groups,\n"
+"                            and connect with other members."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid ""
+"You can now explore the social network,\n"
+"                            post updates, join groups, and connect with other members."
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/controllers/portal.py:0
+#: code:addons/social_onboarding/models/wizard.py:0
+msgid "You must be 18 or older to access the social network."
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Your preferences"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "Your profile is complete!"
+msgstr ""
+
+#. module: social_onboarding
+#. odoo-python
+#: code:addons/social_onboarding/models/wizard.py:0
+msgid "Your profile is now complete. Enjoy exploring!"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "Your profile is ready!"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "e.g. 1990"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "e.g. Montréal"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.view_social_onboarding_wizard_form
+msgid "e.g. he/him, she/her, they/them"
+msgstr ""
+
+#. module: social_onboarding
+#: model_terms:ir.ui.view,arch_db:social_onboarding.portal_onboarding
+msgid "← Previous"
+msgstr ""

@@ -1,0 +1,359 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_notifications
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 14:05+0000\n"
+"PO-Revision-Date: 2026-05-20 14:05+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/circles_hooks.py:0
+msgid "%(name)s added you to their circle \"%(circle)s\"."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/negotiation_hooks.py:0
+msgid "%(name)s shared a negotiation document with you."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/negotiation_hooks.py:0
+msgid "%(name)s signed the negotiation document."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/reputation_hooks.py:0
+msgid "%(name)s vouched for you in the community."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/reputation_hooks.py:0
+msgid "%(name)s withdrew their vouch."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/story_hooks.py:0
+msgid "%s published a new story."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/event_hooks.py:0
+msgid "%s registered for your event \"%s\"."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/group_hooks.py:0
+msgid "%s requested to join the group \"%s\"."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/messaging_hooks.py:0
+msgid "%s sent you a message."
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_my_home_notifications
+msgid "/social/notifications"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+msgid "<span>Notifications</span>"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__circle_added
+msgid "Added to a circle"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "All"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+msgid "Chargement…"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_governance_proposal
+msgid "Community Proposal"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_reputation_vouching
+msgid "Community Vouching"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.view_social_notification_list
+msgid "Date"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.view_social_notification_list
+msgid "De"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields,field_description:social_notifications.field_club_social_profile_notification__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_event_registration__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_gallery_photo__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_governance_proposal__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_group_join_request__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_messaging_message__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_negotiation_negotiation__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_reputation_vouching__display_name
+#: model:ir.model.fields,field_description:social_notifications.field_social_story_story__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_event_registration
+msgid "Event Registration"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__event_registration
+msgid "Event registration"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_gallery_photo
+msgid "Gallery Photo"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_group_join_request
+msgid "Group Join Request"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__group_join_request
+msgid "Group join request"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields,field_description:social_notifications.field_club_social_profile_notification__id
+#: model:ir.model.fields,field_description:social_notifications.field_event_registration__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_circles_circle__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_gallery_photo__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_governance_proposal__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_group_join_request__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_messaging_message__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_negotiation_negotiation__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_reputation_vouching__id
+#: model:ir.model.fields,field_description:social_notifications.field_social_story_story__id
+msgid "ID"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields,field_description:social_notifications.field_social_circles_circle__display_name
+msgid "Label"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "Mark all as read"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__group_join_approved
+msgid "Membership approved"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.actions.act_window,name:social_notifications.action_my_notifications
+msgid "Mes notifications"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "My notifications"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_negotiation_negotiation
+msgid "Negotiation Document"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__negotiation_active
+msgid "Negotiation document active"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__negotiation_shared
+msgid "Negotiation document shared"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__negotiation_signed
+msgid "Negotiation document signed"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__story_new
+msgid "New story"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "No notifications yet."
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "No unread notifications."
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.ui.menu,name:social_notifications.menu_my_notifications
+#: model:website.menu,name:social_notifications.menu_social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_my_home_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+#: model_terms:ir.ui.view,arch_db:social_notifications.view_social_notification_list
+msgid "Notifications"
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/governance_hooks.py:0
+msgid "Nouvelle proposition ouverte au vote : \"%s\""
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__gallery_photo_approved
+msgid "Photo approved in a gallery"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__gallery_photo_rejected
+msgid "Photo rejected"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_messaging_message
+msgid "Private Message"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__proposal_voting
+msgid "Proposal open for voting"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "Read ✓"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_club_social_profile_notification
+msgid "Social Notification"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_story_story
+msgid "Social Story"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+msgid "Tout lire"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model,name:social_notifications.model_social_circles_circle
+msgid "Trust Circle"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields,field_description:social_notifications.field_club_social_profile_notification__type
+msgid "Type"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "Unread"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+msgid "Voir toutes les notifications →"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__vouching_received
+msgid "Vouch received"
+msgstr ""
+
+#. module: social_notifications
+#: model:ir.model.fields.selection,name:social_notifications.selection__club_social_profile_notification__type__vouching_withdrawn
+msgid "Vouch withdrawn"
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/negotiation_hooks.py:0
+msgid "Your negotiation document is now active."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/gallery_hooks.py:0
+msgid "Your photo \"%s\" was approved in the gallery \"%s\"."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/gallery_hooks.py:0
+msgid "Your photo \"%s\" was rejected."
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/group_hooks.py:0
+msgid "Your request to join the group \"%s\" was approved."
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "unread"
+msgstr ""
+
+#. module: social_notifications
+#. odoo-python
+#: code:addons/social_notifications/models/gallery_hooks.py:0
+msgid "untitled"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notification_bell
+msgid ""
+"🔔\n"
+"                        <span id=\"sn_badge\"/>"
+msgstr ""
+
+#. module: social_notifications
+#: model_terms:ir.ui.view,arch_db:social_notifications.portal_notifications_page
+msgid "🔔 Notifications"
+msgstr ""

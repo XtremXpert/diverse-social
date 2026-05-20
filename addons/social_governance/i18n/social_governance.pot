@@ -1,0 +1,814 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_governance
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 15:09+0000\n"
+"PO-Revision-Date: 2026-05-20 15:09+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "+ New proposal"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_my_home_governance
+msgid "/governance"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "<option value=\"\">— Category —</option>"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "<span class=\"text-muted\">No votes recorded.</span>"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__my_vote__abstain
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_vote__choice__abstain
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Abstain"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__abstain_count
+msgid "Abstain Count"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__accepted
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "Accepted"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__approval_pct
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_list
+msgid "Approval %"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__author_id
+msgid "Author"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_search
+msgid "Bans"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "By"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Cannot start voting from current state."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Cannot withdraw a closed proposal."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Cast your vote"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.ui.menu,name:social_governance.menu_governance_categories
+msgid "Categories"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__category
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__category_id
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_search
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "Category"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__choice
+msgid "Choice"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Close Vote"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "Closes:"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Closing very soon"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__color
+msgid "Color"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model,name:social_governance.model_social_governance_proposal
+msgid "Community Proposal"
+msgstr ""
+
+#. module: social_governance
+#: model:social_governance.proposal_category,name:social_governance.category_rules
+msgid "Community Rules"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.ui.menu,name:social_governance.menu_governance_config
+msgid "Configuration"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__content_removal
+msgid "Content Removal"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__create_date
+msgid "Create Date"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__create_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__create_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__create_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__create_date
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__create_date
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__decision_date
+msgid "Date"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__title
+msgid "Decision"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.actions.act_window,name:social_governance.action_decision_log
+#: model:ir.ui.menu,name:social_governance.menu_governance_decisions
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_list
+msgid "Decision Log"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__description
+msgid "Description"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "Detailed description"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__body
+msgid "Details"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__display_name
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__display_name
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__display_name
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__dispute
+msgid "Dispute Resolution"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: social_governance
+#: model:social_governance.proposal_category,name:social_governance.category_events
+msgid "Events & Activities"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.ui.menu,name:social_governance.menu_governance_root
+#: model:website.menu,name:social_governance.menu_social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Governance"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model,name:social_governance.model_social_governance_vote
+msgid "Governance Vote"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__id
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__id
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__id
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__id
+msgid "ID"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__message_has_error
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__implemented_at
+msgid "Implemented At"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Invalid choice."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__write_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__write_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__write_uid
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__write_date
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__write_date
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__write_date
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Mark Implemented"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__ban
+msgid "Member Ban"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_form
+msgid "Moderation Decision"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model,name:social_governance.model_social_governance_decision_log
+msgid "Moderation Decision Log"
+msgstr ""
+
+#. module: social_governance
+#: model:social_governance.proposal_category,name:social_governance.category_moderation
+msgid "Moderation Policy"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__moderator_id
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_search
+msgid "Moderator"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "My Proposals"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__my_vote
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "My Vote"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__name
+msgid "Name"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__my_vote__no
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_vote__choice__no
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "No"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__no_count
+msgid "No Count"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_log
+msgid "No decisions published."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "No proposals in this state."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "No votes yet."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Only a voting proposal can be closed."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Only accepted proposals can be marked implemented."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Only drafts can be opened."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Only the author or a moderator can withdraw a proposal."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "Open"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__open
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Open for Comments"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__other
+#: model:social_governance.proposal_category,name:social_governance.category_other
+msgid "Other"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Please set a voting close date before starting the vote."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__proposal_id
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Proposal"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.actions.act_window,name:social_governance.action_categories
+#: model_terms:ir.ui.view,arch_db:social_governance.view_category_list
+msgid "Proposal Categories"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model,name:social_governance.model_social_governance_proposal_category
+msgid "Proposal Category"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Proposal opened for discussion."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Proposal submitted."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "Proposal title"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Proposal withdrawn."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.actions.act_window,name:social_governance.action_proposals
+#: model:ir.ui.menu,name:social_governance.menu_governance_proposals
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_list
+msgid "Proposals"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_my_home_governance
+msgid "Proposals open for voting"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__is_public
+msgid "Public"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_search
+msgid "Public Only"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_log
+msgid "Public decisions made by moderators."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_decision_log__is_public
+msgid ""
+"Publicly visible decisions build community trust. Set to private only for "
+"sensitive cases."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_decision_log__related_proposal_id
+msgid "Related Proposal"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__rule_change
+msgid "Rule Change"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_decision_log_search
+msgid "Rule Changes"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal_category__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: social_governance
+#: model:social_governance.proposal_category,name:social_governance.category_spaces
+msgid "Spaces & Infrastructure"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Start Voting"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Start voting"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__state
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "State"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "Submit proposal"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__name
+msgid "Title"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Total Votes"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__vote_count
+msgid "Vote Count"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Vote No"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Vote Yes"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Vote recorded."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_vote__voter_id
+msgid "Voter"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__vote_ids
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Votes"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__voting
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_search
+msgid "Voting"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__voting_closes_at
+msgid "Voting Closes"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__voting_opens_at
+msgid "Voting Opens"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Voting close date"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "Voting close date (optional)"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Voting close date must be after open date."
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/models/proposal.py:0
+msgid "Voting is not open for this proposal."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Voting started."
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_decision_log__category__warning
+msgid "Warning Issued"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,help:social_governance.field_social_governance_proposal__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Withdraw"
+msgstr ""
+
+#. module: social_governance
+#. odoo-python
+#: code:addons/social_governance/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__state__withdrawn
+msgid "Withdrawn"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_proposal__my_vote__yes
+#: model:ir.model.fields.selection,name:social_governance.selection__social_governance_vote__choice__yes
+#: model_terms:ir.ui.view,arch_db:social_governance.view_proposal_form
+msgid "Yes"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.fields,field_description:social_governance.field_social_governance_proposal__yes_count
+msgid "Yes Count"
+msgstr ""
+
+#. module: social_governance
+#: model:ir.model.constraint,message:social_governance.constraint_social_governance_vote_unique_vote
+msgid "You have already voted on this proposal."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "Your current vote:"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "abstentions"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "breadcrumb"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "d left"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "h left"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "no"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "yes"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "— you can change it."
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_log
+msgid "← Back to proposals"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "○ Abstain"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+msgid "⚖️ Community governance"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "✓ Yes"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "✗ No"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_list
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_log
+msgid "📋 Decisions log"
+msgstr ""
+
+#. module: social_governance
+#: model_terms:ir.ui.view,arch_db:social_governance.portal_governance_detail
+msgid "🗳️ Voting in progress"
+msgstr ""

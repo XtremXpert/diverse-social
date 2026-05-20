@@ -1,0 +1,648 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_circles
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 14:30+0000\n"
+"PO-Revision-Date: 2026-05-20 14:30+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "+ Nouveau cercle"
+msgstr "+ Nouveau cercle"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_home_circles
+msgid "/my/circles"
+msgstr "/my/circles"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "<option value=\"\">— Ajouter une connexion —</option>"
+msgstr "<option value=\"\">— Ajouter une connexion —</option>"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "<option value=\"\">— choisir —</option>"
+msgstr "<option value=\"\">— choisir —</option>"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "<small class=\"text-muted\">Ce cercle est vide.</small>"
+msgstr "<small class=\"text-muted\">Ce cercle est vide.</small>"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "<span style=\"font-size:.9rem;\" class=\"text-muted\">🔵</span>"
+msgstr "<span style=\"font-size:.9rem;\" class=\"text-muted\">🔵</span>"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "<span style=\"font-size:1.1rem;\">🔵</span>"
+msgstr "<span style=\"font-size:1.1rem;\">🔵</span>"
+
+#. module: social_circles
+#. odoo-python
+#: code:addons/social_circles/models/circle.py:0
+msgid "A circle of type \"%(name)s\" already exists for this profile."
+msgstr "Un cercle de type « %(name)s » existe déjà pour ce profil."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "A circle with this name already exists."
+msgstr "Un cercle avec ce nom existe déjà."
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_collar
+msgid "A mis le collier à"
+msgstr "A mis le collier à"
+
+#. module: social_circles
+#: model:social_circles.circle_type,description:social_circles.circle_type_vip
+msgid ""
+"Accès privilégié — personnes à qui vous accordez une visibilité maximale."
+msgstr ""
+"Accès privilégié — personnes à qui vous accordez une visibilité maximale."
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__active
+msgid "Active"
+msgstr "Actif"
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_club_visibility_mixin__allowed_relation_type_ids
+msgid ""
+"Active only when visibility is 'Specific relations'. Visitor must have at "
+"least one confirmed relation of these types with the record owner."
+msgstr ""
+"Active uniquement quand la visibilité est « Relations spécifiques ». Le "
+"visiteur doit avoir au moins une relation confirmée de ces types avec le "
+"propriétaire du dossier."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Ajouter"
+msgstr "Ajouter"
+
+#. module: social_circles
+#: model:ir.actions.act_window,name:social_circles.action_circles_admin
+msgid "All Circles"
+msgstr "Tous les cercles"
+
+#. module: social_circles
+#: model:ir.ui.menu,name:social_circles.menu_circles_admin
+msgid "All Circles (Admin)"
+msgstr "Tous les cercles (Admin)"
+
+#. module: social_circles
+#: model:ir.model.fields.selection,name:social_circles.selection__club_social_profile_profile__detailed_visibility__members
+msgid "All Members"
+msgstr "Tous les membres"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_visibility_mixin__allowed_relation_type_ids
+msgid "Allowed relation types"
+msgstr "Types de relations autorisés"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_friend
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_friend
+msgid "Ami(e) de"
+msgstr "Ami(e) de"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_scene_friend
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_scene_friend
+msgid "Ami(e) de scène de"
+msgstr "Ami(e) de scène de"
+
+#. module: social_circles
+#: model:social_circles.circle_type,name:social_circles.circle_type_amis
+msgid "Amis proches"
+msgstr "Amis proches"
+
+#. module: social_circles
+#: model:ir.model.fields.selection,name:social_circles.selection__club_social_profile_profile__detailed_visibility__circles
+msgid "Any Circle"
+msgstr "N'importe quel cercle"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_owner
+msgid "Appartient à"
+msgstr "Appartient à"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_res_partner_relation_type__circle_type_id
+msgid "Auto-sync Circle Type"
+msgstr "Type de cercle auto-synchronisé"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_top
+msgid "Bottom de"
+msgstr "Bottom de"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.view_circle_form
+msgid "Circle"
+msgstr "Cercle"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Circle :"
+msgstr "Cercle :"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__circle_count
+msgid "Circle Count"
+msgstr "Nombre de cercles"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_social_circles_circle_type
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__type_id
+msgid "Circle Type"
+msgstr "Type de cercle"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Circle created."
+msgstr "Cercle créé."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Circle deleted."
+msgstr "Cercle supprimé."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Circle updated."
+msgstr "Cercle mis à jour."
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__circle_ids
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__circle_count
+#: model:ir.ui.menu,name:social_circles.menu_circles_root
+#: model:website.menu,name:social_circles.menu_social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.view_circle_list
+#: model_terms:ir.ui.view,arch_db:social_circles.view_profile_circles_inline
+msgid "Circles"
+msgstr "Cercles"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Circles I appear in"
+msgstr "Cercles où je figure"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__color
+msgid "Color"
+msgstr "Couleur"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_spouse
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_spouse
+msgid "Conjoint(e) de"
+msgstr "Conjoint(e) de"
+
+#. module: social_circles
+#: model:social_circles.circle_type,name:social_circles.circle_type_connaissances
+msgid "Connaissances"
+msgstr "Connaissances"
+
+#. module: social_circles
+#: model:ir.model.fields.selection,name:social_circles.selection__club_social_profile_profile__detailed_visibility__connections
+msgid "Connections Only"
+msgstr "Connexions uniquement"
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_club_social_profile_profile__detailed_visibility
+msgid "Controls who can read bio, orientation, location, looking-for."
+msgstr "Contrôle qui peut lire la bio, l'orientation, le lieu et les recherches."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Create"
+msgstr "Créer"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid ""
+"Create a circle to organize your connections and control who sees your "
+"sensitive info."
+msgstr ""
+"Créez un cercle pour organiser vos connexions et contrôler qui voit vos "
+"informations sensibles."
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__create_uid
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__create_date
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__color
+msgid "Default Color"
+msgstr "Couleur par défaut"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__is_default
+msgid "Default for new connections"
+msgstr "Par défaut pour les nouvelles connexions"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__description
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__description
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.view_circle_form
+msgid "Description"
+msgstr "Description"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Description (optionnel)"
+msgstr "Description (optionnel)"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__detailed_visibility
+msgid "Detailed Info Visible To"
+msgstr "Infos détaillées visibles par"
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_club_visibility_mixin__visibility
+msgid "Determines who can see this record."
+msgstr "Détermine qui peut voir ce dossier."
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_connection__display_name
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_circles.field_club_visibility_mixin__display_name
+#: model:ir.model.fields,field_description:social_circles.field_res_partner_relation__display_name
+#: model:ir.model.fields,field_description:social_circles.field_res_partner_relation_type__display_name
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_dominant
+msgid "Dominant(e) de"
+msgstr "Dominant(e) de"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_poly
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_poly
+msgid "En relation poly avec"
+msgstr "En relation poly avec"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_master
+msgid "Esclave de"
+msgstr "Esclave de"
+
+#. module: social_circles
+#: model:social_circles.circle_type,description:social_circles.circle_type_famille
+msgid "Famille au sens large — liens forts non-romantiques."
+msgstr "Famille au sens large — liens forts non-romantiques."
+
+#. module: social_circles
+#: model:social_circles.circle_type,name:social_circles.circle_type_famille
+msgid "Famille choisie"
+msgstr "Famille choisie"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_connection__id
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_circles.field_club_visibility_mixin__id
+#: model:ir.model.fields,field_description:social_circles.field_res_partner_relation__id
+#: model:ir.model.fields,field_description:social_circles.field_res_partner_relation_type__id
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__id
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__id
+msgid "ID"
+msgstr "ID"
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_res_partner_relation_type__circle_type_id
+msgid ""
+"If set, creating a relation of this type automatically adds both members to "
+"their respective circle of this type."
+msgstr ""
+"Si défini, la création d'une relation de ce type ajoute automatiquement les "
+"deux membres à leur cercle respectif de ce type."
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_social_circles_circle_type__is_default
+msgid ""
+"If set, new profiles automatically get a circle of this type, and accepted "
+"friend connections are added to it."
+msgstr ""
+"Si défini, les nouveaux profils obtiennent automatiquement un cercle de ce "
+"type, et les connexions d'amis acceptées y sont ajoutées."
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__display_name
+msgid "Label"
+msgstr "Étiquette"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__write_uid
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__write_uid
+msgid "Last Updated by"
+msgstr "Dernière modification par"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__write_date
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__write_date
+msgid "Last Updated on"
+msgstr "Dernière modification le"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Le nom est requis."
+msgstr "Le nom est requis."
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_social_circles_circle__name
+msgid "Leave blank to use the type name as-is."
+msgstr "Laisser vide pour utiliser le nom du type tel quel."
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_master
+msgid "Maître/Maîtresse de"
+msgstr "Maître/Maîtresse de"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__member_count
+msgid "Member Count"
+msgstr "Nombre de membres"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr "Profil social du membre"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__member_ids
+#: model_terms:ir.ui.view,arch_db:social_circles.view_circle_form
+msgid "Members"
+msgstr "Membres"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_mentor
+msgid "Mentor de"
+msgstr "Mentor de"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_rigger
+msgid "Model de"
+msgstr "Model de"
+
+#. module: social_circles
+#: model:ir.actions.act_window,name:social_circles.action_my_circles
+#: model:ir.ui.menu,name:social_circles.menu_my_circles
+msgid "My Circles"
+msgstr "Mes cercles"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "My circles"
+msgstr "Mes cercles"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_home_circles
+msgid "My circles de confiance"
+msgstr "Mes cercles de confiance"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__name
+msgid "Name"
+msgstr "Nom"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Name du cercle *"
+msgstr "Nom du cercle *"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__name
+msgid "Nickname (optional)"
+msgstr "Surnom (facultatif)"
+
+#. module: social_circles
+#: model:ir.model.fields.selection,name:social_circles.selection__club_social_profile_profile__detailed_visibility__private
+msgid "Only Me"
+msgstr "Moi seulement"
+
+#. module: social_circles
+#. odoo-python
+#: code:addons/social_circles/models/circle_type.py:0
+msgid "Only one circle type can be the default for new connections."
+msgstr "Un seul type de cercle peut être celui par défaut pour les nouvelles connexions."
+
+#. module: social_circles
+#: model:ir.model.fields,help:social_circles.field_club_social_profile_profile__detailed_visibility_circle_id
+msgid "Only visible when Detailed Info = Specific Circle."
+msgstr "Visible uniquement quand Infos détaillées = Cercle spécifique."
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_partner
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_partner
+msgid "Partenaire de"
+msgstr "Partenaire de"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_play_partner
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_play_partner
+msgid "Partenaire de jeu de"
+msgstr "Partenaire de jeu de"
+
+#. module: social_circles
+#: model:social_circles.circle_type,name:social_circles.circle_type_partenaires
+msgid "Partenaires"
+msgstr "Partenaires"
+
+#. module: social_circles
+#: model:social_circles.circle_type,description:social_circles.circle_type_partenaires
+msgid "Partenaires intimes ou romantiques."
+msgstr "Partenaires intimes ou romantiques."
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_res_partner_relation_type
+msgid "Partner Relation Type"
+msgstr "Type de relation partenaire"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_res_partner_relation
+msgid "Partner relation"
+msgstr "Relation partenaire"
+
+#. module: social_circles
+#: model:social_circles.circle_type,description:social_circles.circle_type_amis
+msgid "Personnes en qui vous avez une confiance particulière."
+msgstr "Personnes en qui vous avez une confiance particulière."
+
+#. module: social_circles
+#: model:social_circles.circle_type,description:social_circles.circle_type_connaissances
+msgid ""
+"Personnes que vous connaissez — cercle par défaut pour les nouvelles "
+"connexions."
+msgstr ""
+"Personnes que vous connaissez — cercle par défaut pour les nouvelles "
+"connexions."
+
+#. module: social_circles
+#. odoo-python
+#: code:addons/social_circles/models/profile_ext.py:0
+msgid "Please select a circle when using \"Specific Circle\" visibility."
+msgstr "Veuillez sélectionner un cercle lors de l'utilisation de la visibilité « Cercle spécifique »."
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_collar
+msgid "Porte le collier de"
+msgstr "Porte le collier de"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__profile_id
+msgid "Profile"
+msgstr "Profil"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_owner
+msgid "Propriétaire de"
+msgstr "Propriétaire de"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_mentor
+msgid "Protégé(e) de"
+msgstr "Protégé(e) de"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Retirer"
+msgstr "Retirer"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_rigger
+msgid "Rigger de"
+msgstr "Rigger de"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Sauver"
+msgstr "Sauver"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Save visibility"
+msgstr "Enregistrer la visibilité"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle__sequence
+#: model:ir.model.fields,field_description:social_circles.field_social_circles_circle_type__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_club_social_profile_connection
+msgid "Social Connection"
+msgstr "Connexion sociale"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_dominant
+msgid "Soumis(e) à"
+msgstr "Soumis(e) à"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_social_profile_profile__detailed_visibility_circle_id
+#: model:ir.model.fields.selection,name:social_circles.selection__club_social_profile_profile__detailed_visibility__specific
+msgid "Specific Circle"
+msgstr "Cercle spécifique"
+
+#. module: social_circles
+#: model:ir.model.fields.selection,name:social_circles.selection__club_visibility_mixin__visibility__relations
+msgid "Specific relations"
+msgstr "Relations spécifiques"
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_switch
+#: model:res.partner.relation.type,name_inverse:social_circles.rel_type_switch
+msgid "Switch avec"
+msgstr "Switch avec"
+
+#. module: social_circles
+#. odoo-python
+#: code:addons/social_circles/models/profile_ext.py:0
+msgid "The selected circle must belong to this profile."
+msgstr "Le cercle sélectionné doit appartenir à ce profil."
+
+#. module: social_circles
+#: model:res.partner.relation.type,name:social_circles.rel_type_top
+msgid "Top de"
+msgstr "Top de"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_social_circles_circle
+msgid "Trust Circle"
+msgstr "Cercle de confiance"
+
+#. module: social_circles
+#: model:social_circles.circle_type,name:social_circles.circle_type_vip
+msgid "VIP"
+msgstr "VIP"
+
+#. module: social_circles
+#: model:ir.model.fields,field_description:social_circles.field_club_visibility_mixin__visibility
+msgid "Visibility"
+msgstr "Visibilité"
+
+#. module: social_circles
+#: model:ir.model,name:social_circles.model_club_visibility_mixin
+msgid "Visibility Mixin"
+msgstr "Mixin de visibilité"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Visibility saved."
+msgstr "Visibilité enregistrée."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "Vous n'avez pas encore de cercles de confiance."
+msgstr "Vous n'avez pas encore de cercles de confiance."
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.view_circle_kanban
+msgid "member(s)"
+msgstr "membre(s)"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "membre(s)"
+msgstr "membre(s)"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid ""
+"🔒 Who can see my detailed info?\n"
+"                        <small class=\"fw-normal opacity-75 ms-2\">bio, orientation, ville, looking for</small>"
+msgstr ""
+"🔒 Qui peut voir mes infos détaillées ?\n"
+"                        <small class=\"fw-normal opacity-75 ms-2\">bio, orientation, ville, looking for</small>"
+
+#. module: social_circles
+#: model_terms:ir.ui.view,arch_db:social_circles.portal_my_circles
+msgid "🔵 Circles de confiance"
+msgstr ""

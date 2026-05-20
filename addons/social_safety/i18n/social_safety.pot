@@ -1,0 +1,403 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_safety
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 13:39+0000\n"
+"PO-Revision-Date: 2026-05-20 13:39+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid ""
+".\n"
+"                                        Your profile is hidden from discovery and limited to your connections."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_my_home_safety
+msgid "/safety"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid ""
+"<span class=\"text-muted ms-2\" style=\"font-size:0.8rem;\">\n"
+"                                                    indefinitely\n"
+"                                                </span>"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "<span style=\"font-size:1.4rem;\">⚠️</span>"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_profile_panic_inline
+msgid ""
+"<strong>Panic Mode is ON</strong> — you are hidden from non-connections."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "<strong>Stealth mode active</strong> depuis"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_profile_panic_inline
+msgid "Activate panic mode? You will be hidden from all non-connections."
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.constraint,message:social_safety.constraint_social_safety_block_unique_block
+msgid "Already blocked."
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.constraint,message:social_safety.constraint_social_safety_mute_unique_mute
+msgid "Already muted."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_block_form
+msgid "Block"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__blocked_id
+msgid "Blocked"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__create_date
+msgid "Blocked On"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.actions.act_window,name:social_safety.action_my_blocks
+#: model:ir.ui.menu,name:social_safety.menu_blocked_users
+#: model_terms:ir.ui.view,arch_db:social_safety.view_block_list
+msgid "Blocked Users"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__blocker_id
+msgid "Blocker"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_profile_panic_inline
+msgid "Come Back"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__create_uid
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Destination site:"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Disable stealth mode"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model,name:social_safety.model_social_discovery_criteria
+msgid "Discovery Search Criteria"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_safety.field_social_discovery_criteria__display_name
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__display_name
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_profile_panic_inline
+msgid "Go Dark"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_safety.field_social_discovery_criteria__id
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__id
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__id
+msgid "ID"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid ""
+"In stealth mode, your profile disappears from discovery and is only\n"
+"                                    visible to your connections. You can re-enable it any time."
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__is_active
+msgid "Is Active"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__write_uid
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__write_date
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_mute_form
+msgid "Leave empty for permanent"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,help:social_safety.field_social_safety_mute__until
+msgid "Leave empty for permanent mute."
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model,name:social_safety.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_mute_form
+msgid "Mute"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__until
+msgid "Mute Until"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__muted_id
+msgid "Muted"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__create_date
+msgid "Muted On"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.actions.act_window,name:social_safety.action_my_mutes
+#: model:ir.ui.menu,name:social_safety.menu_muted_users
+#: model_terms:ir.ui.view,arch_db:social_safety.view_mute_list
+msgid "Muted Users"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_mute__muter_id
+msgid "Muter"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "No blocked users."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "No muted users."
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_club_social_profile_profile__panic_activated_at
+msgid "Panic Activated At"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_club_social_profile_profile__panic_mode
+msgid "Panic Mode"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_social_safety_block__reason
+#: model_terms:ir.ui.view,arch_db:social_safety.view_block_form
+msgid "Private Note"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_quick_exit_button
+msgid "Quick exit (also: press Esc twice)"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.ui.menu,name:social_safety.menu_safety_root
+#: model:website.menu,name:social_safety.menu_social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Safety"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_my_home_safety
+msgid "Safety and privacy"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,field_description:social_safety.field_club_social_profile_profile__panic_saved_visibility
+msgid "Saved Visibility (panic)"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.actions.server,name:social_safety.cron_expire_mutes_ir_actions_server
+msgid "Social Safety : expiration des silences temporaires"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid ""
+"The <strong>⏻</strong> button in the top-left corner of every page sends you\n"
+"                                instantly to a neutral site without leaving traces in history.\n"
+"                                You can also press <strong>Esc twice</strong>."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Unblock"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Unmute"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model,name:social_safety.model_social_safety_block
+msgid "User Block"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model,name:social_safety.model_social_safety_mute
+msgid "User Mute"
+msgstr ""
+
+#. module: social_safety
+#: model:ir.model.fields,help:social_safety.field_club_social_profile_profile__panic_mode
+msgid ""
+"When active: profile hidden from non-connections, no new contact requests "
+"accepted."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.view_block_form
+msgid "Why you blocked this person (only visible to you)"
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only activate panic mode on your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only block users from your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only deactivate panic mode on your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only mute users from your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only unblock users from your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/profile_ext.py:0
+msgid "You can only unmute users from your own profile."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/block.py:0
+msgid "You cannot block yourself."
+msgstr ""
+
+#. module: social_safety
+#. odoo-python
+#: code:addons/social_safety/models/mute.py:0
+msgid "You cannot mute yourself."
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "since"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "until"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "⏻ Quick exit"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🔇 Muted users"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🔐 Safety and privacy"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🕵️ Enable stealth mode"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_profile_panic_inject
+msgid "🕵️ Stealth mode"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🕵️ Stealth mode (panic mode)"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_profile_panic_inject
+msgid "🕵️ Stealth mode on — Disable"
+msgstr ""
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🚫 Blocked users"
+msgstr ""

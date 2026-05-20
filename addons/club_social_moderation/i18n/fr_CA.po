@@ -1,0 +1,360 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* club_social_moderation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 15:16+0000\n"
+"PO-Revision-Date: 2026-05-20 15:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__is_banned
+msgid "Account Suspended"
+msgstr "Compte suspendu"
+
+#. module: club_social_moderation
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_csp_profile_moderation_form
+msgid "Account suspended:"
+msgstr "Compte suspendu :"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_needaction
+msgid "Action Needed"
+msgstr "Nécessite une action"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_attachment_count
+msgid "Attachment Count"
+msgstr "Nombre de pièces jointes"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__banned_by
+msgid "Banned By"
+msgstr "Banni par"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__banned_until
+msgid "Banned Until"
+msgstr "Banni jusqu'au"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__ban_ids
+msgid "Bans"
+msgstr "Bannissements"
+
+#. module: club_social_moderation
+#: model:ir.actions.server,name:club_social_moderation.cron_expire_bans_ir_actions_server
+msgid "Club Social: Expire Temporary Bans"
+msgstr "Club Social : expirer les bans temporaires"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__ref_model__social_base_comment
+msgid "Comment"
+msgstr "Commentaire"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__ref_id
+msgid "Content ID"
+msgstr "ID du contenu"
+
+#. module: club_social_moderation
+#: model:ir.model,name:club_social_moderation.model_club_social_moderation_report
+msgid "Content Report"
+msgstr "Signalement de contenu"
+
+#. module: club_social_moderation
+#: model:ir.actions.act_window,name:club_social_moderation.action_moderation_reports
+msgid "Content Reports"
+msgstr "Signalements de contenu"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__ref_model
+msgid "Content Type"
+msgstr "Type de contenu"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__create_uid
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__create_date
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__description
+msgid "Details"
+msgstr "Détails"
+
+#. module: club_social_moderation
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_moderation_report_list
+msgid "Dismiss"
+msgstr "Ignorer"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__state__dismissed
+msgid "Dismissed — no action"
+msgstr "Ignoré — aucune action"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__display_name
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__display_name
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_follower_ids
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnés (Partenaires)"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__reason__harcelement
+msgid "Harassment"
+msgstr "Harcèlement"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__has_message
+msgid "Has Message"
+msgstr "A un message"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__id
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__id
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__id
+msgid "ID"
+msgstr "ID"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si coché, de nouveaux messages demandent votre attention."
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__message_has_error
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si coché, certains messages ont une erreur de livraison."
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__reason__contenu_inapproprie
+msgid "Inappropriate Content"
+msgstr "Contenu inapproprié"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__is_active
+msgid "Is Active"
+msgstr "Est actif"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_is_follower
+msgid "Is Follower"
+msgstr "Est un abonné"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__write_uid
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__write_uid
+msgid "Last Updated by"
+msgstr "Dernière modification par"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__write_date
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__write_date
+msgid "Last Updated on"
+msgstr "Dernière modification le"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_ban__banned_until
+msgid "Leave empty for permanent ban"
+msgstr "Laisser vide pour un ban permanent"
+
+#. module: club_social_moderation
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_csp_profile_moderation_form
+msgid "Lift Ban"
+msgstr "Lever le ban"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__lifted_at
+msgid "Lifted At"
+msgstr "Levé le"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__lifted_by
+msgid "Lifted By"
+msgstr "Levé par"
+
+#. module: club_social_moderation
+#: model:ir.model,name:club_social_moderation.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr "Profil social du membre"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_has_error
+msgid "Message Delivery error"
+msgstr "Erreur d'envoi du message"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_ids
+msgid "Messages"
+msgstr "Messages"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__reason__mineurs
+msgid "Minors Protection"
+msgstr "Protection des mineurs"
+
+#. module: club_social_moderation
+#: model:ir.ui.menu,name:club_social_moderation.menu_moderation_root
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_csp_profile_moderation_form
+msgid "Moderation"
+msgstr "Modération"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Nombre d'actions"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_has_error_counter
+msgid "Number of errors"
+msgstr "Nombre d'erreurs"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Nombre de messages nécessitant une action"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Nombre de messages avec des erreurs d'envoi"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__reason__autre
+msgid "Other"
+msgstr "Autre"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__state__pending
+msgid "Pending"
+msgstr "En attente"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__ref_model__social_base_post
+msgid "Post"
+msgstr "Publication"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__profile_id
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__ref_model__club_social_profile_profile
+msgid "Profile"
+msgstr "Profil"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_ban__reason
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__reason
+msgid "Reason"
+msgstr "Raison"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__reporter_id
+msgid "Reporter"
+msgstr "Rapporteur"
+
+#. module: club_social_moderation
+#: model:ir.ui.menu,name:club_social_moderation.menu_moderation_reports
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_moderation_report_list
+msgid "Reports"
+msgstr "Rapports"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__resolution_note
+msgid "Resolution Note"
+msgstr "Note de résolution"
+
+#. module: club_social_moderation
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_moderation_report_list
+msgid "Resolve"
+msgstr "Résoudre"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__resolved_at
+msgid "Resolved At"
+msgstr "Résolu le"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__resolved_by
+msgid "Resolved By"
+msgstr "Résolu par"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__state__resolved
+msgid "Resolved — action taken"
+msgstr "Résolu — action prise"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Erreur d'envoi SMS"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__is_shadow_banned
+msgid "Shadow Banned"
+msgstr "Shadow banni"
+
+#. module: club_social_moderation
+#: model_terms:ir.ui.view,arch_db:club_social_moderation.view_csp_profile_moderation_form
+msgid "Shadow banned"
+msgstr "Shadow banni"
+
+#. module: club_social_moderation
+#: model:ir.model.fields.selection,name:club_social_moderation.selection__club_social_moderation_report__reason__spam
+msgid "Spam"
+msgstr "Spam"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__state
+msgid "State"
+msgstr "État"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_profile_profile__ban_reason
+msgid "Suspension Reason"
+msgstr "Raison de la suspension"
+
+#. module: club_social_moderation
+#: model:ir.model,name:club_social_moderation.model_club_social_moderation_ban
+msgid "User Ban"
+msgstr "Ban d'utilisateur"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,field_description:club_social_moderation.field_club_social_moderation_report__website_message_ids
+msgid "Website Messages"
+msgstr "Messages du site web"
+
+#. module: club_social_moderation
+#: model:ir.model.fields,help:club_social_moderation.field_club_social_moderation_report__website_message_ids
+msgid "Website communication history"
+msgstr "Historique de communication du site web"
+
+#. module: club_social_moderation
+#: model:ir.model.constraint,message:club_social_moderation.constraint_club_social_moderation_report_unique_report
+msgid "You have already reported this content."
+msgstr ""

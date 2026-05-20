@@ -1,0 +1,580 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_discovery
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 14:37+0000\n"
+"PO-Revision-Date: 2026-05-20 14:37+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_my_home_members
+msgid "/members"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "0 = no limit"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,help:social_discovery.field_social_discovery_criteria__max_age
+msgid "0 = no upper limit"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid ""
+"<span class=\"position-absolute top-0 end-0 m-1 badge\" style=\"background:#28a745; font-size:0.7rem;\">\n"
+"                                                            🟢 Available\n"
+"                                                        </span>"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "<span class=\"text-muted\" style=\"font-size:0.85rem;\">Sort by:</span>"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "<span>–</span>"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Age"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Age & Location"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__age_verified
+msgid "Age Verified (18+)"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_asexuel
+msgid "Asexual"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Availability"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__availability_ids
+msgid "Availability (any if empty)"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.availability_value,name:social_discovery.avail_disponible
+msgid "Available / Looking"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_bi
+msgid "Bisexual"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__city
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "City"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Clear filters"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.availability_value,name:social_discovery.avail_couple_ferme
+msgid "Closed relationship"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__create_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__create_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__create_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__create_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__create_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__create_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Curious"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__is_default
+msgid "Default Search"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.ui.menu,name:social_discovery.menu_discovery_root
+msgid "Discovery"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_club_social_profile_profile__discovery_criteria_count
+msgid "Discovery Criteria Count"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model,name:social_discovery.model_social_discovery_criteria
+msgid "Discovery Search Criteria"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/models/criteria.py:0
+msgid "Discovery: %(name)s"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model,name:social_discovery.model_social_discovery_availability_value
+msgid "Discovery: Availability Filter Value"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model,name:social_discovery.model_social_discovery_gender_value
+msgid "Discovery: Gender Filter Value"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model,name:social_discovery.model_social_discovery_orientation_value
+msgid "Discovery: Orientation Filter Value"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__display_name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__display_name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__display_name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Dominant"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,help:social_discovery.field_social_discovery_criteria__reachable_only
+msgid "Exclude profiles with an active consent gate I have not yet passed."
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Experience"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Experienced"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_my_home_members
+msgid "Explore members"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Filter"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Filters"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_gay
+msgid "Gay / Lesbian"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Gender"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__gender_ids
+msgid "Gender (any if empty)"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__has_photo
+msgid "Has Profile Photo"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__id
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__id
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__id
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__id
+msgid "ID"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Identity"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__in_circles_only
+msgid "In My Circles Only"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Intermediate"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__write_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__write_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__write_uid
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__write_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__write_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__write_date
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,help:social_discovery.field_social_discovery_criteria__is_default
+msgid "Loaded automatically when opening Discovery."
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__looking_for_ids
+msgid "Looking For (overlap match)"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.gender_value,name:social_discovery.gender_homme
+msgid "Man"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Masochist"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Master/Mistress"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Max"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__max_age
+msgid "Max Age"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/models/criteria.py:0
+msgid "Maximum age must be greater than minimum age."
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model,name:social_discovery.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Min"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__min_age
+msgid "Min Age"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/models/criteria.py:0
+msgid "Minimum age must be 18 or higher."
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Montréal…"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/models/criteria.py:0
+msgid "My Search"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.actions.act_window,name:social_discovery.action_my_searches
+#: model:ir.ui.menu,name:social_discovery.menu_my_searches
+msgid "My Searches"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__name
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__name
+msgid "Name"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Name, bio, city…"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "New"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "No member matches these criteria."
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.gender_value,name:social_discovery.gender_non_binaire
+msgid "Non-binary"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__onboarding_done
+msgid "Onboarding Completed"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/models/criteria.py:0
+msgid "Only one search can be the default."
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,help:social_discovery.field_social_discovery_criteria__in_circles_only
+msgid ""
+"Only show profiles that have added me to at least one of their circles."
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.availability_value,name:social_discovery.avail_couple_ouvert
+msgid "Open relationship"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Orientation"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__orientation_ids
+msgid "Orientation (any if empty)"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+#: model:social_discovery.gender_value,name:social_discovery.gender_autre
+#: model:social_discovery.orientation_value,name:social_discovery.orient_autre
+msgid "Other"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_pan
+msgid "Pansexual"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Partial city name…"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,help:social_discovery.field_social_discovery_criteria__city
+msgid "Partial, case-insensitive match"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__profile_id
+msgid "Profile"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Profile Content"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_queer
+msgid "Queer"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__reachable_only
+msgid "Reachable Only"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "Reset"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__result_count
+msgid "Results"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Sadist"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_club_social_profile_profile__discovery_criteria_ids
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_list
+msgid "Saved Searches"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Search"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.view_discovery_criteria_form
+msgid "Search Criteria"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__name
+msgid "Search Name"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__sequence
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__sequence
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Slave"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_criteria__language_ids
+msgid "Speaks (overlap match)"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Spectator"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.orientation_value,name:social_discovery.orient_hetero
+msgid "Straight"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Submissive"
+msgstr ""
+
+#. module: social_discovery
+#. odoo-python
+#: code:addons/social_discovery/controllers/portal.py:0
+msgid "Switch"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.gender_value,name:social_discovery.gender_trans_homme
+msgid "Trans man"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.gender_value,name:social_discovery.gender_trans_femme
+msgid "Trans woman"
+msgstr ""
+
+#. module: social_discovery
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_availability_value__value
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_gender_value__value
+#: model:ir.model.fields,field_description:social_discovery.field_social_discovery_orientation_value__value
+msgid "Value"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "With a profile picture"
+msgstr ""
+
+#. module: social_discovery
+#: model:social_discovery.gender_value,name:social_discovery.gender_femme
+msgid "Woman"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "result(s)"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "years old"
+msgstr ""
+
+#. module: social_discovery
+#: model_terms:ir.ui.view,arch_db:social_discovery.portal_members
+msgid "⛓️ BDSM Role"
+msgstr ""

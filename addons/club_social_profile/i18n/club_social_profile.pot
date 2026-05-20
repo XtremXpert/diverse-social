@@ -1,0 +1,1280 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* club_social_profile
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 13:10+0000\n"
+"PO-Revision-Date: 2026-05-20 13:10+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "+ Connect"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "+ Request connection"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_discover
+msgid "/discover"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_dashboard
+msgid "/my/dashboard"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_profile_edit
+msgid "/my/profile/edit"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "1990"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "<option value=\"\">— All —</option>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid ""
+"<span class=\"badge bg-light text-dark border\" style=\"font-size:.7rem;\">\n"
+"                                                🤝 Connection\n"
+"                                            </span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid ""
+"<span class=\"badge rounded-pill bg-danger\" style=\"font-"
+"size:0.6rem;\">New</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "<span>👥 My groups</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "<span>📅 Upcoming events</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "<span>🔔 Recent notifications</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "<span>🗳️ Proposals open for voting</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid ""
+"<strong>Club members</strong><br/>\n"
+"                                                    <small class=\"text-muted\">Visible to all active members</small>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid ""
+"<strong>Connections only</strong><br/>\n"
+"                                                    <small class=\"text-muted\">Visible to your connections only</small>"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/models/profile.py:0
+msgid "A profile already exists for this user."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "A quote, an intention…"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "About"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "Accept the request"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__state__accepted
+msgid "Accepted"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__accepted_date
+msgid "Accepted Date"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__actor_id
+msgid "Actor"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__age
+msgid "Age"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__age_verified
+msgid "Age Verified (18+)"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Alias shown to other members (optional)"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "All quiet for now."
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__allow_link_sharing
+msgid "Allow profile link sharing"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Alternate display name"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,help:club_social_profile.field_club_social_profile_profile__stealth_name
+msgid "Alternative name shown to connections instead of login."
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_device_token__platform__android
+msgid "Android (FCM)"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__asexuel
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Asexual"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__availability
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Availability"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Available"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__availability__disponible
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Available / Looking"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "BDSM role"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "Become a member"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__bio
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Bio"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__birth_year
+msgid "Birth Year"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Birth year"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__bi
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Bisexual"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__state__blocked
+msgid "Blocked"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__body
+msgid "Body"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/models/connection.py:0
+msgid "Cannot connect to yourself"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Change"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__city
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "City"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Closed couple"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__availability__couple_ferme
+msgid "Closed relationship"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "Closes"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__visibility__members
+msgid "Club Members"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__comment_reply
+msgid "Comment Reply"
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_social_root
+msgid "Community"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "Compatibility"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__connected_user_id
+msgid "Connected User"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__connection_accepted
+msgid "Connection Accepted"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__connection_request
+msgid "Connection Request"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__connection_type
+msgid "Connection Type"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/models/connection.py:0
+msgid "Connection already exists"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.actions.act_window,name:club_social_profile.action_csp_connections
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_connection_list
+msgid "Connections"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__visibility__connections
+msgid "Connections Only"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_visibility_mixin__visibility__connections
+msgid "Connections only"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__cover_image
+msgid "Cover Image"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Cover picture"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__create_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__create_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__create_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__create_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__create_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__create_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Curious"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__daily_digest
+msgid "Daily Digest"
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_social_dashboard
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_dashboard
+msgid "Dashboard"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,help:club_social_profile.field_club_visibility_mixin__visibility
+msgid "Determines who can see this record."
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_social_discover
+msgid "Discover"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_discover
+msgid "Discover members"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__display_name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_visibility_mixin__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Dominant"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Edit my profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "Filter"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__connection_type__following
+msgid "Following"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__connection_type__friend
+msgid "Friend"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__gay
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Gay / Lesbian"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__gender
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Gender"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Heterosexual"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_visibility_mixin__id
+msgid "ID"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Identity"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "If set, this name replaces your real name on your public profile."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Introduce yourself…"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__is_active
+msgid "Is Active"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__is_read
+msgid "Is Read"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Languages & Goals"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__write_uid
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__write_date
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__last_used
+msgid "Last Used"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Location & Status"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__login
+msgid "Login"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__looking_for_ids
+msgid "Looking For"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__homme
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Man"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Masochist"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Master / Mistress"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Member Profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.actions.act_window,name:club_social_profile.action_csp_profiles
+msgid "Member Profiles"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_visibility_mixin__visibility__members
+msgid "Members only"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Montréal…"
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_my_account_root
+msgid "My Account"
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_my_network_root
+msgid "My Network"
+msgstr ""
+
+#. module: club_social_profile
+#: model:website.menu,name:club_social_profile.menu_social_profile
+msgid "My Profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_profile_edit
+msgid "My profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__name
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__name
+msgid "Name"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__new_message
+msgid "New Message"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "No members match these criteria."
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__non_binaire
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Non-binary"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__availability__pas_disponible
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Not available"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__availability__non_specifie
+msgid "Not specified"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__onboarding_done
+msgid "Onboarding Done"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Open couple"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__availability__couple_ouvert
+msgid "Open relationship"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__orientation
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Orientation"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__autre
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__autre
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Other"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__pan
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Pansexual"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,help:club_social_profile.field_club_social_profile_profile__partner_id
+msgid "Partner-related data of the user"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__platform
+msgid "Platform"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__post_comment
+msgid "Post Comment"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__post_like
+msgid "Post Like"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__non_specifie
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__non_specifie
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Prefer not to say"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Preferences"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_edit.py:0
+msgid "Preferences saved."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Privacy"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__profile_id
+msgid "Profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__profile_image
+msgid "Profile Image"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__profile_view_count
+msgid "Profile View Count"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_profile_visit
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_notification__type__profile_visit
+msgid "Profile Visit"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Profile picture"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_edit.py:0
+msgid "Profile updated."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Profile visibility"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.ui.menu,name:club_social_profile.menu_csp_profiles
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_list
+msgid "Profiles"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__pronouns
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Pronouns"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Province"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__stealth_name
+msgid "Pseudonym (stealth)"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_visibility_mixin__visibility__public
+msgid "Public"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_device_token
+msgid "Push Device Token"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__queer
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Queer"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__quote
+msgid "Quote"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Québec…"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__read_at
+msgid "Read At"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Receive the weekly digest by email"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "Recent posts"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__ref_id
+msgid "Ref"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__ref_model
+msgid "Ref Model"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__region
+msgid "Region / Province"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_connection__state__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__partner_id
+msgid "Related Partner"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__create_date
+msgid "Requested"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Sadist"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Save"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_language__sequence
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_looking_for__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Slave"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_connection
+msgid "Social Connection"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_notification
+msgid "Social Notification"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Spectator"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_language
+msgid "Spoken Language"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__language_ids
+msgid "Spoken Languages"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__state
+msgid "State"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__orientation__hetero
+msgid "Straight"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Submissive"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+msgid "Switch"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Tagline <small class=\"text-muted\">(200 chars max)</small>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "This profile is only visible to this member's connections."
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.constraint,message:club_social_profile.constraint_club_social_profile_device_token_unique_token
+msgid "This token is already registered."
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__token
+msgid "Token"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__trans_homme
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Trans man"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__trans_femme
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Trans woman"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__type
+msgid "Type"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Unspecified"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__url
+msgid "Url"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,help:club_social_profile.field_club_social_profile_profile__login
+msgid "Used to log into the system"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_connection__user_id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_device_token__user_id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_notification__user_id
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__user_id
+msgid "User"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "View"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "View all members"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "View all →"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "View my profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "View my requests"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__visibility
+#: model:ir.model.fields,field_description:club_social_profile.field_club_visibility_mixin__visibility
+msgid "Visibility"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_visibility_mixin
+msgid "Visibility Mixin"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__visited_at
+msgid "Visited At"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__visitor_id
+msgid "Visitor"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile_visit__visitor_profile_id
+msgid "Visitor Profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__profile_visit_ids
+#: model_terms:ir.ui.view,arch_db:club_social_profile.view_csp_profile_form
+msgid "Visits"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_device_token__platform__web
+msgid "Web (WebPush)"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields,field_description:club_social_profile.field_club_social_profile_profile__digest_email_enabled
+msgid "Weekly digest email"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model,name:club_social_profile.model_club_social_profile_looking_for
+msgid "What the Member is Looking For"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_discover.py:0
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_profile__gender__femme
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Woman"
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/controllers/portal_edit.py:0
+msgid "You must be 18 or older."
+msgstr ""
+
+#. module: club_social_profile
+#. odoo-python
+#: code:addons/club_social_profile/models/profile.py:0
+msgid "You must be 18 years or older to register."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "You must be an active member to access profiles."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_restricted
+msgid "Your connection request is pending."
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "by"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_my_home_discover
+msgid "discover_count"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "found"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "he/him, she/her, they/them…"
+msgstr ""
+
+#. module: club_social_profile
+#: model:ir.model.fields.selection,name:club_social_profile.selection__club_social_profile_device_token__platform__ios
+msgid "iOS (APNs)"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "member"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "members"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "photo(s)"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "profile view(s)"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "years old"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "ℹ️ Infos"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "← View my profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "⏳ Pending requests"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "⏳ Request sent"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "✏️ Edit"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "✏️ Edit my profile"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "✓ Connected"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "✕ Clear filters"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid ""
+"👁️ Profile views<br/><span style=\"font-size:0.7rem;\">(last 7 days)</span>"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "👤 Basic information"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "💬 Message"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "📧 Notifications"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "📷 Galleries"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "📷 Photos"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_discover
+msgid "🔍 Discover members"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "🔍 What I'm looking for"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "🔒 Visibility and availability"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "🔔 Unread notifications"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "🗣️ Languages spoken"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_public
+msgid "🤝 Mutual connections"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid "🤝 New connections"
+msgstr ""
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_dashboard
+msgid ""
+"🤝 New connections<br/><span style=\"font-size:0.7rem;\">(last 7 days)</span>"
+msgstr ""

@@ -1,0 +1,315 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_messaging
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 11:48+0000\n"
+"PO-Revision-Date: 2026-05-20 11:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_my_home_messages
+msgid "/my/messages"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/thread.py:0
+msgid "A message thread must have at least 2 participants."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.constraint,message:social_messaging.constraint_social_messaging_reaction_unique_user_emoji
+msgid "A user can only react once with the same emoji on a given message."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/xml/messaging_thread.xml:0
+msgid "Add a reaction"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/xml/messaging_thread.xml:0
+msgid "Attach files"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__attachment_ids
+msgid "Attachments"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__author_id
+msgid "Author"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__content
+msgid "Content"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__create_uid
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__create_uid
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__create_date
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__create_date
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__display_name
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__display_name
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__emoji
+msgid "Emoji"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Emoji not allowed"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/reaction.py:0
+msgid "Emoji required."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Empty message"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "File \"%s\" is too large (max 10 MB)."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__id
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__id
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__id
+msgid "ID"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Internal error"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__last_message_date
+msgid "Last Message Date"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__last_message_preview
+msgid "Last Message Preview"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__write_uid
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__write_uid
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__write_date
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__write_date
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/xml/messaging_thread.xml:0
+msgid "Loading…"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__message_id
+msgid "Message"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Message not found"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/reaction.py:0
+msgid "Message not found."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.actions.act_window,name:social_messaging.action_social_messaging_threads
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__message_ids
+#: model:ir.ui.menu,name:social_messaging.menu_social_messaging
+#: model:website.menu,name:social_messaging.menu_social_messages
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_my_home_messages
+msgid "Messages"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/js/messaging_thread.js:0
+msgid "Network error"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_messages_list
+msgid "No conversations yet."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_thread__participant_ids
+msgid "Participants"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model,name:social_messaging.model_social_messaging_message
+msgid "Private Message"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model,name:social_messaging.model_social_messaging_thread
+msgid "Private Message Thread"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/reaction.py:0
+msgid "Reaction emoji cannot be empty."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model,name:social_messaging.model_social_messaging_reaction
+msgid "Reaction on a Private Message"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__reaction_ids
+msgid "Reactions"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__read_by_ids
+msgid "Read By"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/xml/messaging_thread.xml:0
+msgid "Send"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/js/messaging_thread.js:0
+msgid "Send failed"
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_message__thread_id
+#: model_terms:ir.ui.view,arch_db:social_messaging.view_social_messaging_thread_form
+msgid "Thread"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Thread not found"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.view_social_messaging_thread_list
+msgid "Threads"
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/controllers/portal_messaging.py:0
+msgid "Too many attachments (max %s)."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/js/messaging_thread.js:0
+msgid "Unable to load the conversation."
+msgstr ""
+
+#. module: social_messaging
+#: model:ir.model.fields,field_description:social_messaging.field_social_messaging_reaction__user_id
+msgid "User"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_messages_thread
+msgid "View profile →"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_messages_list
+msgid "Visit a member's profile and click \"Message\" to start one."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/reaction.py:0
+msgid "You are not a participant of this thread."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-python
+#: code:addons/social_messaging/models/message.py:0
+#: code:addons/social_messaging/models/thread.py:0
+msgid "You cannot send a message to this person."
+msgstr ""
+
+#. module: social_messaging
+#. odoo-javascript
+#: code:addons/social_messaging/static/src/xml/messaging_thread.xml:0
+msgid "Your message…"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_messages_thread
+msgid "← Back"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_profile_message_start_form
+msgid "💬 Message"
+msgstr ""
+
+#. module: social_messaging
+#: model_terms:ir.ui.view,arch_db:social_messaging.portal_messages_list
+msgid "💬 My Messages"
+msgstr ""

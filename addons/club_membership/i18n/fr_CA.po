@@ -1,0 +1,507 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* club_membership
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 13:31+0000\n"
+"PO-Revision-Date: 2026-05-20 13:31+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_form
+msgid "0 = unlimited (lifetime member)"
+msgstr "0 = illimité (membre à vie)"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_needaction
+msgid "Action Needed"
+msgstr "Nécessite une action"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Activate"
+msgstr "Activer"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__active
+#: model:ir.model.fields.selection,name:club_membership.selection__club_membership_membership__state__active
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Active"
+msgstr "Actif"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__active
+msgid "Active member"
+msgstr "Membre actif"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_form
+msgid "Active memberships"
+msgstr "Adhésions actives"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_ids
+msgid "Activities"
+msgstr "Activités"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Activité exception décoration"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_state
+msgid "Activity State"
+msgstr "Statut de l'activité"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icône de type d'activité"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__fee
+msgid "Annual fee"
+msgstr "Cotisation annuelle"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_attachment_count
+msgid "Attachment Count"
+msgstr "Nombre de pièces jointes"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__club_membership_membership__state__cancelled
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__cancelled
+msgid "Cancelled"
+msgstr "Annulé"
+
+#. module: club_membership
+#. odoo-python
+#: code:addons/club_membership/models/membership.py:0
+msgid "Cannot activate a membership in state \"%s\"."
+msgstr "Impossible d'activer une adhésion en état « %s »."
+
+#. module: club_membership
+#. odoo-python
+#: code:addons/club_membership/models/membership.py:0
+msgid "Cannot suspend a membership in state \"%s\"."
+msgstr "Impossible de suspendre une adhésion en état « %s »."
+
+#. module: club_membership
+#: model:res.groups,name:club_membership.group_membership_manager
+msgid "Club / Membership Manager"
+msgstr "Club / Gestionnaire des adhésions"
+
+#. module: club_membership
+#: model:ir.actions.server,name:club_membership.cron_check_membership_expiry_ir_actions_server
+msgid "Club Adhésion : expiration automatique"
+msgstr "Club Adhésion : expiration automatique"
+
+#. module: club_membership
+#: model:ir.model,name:club_membership.model_club_membership_membership
+msgid "Club Membership"
+msgstr "Adhésion au club"
+
+#. module: club_membership
+#: model:ir.model,name:club_membership.model_res_partner
+msgid "Contact"
+msgstr "Contact"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__create_uid
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__create_date
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__currency_id
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__currency_id
+msgid "Currency"
+msgstr "Devise"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_res_partner__current_membership_id
+#: model:ir.model.fields,field_description:club_membership.field_res_users__current_membership_id
+msgid "Current membership"
+msgstr "Adhésion courante"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__description
+msgid "Description"
+msgstr "Description"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_form
+msgid "Description publique..."
+msgstr "Description publique…"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__display_name
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__display_name
+#: model:ir.model.fields,field_description:club_membership.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__duration_months
+msgid "Duration (months)"
+msgstr "Durée (mois)"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__end_date
+msgid "End"
+msgstr "Fin"
+
+#. module: club_membership
+#. odoo-python
+#: code:addons/club_membership/models/membership.py:0
+msgid "End date must be after start date."
+msgstr "La date de fin doit être postérieure à la date de début."
+
+#. module: club_membership
+#: model:club_membership.type,name:club_membership.membership_type_trial
+msgid "Essai (3 mois)"
+msgstr "Essai (3 mois)"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__club_membership_membership__state__expired
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__expired
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Expired"
+msgstr "Expiré"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__fee_paid
+msgid "Fee paid"
+msgstr "Cotisation payée"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_follower_ids
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnés (Partenaires)"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icône Font Awesome par ex. fa-tasks"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__has_message
+msgid "Has Message"
+msgstr "A un message"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__id
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__id
+#: model:ir.model.fields,field_description:club_membership.field_res_partner__id
+msgid "ID"
+msgstr "ID"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_exception_icon
+msgid "Icon"
+msgstr "Icône"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icône pour indiquer une activité d'exception."
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si coché, de nouveaux messages demandent votre attention."
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__message_has_error
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si coché, certains messages ont une erreur de livraison."
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__notes
+msgid "Internal notes"
+msgstr "Notes internes"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Internal notes..."
+msgstr "Notes internes..."
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__invoice_id
+msgid "Invoice"
+msgstr "Facture"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_is_follower
+msgid "Is Follower"
+msgstr "Est un abonné"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__write_uid
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__write_uid
+msgid "Last Updated by"
+msgstr "Dernière modification par"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__write_date
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__write_date
+msgid "Last Updated on"
+msgstr "Dernière modification le"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__partner_id
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Member"
+msgstr "Membre"
+
+#. module: club_membership
+#. odoo-python
+#: code:addons/club_membership/models/membership.py:0
+msgid "Member \"%s\" already has an active membership."
+msgstr "Le membre « %s » a déjà une adhésion active."
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+#: model_terms:ir.ui.view,arch_db:club_membership.view_partner_form_membership_ext
+msgid "Membership"
+msgstr "Adhésion"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__membership_count
+msgid "Membership Count"
+msgstr "Nombre d'adhésions"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_res_partner__member_state
+#: model:ir.model.fields,field_description:club_membership.field_res_users__member_state
+msgid "Membership status"
+msgstr "Statut d'adhésion"
+
+#. module: club_membership
+#: model:ir.model,name:club_membership.model_club_membership_type
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_form
+msgid "Membership type"
+msgstr "Type d'adhésion"
+
+#. module: club_membership
+#: model:ir.actions.act_window,name:club_membership.action_club_membership_type
+#: model:ir.ui.menu,name:club_membership.menu_club_membership_types
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_list
+msgid "Membership types"
+msgstr "Types d'adhésion"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_type__duration_months
+msgid "Membership validity in months. 0 = unlimited (lifetime member)."
+msgstr "Validité de l'adhésion en mois. 0 = illimité (membre à vie)."
+
+#. module: club_membership
+#: model:ir.actions.act_window,name:club_membership.action_club_membership
+#: model:ir.model.fields,field_description:club_membership.field_res_partner__membership_ids
+#: model:ir.model.fields,field_description:club_membership.field_res_users__membership_ids
+#: model:ir.ui.menu,name:club_membership.menu_club_membership_root
+#: model:ir.ui.menu,name:club_membership.menu_club_memberships
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_list
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_list
+msgid "Memberships"
+msgstr "Adhésions"
+
+#. module: club_membership
+#: model:club_membership.type,name:club_membership.membership_type_regular
+msgid "Membre régulier"
+msgstr "Membre régulier"
+
+#. module: club_membership
+#: model:club_membership.type,name:club_membership.membership_type_lifetime
+msgid "Membre à vie"
+msgstr "Membre à vie"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_has_error
+msgid "Message Delivery error"
+msgstr "Erreur d'envoi du message"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_ids
+msgid "Messages"
+msgstr "Messages"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Échéance de mon activité"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__name
+msgid "Name"
+msgstr "Nom"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Date limite de l'activité à venir"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_summary
+msgid "Next Activity Summary"
+msgstr "Résumé de l'activité suivante"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_type_id
+msgid "Next Activity Type"
+msgstr "Type d'activités à venir"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_type_form
+msgid "Nom du type..."
+msgstr "Nom du type…"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__none
+msgid "Not a member"
+msgstr "Non-membre"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Nombre d'actions"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_has_error_counter
+msgid "Number of errors"
+msgstr "Nombre d'erreurs"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Nombre de messages nécessitant une action"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Nombre de messages avec des erreurs d'envoi"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__club_membership_membership__state__pending
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__pending
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Pending"
+msgstr "En attente"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Period"
+msgstr "Période"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Renew"
+msgstr "Renouveler"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__activity_user_id
+msgid "Responsible User"
+msgstr "Utilisateur responsable"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Erreur d'envoi SMS"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_type__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__start_date
+msgid "Start"
+msgstr "Début"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__state
+msgid "State"
+msgstr "État"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Status"
+msgstr "Statut"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Statut basé sur les activités\n"
+"En retard : la date d'échéance est déjà dépassée\n"
+"Aujourd'hui : la date d'activité est aujourd'hui\n"
+"Planifiée : activités futures"
+
+#. module: club_membership
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_form
+msgid "Suspend"
+msgstr "Suspendre"
+
+#. module: club_membership
+#: model:ir.model.fields.selection,name:club_membership.selection__club_membership_membership__state__suspended
+#: model:ir.model.fields.selection,name:club_membership.selection__res_partner__member_state__suspended
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Suspended"
+msgstr "Suspendu"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__membership_type_id
+#: model_terms:ir.ui.view,arch_db:club_membership.view_club_membership_search
+msgid "Type"
+msgstr "Type"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Type d'activité d'exception enregistrée."
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__user_id
+msgid "User"
+msgstr "Utilisateur"
+
+#. module: club_membership
+#: model:ir.model.fields,field_description:club_membership.field_club_membership_membership__website_message_ids
+msgid "Website Messages"
+msgstr "Messages du site web"
+
+#. module: club_membership
+#: model:ir.model.fields,help:club_membership.field_club_membership_membership__website_message_ids
+msgid "Website communication history"
+msgstr ""
