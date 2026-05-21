@@ -2,20 +2,21 @@ from datetime import datetime, timedelta
 
 from werkzeug.exceptions import Forbidden, NotFound
 
-from odoo import fields
+from odoo import _, fields
 from odoo.exceptions import UserError
 from odoo.http import request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 
 
-_STATE_LABELS = {
-    'draft': 'Brouillon',
-    'open': 'Ouvert',
-    'voting': 'En vote',
-    'accepted': 'Acceptée',
-    'rejected': 'Rejetée',
-    'withdrawn': 'Retirée',
-}
+def _state_labels():
+    return {
+        'draft': _('Draft'),
+        'open': _('Open'),
+        'voting': _('Voting'),
+        'accepted': _('Accepted'),
+        'rejected': _('Rejected'),
+        'withdrawn': _('Withdrawn'),
+    }
 
 
 class GovernancePortal(CustomerPortal):
@@ -33,7 +34,7 @@ class GovernancePortal(CustomerPortal):
     @route('/governance', auth='user', website=True, sitemap=True)
     def governance_list(self, page=1, state='voting', **kw):
         Proposal = request.env['social_governance.proposal'].sudo()
-        valid_states = list(_STATE_LABELS.keys())
+        valid_states = list(_state_labels().keys())
         if state not in valid_states:
             state = 'voting'
         domain = [('state', '=', state)]
@@ -48,17 +49,19 @@ class GovernancePortal(CustomerPortal):
             'proposals': proposals,
             'pager': pager,
             'state_filter': state,
-            'state_labels': _STATE_LABELS,
+            'state_labels': _state_labels(),
             'categories': categories,
             'page_name': 'governance',
             'error': kw.get('error'),
         })
 
-    # ── Créer une proposition ──────────────────────────────────────────────────
+    # ── Create a proposal ──────────────────────────────────────────────────────
 
-    @route('/governance/create', auth='user', methods=['POST'], website=True, csrf=True)
+    @route('/governance/create', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def governance_create(self, name='', description='', category_id='',
                           voting_closes_at='', **kw):
+        if request.httprequest.method == 'GET':
+            return request.redirect('/governance')
         name = (name or '').strip()
         description = (description or '').strip()
         if not name or not description:
@@ -96,7 +99,7 @@ class GovernancePortal(CustomerPortal):
             return request.redirect('/governance?error=create_failed')
         return request.redirect(f'/governance/{proposal.id}?created=1')
 
-    # ── Détail ─────────────────────────────────────────────────────────────────
+    # ── Detail ─────────────────────────────────────────────────────────────────
 
     @route('/governance/<int:proposal_id>', auth='user', website=True)
     def governance_detail(self, proposal_id, **kw):
@@ -114,7 +117,7 @@ class GovernancePortal(CustomerPortal):
         return request.render('social_governance.portal_governance_detail', {
             'proposal': proposal,
             'my_vote': my_vote[:1].choice if my_vote else False,
-            'state_labels': _STATE_LABELS,
+            'state_labels': _state_labels(),
             'is_author': is_author,
             'is_moderator': is_moderator,
             'deadline_hours': deadline_hours,
@@ -122,7 +125,7 @@ class GovernancePortal(CustomerPortal):
             'error': kw.get('error'),
         })
 
-    # ── Voter ──────────────────────────────────────────────────────────────────
+    # ── Vote ───────────────────────────────────────────────────────────────────
 
     @route('/governance/<int:proposal_id>/vote', auth='user', methods=['POST'],
            website=True, csrf=True)
@@ -138,7 +141,7 @@ class GovernancePortal(CustomerPortal):
             return request.redirect(f'/governance/{proposal_id}?error={e}')
         return request.redirect(f'/governance/{proposal_id}?voted=1')
 
-    # ── Ouvrir une proposition ────────────────────────────────────────────────
+    # ── Open a proposal ────────────────────────────────────────────────────────
 
     @route('/governance/<int:proposal_id>/open', auth='user', methods=['POST'],
            website=True, csrf=True)
@@ -155,7 +158,7 @@ class GovernancePortal(CustomerPortal):
             return request.redirect(f'/governance/{proposal_id}?error={e}')
         return request.redirect(f'/governance/{proposal_id}?opened=1')
 
-    # ── Lancer le vote ────────────────────────────────────────────────────────
+    # ── Start voting ───────────────────────────────────────────────────────────
 
     @route('/governance/<int:proposal_id>/start_voting', auth='user', methods=['POST'],
            website=True, csrf=True)
@@ -195,7 +198,7 @@ class GovernancePortal(CustomerPortal):
             return request.redirect(f'/governance/{proposal_id}?error={e}')
         return request.redirect(f'/governance/{proposal_id}?withdrawn=1')
 
-    # ── Journal des décisions ──────────────────────────────────────────────────
+    # ── Decisions log ──────────────────────────────────────────────────────────
 
     @route('/governance/log', auth='user', website=True, sitemap=True)
     def governance_log(self, page=1, **kw):

@@ -1,6 +1,7 @@
 import base64
 import datetime
 
+from odoo import _
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.http import request, route
 
@@ -50,12 +51,14 @@ class ProfileEditPortal(CustomerPortal):
             self._edit_context(profile, section=section),
         )
 
-    # ── Identité ──────────────────────────────────────────────────────────────
+    # ── Identity ──────────────────────────────────────────────────────────────
 
-    @route('/my/profile/edit/identity', auth='user', methods=['POST'], website=True, csrf=True)
+    @route('/my/profile/edit/identity', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def save_identity(self, pronouns='', bio='', birth_year='', city='', region='',
                       gender='non_specifie', orientation='non_specifie', quote='',
                       profile_image=None, cover_image=None, **kw):
+        if request.httprequest.method == 'GET':
+            return request.redirect('/my/profile/edit')
         profile = self._get_own_profile()
 
         try:
@@ -70,7 +73,7 @@ class ProfileEditPortal(CustomerPortal):
                     'club_social_profile.portal_profile_edit',
                     self._edit_context(
                         profile, section='identity',
-                        error="Vous devez avoir 18 ans ou plus.",
+                        error=_("You must be 18 or older."),
                     ),
                 )
 
@@ -92,14 +95,16 @@ class ProfileEditPortal(CustomerPortal):
         profile.write(vals)
         return request.render(
             'club_social_profile.portal_profile_edit',
-            self._edit_context(profile, section='identity', success="Profil mis à jour."),
+            self._edit_context(profile, section='identity', success=_("Profile updated.")),
         )
 
-    # ── Préférences ───────────────────────────────────────────────────────────
+    # ── Preferences ───────────────────────────────────────────────────────────
 
-    @route('/my/profile/edit/preferences', auth='user', methods=['POST'], website=True, csrf=True)
+    @route('/my/profile/edit/preferences', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def save_profile_preferences(self, visibility='members', availability='non_specifie',
                                  digest_email_enabled=False, stealth_name='', **kw):
+        if request.httprequest.method == 'GET':
+            return request.redirect('/my/profile/edit?section=preferences')
         profile = self._get_own_profile()
         form = request.httprequest.form
         looking_for_raw = [int(x) for x in form.getlist('looking_for_ids') if x.isdigit()]
@@ -118,5 +123,5 @@ class ProfileEditPortal(CustomerPortal):
         })
         return request.render(
             'club_social_profile.portal_profile_edit',
-            self._edit_context(profile, section='preferences', success="Préférences enregistrées."),
+            self._edit_context(profile, section='preferences', success=_("Preferences saved.")),
         )

@@ -37,7 +37,7 @@ class CirclesPortal(CustomerPortal):
             addable = connections.filtered(lambda u: u not in in_circle)
             circles_with_addable.append((circle, addable))
 
-        # Cercles d'autres utilisateurs dont je suis membre (lecture autorisée par rule_circle_member_read)
+        # Circles from other users where I am a member (read allowed via rule_circle_member_read)
         others_circles = request.env['social_circles.circle'].search([
             ('member_ids', 'in', user.id),
             ('profile_id.user_id', '!=', user.id),
@@ -60,11 +60,13 @@ class CirclesPortal(CustomerPortal):
             'error': kw.get('error'),
         })
 
-    # ── Créer ──────────────────────────────────────────────────────────────
+    # ── Create ─────────────────────────────────────────────────────────────
 
-    @route('/my/circles/create', auth='user', methods=['POST'], website=True, csrf=True)
+    @route('/my/circles/create', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def circle_create(self, type_id='', name='', description='', **kw):
         """Create a circle from a type_id (required) with an optional nickname."""
+        if request.httprequest.method == 'GET':
+            return request.redirect('/my/circles')
         try:
             type_id = int(type_id)
         except (ValueError, TypeError):
@@ -84,7 +86,7 @@ class CirclesPortal(CustomerPortal):
             return request.redirect('/my/circles?error=duplicate_type')
         return request.redirect('/my/circles?created=1')
 
-    # ── Modifier nom / description ─────────────────────────────────────────
+    # ── Edit nom / description ─────────────────────────────────────────
 
     @route('/my/circles/<int:circle_id>/update', auth='user', methods=['POST'], website=True, csrf=True)
     def circle_update(self, circle_id, name='', description='', **kw):
@@ -132,7 +134,7 @@ class CirclesPortal(CustomerPortal):
                 circle.remove_member(member)
         return request.redirect('/my/circles')
 
-    # ── Visibilité détaillée du profil ────────────────────────────────────
+    # ── Detailed profile visibility ────────────────────────────────────────
 
     @route('/my/circles/visibility', auth='user', methods=['POST'], website=True, csrf=True)
     def circle_visibility(self, detailed_visibility='members', detailed_visibility_circle_id='', **kw):
@@ -167,7 +169,7 @@ def _own_circle(circle_id):
 
 
 def _get_user_connections(user):
-    """Retourne les res.users avec qui l'utilisateur a une connexion acceptée."""
+    """Return res.users with whom the user has an accepted connection."""
     Connection = request.env['club_social_profile.connection'].sudo()
     sent = Connection.search([('user_id', '=', user.id), ('state', '=', 'accepted')])
     recv = Connection.search([('connected_user_id', '=', user.id), ('state', '=', 'accepted')])

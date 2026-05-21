@@ -35,8 +35,10 @@ class GroupPortal(CustomerPortal):
             'error': kw.get('error'),
         })
 
-    @route('/groups/create', auth='user', methods=['POST'], website=True, csrf=True)
+    @route('/groups/create', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def group_create(self, name='', description='', privacy='private', join_type='approval', **kw):
+        if request.httprequest.method == 'GET':
+            return request.redirect('/groups')
         name = (name or '').strip()
         if not name:
             return request.redirect('/groups?error=name_required')
