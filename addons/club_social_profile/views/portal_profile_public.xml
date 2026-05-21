@@ -2,13 +2,13 @@
 <odoo>
 
     <!-- ══ Page profil public ══════════════════════════════════════════════ -->
-    <template id="portal_profile_public" name="Profil membre">
+    <template id="portal_profile_public" name="Member profile">
         <t t-call="portal.portal_layout">
             <t t-set="head_title" t-value="display_name"/>
             <div class="o_portal_wrap">
                 <div class="container py-4">
 
-                    <!-- Bannière -->
+                    <!-- Banner -->
                     <div class="position-relative mb-4" style="height:200px; background:#1a1a2e; border-radius:12px; overflow:hidden;">
                         <t t-if="profile.cover_image">
                             <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/cover_image"
@@ -36,7 +36,7 @@
                         <!-- ── Colonne principale ── -->
                         <div class="col-lg-8">
 
-                            <!-- Identité -->
+                            <!-- Identity -->
                             <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
                                 <div>
                                     <h1 class="mb-1" style="font-size:1.6rem;" t-out="display_name"/>
@@ -60,20 +60,20 @@
                                             <form t-attf-action="/api/connections/remove/#{target_user.id}" method="post">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                                 <button type="submit" class="btn btn-outline-secondary btn-sm">
-                                                    ✓ Connecté
+                                                    ✓ Connected
                                                 </button>
                                             </form>
                                         </t>
                                         <t t-elif="connection_state == 'pending_sent'">
                                             <button class="btn btn-outline-secondary btn-sm" disabled="1">
-                                                ⏳ Demande envoyée
+                                                ⏳ Request sent
                                             </button>
                                         </t>
                                         <t t-elif="connection_state == 'pending_received'">
                                             <form t-attf-action="/api/connections/accept/#{target_user.id}" method="post">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                                 <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
-                                                    Accepter la demande
+                                                    Accept the request
                                                 </button>
                                             </form>
                                         </t>
@@ -81,7 +81,7 @@
                                             <form t-attf-action="/api/connections/request/#{target_user.id}" method="post">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                                 <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
-                                                    + Se connecter
+                                                    + Connect
                                                 </button>
                                             </form>
                                         </t>
@@ -89,11 +89,15 @@
                                            class="btn btn-outline-secondary btn-sm">
                                             💬 Message
                                         </a>
+                                        <a t-attf-href="/report/club_social_profile.profile/#{profile.id}"
+                                           class="btn btn-outline-danger btn-sm">
+                                            🚩 Signaler
+                                        </a>
                                     </div>
                                 </t>
                                 <t t-if="is_own">
                                     <a href="/my/profile/edit" class="btn btn-outline-secondary btn-sm">
-                                        ✏️ Modifier
+                                        ✏️ Edit
                                     </a>
                                 </t>
                             </div>
@@ -102,10 +106,10 @@
                             <div class="d-flex flex-wrap gap-2 mb-4">
                                 <t t-if="profile.availability and profile.availability != 'non_specifie'">
                                     <t t-set="_avail_labels" t-value="{
-                                        'disponible': ('🟢', 'Disponible'),
-                                        'couple_ouvert': ('💚', 'Couple ouvert'),
-                                        'couple_ferme': ('🔴', 'Couple fermé'),
-                                        'pas_disponible': ('⛔', 'Non disponible'),
+                                        'disponible': ('🟢', 'Available'),
+                                        'couple_ouvert': ('💚', 'Open couple'),
+                                        'couple_ferme': ('🔴', 'Closed couple'),
+                                        'pas_disponible': ('⛔', 'Not available'),
                                     }"/>
                                     <t t-set="_av" t-value="_avail_labels.get(profile.availability)"/>
                                     <t t-if="_av">
@@ -120,8 +124,8 @@
                                 <t t-if="profile.orientation and profile.orientation != 'non_specifie'">
                                     <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['orientation'].selection).get(profile.orientation, '')"/>
                                 </t>
-                                <t t-foreach="profile.language_ids" t-as="lang">
-                                    <span class="badge rounded-pill bg-light text-dark border" t-out="lang.name"/>
+                                <t t-foreach="profile.language_ids" t-as="spoken_lang">
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="spoken_lang.name"/>
                                 </t>
                             </div>
 
@@ -129,7 +133,7 @@
                             <t t-if="profile.bio">
                                 <div class="card mb-4">
                                     <div class="card-body">
-                                        <h5 class="card-title" style="color:#e94560;">À propos</h5>
+                                        <h5 class="card-title" style="color:#e94560;">About</h5>
                                         <p class="mb-0" style="white-space:pre-line;" t-out="profile.bio"/>
                                     </div>
                                 </div>
@@ -142,12 +146,12 @@
                                 </blockquote>
                             </t>
 
-                            <!-- Section BDSM injectée par club_social_profile_bdsm (XPath) -->
+                            <!-- BDSM section injected by club_social_profile_bdsm (XPath) -->
                             <div id="profile_bdsm_section"/>
 
-                            <!-- Posts récents -->
+                            <!-- Recent posts -->
                             <t t-if="recent_posts">
-                                <h5 class="mb-3 mt-4" style="color:#1a1a2e;">Publications récentes</h5>
+                                <h5 class="mb-3 mt-4" style="color:#1a1a2e;">Recent posts</h5>
                                 <div class="d-flex flex-column gap-3">
                                     <t t-foreach="recent_posts" t-as="post">
                                         <div class="card">
@@ -168,19 +172,19 @@
 
                         </div>
 
-                        <!-- ── Colonne latérale ── -->
+                        <!-- ── Sidebar ── -->
                         <div class="col-lg-4 mt-4 mt-lg-0">
 
-                            <!-- Compatibilité BDSM (injecté par club_social_profile_bdsm) -->
+                            <!-- BDSM compatibility (injected by club_social_profile_bdsm) -->
                             <div id="profile_compat_widget"
                                  t-att-data-profile-id="profile.id"
                                  t-att-data-is-own="'1' if is_own else '0'"/>
 
-                            <!-- Galeries -->
+                            <!-- Galleries -->
                             <t t-if="galleries">
                                 <div class="card mb-4">
                                     <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
-                                        📷 Galeries
+                                        📷 Galleries
                                     </div>
                                     <div class="card-body p-2">
                                         <div class="row g-2">
@@ -202,11 +206,11 @@
                                 </div>
                             </t>
 
-                            <!-- Connexions mutuelles -->
+                            <!-- Mutual connections -->
                             <t t-if="mutual_connections">
                                 <div class="card mb-4">
                                     <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
-                                        🤝 Connexions en commun
+                                        🤝 Mutual connections
                                     </div>
                                     <ul class="list-group list-group-flush">
                                         <t t-foreach="mutual_connections" t-as="mc">
@@ -231,7 +235,7 @@
                                 </div>
                             </t>
 
-                            <!-- Infos profil -->
+                            <!-- Profile info -->
                             <div class="card">
                                 <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
                                     ℹ️ Infos
@@ -239,7 +243,7 @@
                                 <ul class="list-group list-group-flush">
                                     <t t-if="profile.age and profile.age >= 18">
                                         <li class="list-group-item" style="font-size:0.9rem;">
-                                            🎂 <t t-out="profile.age"/> ans
+                                            🎂 <t t-out="profile.age"/> years old
                                         </li>
                                     </t>
                                     <t t-if="profile.looking_for_ids">
@@ -249,7 +253,7 @@
                                     </t>
                                     <t t-if="not is_own">
                                         <li class="list-group-item text-muted" style="font-size:0.8rem;">
-                                            👁️ <t t-out="profile.profile_view_count"/> visite(s) de profil
+                                            👁️ <t t-out="profile.profile_view_count"/> profile view(s)
                                         </li>
                                     </t>
                                 </ul>
@@ -263,32 +267,32 @@
     </template>
 
     <!-- ══ Page profil restreint ═══════════════════════════════════════════ -->
-    <template id="portal_profile_restricted" name="Profil restreint">
+    <template id="portal_profile_restricted" name="Restricted profile">
         <t t-call="portal.portal_layout">
             <t t-set="head_title" t-value="display_name"/>
             <div class="o_portal_wrap">
                 <div class="container py-5 text-center" style="max-width:500px;">
                     <div style="font-size:3rem;" class="mb-3">🔒</div>
                     <h2 t-out="display_name"/>
-                    <p class="text-muted">Ce profil est visible uniquement pour les connexions de ce membre.</p>
+                    <p class="text-muted">This profile is only visible to this member's connections.</p>
 
                     <t t-if="not is_member">
-                        <p>Vous devez être membre actif pour accéder aux profils.</p>
+                        <p>You must be an active member to access profiles.</p>
                         <a href="/membership" class="btn" style="background:#e94560; color:white;">
-                            Devenir membre
+                            Become a member
                         </a>
                     </t>
                     <t t-elif="connection_state == 'pending_sent'">
-                        <p class="text-muted">Votre demande de connexion est en attente.</p>
+                        <p class="text-muted">Your connection request is pending.</p>
                         <a href="/my/connections" class="btn btn-outline-secondary">
-                            Voir mes demandes
+                            View my requests
                         </a>
                     </t>
                     <t t-else="">
                         <form t-attf-action="/api/connections/request/#{profile.user_id.id}" method="post">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <button type="submit" class="btn" style="background:#e94560; color:white;">
-                                + Demander à se connecter
+                                + Request connection
                             </button>
                         </form>
                     </t>

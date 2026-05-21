@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'data/ir_cron.xml',
         'views/moderation_views.xml',
+        'views/portal_templates.xml',
     ],
     'installable': True,
     'application': False,
