@@ -5,62 +5,62 @@
         <field name="name">social_onboarding.wizard.form</field>
         <field name="model">social_onboarding.wizard</field>
         <field name="arch" type="xml">
-            <form string="Compléter mon profil" create="false" delete="false">
+            <form string="Complete my profile" create="false" delete="false">
                 <sheet>
 
-                    <!-- Indicateur de progression -->
+                    <!-- Progress indicator -->
                     <div class="text-center mb-4">
-                        <span invisible="step != 'welcome'" class="badge rounded-pill bg-primary fs-6">Étape 1/4 — Bienvenue</span>
-                        <span invisible="step != 'about'" class="badge rounded-pill bg-primary fs-6">Étape 2/4 — À propos</span>
-                        <span invisible="step != 'preferences'" class="badge rounded-pill bg-primary fs-6">Étape 3/4 — Préférences</span>
-                        <span invisible="step != 'done'" class="badge rounded-pill bg-success fs-6">Profil complété ✓</span>
+                        <span invisible="step != 'welcome'" class="badge rounded-pill bg-primary fs-6">Step 1/4 — Welcome</span>
+                        <span invisible="step != 'about'" class="badge rounded-pill bg-primary fs-6">Step 2/4 — About</span>
+                        <span invisible="step != 'preferences'" class="badge rounded-pill bg-primary fs-6">Step 3/4 — Preferences</span>
+                        <span invisible="step != 'done'" class="badge rounded-pill bg-success fs-6">Profile complete ✓</span>
                     </div>
 
-                    <!-- Étape 1 : Bienvenue + photo -->
+                    <!-- Step 1: Welcome + photo -->
                     <div invisible="step != 'welcome'">
                         <div class="oe_title text-center mb-4">
-                            <h1>Bienvenue dans votre réseau social !</h1>
+                            <h1>Welcome to your social network!</h1>
                             <p class="lead text-muted">
-                                Prenez quelques minutes pour personnaliser votre profil.
-                                Vous pouvez ignorer cette étape et revenir plus tard.
+                                Take a few minutes to personalize your profile.
+                                You can skip this step and come back later.
                             </p>
                         </div>
-                        <group string="Photo de profil" col="1">
+                        <group string="Profile picture" col="1">
                             <field name="profile_image" widget="image"
                                    options="{'size': [200, 200], 'preview_image': 'profile_image'}"
                                    nolabel="1"/>
                         </group>
                     </div>
 
-                    <!-- Étape 2 : À propos -->
+                    <!-- Step 2: About -->
                     <div invisible="step != 'about'">
                         <div class="oe_title mb-3">
-                            <h2>À propos de vous</h2>
-                            <p class="text-muted">Ces informations sont partagées selon vos paramètres de visibilité.</p>
+                            <h2>About you</h2>
+                            <p class="text-muted">This information is shared according to your visibility settings.</p>
                         </div>
                         <group>
                             <group>
-                                <field name="pronouns" placeholder="ex. il/lui, elle/elle, iel/iel"/>
-                                <field name="birth_year" placeholder="ex. 1990"/>
-                                <field name="city" placeholder="ex. Montréal"/>
+                                <field name="pronouns" placeholder="e.g. he/him, she/her, they/them"/>
+                                <field name="birth_year" placeholder="e.g. 1990"/>
+                                <field name="city" placeholder="e.g. Montréal"/>
                             </group>
                             <group>
-                                <field name="bio" placeholder="Parlez-nous de vous..." widget="text"/>
+                                <field name="bio" placeholder="Tell us about yourself..." widget="text"/>
                             </group>
                         </group>
                     </div>
 
-                    <!-- Étape 3 : Préférences -->
+                    <!-- Step 3: Preferences -->
                     <div invisible="step != 'preferences'">
                         <div class="oe_title mb-3">
-                            <h2>Vos préférences</h2>
-                            <p class="text-muted">Vous pourrez modifier ces paramètres à tout moment dans votre profil.</p>
+                            <h2>Your preferences</h2>
+                            <p class="text-muted">You can change these settings at any time from your profile.</p>
                         </div>
                         <group>
-                            <group string="Confidentialité">
+                            <group string="Privacy">
                                 <field name="visibility" widget="radio"/>
                             </group>
-                            <group string="Disponibilité">
+                            <group string="Availability">
                                 <field name="availability" widget="radio"/>
                             </group>
                             <group string="Notifications" colspan="2">
@@ -69,20 +69,20 @@
                         </group>
                     </div>
 
-                    <!-- Étape 4 : Terminé -->
+                    <!-- Step 4: Done -->
                     <div invisible="step != 'done'" class="text-center py-4">
                         <div class="mb-4">
-                            <i class="fa fa-check-circle fa-5x text-success"/>
+                            <i class="fa fa-check-circle fa-5x text-success" title="Done"/>
                         </div>
-                        <h2 class="text-success">Votre profil est complété !</h2>
+                        <h2 class="text-success">Your profile is complete!</h2>
                         <p class="lead text-muted">
-                            Vous pouvez maintenant explorer le réseau social,
-                            publier des posts, rejoindre des groupes et vous connecter avec d'autres membres.
+                            You can now explore the social network,
+                            post updates, join groups, and connect with other members.
                         </p>
                         <div class="d-flex justify-content-center gap-3 mt-4">
                             <a href="/web#model=social_base.post&amp;view_type=list"
                                class="btn btn-outline-primary">
-                                <i class="fa fa-newspaper-o me-1"/> Voir le fil
+                                <i class="fa fa-newspaper-o me-1" title="Feed"/> View feed
                             </a>
                         </div>
                     </div>
@@ -90,28 +90,28 @@
                 </sheet>
 
                 <footer>
-                    <!-- Retour -->
-                    <button name="action_previous" string="Précédent" type="object"
+                    <!-- Back -->
+                    <button name="action_previous" string="Previous" type="object"
                             class="btn-secondary"
                             invisible="step in ('welcome', 'done')"/>
 
-                    <!-- Suivant (étapes 1-3) -->
-                    <button name="action_next" string="Suivant" type="object"
+                    <!-- Next (steps 1-3) -->
+                    <button name="action_next" string="Next" type="object"
                             class="btn-primary"
                             invisible="step in ('preferences', 'done')"/>
 
-                    <!-- Terminer (étape 3) -->
-                    <button name="action_finish" string="Terminer" type="object"
+                    <!-- Finish (step 3) -->
+                    <button name="action_finish" string="Finish" type="object"
                             class="btn-primary"
                             invisible="step != 'preferences'"/>
 
-                    <!-- Fermer (étape 4) -->
-                    <button name="action_finish" string="Fermer" type="object"
+                    <!-- Close (step 4) -->
+                    <button name="action_finish" string="Close" type="object"
                             class="btn-primary"
                             invisible="step != 'done'"/>
 
-                    <!-- Ignorer (étapes 1-3) -->
-                    <button name="action_skip" string="Plus tard" type="object"
+                    <!-- Skip (steps 1-3) -->
+                    <button name="action_skip" string="Later" type="object"
                             class="btn-link text-muted"
                             invisible="step == 'done'"/>
                 </footer>
@@ -119,9 +119,9 @@
         </field>
     </record>
 
-    <!-- Action d'ouverture de l'assistant -->
+    <!-- Action to open the wizard -->
     <record id="action_open_social_onboarding" model="ir.actions.server">
-        <field name="name">Compléter mon profil</field>
+        <field name="name">Complete my profile</field>
         <field name="model_id" ref="model_social_onboarding_wizard"/>
         <field name="state">code</field>
         <field name="code">action = env['social_onboarding.wizard'].action_open()</field>

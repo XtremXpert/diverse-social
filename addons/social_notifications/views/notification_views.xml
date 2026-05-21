@@ -16,7 +16,7 @@
     </record>
 
     <record id="action_my_notifications" model="ir.actions.act_window">
-        <field name="name">Mes notifications</field>
+        <field name="name">My notifications</field>
         <field name="res_model">club_social_profile.notification</field>
         <field name="view_mode">list</field>
         <field name="domain">[('user_id', '=', uid)]</field>

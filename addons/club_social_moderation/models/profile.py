@@ -2,7 +2,7 @@ from odoo import fields, models, api
 
 
 class ClubSocialProfileModeration(models.Model):
-    """Étend club_social_profile.profile avec les champs de modération."""
+    """Extends club_social_profile.profile with moderation fields."""
     _inherit = 'club_social_profile.profile'
 
     ban_ids = fields.One2many('club_social_moderation.ban', 'profile_id', string='Bans')

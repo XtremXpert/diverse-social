@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="portal_notifications_page" name="Mes notifications">
+    <template id="portal_notifications_page" name="My notifications">
         <t t-call="portal.portal_layout">
-            <t t-set="head_title">Mes notifications</t>
+            <t t-set="head_title">My notifications</t>
             <div class="o_portal_wrap">
                 <div class="container py-4" style="max-width:700px;">
 
@@ -12,14 +12,14 @@
                             <t t-if="unread_count">
                                 <span class="badge ms-2"
                                       style="background:#e94560; color:white; font-size:0.75rem;">
-                                    <t t-out="unread_count"/> non lue(s)
+                                    <t t-out="unread_count"/> unread
                                 </span>
                             </t>
                         </h2>
                         <t t-if="unread_count">
                             <form action="/social/api/notifications/read_all" method="post">
                                 <button type="submit" class="btn btn-sm btn-outline-secondary">
-                                    Tout marquer comme lu
+                                    Mark all as read
                                 </button>
                             </form>
                         </t>
@@ -29,11 +29,11 @@
                     <div class="d-flex gap-2 mb-4">
                         <a t-attf-href="/social/notifications?filter=all"
                            t-attf-class="btn btn-sm #{'btn-dark' if filter == 'all' else 'btn-outline-secondary'}">
-                            Toutes
+                            All
                         </a>
                         <a t-attf-href="/social/notifications?filter=unread"
                            t-attf-class="btn btn-sm #{'btn-dark' if filter == 'unread' else 'btn-outline-secondary'}">
-                            Non lues
+                            Unread
                             <t t-if="unread_count">
                                 (<t t-out="unread_count"/>)
                             </t>
@@ -69,12 +69,12 @@
                                 <div t-attf-class="d-flex align-items-start gap-3 p-3 rounded border #{'bg-white' if notif.is_read else ''}"
                                      t-attf-style="#{'background:#fffbf0;' if not notif.is_read else ''}">
 
-                                    <!-- Icône type -->
+                                    <!-- Type icon -->
                                     <div style="font-size:1.5rem; flex-shrink:0; margin-top:2px;">
                                         <t t-out="_type_icons.get(notif.type, '🔔')"/>
                                     </div>
 
-                                    <!-- Contenu -->
+                                    <!-- Content -->
                                     <div class="flex-grow-1 min-w-0">
                                         <div style="font-size:0.95rem; color:#333; line-height:1.4;">
                                             <t t-if="notif.url">
@@ -90,11 +90,11 @@
                                             <t t-if="notif.actor_id">
                                                 <t t-out="notif.actor_id.name"/> ·
                                             </t>
-                                            <t t-out="notif.create_date.strftime('%d/%m/%Y à %H:%M') if notif.create_date else ''"/>
+                                            <t t-out="notif.create_date.strftime('%d/%m/%Y at %H:%M') if notif.create_date else ''"/>
                                         </div>
                                     </div>
 
-                                    <!-- Indicateur non-lu + action -->
+                                    <!-- Unread indicator + action -->
                                     <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
                                         <t t-if="not notif.is_read">
                                             <div style="width:8px; height:8px; background:#e94560; border-radius:50%;"/>
@@ -103,7 +103,7 @@
                                                 <button type="submit"
                                                         class="btn btn-link p-0 text-muted"
                                                         style="font-size:0.75rem;">
-                                                    Lu ✓
+                                                    Read ✓
                                                 </button>
                                             </form>
                                         </t>
@@ -124,8 +124,8 @@
                         <div class="text-center py-5 text-muted">
                             <div style="font-size:3rem;" class="mb-2">🔔</div>
                             <p>
-                                <t t-if="filter == 'unread'">Aucune notification non lue.</t>
-                                <t t-else="">Aucune notification pour l'instant.</t>
+                                <t t-if="filter == 'unread'">No unread notifications.</t>
+                                <t t-else="">No notifications yet.</t>
                             </p>
                         </div>
                     </t>
@@ -135,9 +135,9 @@
         </t>
     </template>
 
-    <!-- Lien dans la navigation portail -->
+    <!-- Portal navigation entry -->
     <template id="portal_my_home_notifications" inherit_id="portal.portal_my_home"
-              name="Portail — Notifications">
+              name="Portal — Notifications">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Notifications</t>

@@ -18,7 +18,7 @@ class SocialStory(models.Model):
                     user_id=user.id,
                     actor_id=story.author_id.id,
                     notif_type='story_new',
-                    body=_('%s a publié une nouvelle story.', story.author_id.name),
+                    body=_('%s published a new story.', story.author_id.name),
                     ref_model='social_story.story',
                     ref_id=story.id,
                 )

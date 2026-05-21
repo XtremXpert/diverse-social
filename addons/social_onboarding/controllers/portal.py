@@ -1,23 +1,26 @@
 import base64
 import datetime
 
+from odoo import _
 from odoo.http import request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 _STEPS = ['welcome', 'about', 'preferences', 'done']
 
-_STEP_TITLES = {
-    'welcome': 'Bienvenue',
-    'about': 'À propos de moi',
-    'preferences': 'Mes préférences',
-    'done': 'Profil complété !',
-}
+
+def _step_titles():
+    return {
+        'welcome': _('Welcome'),
+        'about': _('About me'),
+        'preferences': _('My preferences'),
+        'done': _('Profile complete!'),
+    }
 
 
 class OnboardingPortal(CustomerPortal):
 
     def home(self, **kw):
-        """Redirige les nouveaux membres actifs vers /onboarding (une fois par session)."""
+        """Redirect newly active members to /onboarding (once per session)."""
         if not request.session.get('onboarding_prompted'):
             user = request.env.user
             partner = user.partner_id.sudo()
@@ -39,7 +42,7 @@ class OnboardingPortal(CustomerPortal):
             step = 'done' if profile.onboarding_done else 'welcome'
         return self._render_onboarding(profile, step)
 
-    # ── Étape 1 : photo de profil ─────────────────────────────────────────────
+    # ── Step 1: profile picture ───────────────────────────────────────────────
 
     @route('/onboarding/save/welcome', auth='user', methods=['POST'], website=True, csrf=True)
     def save_welcome(self, profile_image=None, **kw):
@@ -51,9 +54,12 @@ class OnboardingPortal(CustomerPortal):
             vals['profile_image'] = base64.b64encode(profile_image.read()).decode('ascii')
         if vals:
             profile.write(vals)
-        return request.redirect('/onboarding?step=about')
+        # Stay on `welcome` so the user can immediately see their newly
+        # uploaded photo before clicking "Next". Moving to the next step is
+        # now a separate link, not the submit button of the upload form.
+        return request.redirect('/onboarding?step=welcome')
 
-    # ── Étape 2 : à propos ────────────────────────────────────────────────────
+    # ── Step 2: about ─────────────────────────────────────────────────────────
 
     @route('/onboarding/save/about', auth='user', methods=['POST'], website=True, csrf=True)
     def save_about(self, pronouns='', bio='', birth_year='', city='', region='',
@@ -71,7 +77,7 @@ class OnboardingPortal(CustomerPortal):
             if 0 < age < 18:
                 return self._render_onboarding(
                     profile, 'about',
-                    error="Vous devez avoir 18 ans ou plus pour accéder au réseau social.",
+                    error=_("You must be 18 or older to access the social network."),
                     form_values={'pronouns': pronouns, 'bio': bio,
                                  'birth_year': birth_year, 'city': city,
                                  'region': region, 'gender': gender,
@@ -95,7 +101,7 @@ class OnboardingPortal(CustomerPortal):
         })
         return request.redirect('/onboarding?step=preferences')
 
-    # ── Étape 3 : préférences ─────────────────────────────────────────────────
+    # ── Step 3: preferences ───────────────────────────────────────────────────
 
     @route('/onboarding/save/preferences', auth='user', methods=['POST'], website=True, csrf=True)
     def save_preferences(self, visibility='members', availability='non_specifie',
@@ -107,12 +113,12 @@ class OnboardingPortal(CustomerPortal):
         valid_availabilities = ('disponible', 'couple_ouvert', 'couple_ferme',
                                 'pas_disponible', 'non_specifie')
 
-        # Many2many : looking_for_ids et language_ids via getlist
+        # Many2many: looking_for_ids and language_ids via getlist
         form = request.httprequest.form
         looking_for_raw = [int(x) for x in form.getlist('looking_for_ids') if x.isdigit()]
         language_raw    = [int(x) for x in form.getlist('language_ids') if x.isdigit()]
 
-        # Valider que les IDs existent
+        # Make sure submitted IDs exist
         valid_lf  = request.env['club_social_profile.looking_for'].sudo().browse(looking_for_raw).exists().ids
         valid_lng = request.env['club_social_profile.language'].sudo().browse(language_raw).exists().ids
 
@@ -126,7 +132,7 @@ class OnboardingPortal(CustomerPortal):
         profile.write({'onboarding_done': True})
         return request.redirect('/onboarding?step=done')
 
-    # ── Ignorer ───────────────────────────────────────────────────────────────
+    # ── Skip ──────────────────────────────────────────────────────────────────
 
     @route('/onboarding/skip', auth='user', methods=['POST'], website=True, csrf=True)
     def skip(self, **kw):
@@ -141,10 +147,13 @@ class OnboardingPortal(CustomerPortal):
         language_opts = request.env['club_social_profile.language'].sudo().search(
             [], order='sequence asc'
         )
+        # `no-store` disables the browser bfcache: without it, clicking
+        # "Back" after a photo upload would re-serve the cached HTML with
+        # the old `?unique=...` and the image would never refresh.
         return request.render('social_onboarding.portal_onboarding', {
             'profile': profile,
             'step': step,
-            'step_titles': _STEP_TITLES,
+            'step_titles': _step_titles(),
             'steps': _STEPS,
             'step_index': _STEPS.index(step),
             'error': error,
@@ -152,4 +161,4 @@ class OnboardingPortal(CustomerPortal):
             'looking_for_opts': looking_for_opts,
             'language_opts': language_opts,
             'page_name': 'onboarding',
-        })
+        }, headers={'Cache-Control': 'no-store, max-age=0'})

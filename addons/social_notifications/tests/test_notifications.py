@@ -40,7 +40,7 @@ class TestSocialNotifications(TransactionCase):
     # ── Bus push on create ────────────────────────────────────────────────────
 
     def test_notification_create_triggers_bus(self):
-        # Vérifie juste que la création ne lève pas d'erreur (bus mock en test)
+        # Just verify that create does not raise (bus mock in tests)
         notif = self.Notif.sudo().create({
             'user_id': self.bob.id,
             'actor_id': self.alice.id,
@@ -196,7 +196,7 @@ class TestSocialNotifications(TransactionCase):
         before = len(self._notifs_for(self.carol, 'story_new'))
         self.env['social_story.story'].sudo().create({
             'author_id': self.alice.id,
-            'name': 'Story privée',
+            'name': 'Private story',
         })
         self.assertEqual(len(self._notifs_for(self.carol, 'story_new')), before)
 

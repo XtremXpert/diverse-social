@@ -1,8 +1,8 @@
 {
-    'name': 'Club — Adhésion',
+    'name': 'Club — Memberships',
     'version': '19.0.1.0.0',
     'category': 'Club',
-    'summary': "Gestion des adhésions : statut, période, cotisation, accès réseau social",
+    'summary': "Membership management: status, period, dues, social network access",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [

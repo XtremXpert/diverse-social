@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="membership_page" name="Adhésions — Vitrine">
+    <template id="membership_page" name="Memberships — Vitrine">
         <t t-call="website.layout">
             <div class="oe_structure" id="oe_structure_membership_top"/>
 
@@ -9,9 +9,9 @@
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-8 text-center">
-                            <h1>Devenir membre</h1>
+                            <h1>Become a member</h1>
                             <p class="lead text-muted">
-                                Rejoignez notre communauté et accédez au réseau social privé du club.
+                                Join our community and access the club's private social network.
                             </p>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                                                     / <t t-esc="mtype.duration_months"/> mois
                                                 </span>
                                                 <span class="text-muted small ms-1" t-if="not mtype.duration_months">
-                                                    à vie
+                                                    lifetime
                                                 </span>
                                             </div>
                                             <t t-if="mtype.id in type_products">
@@ -66,7 +66,7 @@
 
                     <div class="row mt-5" t-if="not types">
                         <div class="col text-center text-muted">
-                            <p>Aucun type d'adhésion disponible pour le moment.</p>
+                            <p>No membership type available right now.</p>
                         </div>
                     </div>
                 </div>

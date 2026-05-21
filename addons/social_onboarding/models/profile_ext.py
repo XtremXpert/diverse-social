@@ -5,13 +5,12 @@ class ClubSocialProfileOnboarding(models.Model):
     _inherit = 'club_social_profile.profile'
 
     def action_open_onboarding(self):
-        """Redirige vers le parcours d'intégration côté portail public.
+        """Redirect to the public portal onboarding flow.
 
-        Le wizard backend existe toujours (utilisé par les tests et certaines
-        actions admin), mais le bouton "Compléter mon profil" sur la bannière
-        de la fiche profil doit envoyer le membre vers `/onboarding`
-        (interface front, multi-étapes complète) plutôt que vers la vue
-        formulaire backend mono-étape.
+        The backend wizard still exists (used by tests and some admin
+        actions), but the "Complete my profile" button on the profile
+        banner must send the member to ``/onboarding`` — the multi-step
+        public flow — rather than to the single-page backend form.
         """
         return {
             'type': 'ir.actions.act_url',

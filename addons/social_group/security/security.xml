@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <!-- Groupes publics visibles à tous les membres -->
+        <!-- Public groups visible to all members -->
         <record id="social_group_user_rule" model="ir.rule">
             <field name="name">Social Group: User Access</field>
             <field name="model_id" ref="model_social_group_group"/>
@@ -14,7 +14,7 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- Créateur et admins peuvent modifier leur groupe -->
+        <!-- Creator and admins can modify their group -->
         <record id="social_group_admin_write_rule" model="ir.rule">
             <field name="name">Social Group: Admin Write</field>
             <field name="model_id" ref="model_social_group_group"/>
@@ -38,7 +38,7 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
-        <!-- Demandes d'adhésion: l'utilisateur voit ses propres demandes -->
+        <!-- Join requests: users see their own requests -->
         <record id="social_group_join_request_user_rule" model="ir.rule">
             <field name="name">Social Group Join Request: User Access</field>
             <field name="model_id" ref="model_social_group_join_request"/>

@@ -179,7 +179,7 @@ class TestDiscovery(TransactionCase):
     # ── age_verified / onboarding_done filters ────────────────────────────────
 
     def test_age_verified_filter(self):
-        """Filtre age_verified : seuls les profils vérifiés retenus."""
+        """age_verified filter: only verified profiles are kept."""
         self.alice_p.sudo().write({'birth_year': 1990})
         self.carol_p.sudo().write({'birth_year': 0})
         crit = self._make_criteria(age_verified=True)
@@ -199,7 +199,7 @@ class TestDiscovery(TransactionCase):
     # ── max_age=0 allowed ─────────────────────────────────────────────────────
 
     def test_max_age_zero_no_upper_limit(self):
-        """max_age=0 (défaut) ne doit pas lever d'erreur et ne filtre pas."""
+        """max_age=0 (default) must not raise and must not filter."""
         crit = self._make_criteria(max_age=0)
         profiles = crit._find_profiles()
         self.assertIn(self.alice_p, profiles)
@@ -214,7 +214,7 @@ class TestDiscovery(TransactionCase):
         self.assertTrue(result)
 
     def test_is_reachable_with_gate_no_request(self):
-        """_is_reachable retourne False si gate active sans demande approuvée."""
+        """_is_reachable returns False if gate is active without an approved request."""
         if 'social_consent.gate' not in self.env:
             self.skipTest('social_consent not installed')
         gate = self.env['social_consent.gate'].sudo().create({
@@ -240,13 +240,13 @@ class TestDiscovery(TransactionCase):
     # ── action_open_discovery ─────────────────────────────────────────────────
 
     def test_action_open_discovery_no_default_returns_list(self):
-        """Sans recherche par défaut → action liste les critères."""
+        """Without a default search → the action lists criteria."""
         action = self.searcher.action_open_discovery()
         self.assertEqual(action['type'], 'ir.actions.act_window')
         self.assertEqual(action['res_model'], 'social_discovery.criteria')
 
     def test_action_open_discovery_with_default_runs_search(self):
-        crit = self._make_criteria(name='Défaut', is_default=True)
+        crit = self._make_criteria(name='Default', is_default=True)
         action = self.searcher.action_open_discovery()
         self.assertEqual(action['res_model'], 'club_social_profile.profile')
 

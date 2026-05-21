@@ -23,7 +23,7 @@
                     <a t-attf-href="/my/stories?filter=active"
                        t-attf-class="btn btn-sm me-1 #{filter == 'active' and 'btn-primary' or 'btn-outline-secondary'}">Actives</a>
                     <a t-attf-href="/my/stories?filter=expired"
-                       t-attf-class="btn btn-sm me-1 #{filter == 'expired' and 'btn-primary' or 'btn-outline-secondary'}">Expirées</a>
+                       t-attf-class="btn btn-sm me-1 #{filter == 'expired' and 'btn-primary' or 'btn-outline-secondary'}">Expired</a>
                     <a t-attf-href="/my/stories?filter=all"
                        t-attf-class="btn btn-sm #{filter == 'all' and 'btn-primary' or 'btn-outline-secondary'}">Toutes</a>
                 </div>
@@ -40,7 +40,7 @@
                                                 <span class="text-success">Active</span> · expire <t t-esc="story.expires_at"/>
                                             </t>
                                             <t t-else="">
-                                                <span class="text-muted">Expirée</span>
+                                                <span class="text-muted">Expired</span>
                                             </t>
                                         </p>
                                         <t t-if="story.state == 'active'">
@@ -56,7 +56,7 @@
                     </div>
                 </t>
                 <t t-else="">
-                    <p class="text-muted text-center">Aucune story dans cette catégorie.</p>
+                    <p class="text-muted text-center">No stories in this category.</p>
                 </t>
             </div>
         </t>

@@ -1,8 +1,8 @@
 {
-    'name': 'Club — Adhésion via vente',
+    'name': 'Club — Sale-driven memberships',
     'version': '19.0.1.0.0',
     'category': 'Club',
-    'summary': "Activation automatique des adhésions à la confirmation de commande et au paiement",
+    'summary': "Automatic membership activation on order confirmation and payment",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [

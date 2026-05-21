@@ -3,7 +3,7 @@
     <data>
 
         <record id="group_membership_manager" model="res.groups">
-            <field name="name">Club / Gestionnaire des adhésions</field>
+            <field name="name">Club / Membership Manager</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 

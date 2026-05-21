@@ -188,7 +188,7 @@ class TestBlock(TransactionCase):
         # Cleanup
         self.carol_p.with_user(self.carol).action_panic_lift()
 
-    # ── Mute — cas supplémentaires ────────────────────────────────────────────
+    # ── Mute — extra cases ────────────────────────────────────────────────────
 
     def test_mute_idempotent(self):
         self.Mute.with_user(self.alice).mute_user(self.bob)
@@ -232,7 +232,7 @@ class TestBlock(TransactionCase):
         count = self.Mute.cron_expire_mutes()
         self.assertGreaterEqual(count, 1)
 
-    # ── Panic — cas supplémentaires ───────────────────────────────────────────
+    # ── Panic — extra cases ───────────────────────────────────────────────────
 
     def test_panic_saves_previous_visibility(self):
         self.alice_p.write({'visibility': 'connections'})

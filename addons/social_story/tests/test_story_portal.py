@@ -71,10 +71,10 @@ class TestStoryPortalData(TransactionCase):
         self.assertIn(self.active_story, active_stories)
         self.assertNotIn(expired, active_stories)
 
-    # ── ir.rule : visibilité stories expirées ─────────────────────────────────
+    # ── ir.rule: expired story visibility ─────────────────────────────────────
 
     def test_ir_rule_user_can_see_own_expired(self):
-        """Un utilisateur voit ses propres stories expirées (author_id = user.id)."""
+        """A user sees their own expired stories (author_id = user.id)."""
         from odoo import fields
         import datetime
         expired = self.env['social_story.story'].sudo().create({
@@ -89,7 +89,7 @@ class TestStoryPortalData(TransactionCase):
         self.assertTrue(found)
 
     def test_ir_rule_user_cannot_see_others_expired(self):
-        """Un utilisateur ne voit pas les stories expirées des autres."""
+        """A user does not see other people's expired stories."""
         from odoo import fields
         import datetime
         expired = self.env['social_story.story'].sudo().create({
@@ -150,7 +150,7 @@ class TestStoryPortalHttp(HttpCase):
         self.assertIn(resp.status_code, (302, 303, 403))
 
     def test_story_archive_by_owner(self):
-        """Le propriétaire peut archiver sa propre story."""
+        """The owner can archive their own story."""
         group_social = self.env.ref('social_base.group_social_user')
         owner = self.env['res.users'].sudo().create({
             'name': 'Story Owner HTTP', 'login': 'story_owner_http',
@@ -198,7 +198,7 @@ class TestStoryPortalHttp(HttpCase):
         self.assertEqual(resp.status_code, 404)
 
     def test_api_view_story_increments_count(self):
-        """POST /social/api/stories/<id>/view incrémente view_count."""
+        """POST /social/api/stories/<id>/view increments view_count."""
         import json
         group_social = self.env.ref('social_base.group_social_user')
         viewer = self.env['res.users'].sudo().create({

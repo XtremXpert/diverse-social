@@ -24,7 +24,7 @@ class TestProfilePortalData(TransactionCase):
         cls.owner_profile.sudo().write({
             'onboarding_done': True,
             'visibility': 'members',
-            'bio': 'Test bio du propriétaire',
+            'bio': 'Test owner bio',
             'city': 'Montréal',
         })
 
@@ -34,7 +34,7 @@ class TestProfilePortalData(TransactionCase):
             'connected_user_id': user_b.id,
             'state': 'accepted',
         })
-        # connexion réciproque
+        # reciprocal connection
         self.env['club_social_profile.connection'].sudo().create({
             'user_id': user_b.id,
             'connected_user_id': user_a.id,
@@ -42,7 +42,7 @@ class TestProfilePortalData(TransactionCase):
         })
         return conn
 
-    # ── Visibilité ────────────────────────────────────────────────────────
+    # ── Visibility ───────────────────────────────────────────────────────
 
     def test_members_visibility_allows_any_member(self):
         self.owner_profile.sudo().write({'visibility': 'members'})
@@ -92,7 +92,7 @@ class TestProfilePortalData(TransactionCase):
         self.assertEqual(count_after, count_before + 1)
 
     def test_no_self_visit(self):
-        """Le propriétaire qui consulte son propre profil ne génère pas de visite."""
+        """The owner viewing their own profile does not generate a visit."""
         count_before = self.env['club_social_profile.profile_visit'].sudo().search_count([
             ('profile_id', '=', self.owner_profile.id),
             ('visitor_id', '=', self.owner.id),
@@ -166,7 +166,7 @@ class TestProfileEditHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit?section=preferences')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Visibilité', resp.text)
+        self.assertIn('Visibility', resp.text)
 
     def test_save_identity_redirects(self):
         self.authenticate('admin', 'admin')
@@ -174,14 +174,14 @@ class TestProfileEditHttp(HttpCase):
         resp = self.url_open(
             '/my/profile/edit/identity',
             data={'csrf_token': _csrf, 
-                'bio': 'Bio test édition',
+                'bio': 'Bio test edit',
                 'city': 'Montréal',
                 'gender': 'non_binaire',
                 'orientation': 'queer',
             },
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Profil mis à jour', resp.text)
+        self.assertIn('Profile updated', resp.text)
 
     def test_save_identity_invalid_gender_ignored(self):
         self.authenticate('admin', 'admin')
@@ -214,15 +214,15 @@ class TestProfileEditHttp(HttpCase):
             },
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Préférences enregistrées', resp.text)
+        self.assertIn('Preferences saved', resp.text)
 
     def test_edit_page_has_tabs(self):
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Identité', resp.text)
-        self.assertIn('Préférences', resp.text)
+        self.assertIn('Identity', resp.text)
+        self.assertIn('Preferences', resp.text)
 
 
 @tagged('club_social_profile', 'profile_portal', 'post_install', '-at_install')

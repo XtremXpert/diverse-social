@@ -12,21 +12,21 @@ class TestMembershipSale(TransactionCase):
         cls.type_trial = cls.env.ref('club_membership.membership_type_trial')
 
         cls.partner = cls.env['res.partner'].create({
-            'name': 'Jean Membre Sale', 'email': 'jean@sale.test',
+            'name': 'Jean Member Sale', 'email': 'jean@sale.test',
         })
         cls.user = cls.env['res.users'].create({
-            'name': 'Jean Membre Sale', 'login': 'jms_user',
+            'name': 'Jean Member Sale', 'login': 'jms_user',
             'email': 'jean@sale.test', 'partner_id': cls.partner.id,
         })
 
-        # Produit d'adhésion annuelle
+        # Annual membership product
         cls.product_regular = cls.env['product.template'].create({
-            'name': 'Adhésion Annuelle Test',
+            'name': 'Membership Annuelle Test',
             'type': 'service',
             'membership_type_id': cls.type_regular.id,
             'list_price': 100.0,
         })
-        # Produit sans adhésion
+        # Non-membership product
         cls.product_normal = cls.env['product.template'].create({
             'name': 'Produit Normal Test',
             'type': 'service',
@@ -48,7 +48,7 @@ class TestMembershipSale(TransactionCase):
         })
         return order
 
-    # ── Création de l'adhésion à la confirmation ──────────────────────────────
+    # ── Membership creation on order confirmation ────────────────────────────
 
     def test_confirm_creates_pending_membership(self):
         order = self._make_order([self.product_regular])
@@ -108,12 +108,12 @@ class TestMembershipSale(TransactionCase):
         membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)
         self.assertEqual(membership.state, 'pending')
 
-        # Simuler le paiement : appel direct à la méthode interne
+        # Simulate payment by calling the internal method directly
         invoice = self.env['account.move'].sudo().create({
             'move_type': 'out_invoice',
             'partner_id': self.partner.id,
             'invoice_line_ids': [(0, 0, {
-                'name': 'Adhésion',
+                'name': 'Membership',
                 'quantity': 1,
                 'price_unit': 100.0,
                 'sale_line_ids': [(4, order.order_line[:1].id)],
@@ -121,7 +121,7 @@ class TestMembershipSale(TransactionCase):
         })
         invoice.action_post()
 
-        # Simuler payment_state = 'paid' en appelant la méthode directement
+        # Simulate payment_state = 'paid' by calling the method directly
         invoice.sudo()._activate_memberships_on_payment()
 
         membership.invalidate_recordset()
@@ -135,7 +135,7 @@ class TestMembershipSale(TransactionCase):
             'move_type': 'out_invoice',
             'partner_id': self.partner.id,
             'invoice_line_ids': [(0, 0, {
-                'name': 'Adhésion',
+                'name': 'Membership',
                 'quantity': 1,
                 'price_unit': 100.0,
                 'sale_line_ids': [(4, order.order_line[:1].id)],
@@ -169,7 +169,7 @@ class TestMembershipSale(TransactionCase):
     def test_product_without_membership_type(self):
         self.assertFalse(self.product_normal.membership_type_id)
 
-    # ── Données seed ─────────────────────────────────────────────────────────
+    # ── Seed data ────────────────────────────────────────────────────────────
 
     def test_seed_products_have_membership_type(self):
         p = self.env.ref('club_membership_sale.product_membership_regular')
@@ -179,11 +179,11 @@ class TestMembershipSale(TransactionCase):
         p = self.env.ref('club_membership_sale.product_membership_trial')
         self.assertEqual(p.membership_type_id, self.type_trial)
 
-    # ── Deux produits d'adhésion ──────────────────────────────────────────────
+    # ── Two membership products ───────────────────────────────────────────────
 
     def test_confirm_two_membership_products_creates_two_memberships(self):
         product_trial = self.env['product.template'].create({
-            'name': 'Adhésion Essai Test',
+            'name': 'Membership Essai Test',
             'type': 'service',
             'membership_type_id': self.type_trial.id,
             'list_price': 20.0,
@@ -195,7 +195,7 @@ class TestMembershipSale(TransactionCase):
 
     def test_membership_count_two_products(self):
         product_trial = self.env['product.template'].create({
-            'name': 'Adhésion Essai Count',
+            'name': 'Membership Essai Count',
             'type': 'service',
             'membership_type_id': self.type_trial.id,
             'list_price': 20.0,
@@ -204,7 +204,7 @@ class TestMembershipSale(TransactionCase):
         order.action_confirm()
         self.assertEqual(order.membership_count, 2)
 
-    # ── Champs de la membership créée ────────────────────────────────────────
+    # ── Fields of the created membership ──────────────────────────────────────
 
     def test_start_date_set_to_today(self):
         from odoo import fields
@@ -242,7 +242,7 @@ class TestMembershipSale(TransactionCase):
             'move_type': 'out_invoice',
             'partner_id': self.partner.id,
             'invoice_line_ids': [(0, 0, {
-                'name': 'Adhésions', 'quantity': 1, 'price_unit': 120.0,
+                'name': 'Memberships', 'quantity': 1, 'price_unit': 120.0,
                 'sale_line_ids': [(4, order.order_line[:1].id)],
             })],
         })
@@ -253,7 +253,7 @@ class TestMembershipSale(TransactionCase):
             self.assertEqual(m.state, 'active')
 
     def test_already_active_membership_not_touched(self):
-        """Une membership déjà active n'est pas ré-activée."""
+        """An already-active membership is not re-activated."""
         order = self._make_order([self.product_regular])
         order.action_confirm()
         membership = self.Membership.search([('sale_order_id', '=', order.id)], limit=1)

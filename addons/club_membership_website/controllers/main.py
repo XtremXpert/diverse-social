@@ -7,11 +7,11 @@ class ClubMembershipWebsite(Controller):
 
     @route('/membership', auth='public', website=True, sitemap=True)
     def membership_page(self, **kw):
-        """Vitrine publique : liste des types d'adhésion disponibles."""
+        """Public storefront: list of available membership types."""
         types = request.env['club_membership.type'].sudo().search(
             [('active', '=', True)], order='sequence, name'
         )
-        # Associer chaque type à son produit website_sale (premier produit publié trouvé)
+        # Associate each type to its website_sale product (first published one found)
         Product = request.env['product.template'].sudo()
         type_products = {}
         for mtype in types:
@@ -30,7 +30,7 @@ class ClubMembershipWebsite(Controller):
 
     @route('/membership/join/<int:type_id>', auth='public', website=True, methods=['POST'], csrf=True)
     def join_membership(self, type_id, **kw):
-        """Ajoute le produit d'adhésion au panier et redirige vers le checkout."""
+        """Add the membership product to the cart and redirect to checkout."""
         mtype = request.env['club_membership.type'].sudo().browse(type_id).exists()
         if not mtype:
             raise NotFound()

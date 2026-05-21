@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Entrée dans le menu portail -->
-    <template id="portal_my_home_membership" name="Portail : adhésions" inherit_id="portal.portal_my_home" priority="30">
+    <!-- Portal menu entry -->
+    <template id="portal_my_home_membership" name="Portal: memberships" inherit_id="portal.portal_my_home" priority="30">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Mes adhésions</t>
+                <t t-set="title">My memberships</t>
                 <t t-set="url">/my/membership</t>
                 <t t-set="placeholder_count">membership_count</t>
             </t>
         </xpath>
     </template>
 
-    <!-- Fil d'Ariane pour les pages adhésion -->
-    <template id="portal_breadcrumb_membership" name="Breadcrumb adhésion">
+    <!-- Breadcrumb for membership pages -->
+    <template id="portal_breadcrumb_membership" name="Membership breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="/my/home">Mon espace</a>
+                <a href="/my/home">My account</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="/my/membership">Mes adhésions</a>
+                <a href="/my/membership">My memberships</a>
             </li>
             <li t-if="membership" class="breadcrumb-item active">
                 <t t-esc="membership.membership_type_id.name"/>
@@ -27,18 +27,18 @@
         </ol>
     </template>
 
-    <!-- Liste des adhésions -->
-    <template id="portal_my_memberships" name="Portail — Mes adhésions">
+    <!-- Memberships list -->
+    <template id="portal_my_memberships" name="Portal — My memberships">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Mes adhésions</t>
+                <t t-set="title">My memberships</t>
             </t>
 
             <t t-if="not memberships">
                 <div class="alert alert-info">
-                    Vous n'avez pas encore d'adhésion.
-                    <a href="/membership" class="alert-link">Découvrir les offres</a>
+                    You don't have a membership yet.
+                    <a href="/membership" class="alert-link">View available plans</a>
                 </div>
             </t>
 
@@ -47,9 +47,9 @@
                     <thead>
                         <tr>
                             <th>Type</th>
-                            <th>État</th>
-                            <th>Début</th>
-                            <th>Fin</th>
+                            <th>State</th>
+                            <th>Start</th>
+                            <th>End</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -69,7 +69,7 @@
                                 </td>
                                 <td>
                                     <a t-attf-href="/my/membership/#{m.id}" class="btn btn-sm btn-outline-primary">
-                                        Voir
+                                        View
                                     </a>
                                 </td>
                             </tr>
@@ -84,8 +84,8 @@
         </t>
     </template>
 
-    <!-- Détail d'une adhésion -->
-    <template id="portal_membership_detail" name="Portail — Détail adhésion">
+    <!-- Membership detail -->
+    <template id="portal_membership_detail" name="Portal — Membership detail">
         <t t-call="portal.portal_layout">
             <t t-call="club_membership_website.portal_breadcrumb_membership"/>
 
@@ -97,23 +97,23 @@
                 </div>
                 <div class="card-body">
                     <dl class="row">
-                        <dt class="col-sm-4">État</dt>
+                        <dt class="col-sm-4">State</dt>
                         <dd class="col-sm-8">
                             <span t-att-class="'badge rounded-pill ' + {'active': 'bg-success', 'pending': 'bg-warning text-dark', 'expired': 'bg-secondary', 'suspended': 'bg-warning text-dark', 'cancelled': 'bg-danger'}.get(membership.state, 'bg-secondary')">
                                 <t t-esc="membership.state"/>
                             </span>
                         </dd>
 
-                        <dt class="col-sm-4">Date de début</dt>
+                        <dt class="col-sm-4">Start date</dt>
                         <dd class="col-sm-8"><t t-esc="membership.start_date"/></dd>
 
-                        <dt class="col-sm-4">Date de fin</dt>
+                        <dt class="col-sm-4">End date</dt>
                         <dd class="col-sm-8">
                             <t t-if="membership.end_date"><t t-esc="membership.end_date"/></t>
-                            <t t-else=""><span class="text-muted">Illimité</span></t>
+                            <t t-else=""><span class="text-muted">Unlimited</span></t>
                         </dd>
 
-                        <dt class="col-sm-4" t-if="membership.fee_paid">Cotisation payée</dt>
+                        <dt class="col-sm-4" t-if="membership.fee_paid">Membership fee paid</dt>
                         <dd class="col-sm-8" t-if="membership.fee_paid">
                             <t t-esc="'{:,.2f}'.format(membership.fee_paid)"/>
                             <t t-esc="membership.currency_id.symbol"/>
@@ -125,7 +125,7 @@
                     <form t-attf-action="/my/membership/#{membership.id}/renew" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <button type="submit" class="btn btn-primary">
-                            Renouveler
+                            Renew
                         </button>
                     </form>
                 </div>
@@ -133,7 +133,7 @@
 
             <div class="mt-3">
                 <a href="/my/membership" class="btn btn-link ps-0">
-                    ← Retour à mes adhésions
+                    ← Back to my memberships
                 </a>
             </div>
         </t>

@@ -15,7 +15,7 @@ class SocialMessage(models.Model):
                     user_id=user.id,
                     actor_id=msg.author_id.id,
                     notif_type='new_message',
-                    body=_('%s vous a envoyé un message.', msg.author_id.name),
+                    body=_('%s sent you a message.', msg.author_id.name),
                     ref_model='social_messaging.thread',
                     ref_id=msg.thread_id.id,
                 )

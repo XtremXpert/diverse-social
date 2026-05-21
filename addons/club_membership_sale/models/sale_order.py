@@ -10,7 +10,7 @@ class SaleOrder(models.Model):
 
     membership_ids = fields.One2many(
         'club_membership.membership', 'sale_order_id',
-        string='Adhésions',
+        string='Memberships',
     )
     membership_count = fields.Integer(compute='_compute_membership_count')
 
@@ -48,10 +48,10 @@ class SaleOrder(models.Model):
                     'start_date': today,
                     'fee_paid': line.price_subtotal,
                     'state': 'pending',
-                    'notes': _("Créée automatiquement depuis la commande %s", order.name),
+                    'notes': _("Automatically created from order %s", order.name),
                 })
                 _logger.info(
-                    "Adhésion %s créée en attente pour %s (commande %s)",
+                    "Membership %s created (pending) for %s (order %s)",
                     mtype.name, partner.name, order.name,
                 )
 
@@ -59,7 +59,7 @@ class SaleOrder(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Adhésions',
+            'name': 'Memberships',
             'res_model': 'club_membership.membership',
             'view_mode': 'list,form',
             'domain': [('sale_order_id', '=', self.id)],
@@ -72,6 +72,6 @@ class SaleOrderLine(models.Model):
     # Read-only convenience field for the view
     membership_type_id = fields.Many2one(
         related='product_id.product_tmpl_id.membership_type_id',
-        string="Type d'adhésion",
+        string="Membership type",
         readonly=True,
     )

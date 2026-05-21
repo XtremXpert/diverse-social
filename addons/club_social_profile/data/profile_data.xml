@@ -2,9 +2,9 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Langues par défaut -->
+        <!-- Default languages -->
         <record id="lang_fr" model="club_social_profile.language">
-            <field name="name">Français</field>
+            <field name="name">French</field>
             <field name="sequence">1</field>
         </record>
         <record id="lang_en" model="club_social_profile.language">
@@ -12,11 +12,11 @@
             <field name="sequence">2</field>
         </record>
         <record id="lang_es" model="club_social_profile.language">
-            <field name="name">Español</field>
+            <field name="name">Spanish</field>
             <field name="sequence">3</field>
         </record>
 
-        <!-- Ce que les membres cherchent -->
+        <!-- What members are looking for -->
         <record id="looking_for_friendship" model="club_social_profile.looking_for">
             <field name="name">Friendship</field>
             <field name="sequence">10</field>

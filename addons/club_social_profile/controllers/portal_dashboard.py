@@ -17,7 +17,7 @@ class DashboardPortal(CustomerPortal):
             [('user_id', '=', user.id)], limit=1
         )
 
-        # ── Stats semaine ─────────────────────────────────────────────────────
+        # ── Weekly stats ──────────────────────────────────────────────────────
         profile_views = 0
         if profile:
             profile_views = request.env['club_social_profile.profile_visit'].sudo().search_count([
@@ -42,21 +42,21 @@ class DashboardPortal(CustomerPortal):
             ('is_read', '=', False),
         ])
 
-        # ── Mes groupes actifs ────────────────────────────────────────────────
+        # ── My active groups ──────────────────────────────────────────────────
         my_groups = []
         if 'social_group.group' in request.env:
             my_groups = request.env['social_group.group'].sudo().search([
                 ('member_ids', 'in', [user.id]),
             ], limit=6)
 
-        # ── Propositions en vote ──────────────────────────────────────────────
+        # ── Proposals open for voting ─────────────────────────────────────────
         proposals_voting = []
         if 'social_governance.proposal' in request.env:
             proposals_voting = request.env['social_governance.proposal'].sudo().search([
                 ('state', '=', 'voting'),
             ], order='voting_closes_at asc', limit=4)
 
-        # ── Événements à venir ────────────────────────────────────────────────
+        # ── Upcoming events ───────────────────────────────────────────────────
         upcoming_events = []
         if 'event.event' in request.env:
             upcoming_events = request.env['event.event'].sudo().search([
@@ -64,12 +64,12 @@ class DashboardPortal(CustomerPortal):
                 ('date_begin', '<=', now + timedelta(days=14)),
             ], order='date_begin asc', limit=4)
 
-        # ── Dernières notifications ───────────────────────────────────────────
+        # ── Recent notifications ──────────────────────────────────────────────
         recent_notifs = request.env['club_social_profile.notification'].sudo().search([
             ('user_id', '=', user.id),
         ], order='create_date desc', limit=5)
 
-        # ── Connexions récentes ───────────────────────────────────────────────
+        # ── Recent connections ────────────────────────────────────────────────
         recent_conn_ids = request.env['club_social_profile.connection'].sudo().search([
             '|',
             '&', ('user_id', '=', user.id), ('state', '=', 'accepted'),

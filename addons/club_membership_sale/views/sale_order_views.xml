@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Badge adhésion dans les lignes de commande -->
+    <!-- Membership badge in order lines -->
     <record id="view_sale_order_form_membership_ext" model="ir.ui.view">
         <field name="name">sale.order.form.club_membership_sale</field>
         <field name="model">sale.order</field>
@@ -10,18 +10,18 @@
             <xpath expr="//field[@name='order_line']/list//field[@name='product_id']"
                    position="after">
                 <field name="membership_type_id"
-                       string="Adhésion"
+                       string="Membership"
                        optional="show"
                        readonly="1"/>
             </xpath>
-            <!-- Bouton stat adhésions dans le header -->
+            <!-- Memberships stat button in header -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_view_memberships"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-id-card"
                         invisible="membership_count == 0">
-                    <field name="membership_count" widget="statinfo" string="Adhésions"/>
+                    <field name="membership_count" widget="statinfo" string="Memberships"/>
                 </button>
             </xpath>
         </field>

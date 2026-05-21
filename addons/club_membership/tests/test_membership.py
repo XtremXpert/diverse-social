@@ -41,7 +41,7 @@ class TestClubMembership(TransactionCase):
             'start_date': start or datetime.date.today(),
         })
 
-    # ── Création & computed fields ────────────────────────────────────────────
+    # ── Creation & computed fields ────────────────────────────────────────────
 
     def test_user_id_computed_from_partner(self):
         m = self._make_membership(self.partner_alice)
@@ -51,7 +51,7 @@ class TestClubMembership(TransactionCase):
         m = self._make_membership(self.partner_alice)
         self.assertIn('Alice Membre', m.display_name)
 
-    # ── Transitions d'état ────────────────────────────────────────────────────
+    # ── State transitions ─────────────────────────────────────────────────────
 
     def test_activate_from_pending(self):
         m = self._make_membership(self.partner_alice)
@@ -92,7 +92,7 @@ class TestClubMembership(TransactionCase):
         m.action_cancel()
         self.assertEqual(m.state, 'cancelled')
 
-    # ── Accès réseau social ───────────────────────────────────────────────────
+    # ── Social network access ─────────────────────────────────────────────────
 
     def test_activate_grants_social_access(self):
         m = self._make_membership(self.partner_bob)
@@ -127,7 +127,7 @@ class TestClubMembership(TransactionCase):
         # Alice still has m2 active → should keep social access
         self.assertIn(self.group_social, self.user_alice.sudo().all_group_ids)
 
-    # ── Durée automatique ─────────────────────────────────────────────────────
+    # ── Automatic duration ────────────────────────────────────────────────────
 
     def test_end_date_computed_on_activate(self):
         m = self._make_membership(self.partner_alice)
@@ -211,7 +211,7 @@ class TestClubMembership(TransactionCase):
         m.action_activate()
         self.assertEqual(self.partner_bob.current_membership_id, m)
 
-    # ── Type d'adhésion ───────────────────────────────────────────────────────
+    # ── Membership type ───────────────────────────────────────────────────────
 
     def test_membership_type_data_loaded(self):
         self.assertTrue(self.type_regular.exists())

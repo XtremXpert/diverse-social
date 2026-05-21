@@ -7,47 +7,47 @@ _STEPS = ['welcome', 'about', 'preferences', 'done']
 
 class SocialOnboardingWizard(models.TransientModel):
     _name = 'social_onboarding.wizard'
-    _description = "Assistant d'intégration réseau social"
+    _description = "Social Network Onboarding Wizard"
 
     step = fields.Selection([
-        ('welcome', 'Bienvenue'),
-        ('about', 'À propos'),
-        ('preferences', 'Préférences'),
-        ('done', 'Terminé'),
+        ('welcome', 'Welcome'),
+        ('about', 'About'),
+        ('preferences', 'Preferences'),
+        ('done', 'Done'),
     ], default='welcome', required=True)
 
     profile_id = fields.Many2one('club_social_profile.profile', readonly=True)
 
-    # ── Étape 1 : photo ───────────────────────────────────────────────────────
-    profile_image = fields.Image(max_width=400, max_height=400, string='Photo de profil')
+    # ── Step 1: photo ─────────────────────────────────────────────────────────
+    profile_image = fields.Image(max_width=400, max_height=400, string='Profile Picture')
 
-    # ── Étape 2 : à propos ────────────────────────────────────────────────────
-    pronouns = fields.Char('Pronoms')
+    # ── Step 2: about ─────────────────────────────────────────────────────────
+    pronouns = fields.Char('Pronouns')
     bio = fields.Text('Bio')
-    birth_year = fields.Integer("Année de naissance")
-    city = fields.Char('Ville')
+    birth_year = fields.Integer("Birth Year")
+    city = fields.Char('City')
 
-    # ── Étape 3 : préférences ─────────────────────────────────────────────────
+    # ── Step 3: preferences ───────────────────────────────────────────────────
     visibility = fields.Selection([
-        ('members', 'Membres du club'),
-        ('connections', 'Connexions uniquement'),
-    ], string='Visibilité du profil', default='members', required=True)
+        ('members', 'Club Members'),
+        ('connections', 'Connections Only'),
+    ], string='Profile Visibility', default='members', required=True)
     availability = fields.Selection([
-        ('disponible', 'Disponible / En recherche'),
-        ('couple_ouvert', 'Couple ouvert'),
-        ('couple_ferme', 'Couple fermé'),
-        ('pas_disponible', 'Pas disponible'),
-        ('non_specifie', 'Non spécifié'),
-    ], string='Disponibilité', default='non_specifie')
+        ('disponible', 'Available / Looking'),
+        ('couple_ouvert', 'Open Couple'),
+        ('couple_ferme', 'Closed Couple'),
+        ('pas_disponible', 'Not Available'),
+        ('non_specifie', 'Unspecified'),
+    ], string='Availability', default='non_specifie')
     digest_email_enabled = fields.Boolean(
-        'Recevoir le résumé hebdomadaire par courriel', default=True,
+        'Receive the weekly digest by email', default=True,
     )
 
-    # ── Ouverture ─────────────────────────────────────────────────────────────
+    # ── Open ──────────────────────────────────────────────────────────────────
 
     @api.model
     def action_open(self):
-        """Crée ou charge l'assistant pour l'utilisateur courant."""
+        """Create or load the wizard for the current user."""
         Profile = self.env['club_social_profile.profile']
         profile = Profile.sudo().get_or_create_for_user(self.env.user)
         wizard = self.create({
@@ -67,7 +67,7 @@ class SocialOnboardingWizard(models.TransientModel):
     def _build_action(self):
         return {
             'type': 'ir.actions.act_window',
-            'name': _("Compléter mon profil"),
+            'name': _("Complete my profile"),
             'res_model': self._name,
             'res_id': self.id,
             'view_mode': 'form',
@@ -100,8 +100,8 @@ class SocialOnboardingWizard(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _("Bienvenue !"),
-                'message': _("Votre profil est maintenant complet. Bonne exploration !"),
+                'title': _("Welcome!"),
+                'message': _("Your profile is now complete. Enjoy exploring!"),
                 'type': 'success',
                 'sticky': False,
                 'next': {
@@ -114,22 +114,22 @@ class SocialOnboardingWizard(models.TransientModel):
         }
 
     def action_skip(self):
-        """Ferme l'assistant sans marquer le profil comme complété."""
+        """Close the wizard without marking the profile as complete."""
         self.ensure_one()
         self._save_to_profile()
         return {'type': 'ir.actions.act_window_close'}
 
-    # ── Sauvegarde & validation ───────────────────────────────────────────────
+    # ── Saving and validation ────────────────────────────────────────────────
 
     def _validate_current_step(self):
-        """Valide les champs de l'étape courante avant de passer à la suivante."""
+        """Validate the current step fields before moving to the next."""
         if self.step == 'about' and self.birth_year:
             import datetime
             current_year = datetime.date.today().year
             age = current_year - self.birth_year
             if 0 < age < 18:
                 raise ValidationError(
-                    _("Vous devez avoir 18 ans ou plus pour accéder au réseau social.")
+                    _("You must be 18 or older to access the social network.")
                 )
 
     def _save_to_profile(self):

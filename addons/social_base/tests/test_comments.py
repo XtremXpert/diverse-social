@@ -69,7 +69,7 @@ class TestSocialComment(TransactionCase):
         self.assertEqual(comment.state, 'published')
 
     def test_nesting_depth_3_valid(self):
-        """Trois niveaux (L1→L2→L3) sont autorisés."""
+        """Three nesting levels (L1→L2→L3) are allowed."""
         c1 = self._make_comment('L1')
         c2 = self._make_comment('L2', parent=c1)
         c3 = self._make_comment('L3', parent=c2)

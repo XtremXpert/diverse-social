@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Banner sur le portal home pour les membres sans onboarding complété -->
+    <!-- Banner on the portal home for members who haven't completed onboarding -->
     <template id="portal_home_onboarding_banner"
               inherit_id="portal.portal_my_home"
-              name="Portal Home — bannière onboarding">
+              name="Portal Home — onboarding banner">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
             <t t-set="profile" t-value="request.env['club_social_profile.profile'].sudo().search(
                 [('user_id', '=', request.env.user.id)], limit=1)"/>
@@ -12,22 +12,22 @@
                      and request.env.user.partner_id.sudo().member_state == 'active'">
                 <div class="alert alert-primary d-flex align-items-center justify-content-between mb-4">
                     <div>
-                        <strong>Complétez votre profil !</strong>
-                        Bienvenue dans la communauté — prenez 2 minutes pour personnaliser votre présence.
+                        <strong>Complete your profile!</strong>
+                        Welcome to the community — take 2 minutes to personalize your presence.
                     </div>
                     <a href="/onboarding" class="btn btn-primary btn-sm ms-3 flex-shrink-0">
-                        Compléter mon profil
+                        Complete my profile
                     </a>
                 </div>
             </t>
         </xpath>
     </template>
 
-    <template id="portal_onboarding" name="Onboarding — Parcours profil">
+    <template id="portal_onboarding" name="Onboarding — Profile flow">
         <t t-call="portal.portal_layout">
             <div class="container py-4" style="max-width: 640px;">
 
-                <!-- Barre de progression -->
+                <!-- Progress bar -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-1">
                         <t t-foreach="steps" t-as="s">
@@ -46,17 +46,21 @@
 
                 <h2 class="mb-4"><t t-esc="step_titles[step]"/></h2>
 
-                <!-- Message d'erreur -->
+                <!-- Error message -->
                 <div class="alert alert-danger" t-if="error">
                     <t t-esc="error"/>
                 </div>
 
-                <!-- ── Étape 1 : Bienvenue / photo ──────────────────────── -->
+                <!-- ── Step 1: Welcome / photo ──────────────────────────── -->
                 <t t-if="step == 'welcome'">
                     <p class="text-muted mb-4">
-                        Bienvenue ! Commençons par ajouter une photo de profil.
+                        Welcome! Let's start by adding a profile picture.
                     </p>
-                    <form action="/onboarding/save/welcome" method="post" enctype="multipart/form-data">
+
+                    <!-- Upload: auto-submit on file selection, reloads welcome with the new photo -->
+                    <form id="onboarding-upload-form"
+                          action="/onboarding/save/welcome" method="post"
+                          enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                         <div class="mb-4 text-center">
@@ -64,7 +68,7 @@
                                 <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image?unique=#{profile.write_date}"
                                      class="rounded-circle mb-3"
                                      style="width:120px;height:120px;object-fit:cover;"
-                                     alt="Photo de profil"/>
+                                     alt="Profile picture"/>
                             </t>
                             <t t-else="">
                                 <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3"
@@ -74,59 +78,61 @@
                             </t>
                             <div>
                                 <label class="btn btn-outline-primary btn-sm" for="profile_image">
-                                    Choisir une photo
+                                    <t t-if="profile.profile_image">Change picture</t>
+                                    <t t-else="">Choose a picture</t>
                                 </label>
                                 <input type="file" name="profile_image" id="profile_image"
                                        accept="image/*" class="d-none"
-                                       onchange="this.previousElementSibling.textContent = this.files[0]?.name || 'Choisir une photo'"/>
+                                       onchange="document.getElementById('onboarding-upload-form').submit();"/>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-between">
-                            <form action="/onboarding/skip" method="post" class="d-inline">
-                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                <button type="submit" class="btn btn-link text-muted ps-0">Ignorer pour l'instant</button>
-                            </form>
-                            <button type="submit" class="btn btn-primary">Suivant →</button>
-                        </div>
                     </form>
+
+                    <!-- Navigation: outside the upload form so it doesn't resubmit the file -->
+                    <div class="d-flex justify-content-between">
+                        <form action="/onboarding/skip" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn btn-link text-muted ps-0">Skip for now</button>
+                        </form>
+                        <a href="/onboarding?step=about" class="btn btn-primary">Next →</a>
+                    </div>
                 </t>
 
-                <!-- ── Étape 2 : À propos ───────────────────────────────── -->
+                <!-- ── Step 2: About ────────────────────────────────────── -->
                 <t t-if="step == 'about'">
                     <form action="/onboarding/save/about" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                         <div class="mb-3">
-                            <label class="form-label" for="pronouns">Pronoms</label>
+                            <label class="form-label" for="pronouns">Pronouns</label>
                             <input type="text" class="form-control" name="pronouns" id="pronouns"
-                                   placeholder="ex. : il/lui, elle/her, iel/iels"
+                                   placeholder="e.g. he/him, she/her, they/them"
                                    t-att-value="form_values.get('pronouns', profile.pronouns or '')"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="bio">Bio</label>
                             <textarea class="form-control" name="bio" id="bio" rows="4"
-                                      placeholder="Présentez-vous en quelques mots…">
+                                      placeholder="Tell us about yourself in a few words…">
                                 <t t-esc="form_values.get('bio', profile.bio or '')"/>
                             </textarea>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-sm-4">
-                                <label class="form-label" for="birth_year">Année de naissance</label>
+                                <label class="form-label" for="birth_year">Birth year</label>
                                 <input type="number" class="form-control" name="birth_year" id="birth_year"
-                                       min="1900" max="2010" placeholder="ex. : 1990"
+                                       min="1900" max="2010" placeholder="e.g. 1990"
                                        t-att-value="form_values.get('birth_year', profile.birth_year or '')"/>
                             </div>
                             <div class="col-sm-4">
-                                <label class="form-label" for="city">Ville</label>
+                                <label class="form-label" for="city">City</label>
                                 <input type="text" class="form-control" name="city" id="city"
                                        placeholder="Montréal…"
                                        t-att-value="form_values.get('city', profile.city or '')"/>
                             </div>
                             <div class="col-sm-4">
-                                <label class="form-label" for="region">Province / Région</label>
+                                <label class="form-label" for="region">Province / Region</label>
                                 <input type="text" class="form-control" name="region" id="region"
                                        placeholder="Québec…"
                                        t-att-value="form_values.get('region', profile.region or '')"/>
@@ -135,63 +141,63 @@
 
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label class="form-label" for="gender">Genre</label>
+                                <label class="form-label" for="gender">Gender</label>
                                 <select class="form-select" name="gender" id="gender">
                                     <t t-set="_gv" t-value="form_values.get('gender', profile.gender or 'non_specifie')"/>
-                                    <option value="non_specifie" t-att-selected="_gv == 'non_specifie' or None">Préfère ne pas préciser</option>
-                                    <option value="homme"        t-att-selected="_gv == 'homme' or None">Homme</option>
-                                    <option value="femme"        t-att-selected="_gv == 'femme' or None">Femme</option>
-                                    <option value="trans_homme"  t-att-selected="_gv == 'trans_homme' or None">Homme trans</option>
-                                    <option value="trans_femme"  t-att-selected="_gv == 'trans_femme' or None">Femme trans</option>
-                                    <option value="non_binaire"  t-att-selected="_gv == 'non_binaire' or None">Non-binaire</option>
-                                    <option value="autre"        t-att-selected="_gv == 'autre' or None">Autre</option>
+                                    <option value="non_specifie" t-att-selected="_gv == 'non_specifie' or None">Prefer not to say</option>
+                                    <option value="homme"        t-att-selected="_gv == 'homme' or None">Man</option>
+                                    <option value="femme"        t-att-selected="_gv == 'femme' or None">Woman</option>
+                                    <option value="trans_homme"  t-att-selected="_gv == 'trans_homme' or None">Trans man</option>
+                                    <option value="trans_femme"  t-att-selected="_gv == 'trans_femme' or None">Trans woman</option>
+                                    <option value="non_binaire"  t-att-selected="_gv == 'non_binaire' or None">Non-binary</option>
+                                    <option value="autre"        t-att-selected="_gv == 'autre' or None">Other</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="orientation">Orientation</label>
                                 <select class="form-select" name="orientation" id="orientation">
                                     <t t-set="_ov" t-value="form_values.get('orientation', profile.orientation or 'non_specifie')"/>
-                                    <option value="non_specifie" t-att-selected="_ov == 'non_specifie' or None">Préfère ne pas préciser</option>
-                                    <option value="hetero"       t-att-selected="_ov == 'hetero' or None">Hétérosexuel(le)</option>
-                                    <option value="gay"          t-att-selected="_ov == 'gay' or None">Gai / Lesbienne</option>
-                                    <option value="bi"           t-att-selected="_ov == 'bi' or None">Bisexuel(le)</option>
-                                    <option value="pan"          t-att-selected="_ov == 'pan' or None">Pansexuel(le)</option>
-                                    <option value="asexuel"      t-att-selected="_ov == 'asexuel' or None">Asexuel(le)</option>
+                                    <option value="non_specifie" t-att-selected="_ov == 'non_specifie' or None">Prefer not to say</option>
+                                    <option value="hetero"       t-att-selected="_ov == 'hetero' or None">Heterosexual</option>
+                                    <option value="gay"          t-att-selected="_ov == 'gay' or None">Gay / Lesbian</option>
+                                    <option value="bi"           t-att-selected="_ov == 'bi' or None">Bisexual</option>
+                                    <option value="pan"          t-att-selected="_ov == 'pan' or None">Pansexual</option>
+                                    <option value="asexuel"      t-att-selected="_ov == 'asexuel' or None">Asexual</option>
                                     <option value="queer"        t-att-selected="_ov == 'queer' or None">Queer</option>
-                                    <option value="autre"        t-att-selected="_ov == 'autre' or None">Autre</option>
+                                    <option value="autre"        t-att-selected="_ov == 'autre' or None">Other</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="quote">Phrase d'accroche <small class="text-muted">(200 car. max)</small></label>
+                            <label class="form-label" for="quote">Tagline <small class="text-muted">(max 200 chars)</small></label>
                             <input type="text" class="form-control" name="quote" id="quote"
-                                   maxlength="200" placeholder="Une citation, une intention, un mot-clé…"
+                                   maxlength="200" placeholder="A quote, an intention, a keyword…"
                                    t-att-value="form_values.get('quote', profile.quote or '')"/>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="/onboarding?step=welcome" class="btn btn-outline-secondary">← Précédent</a>
-                            <button type="submit" class="btn btn-primary">Suivant →</button>
+                            <a href="/onboarding?step=welcome" class="btn btn-outline-secondary">← Previous</a>
+                            <button type="submit" class="btn btn-primary">Next →</button>
                         </div>
                     </form>
                 </t>
 
-                <!-- ── Étape 3 : Préférences ────────────────────────────── -->
+                <!-- ── Step 3: Preferences ──────────────────────────────── -->
                 <t t-if="step == 'preferences'">
                     <form action="/onboarding/save/preferences" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Visibilité du profil</label>
+                            <label class="form-label fw-semibold">Profile visibility</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="visibility"
                                            id="vis_members" value="members"
                                            t-att-checked="profile.visibility == 'members' and 'checked' or None"/>
                                     <label class="form-check-label" for="vis_members">
-                                        <strong>Membres du club</strong><br/>
-                                        <small class="text-muted">Visible par tous les membres actifs</small>
+                                        <strong>Club members</strong><br/>
+                                        <small class="text-muted">Visible to all active members</small>
                                     </label>
                                 </div>
                                 <div class="form-check">
@@ -199,28 +205,28 @@
                                            id="vis_connections" value="connections"
                                            t-att-checked="profile.visibility == 'connections' and 'checked' or None"/>
                                     <label class="form-check-label" for="vis_connections">
-                                        <strong>Connexions uniquement</strong><br/>
-                                        <small class="text-muted">Visible seulement par vos connexions</small>
+                                        <strong>Connections only</strong><br/>
+                                        <small class="text-muted">Visible only to your connections</small>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold" for="availability">Disponibilité</label>
+                            <label class="form-label fw-semibold" for="availability">Availability</label>
                             <select class="form-select" name="availability" id="availability">
-                                <option value="non_specifie" t-att-selected="profile.availability == 'non_specifie' and 'selected' or None">Non spécifié</option>
-                                <option value="disponible" t-att-selected="profile.availability == 'disponible' and 'selected' or None">Disponible / En recherche</option>
-                                <option value="couple_ouvert" t-att-selected="profile.availability == 'couple_ouvert' and 'selected' or None">Couple ouvert</option>
-                                <option value="couple_ferme" t-att-selected="profile.availability == 'couple_ferme' and 'selected' or None">Couple fermé</option>
-                                <option value="pas_disponible" t-att-selected="profile.availability == 'pas_disponible' and 'selected' or None">Pas disponible</option>
+                                <option value="non_specifie" t-att-selected="profile.availability == 'non_specifie' and 'selected' or None">Unspecified</option>
+                                <option value="disponible" t-att-selected="profile.availability == 'disponible' and 'selected' or None">Available / Looking</option>
+                                <option value="couple_ouvert" t-att-selected="profile.availability == 'couple_ouvert' and 'selected' or None">Open couple</option>
+                                <option value="couple_ferme" t-att-selected="profile.availability == 'couple_ferme' and 'selected' or None">Closed couple</option>
+                                <option value="pas_disponible" t-att-selected="profile.availability == 'pas_disponible' and 'selected' or None">Not available</option>
                             </select>
                         </div>
 
-                        <!-- Ce que je cherche -->
+                        <!-- What I'm looking for -->
                         <t t-if="looking_for_opts">
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Je cherche…</label>
+                                <label class="form-label fw-semibold">I'm looking for…</label>
                                 <div class="d-flex flex-wrap gap-2">
                                     <t t-foreach="looking_for_opts" t-as="lf">
                                         <div class="form-check form-check-inline">
@@ -237,10 +243,10 @@
                             </div>
                         </t>
 
-                        <!-- Langues parlées -->
+                        <!-- Languages spoken -->
                         <t t-if="language_opts">
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Langue(s) parlée(s)</label>
+                                <label class="form-label fw-semibold">Language(s) spoken</label>
                                 <div class="d-flex flex-wrap gap-2">
                                     <t t-foreach="language_opts" t-as="lng">
                                         <div class="form-check form-check-inline">
@@ -263,44 +269,44 @@
                                        name="digest_email_enabled" id="digest_email"
                                        t-att-checked="profile.digest_email_enabled and 'checked' or None"/>
                                 <label class="form-check-label" for="digest_email">
-                                    Recevoir le résumé hebdomadaire par courriel
+                                    Receive the weekly digest by email
                                 </label>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="/onboarding?step=about" class="btn btn-outline-secondary">← Précédent</a>
-                            <button type="submit" class="btn btn-primary">Terminer →</button>
+                            <a href="/onboarding?step=about" class="btn btn-outline-secondary">← Previous</a>
+                            <button type="submit" class="btn btn-primary">Finish →</button>
                         </div>
                     </form>
                 </t>
 
-                <!-- ── Étape 4 : Terminé ────────────────────────────────── -->
+                <!-- ── Step 4: Done ─────────────────────────────────────── -->
                 <t t-if="step == 'done'">
                     <div class="text-center py-4">
                         <div class="mb-4">
                             <span style="font-size: 4rem;">🎉</span>
                         </div>
-                        <h3>Votre profil est prêt !</h3>
+                        <h3>Your profile is ready!</h3>
                         <p class="text-muted mb-4">
-                            Vous pouvez maintenant explorer la communauté, rejoindre des groupes
-                            et vous connecter avec d'autres membres.
+                            You can now explore the community, join groups,
+                            and connect with other members.
                         </p>
                         <t t-if="profile.profile_image">
                             <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image?unique=#{profile.write_date}"
                                  class="rounded-circle mb-4"
                                  style="width:100px;height:100px;object-fit:cover;"
-                                 alt="Photo de profil"/>
+                                 alt="Profile picture"/>
                         </t>
                         <div class="d-flex flex-column gap-2 align-items-center">
-                            <a href="/groups" class="btn btn-primary">Découvrir les groupes</a>
-                            <a href="/governance" class="btn btn-outline-secondary">Voir les propositions</a>
-                            <a href="/web" class="btn btn-link text-muted">Aller au tableau de bord</a>
+                            <a href="/groups" class="btn btn-primary">Discover groups</a>
+                            <a href="/governance" class="btn btn-outline-secondary">View proposals</a>
+                            <a href="/web" class="btn btn-link text-muted">Go to dashboard</a>
                         </div>
                         <t t-if="not profile.onboarding_done">
                             <div class="mt-4">
                                 <a href="/onboarding?step=welcome" class="btn btn-link text-muted small">
-                                    Compléter mon profil quand même
+                                    Complete my profile anyway
                                 </a>
                             </div>
                         </t>

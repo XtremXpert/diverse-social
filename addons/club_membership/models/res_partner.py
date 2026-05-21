@@ -5,22 +5,22 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     membership_ids = fields.One2many(
-        'club_membership.membership', 'partner_id', 'Adhésions',
+        'club_membership.membership', 'partner_id', 'Memberships',
     )
     current_membership_id = fields.Many2one(
         'club_membership.membership',
         compute='_compute_current_membership',
-        string='Adhésion courante',
+        string='Current membership',
         store=False,
     )
     member_state = fields.Selection([
-        ('none', 'Non-membre'),
-        ('pending', 'En attente'),
-        ('active', 'Membre actif'),
-        ('expired', 'Expiré'),
-        ('suspended', 'Suspendu'),
-        ('cancelled', 'Annulé'),
-    ], compute='_compute_current_membership', string='Statut adhésion', store=False)
+        ('none', 'Not a member'),
+        ('pending', 'Pending'),
+        ('active', 'Active member'),
+        ('expired', 'Expired'),
+        ('suspended', 'Suspended'),
+        ('cancelled', 'Cancelled'),
+    ], compute='_compute_current_membership', string='Membership status', store=False)
 
     def _compute_current_membership(self):
         Membership = self.env['club_membership.membership']

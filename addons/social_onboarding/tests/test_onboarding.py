@@ -20,17 +20,17 @@ class TestSocialOnboarding(TransactionCase):
         })
         cls.type_regular = cls.env.ref('club_membership.membership_type_regular')
 
-    # ── Création du wizard ────────────────────────────────────────────────────
+    # ── Wizard creation ───────────────────────────────────────────────────────
 
     def test_action_open_creates_wizard(self):
-        """action_open crée un enregistrement wizard et retourne un acte d'ouverture."""
+        """action_open creates a wizard record and returns an open action."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         self.assertEqual(action['type'], 'ir.actions.act_window')
         self.assertEqual(action['res_model'], 'social_onboarding.wizard')
         self.assertIsNotNone(action['res_id'])
 
     def test_action_open_creates_profile(self):
-        """action_open crée le profil si inexistant."""
+        """action_open creates the profile if it does not exist."""
         before = self.env['club_social_profile.profile'].search_count(
             [('user_id', '=', self.user.id)]
         )
@@ -41,7 +41,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(after, before + 1)
 
     def test_action_open_reuses_existing_profile(self):
-        """action_open ne crée pas de doublon si le profil existe déjà."""
+        """action_open does not create a duplicate if the profile already exists."""
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.user)
         self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         count = self.env['club_social_profile.profile'].search_count(
@@ -50,7 +50,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(count, 1)
 
     def test_wizard_starts_at_welcome_step(self):
-        """L'assistant démarre à l'étape 'welcome' pour un profil non complété."""
+        """The wizard starts on step 'welcome' for an incomplete profile."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         self.assertEqual(wizard.step, 'welcome')
@@ -58,7 +58,7 @@ class TestSocialOnboarding(TransactionCase):
     # ── Navigation ────────────────────────────────────────────────────────────
 
     def test_action_next_advances_step(self):
-        """action_next passe à l'étape suivante."""
+        """action_next moves to the next step."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         self.assertEqual(wizard.step, 'welcome')
@@ -66,7 +66,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(wizard.step, 'about')
 
     def test_action_next_all_steps(self):
-        """action_next parcourt toutes les étapes dans l'ordre."""
+        """action_next walks through every step in order."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         expected = ['welcome', 'about', 'preferences', 'done']
@@ -76,7 +76,7 @@ class TestSocialOnboarding(TransactionCase):
                 wizard.action_next()
 
     def test_action_previous_goes_back(self):
-        """action_previous revient à l'étape précédente."""
+        """action_previous moves back to the previous step."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.action_next()  # welcome → about
@@ -86,7 +86,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(wizard.step, 'about')
 
     def test_action_previous_does_not_go_before_welcome(self):
-        """action_previous ne va pas en dessous de l'étape 'welcome'."""
+        """action_previous never goes below the 'welcome' step."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         self.assertEqual(wizard.step, 'welcome')
@@ -94,7 +94,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(wizard.step, 'welcome')
 
     def test_action_next_returns_act_window(self):
-        """action_next retourne un act_window vers le même wizard."""
+        """action_next returns an act_window pointing at the same wizard."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         result = wizard.action_next()
@@ -126,7 +126,7 @@ class TestSocialOnboarding(TransactionCase):
             'availability': 'disponible',
             'digest_email_enabled': False,
         })
-        # Avancer jusqu'à l'étape preferences pour pouvoir terminer
+        # Walk forward to the preferences step so that finish() is reachable
         wizard.step = 'preferences'
         wizard.action_finish()
         profile = wizard.profile_id
@@ -139,7 +139,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertFalse(profile.digest_email_enabled)
 
     def test_finish_marks_onboarding_done(self):
-        """action_finish passe onboarding_done à True."""
+        """action_finish sets onboarding_done to True."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         self.assertFalse(wizard.profile_id.onboarding_done)
@@ -148,7 +148,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertTrue(wizard.profile_id.onboarding_done)
 
     def test_skip_does_not_mark_done(self):
-        """action_skip laisse onboarding_done à False."""
+        """action_skip leaves onboarding_done as False."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.action_skip()
@@ -157,7 +157,7 @@ class TestSocialOnboarding(TransactionCase):
     # ── Validation ────────────────────────────────────────────────────────────
 
     def test_underage_birth_year_blocked(self):
-        """Une année de naissance donnant moins de 18 ans est rejetée à l'étape 'about'."""
+        """A birth year yielding less than 18 is rejected on the 'about' step."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         current_year = datetime.date.today().year
@@ -169,7 +169,7 @@ class TestSocialOnboarding(TransactionCase):
             wizard.action_next()
 
     def test_valid_adult_birth_year_passes(self):
-        """Une année de naissance d'un adulte (18+) passe la validation."""
+        """An adult birth year (18+) passes validation."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         current_year = datetime.date.today().year
@@ -181,17 +181,17 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(wizard.step, 'preferences')
 
     def test_zero_birth_year_skips_validation(self):
-        """Un birth_year à 0 (non saisi) ne déclenche pas la validation d'âge."""
+        """A birth_year of 0 (not provided) does not trigger age validation."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.write({'step': 'about', 'birth_year': 0})
         wizard.action_next()
         self.assertEqual(wizard.step, 'preferences')
 
-    # ── Hook d'adhésion ───────────────────────────────────────────────────────
+    # ── Membership hook ───────────────────────────────────────────────────────
 
     def test_membership_activate_creates_profile(self):
-        """L'activation d'une adhésion crée automatiquement le profil du membre."""
+        """Activating a membership automatically creates the member profile."""
         user2 = self.env['res.users'].create({
             'name': 'Hook Test User',
             'login': 'hook_test_onb',
@@ -211,8 +211,8 @@ class TestSocialOnboarding(TransactionCase):
         self.assertFalse(profile.onboarding_done)
 
     def test_membership_activate_no_profile_if_no_user(self):
-        """L'activation sans user associé ne crée pas de profil orphelin."""
-        partner = self.env['res.partner'].create({'name': 'Partenaire sans compte'})
+        """Activation without an associated user does not create an orphan profile."""
+        partner = self.env['res.partner'].create({'name': 'Partner without account'})
         membership = self.env['club_membership.membership'].sudo().create({
             'partner_id': partner.id,
             'membership_type_id': self.type_regular.id,
@@ -225,27 +225,27 @@ class TestSocialOnboarding(TransactionCase):
         ])
         self.assertEqual(count, 0)
 
-    # ── Méthode profile_ext ───────────────────────────────────────────────────
+    # ── profile_ext method ────────────────────────────────────────────────────
 
     def test_profile_action_open_onboarding(self):
-        """Le bouton "Compléter mon profil" redirige vers le parcours portail."""
+        """The "Complete my profile" button redirects to the portal flow."""
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.user)
         action = profile.with_user(self.user).action_open_onboarding()
         self.assertEqual(action['type'], 'ir.actions.act_url')
         self.assertEqual(action['url'], '/onboarding')
 
     def test_action_open_loads_profile_data(self):
-        """action_open pré-remplit le wizard avec les données existantes du profil."""
+        """action_open pre-fills the wizard with the profile's existing data."""
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.user)
-        profile.sudo().write({'bio': 'Bio existante', 'city': 'Québec', 'birth_year': 1985})
+        profile.sudo().write({'bio': 'Existing bio', 'city': 'Québec', 'birth_year': 1985})
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
-        self.assertEqual(wizard.bio, 'Bio existante')
+        self.assertEqual(wizard.bio, 'Existing bio')
         self.assertEqual(wizard.city, 'Québec')
         self.assertEqual(wizard.birth_year, 1985)
 
     def test_skip_saves_to_profile(self):
-        """action_skip sauvegarde les champs remplis vers le profil."""
+        """action_skip saves the filled fields to the profile."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.write({'bio': 'Bio via skip', 'city': 'Laval'})
@@ -255,7 +255,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(profile.city, 'Laval')
 
     def test_action_next_at_done_stays_done(self):
-        """action_next à l'étape 'done' ne dépasse pas 'done'."""
+        """action_next on step 'done' does not go past 'done'."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.step = 'done'
@@ -263,7 +263,7 @@ class TestSocialOnboarding(TransactionCase):
         self.assertEqual(wizard.step, 'done')
 
     def test_finish_returns_client_action(self):
-        """action_finish retourne une action client (notification)."""
+        """action_finish returns a client action (notification)."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.step = 'preferences'

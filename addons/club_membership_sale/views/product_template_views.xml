@@ -8,8 +8,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='description_sale']" position="before">
                 <field name="membership_type_id"
-                       string="Type d'adhésion"
-                       help="Si renseigné, la vente de ce produit crée une adhésion automatiquement."/>
+                       string="Membership type"
+                       help="If set, selling this product automatically creates a membership."/>
             </xpath>
         </field>
     </record>

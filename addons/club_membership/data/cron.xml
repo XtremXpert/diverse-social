@@ -3,7 +3,7 @@
     <data noupdate="1">
 
         <record id="cron_check_membership_expiry" model="ir.cron">
-            <field name="name">Club Adhésion : expiration automatique</field>
+            <field name="name">Club Membership: automatic expiration</field>
             <field name="model_id" ref="model_club_membership_membership"/>
             <field name="state">code</field>
             <field name="code">model.cron_check_expiry()</field>

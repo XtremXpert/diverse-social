@@ -1,8 +1,8 @@
 {
-    'name': 'Club — Adhésion en ligne',
+    'name': 'Club — Membership en ligne',
     'version': '19.0.1.0.0',
     'category': 'Club',
-    'summary': "Vitrine publique des types d'adhésion, intégration panier website_sale, portail membre",
+    'summary': "Public storefront for membership types, website_sale cart integration, member portal",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [

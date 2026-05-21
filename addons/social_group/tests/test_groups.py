@@ -149,7 +149,7 @@ class TestSocialGroup(TransactionCase):
         group = self._make_group()
         self.assertFalse(group.is_moderator(self.user2))
 
-    # ── Règles ────────────────────────────────────────────────────────────────
+    # ── Rules ─────────────────────────────────────────────────────────────────
 
     def test_group_rule_created(self):
         group = self._make_group()

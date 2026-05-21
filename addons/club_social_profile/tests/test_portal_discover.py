@@ -48,7 +48,7 @@ class TestPortalDiscoverData(TransactionCase):
         cls.Profile = cls.env['club_social_profile.profile']
 
     def _search(self, **filters):
-        """Helper : simule le domaine du contrôleur."""
+        """Helper: mimics the controller domain."""
         from odoo.addons.club_social_profile.controllers.portal_discover import (
             _GENDER_LABELS, _ORIENTATION_LABELS, _AVAILABILITY_LABELS,
         )
@@ -66,7 +66,7 @@ class TestPortalDiscoverData(TransactionCase):
             domain.append(('availability', '=', filters['availability']))
         return self.Profile.sudo().search(domain)
 
-    # ── Visibilité ────────────────────────────────────────────────────────
+    # ── Visibility ───────────────────────────────────────────────────────
 
     def test_members_visible_profiles_included(self):
         results = self._search()

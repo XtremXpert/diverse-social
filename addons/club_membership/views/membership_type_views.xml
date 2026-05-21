@@ -5,12 +5,12 @@
         <field name="name">club_membership.type.list</field>
         <field name="model">club_membership.type</field>
         <field name="arch" type="xml">
-            <list string="Types d'adhésion" editable="top">
+            <list string="Membership types" editable="top">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="duration_months"/>
                 <field name="fee"/>
-                <field name="membership_count" string="Adhésions"/>
+                <field name="membership_count" string="Memberships"/>
                 <field name="active" optional="show"/>
             </list>
         </field>
@@ -20,7 +20,7 @@
         <field name="name">club_membership.type.form</field>
         <field name="model">club_membership.type</field>
         <field name="arch" type="xml">
-            <form string="Type d'adhésion">
+            <form string="Membership type">
                 <sheet>
                     <div class="oe_title">
                         <h1><field name="name" placeholder="Nom du type..."/></h1>
@@ -29,22 +29,22 @@
                         <group>
                             <field name="fee"/>
                             <field name="duration_months"
-                                   help="0 = illimité (membre à vie)"/>
+                                   help="0 = unlimited (lifetime member)"/>
                             <field name="sequence"/>
                         </group>
                         <group>
                             <field name="active"/>
-                            <field name="membership_count" string="Adhésions actives"/>
+                            <field name="membership_count" string="Active memberships"/>
                         </group>
                     </group>
-                    <field name="description" placeholder="Description publique..."/>
+                    <field name="description" placeholder="Public description..."/>
                 </sheet>
             </form>
         </field>
     </record>
 
     <record id="action_club_membership_type" model="ir.actions.act_window">
-        <field name="name">Types d'adhésion</field>
+        <field name="name">Membership types</field>
         <field name="res_model">club_membership.type</field>
         <field name="view_mode">list,form</field>
     </record>

@@ -16,7 +16,7 @@ class ClubMembershipPortal(CustomerPortal):
 
     @route('/my/membership', auth='user', website=True)
     def my_memberships(self, page=1, **kw):
-        """Liste des adhésions du membre connecté."""
+        """List of memberships for the connected member."""
         partner = request.env.user.partner_id
         Membership = request.env['club_membership.membership']
 
@@ -42,7 +42,7 @@ class ClubMembershipPortal(CustomerPortal):
 
     @route('/my/membership/<int:membership_id>', auth='user', website=True)
     def membership_detail(self, membership_id, **kw):
-        """Détail d'une adhésion."""
+        """Membership detail."""
         membership = request.env['club_membership.membership'].browse(membership_id).exists()
         if not membership or membership.partner_id != request.env.user.partner_id:
             raise Forbidden()

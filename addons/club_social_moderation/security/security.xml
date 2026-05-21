@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <!-- Bans: lecture et gestion par les modérateurs seulement -->
+        <!-- Bans: read and managed by moderators only -->
         <record id="moderation_ban_moderator_rule" model="ir.rule">
             <field name="name">Club Social Ban: Moderator Access</field>
             <field name="model_id" ref="model_club_social_moderation_ban"/>
@@ -14,7 +14,7 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- Reports: l'utilisateur peut créer, les modérateurs gèrent -->
+        <!-- Reports: any user can create, moderators handle them -->
         <record id="moderation_report_user_rule" model="ir.rule">
             <field name="name">Club Social Report: User Create</field>
             <field name="model_id" ref="model_club_social_moderation_report"/>

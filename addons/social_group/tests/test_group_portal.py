@@ -146,7 +146,7 @@ class TestGroupPortalHttp(HttpCase):
         )
         self.assertIn(resp.status_code, (302, 303))
 
-    # ── Créer un groupe ───────────────────────────────────────────────────
+    # ── Create a group ────────────────────────────────────────────────────
 
     def test_create_group_ok(self):
         self.authenticate('admin', 'admin')
@@ -174,7 +174,7 @@ class TestGroupPortalHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'name_required', resp.url.encode())
 
-    # ── Éditer un groupe ──────────────────────────────────────────────────
+    # ── Edit a group ──────────────────────────────────────────────────────
 
     def test_edit_group_by_admin(self):
         admin = self.env.ref('base.user_admin')

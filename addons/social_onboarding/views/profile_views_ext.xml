@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Bannière sur la fiche profil quand l'onboarding n'est pas complété -->
+    <!-- Banner on the profile form when onboarding is incomplete -->
     <record id="view_csp_profile_form_onboarding_banner" model="ir.ui.view">
         <field name="name">club_social_profile.profile.form.onboarding_banner</field>
         <field name="model">club_social_profile.profile</field>
@@ -11,11 +11,11 @@
                 <div class="alert alert-info d-flex align-items-center justify-content-between"
                      invisible="onboarding_done">
                     <span>
-                        <i class="fa fa-info-circle me-2"/>
-                        Profil incomplet — Complétez votre profil pour une meilleure visibilité auprès des autres membres.
+                        <i class="fa fa-info-circle me-2" title="Info"/>
+                        Incomplete profile — Complete your profile to be more visible to other members.
                     </span>
                     <button name="action_open_onboarding"
-                            string="Compléter mon profil"
+                            string="Complete my profile"
                             type="object"
                             class="btn btn-sm btn-info ms-3"/>
                 </div>

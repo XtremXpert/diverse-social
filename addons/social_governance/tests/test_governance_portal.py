@@ -125,7 +125,7 @@ class TestGovernancePortalData(TransactionCase):
         with self.assertRaises(UserError):
             p.with_user(self.moderator).action_withdraw()
 
-    # ── Clôture ───────────────────────────────────────────────────────────
+    # ── Closing ───────────────────────────────────────────────────────────
 
     def test_close_voting_majority_accepted(self):
         p = self._make_proposal(state='voting')

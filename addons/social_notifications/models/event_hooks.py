@@ -20,7 +20,7 @@ class EventRegistration(models.Model):
                 user_id=organizer.id,
                 actor_id=actor_id,
                 notif_type='event_registration',
-                body=_('%s s\'est inscrit(e) à votre événement « %s ».',
+                body=_('%s registered for your event "%s".',
                        reg.partner_id.name, reg.event_id.name),
                 ref_model='event.event',
                 ref_id=reg.event_id.id,

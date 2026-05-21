@@ -23,7 +23,7 @@ class MembersPortal(CustomerPortal):
         sort = sort if sort in _SORT_MAP else _SORT_DEFAULT
         page = max(1, int(page))
 
-        # Filtres depuis les paramètres GET (multi-valeurs via getlist)
+        # Filters from GET parameters (multi-value via getlist)
         args = request.httprequest.args
         genders       = args.getlist('gender')
         orientations  = args.getlist('orientation')
@@ -56,7 +56,7 @@ class MembersPortal(CustomerPortal):
             offset=pager['offset'],
         )
 
-        # Données pour les dropdowns de filtres
+        # Filter dropdown data
         Profile_base = request.env['club_social_profile.profile']
         has_bdsm = 'bdsm_role' in Profile_base._fields
 
@@ -68,15 +68,16 @@ class MembersPortal(CustomerPortal):
             if 'club_social_profile_bdsm.kink' in request.env else []
         )
 
+        from odoo import _
         _ROLE_LABELS = {
-            'dominant': 'Dominant(e)', 'soumis': 'Soumis(e)', 'switch': 'Switch',
-            'maitre': 'Maître/Maîtresse', 'esclave': 'Esclave',
-            'sadique': 'Sadique', 'masochiste': 'Masochiste',
-            'curieux': 'Curieux(se)', 'spectateur': 'Spectateur(trice)', 'autre': 'Autre',
+            'dominant': _('Dominant'), 'soumis': _('Submissive'), 'switch': _('Switch'),
+            'maitre': _('Master/Mistress'), 'esclave': _('Slave'),
+            'sadique': _('Sadist'), 'masochiste': _('Masochist'),
+            'curieux': _('Curious'), 'spectateur': _('Spectator'), 'autre': _('Other'),
         }
         _EXP_LABELS = {
-            'nouveau': 'Nouveau(lle)', 'intermediate': 'Intermédiaire',
-            'experimente': 'Expérimenté(e)',
+            'nouveau': _('New'), 'intermediate': _('Intermediate'),
+            'experimente': _('Experienced'),
         }
 
         values = {
@@ -85,7 +86,7 @@ class MembersPortal(CustomerPortal):
             'total': total,
             'sort': sort,
             'q': q,
-            # filtres actifs
+            # active filters
             'active_genders': genders,
             'active_orientations': orientations,
             'active_availabilities': availabilities,
@@ -95,7 +96,7 @@ class MembersPortal(CustomerPortal):
             'active_city': city,
             'active_min_age': min_age,
             'active_max_age': max_age,
-            # options dropdowns
+            # dropdown options
             'genders_opts': genders_opts,
             'orientations_opts': orientations_opts,
             'avail_opts': avail_opts,
@@ -120,15 +121,17 @@ def _build_domain(user, q, genders, orientations, availabilities,
                   bdsm_roles, experiences, has_photo, city, min_age, max_age):
     current_year = date.today().year
 
-    # Exclusion des utilisateurs bloqués
+    # Exclude blocked users
     blocked_ids = []
     if 'social_safety.block' in request.env:
         blocked_ids = request.env['social_safety.block'].get_blocked_ids_for(user)
 
+    # After the portal/internal refactor, club members are portal users
+    # (share=True). We filter on social_user group membership instead.
     domain = [
         ('user_id', '!=', user.id),
         ('user_id.active', '=', True),
-        ('user_id.share', '=', False),
+        ('user_id.all_group_ids', 'in', [user.env.ref('social_base.group_social_user').id]),
         ('onboarding_done', '=', True),
         ('visibility', '=', 'members'),
     ]
@@ -154,13 +157,13 @@ def _build_domain(user, q, genders, orientations, availabilities,
     if has_photo:
         domain.append(('profile_image', '!=', False))
 
-    # Filtres d'âge → conversion en birth_year
+    # Age filters → convert to birth_year
     if min_age and min_age > 18:
         domain += [('birth_year', '!=', 0), ('birth_year', '<=', current_year - min_age)]
     if max_age:
         domain += [('birth_year', '!=', 0), ('birth_year', '>=', current_year - max_age)]
 
-    # Filtres BDSM (optionnels si module installé)
+    # BDSM filters (optional, only if the module is installed)
     Profile_fields = request.env['club_social_profile.profile']._fields
     if bdsm_roles and 'bdsm_role' in Profile_fields:
         domain.append(('bdsm_role', 'in', bdsm_roles))

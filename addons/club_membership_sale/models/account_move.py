@@ -20,11 +20,11 @@ class AccountMove(models.Model):
                 move._activate_memberships_on_payment()
 
     def _activate_memberships_on_payment(self):
-        """Active les adhésions en attente liées à cette facture ou à la commande associée."""
+        """Activate pending memberships linked to this invoice or to its order."""
         self.ensure_one()
         Membership = self.env['club_membership.membership'].sudo()
 
-        # Chercher via sale_order_id (commandes liées à cette facture)
+        # Lookup via sale_order_id (orders linked to this invoice)
         sale_orders = self.env['sale.order'].sudo().search([
             ('invoice_ids', 'in', [self.id])
         ])
@@ -40,10 +40,10 @@ class AccountMove(models.Model):
                 membership.invoice_id = self.id
                 membership.action_activate()
                 _logger.info(
-                    "Adhésion #%s activée suite au paiement de la facture %s",
+                    "Membership #%s activated after payment of invoice %s",
                     membership.id, self.name,
                 )
             except Exception:
                 _logger.exception(
-                    "Erreur lors de l'activation de l'adhésion #%s", membership.id
+                    "Error while activating membership #%s", membership.id
                 )

@@ -1,6 +1,6 @@
 {
     'name': 'Social Base',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Social',
     'summary': 'Core social network primitives: posts, comments, reactions',
     'author': 'Bemade, Odoo Community Association (OCA)',

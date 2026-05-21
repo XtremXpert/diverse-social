@@ -2,7 +2,7 @@
 <odoo>
 
     <menuitem id="menu_social_onboarding"
-              name="Compléter mon profil"
+              name="Complete my profile"
               parent="social_base.menu_social_base_root"
               sequence="2"
               action="action_open_social_onboarding"

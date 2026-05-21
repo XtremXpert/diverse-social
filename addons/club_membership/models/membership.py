@@ -6,39 +6,39 @@ from odoo.exceptions import UserError, ValidationError
 
 class ClubMembership(models.Model):
     _name = 'club_membership.membership'
-    _description = 'Adhésion au club'
+    _description = 'Club Membership'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'start_date desc, id desc'
     _rec_name = 'display_name'
 
     partner_id = fields.Many2one(
-        'res.partner', 'Membre', required=True, index=True, ondelete='cascade',
+        'res.partner', 'Member', required=True, index=True, ondelete='cascade',
     )
     user_id = fields.Many2one(
-        'res.users', 'Utilisateur', compute='_compute_user_id', store=True,
+        'res.users', 'User', compute='_compute_user_id', store=True,
     )
     membership_type_id = fields.Many2one(
         'club_membership.type', 'Type', required=True, ondelete='restrict',
     )
     state = fields.Selection([
-        ('pending', 'En attente'),
-        ('active', 'Actif'),
-        ('expired', 'Expiré'),
-        ('suspended', 'Suspendu'),
-        ('cancelled', 'Annulé'),
+        ('pending', 'Pending'),
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('suspended', 'Suspended'),
+        ('cancelled', 'Cancelled'),
     ], default='pending', required=True, index=True, tracking=True)
 
-    start_date = fields.Date('Début', required=True, default=fields.Date.today)
-    end_date = fields.Date('Fin')
-    fee_paid = fields.Monetary('Cotisation payée', currency_field='currency_id')
+    start_date = fields.Date('Start', required=True, default=fields.Date.today)
+    end_date = fields.Date('End')
+    fee_paid = fields.Monetary('Fee paid', currency_field='currency_id')
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.company.currency_id,
     )
     invoice_id = fields.Many2one(
-        'account.move', 'Facture', domain=[('move_type', '=', 'out_invoice')],
+        'account.move', 'Invoice', domain=[('move_type', '=', 'out_invoice')],
         ondelete='set null',
     )
-    notes = fields.Text('Notes internes')
+    notes = fields.Text('Internal notes')
 
     display_name = fields.Char(compute='_compute_display_name', store=True)
 
@@ -60,13 +60,13 @@ class ClubMembership(models.Model):
             )
             rec.user_id = user
 
-    # ── Transitions d'état ────────────────────────────────────────────────────
+    # ── State transitions ────────────────────────────────────────────────────
 
     def action_activate(self):
         for rec in self:
             if rec.state not in ('pending', 'suspended'):
                 raise UserError(
-                    _("Impossible d'activer une adhésion en état « %s ».", rec._get_state_label())
+                    _("Cannot activate a membership in state \"%s\".", rec._get_state_label())
                 )
             if not rec.end_date and rec.membership_type_id.duration_months:
                 rec.end_date = rec.start_date + relativedelta(
@@ -79,7 +79,7 @@ class ClubMembership(models.Model):
         for rec in self:
             if rec.state != 'active':
                 raise UserError(
-                    _("Impossible de suspendre une adhésion en état « %s ».", rec._get_state_label())
+                    _("Cannot suspend a membership in state \"%s\".", rec._get_state_label())
                 )
             rec.write({'state': 'suspended'})
             rec._sync_social_access(grant=False)
@@ -92,7 +92,7 @@ class ClubMembership(models.Model):
             rec._sync_social_access(grant=False)
 
     def action_renew(self):
-        """Crée une nouvelle adhésion dans la continuité de celle-ci."""
+        """Create a new membership picking up from this one."""
         self.ensure_one()
         start = (self.end_date or fields.Date.today()) + relativedelta(days=1)
         return {
@@ -107,10 +107,10 @@ class ClubMembership(models.Model):
             },
         }
 
-    # ── Accès réseau social ───────────────────────────────────────────────────
+    # ── Social network access ────────────────────────────────────────────────
 
     def _sync_social_access(self, grant):
-        """Accorde ou révoque group_social_user selon l'état de l'adhésion."""
+        """Grant or revoke group_social_user based on the membership state."""
         group = self.env.ref('social_base.group_social_user')
         for rec in self:
             user = rec.user_id
@@ -119,7 +119,7 @@ class ClubMembership(models.Model):
             if grant:
                 user.sudo().write({'group_ids': [(4, group.id)]})
             else:
-                # Ne révoquer que si aucune autre adhésion active n'existe
+                # Only revoke if no other active membership exists
                 other_active = self.search([
                     ('partner_id', '=', rec.partner_id.id),
                     ('state', '=', 'active'),
@@ -128,11 +128,11 @@ class ClubMembership(models.Model):
                 if not other_active:
                     user.sudo().write({'group_ids': [(3, group.id)]})
 
-    # ── Cron : expiration automatique ────────────────────────────────────────
+    # ── Cron: automatic expiration ──────────────────────────────────────────
 
     @api.model
     def cron_check_expiry(self):
-        """Expire les adhésions dont la date de fin est dépassée."""
+        """Expire memberships whose end_date is past."""
         today = fields.Date.today()
         expired = self.search([
             ('state', '=', 'active'),
@@ -143,13 +143,13 @@ class ClubMembership(models.Model):
             rec.write({'state': 'expired'})
             rec._sync_social_access(grant=False)
 
-    # ── Contraintes ───────────────────────────────────────────────────────────
+    # ── Constraints ──────────────────────────────────────────────────────────
 
     @api.constrains('start_date', 'end_date')
     def _check_dates(self):
         for rec in self:
             if rec.end_date and rec.start_date and rec.end_date < rec.start_date:
-                raise ValidationError(_("La date de fin doit être postérieure à la date de début."))
+                raise ValidationError(_("End date must be after start date."))
 
     @api.constrains('partner_id', 'state')
     def _check_unique_active(self):
@@ -164,10 +164,10 @@ class ClubMembership(models.Model):
                 ], limit=1)
                 if duplicate:
                     raise ValidationError(
-                        _("Le membre « %s » a déjà une adhésion active.", rec.partner_id.name)
+                        _("Member \"%s\" already has an active membership.", rec.partner_id.name)
                     )
 
-    # ── Helpers ───────────────────────────────────────────────────────────────
+    # ── Helpers ──────────────────────────────────────────────────────────────
 
     def _get_state_label(self):
         self.ensure_one()

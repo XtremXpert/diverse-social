@@ -119,7 +119,7 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Mode discret', resp.content)
         self.assertIn(b'Sortie rapide', resp.content)
-        self.assertIn('bloqués'.encode(), resp.content)
+        self.assertIn('Blocked users'.encode(), resp.content)
 
     def test_panic_activate_redirects(self):
         self.authenticate('admin', 'admin')
@@ -146,7 +146,7 @@ class TestSafetyPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Échap'.encode(), resp.content)
+        self.assertIn('Esc'.encode(), resp.content)
 
     def test_panic_activate_changes_db_state(self):
         group_social = self.env.ref('social_base.group_social_user')

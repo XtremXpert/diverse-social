@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="Adhésion" name="club_membership">
+                <page string="Membership" name="club_membership">
                     <group>
                         <field name="member_state" readonly="1"/>
                         <field name="current_membership_id" readonly="1"/>

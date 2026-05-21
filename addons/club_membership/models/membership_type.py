@@ -3,19 +3,19 @@ from odoo import fields, models
 
 class ClubMembershipType(models.Model):
     _name = 'club_membership.type'
-    _description = "Type d'adhésion"
+    _description = "Membership type"
     _order = 'sequence, name'
 
-    name = fields.Char('Nom', required=True, translate=True)
+    name = fields.Char('Name', required=True, translate=True)
     sequence = fields.Integer(default=10)
     description = fields.Text('Description', translate=True)
-    fee = fields.Monetary('Cotisation annuelle', currency_field='currency_id')
+    fee = fields.Monetary('Annual fee', currency_field='currency_id')
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.company.currency_id,
     )
     duration_months = fields.Integer(
-        'Durée (mois)', default=12,
-        help="Durée de validité de l'adhésion en mois. 0 = illimité (membre à vie).",
+        'Duration (months)', default=12,
+        help="Membership validity in months. 0 = unlimited (lifetime member).",
     )
     active = fields.Boolean(default=True)
     membership_count = fields.Integer(compute='_compute_membership_count')

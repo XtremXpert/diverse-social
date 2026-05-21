@@ -8,7 +8,7 @@
         <field name="path">/social_notifications/static/src/js/notification_bell.js</field>
     </record>
 
-    <!-- ══ Widget cloche injecté dans le header portail ════════════════════ -->
+    <!-- ══ Bell widget injected into the portal header ════════════════════ -->
     <template id="portal_notification_bell" inherit_id="portal.portal_layout"
               name="Cloche de notifications">
         <xpath expr="//div[@id='wrap']" position="before">
@@ -139,13 +139,13 @@
                     <div id="sn_dropdown">
                         <div class="sn-header">
                             <span>Notifications</span>
-                            <button id="sn_read_all">Tout lire</button>
+                            <button id="sn_read_all">Mark all read</button>
                         </div>
                         <ul id="sn_list">
-                            <li class="sn-empty">Chargement…</li>
+                            <li class="sn-empty">Loading…</li>
                         </ul>
                         <div class="sn-footer">
-                            <a href="/social/notifications">Voir toutes les notifications →</a>
+                            <a href="/social/notifications">View all notifications →</a>
                         </div>
                     </div>
                 </div>

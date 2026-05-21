@@ -85,7 +85,7 @@ class TestSocialReaction(TransactionCase):
         self.assertEqual(r.type, 'love')
 
     def test_batch_create_upsert(self):
-        """create() avec plusieurs vals → une seule réaction par user/post."""
+        """create() with multiple vals → only one reaction per user/post."""
         user2 = self.env['res.users'].create({
             'name': 'Reaction User2', 'login': 'reaction_user2', 'email': 'r2@test.test',
             'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],

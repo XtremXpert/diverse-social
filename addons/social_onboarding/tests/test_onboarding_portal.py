@@ -70,7 +70,7 @@ class TestOnboardingPortalLogic(TransactionCase):
             self.assertIn(language, self.profile.language_ids)
 
     def test_gender_invalid_value_rejected(self):
-        """Une valeur de genre invalide ne doit pas être écrite."""
+        """An invalid gender value must not be written."""
         self.profile.sudo().write({'gender': 'non_specifie'})
         valid = {'homme', 'femme', 'trans_homme', 'trans_femme',
                  'non_binaire', 'autre', 'non_specifie'}
@@ -191,7 +191,7 @@ class TestOnboardingPortalHttp(HttpCase):
         self.assertIn(resp.status_code, (302, 303))
 
     def test_save_about_underage_returns_200(self):
-        """Année de naissance invalide → réaffichage du formulaire (200), pas de redirect."""
+        """Invalid birth year → form is re-rendered (200), no redirect."""
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         current_year = datetime.date.today().year
@@ -229,7 +229,7 @@ class TestOnboardingPortalHttp(HttpCase):
             },
             allow_redirects=False,
         )
-        # Doit quand même rediriger (valeur invalide → non_specifie par défaut)
+        # Should still redirect (invalid value → falls back to non_specifie)
         self.assertIn(resp.status_code, (302, 303))
 
     def test_onboarding_about_shows_gender_fields(self):
@@ -295,7 +295,7 @@ class TestOnboardingPortalHttp(HttpCase):
             '/onboarding/save/preferences',
             data={'csrf_token': _csrf, 
                 'visibility': 'members',
-                # digest_email_enabled absent = décoché
+                # digest_email_enabled missing = unchecked
             },
         )
         admin = self.env.ref('base.user_admin')

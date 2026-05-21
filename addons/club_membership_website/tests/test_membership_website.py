@@ -6,7 +6,7 @@ from odoo.tests import HttpCase, tagged, TransactionCase
 
 @tagged('club_membership_website', 'membership_website')
 class TestMembershipWebsiteAccess(TransactionCase):
-    """Tests d'accès et de règles de sécurité portail (sans serveur HTTP)."""
+    """Portal access and security tests (no HTTP server)."""
 
     @classmethod
     def setUpClass(cls):
@@ -36,27 +36,27 @@ class TestMembershipWebsiteAccess(TransactionCase):
     # ── ACL portail ───────────────────────────────────────────────────────────
 
     def test_portal_can_read_own_membership(self):
-        """L'utilisateur portail peut lire ses propres adhésions."""
+        """A portal user can read their own memberships."""
         memberships = self.env['club_membership.membership'].with_user(
             self.portal_user
         ).search([('partner_id', '=', self.portal_user.partner_id.id)])
         self.assertIn(self.membership, memberships)
 
     def test_portal_cannot_read_other_membership(self):
-        """L'utilisateur portail ne voit pas les adhésions des autres."""
+        """A portal user cannot see other people's memberships."""
         memberships = self.env['club_membership.membership'].with_user(
             self.other_portal
         ).search([])
         self.assertNotIn(self.membership, memberships)
 
     def test_portal_cannot_write_membership(self):
-        """L'utilisateur portail ne peut pas modifier les adhésions."""
+        """A portal user cannot modify memberships."""
         from odoo.exceptions import AccessError
         with self.assertRaises(AccessError):
             self.membership.with_user(self.portal_user).write({'state': 'cancelled'})
 
     def test_portal_cannot_create_membership(self):
-        """L'utilisateur portail ne peut pas créer d'adhésion."""
+        """A portal user cannot create a membership."""
         from odoo.exceptions import AccessError
         with self.assertRaises(AccessError):
             self.env['club_membership.membership'].with_user(self.portal_user).create({
@@ -66,12 +66,12 @@ class TestMembershipWebsiteAccess(TransactionCase):
             })
 
     def test_portal_can_read_membership_types(self):
-        """L'utilisateur portail peut lire les types d'adhésion (vitrine publique)."""
+        """A portal user can read membership types (public catalog)."""
         types = self.env['club_membership.type'].with_user(self.portal_user).search([])
         self.assertGreaterEqual(len(types), 1)
 
     def test_public_can_read_membership_types(self):
-        """L'utilisateur public peut lire les types d'adhésion."""
+        """A public user can read membership types."""
         types = self.env['club_membership.type'].with_user(
             self.env.ref('base.public_user')
         ).search([('active', '=', True)])
@@ -80,7 +80,7 @@ class TestMembershipWebsiteAccess(TransactionCase):
     # ── Recherche de produit ──────────────────────────────────────────────────
 
     def test_product_linked_to_type(self):
-        """Les produits seed sont liés à leur type d'adhésion."""
+        """Seed products are linked to their membership type."""
         products = self.env['product.template'].sudo().search([
             ('membership_type_id', '!=', False),
         ])
@@ -89,7 +89,7 @@ class TestMembershipWebsiteAccess(TransactionCase):
             self.assertIsNotNone(product.membership_type_id)
 
     def test_product_has_variant(self):
-        """Chaque produit d'adhésion possède au moins une variante."""
+        """Each membership product has at least one variant."""
         products = self.env['product.template'].sudo().search([
             ('membership_type_id', '!=', False),
         ])
@@ -99,7 +99,7 @@ class TestMembershipWebsiteAccess(TransactionCase):
 
 @tagged('club_membership_website', 'membership_website')
 class TestMembershipPortalData(TransactionCase):
-    """Tests sur les données retournées par le portail."""
+    """Tests on the data returned by the portal."""
 
     @classmethod
     def setUpClass(cls):
@@ -113,7 +113,7 @@ class TestMembershipPortalData(TransactionCase):
         })
 
     def test_multiple_memberships_visible(self):
-        """Plusieurs adhésions d'un même membre sont toutes visibles."""
+        """Multiple memberships of one member are all visible."""
         type2 = self.env.ref('club_membership.membership_type_lifetime')
         m1 = self.env['club_membership.membership'].sudo().create({
             'partner_id': self.portal_user.partner_id.id,
@@ -135,17 +135,17 @@ class TestMembershipPortalData(TransactionCase):
         self.assertIn(m2, memberships)
 
     def test_renewal_product_found_for_active(self):
-        """Un produit de renouvellement est disponible pour une adhésion active."""
+        """A renewal product is available for an active membership."""
         product = self.env['product.template'].sudo().search([
             ('membership_type_id', '=', self.type_regular.id),
             ('sale_ok', '=', True),
         ], limit=1)
         if not product:
-            self.skipTest("Aucun produit lié au type régulier")
+            self.skipTest("No product linked to the regular type")
         self.assertTrue(product.membership_type_id)
 
     def test_no_renewal_product_for_cancelled(self):
-        """Cohérence : une adhésion annulée n'affiche pas le bouton renouvellement."""
+        """Consistency: a cancelled membership does not show the renew button."""
         m = self.env['club_membership.membership'].sudo().create({
             'partner_id': self.portal_user.partner_id.id,
             'membership_type_id': self.type_regular.id,
@@ -156,7 +156,7 @@ class TestMembershipPortalData(TransactionCase):
         self.assertNotIn(m.state, ('active', 'expired'))
 
     def test_portal_count_matches_search(self):
-        """Le compteur portail correspond au nombre d'adhésions trouvées."""
+        """The portal counter matches the number of memberships found."""
         m1 = self.env['club_membership.membership'].sudo().create({
             'partner_id': self.portal_user.partner_id.id,
             'membership_type_id': self.type_regular.id,
@@ -174,40 +174,40 @@ class TestMembershipPortalData(TransactionCase):
 
 @tagged('club_membership_website', 'membership_website', 'post_install', '-at_install')
 class TestMembershipWebsiteHttp(HttpCase):
-    """Tests HTTP de la vitrine et du portail (nécessite post_install)."""
+    """HTTP tests for the storefront and portal (requires post_install)."""
 
     def test_membership_page_public(self):
         """La page /membership est accessible sans authentification."""
         response = self.url_open('/membership')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Devenir membre', response.content)
+        self.assertIn(b'Become a member', response.content)
 
     def test_membership_page_shows_types(self):
-        """La page /membership affiche les types d'adhésion."""
+        """The /membership page displays membership types."""
         response = self.url_open('/membership')
         self.assertEqual(response.status_code, 200)
-        # Au moins un type est affiché (seed data)
+        # At least one type is displayed (seed data)
         self.assertIn(b'S\'inscrire', response.content)
 
     def test_portal_requires_auth(self):
-        """La page /my/membership redirige si non authentifié."""
+        """The /my/membership page redirects if not authenticated."""
         response = self.url_open('/my/membership', allow_redirects=False)
         self.assertIn(response.status_code, (302, 303))
 
     def test_portal_my_memberships_authenticated(self):
-        """La page /my/membership est accessible pour un utilisateur connecté."""
+        """The /my/membership page is accessible to a logged-in user."""
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         response = self.url_open('/my/membership')
         self.assertEqual(response.status_code, 200)
 
     def test_membership_detail_requires_auth(self):
-        """La page /my/membership/<id> redirige si non authentifié."""
+        """The /my/membership/<id> page redirects if not authenticated."""
         response = self.url_open('/my/membership/1', allow_redirects=False)
         self.assertIn(response.status_code, (302, 303))
 
     def test_membership_detail_wrong_user_returns_403(self):
-        """Un utilisateur qui accède à l'adhésion d'un autre obtient 403."""
+        """A user accessing someone else's membership gets 403."""
         env = self.env
         type_regular = env.ref('club_membership.membership_type_regular')
         portal_user = env['res.users'].sudo().create({
@@ -243,14 +243,14 @@ class TestMembershipWebsiteHttp(HttpCase):
         self.assertEqual(response.status_code, 404)
 
     def test_membership_page_content_type_html(self):
-        """La réponse de /membership est du HTML."""
+        """The /membership response is HTML."""
         response = self.url_open('/membership')
         self.assertIn('text/html', response.headers.get('Content-Type', ''))
 
 
 @tagged('club_membership_website', 'membership_website')
 class TestMembershipPortalDataExtra(TransactionCase):
-    """Tests supplémentaires sur les données et la sécurité portail."""
+    """Extra tests on portal data and security."""
 
     @classmethod
     def setUpClass(cls):
@@ -270,13 +270,13 @@ class TestMembershipPortalDataExtra(TransactionCase):
         })
 
     def test_portal_cannot_delete_membership(self):
-        """L'utilisateur portail ne peut pas supprimer d'adhésion."""
+        """A portal user cannot delete a membership."""
         from odoo.exceptions import AccessError
         with self.assertRaises(AccessError):
             self.membership.with_user(self.portal_user).unlink()
 
     def test_inactive_type_not_listed(self):
-        """Un type inactif n'apparaît pas dans la recherche publique."""
+        """An inactive type does not appear in the public search."""
         inactive_type = self.env['club_membership.type'].sudo().create({
             'name': 'Type Inactif Test',
             'active': False,
@@ -288,7 +288,7 @@ class TestMembershipPortalDataExtra(TransactionCase):
         self.assertNotIn(inactive_type, types)
 
     def test_membership_type_sequence_ordering(self):
-        """Les types sont triés par séquence croissante."""
+        """Types are ordered by ascending sequence."""
         types = self.env['club_membership.type'].sudo().search(
             [('active', '=', True)], order='sequence, name'
         )
@@ -296,7 +296,7 @@ class TestMembershipPortalDataExtra(TransactionCase):
         self.assertEqual(sequences, sorted(sequences))
 
     def test_portal_user_sees_only_own_memberships_count(self):
-        """search_count portail retourne uniquement les adhésions de l'utilisateur."""
+        """portal search_count returns only the user's memberships."""
         other = self.env['res.users'].sudo().create({
             'name': 'Other Count', 'login': 'other_count_mw', 'email': 'ocount@mw.test',
             'group_ids': [(4, self.env.ref('base.group_portal').id)],
@@ -318,13 +318,13 @@ class TestMembershipPortalDataExtra(TransactionCase):
         self.assertEqual(count, len(own))
 
     def test_membership_type_has_currency(self):
-        """Les types d'adhésion seed ont une devise configurée."""
+        """Seeded membership types have a currency configured."""
         types = self.env['club_membership.type'].sudo().search([('active', '=', True)])
         for t in types:
             self.assertTrue(t.currency_id)
 
     def test_pending_state_visible_in_portal(self):
-        """Une adhésion en état 'pending' est visible dans le portail."""
+        """A membership in 'pending' state is visible in the portal."""
         m = self.env['club_membership.membership'].sudo().create({
             'partner_id': self.portal_user.partner_id.id,
             'membership_type_id': self.type_regular.id,

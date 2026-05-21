@@ -113,7 +113,7 @@ class TestReport(TransactionCase):
 
     def test_resolve_sets_resolved_by(self):
         report = self._make_report(ref_id=5)
-        report.sudo().action_resolve(note='Supprimé')
+        report.sudo().action_resolve(note='Removed')
         self.assertTrue(report.resolved_by)
 
     def test_dismiss_sets_resolved_by(self):
@@ -122,7 +122,7 @@ class TestReport(TransactionCase):
         self.assertTrue(report.resolved_by)
 
     def test_report_all_reasons(self):
-        """Chaque valeur de reason est acceptée."""
+        """Each reason value is accepted."""
         reasons = ['spam', 'harcelement', 'contenu_inapproprie', 'mineurs', 'autre']
         for i, reason in enumerate(reasons, start=10):
             r = self.Report.with_user(self.reporter).create({
@@ -133,7 +133,7 @@ class TestReport(TransactionCase):
             self.assertEqual(r.reason, reason)
 
     def test_report_all_ref_models(self):
-        """Chaque valeur de ref_model est acceptée."""
+        """Each ref_model value is accepted."""
         models = ['social_base.post', 'social_base.comment', 'club_social_profile.profile']
         for i, ref_model in enumerate(models, start=20):
             r = self.Report.with_user(self.reporter).create({
@@ -144,7 +144,7 @@ class TestReport(TransactionCase):
             self.assertEqual(r.ref_model, ref_model)
 
     def test_duplicate_different_model_allowed(self):
-        """Même ref_id mais modèle différent → deux rapports distincts autorisés."""
+        """Same ref_id but different model → two distinct reports allowed."""
         self.Report.with_user(self.reporter).create({
             'ref_model': 'social_base.post',
             'ref_id': 30,
@@ -162,13 +162,13 @@ class TestReport(TransactionCase):
             'ref_model': 'social_base.post',
             'ref_id': 40,
             'reason': 'autre',
-            'description': 'Détails supplémentaires',
+            'description': 'Extra details',
         })
-        self.assertEqual(report.description, 'Détails supplémentaires')
+        self.assertEqual(report.description, 'Extra details')
 
 
 class TestBanExtra(TransactionCase):
-    """Tests supplémentaires sur les bans."""
+    """Extra tests on bans."""
 
     @classmethod
     def setUpClass(cls):
@@ -189,19 +189,19 @@ class TestBanExtra(TransactionCase):
         self.assertTrue(active.banned_by)
 
     def test_multiple_bans_only_active_counts(self):
-        """Deux bans : le premier levé, le second actif → is_banned=True."""
+        """Two bans: first lifted, second active → is_banned=True."""
         past = fields.Datetime.now() - timedelta(hours=2)
         self.env['club_social_moderation.ban'].create({
             'profile_id': self.profile.id,
             'reason': 'Premier ban',
             'banned_until': past,
         })
-        self.profile.action_ban(reason='Deuxième ban actif')
+        self.profile.action_ban(reason='Second active ban')
         self.profile._compute_is_banned()
         self.assertTrue(self.profile.is_banned)
 
     def test_lift_sets_lifted_by(self):
-        self.profile.action_ban(reason='À lever')
+        self.profile.action_ban(reason='To lift')
         active = self.profile.ban_ids.filtered('is_active')
         active.action_lift()
         self.assertTrue(active.lifted_by)
@@ -230,14 +230,14 @@ class TestBanExtra(TransactionCase):
         self.assertTrue(self.profile.is_banned)
 
     def test_ban_reason_cleared_after_lift(self):
-        self.profile.action_ban(reason='À effacer')
+        self.profile.action_ban(reason='To delete')
         active = self.profile.ban_ids.filtered('is_active')
         active.action_lift()
         self.profile._compute_is_banned()
         self.assertFalse(self.profile.ban_reason)
 
     def test_shadow_ban_independent_of_regular_ban(self):
-        """Shadow ban et ban régulier sont indépendants."""
+        """Shadow ban and regular ban are independent."""
         self.profile.action_shadow_ban()
         self.assertTrue(self.profile.is_shadow_banned)
         self.assertFalse(self.profile.is_banned)

@@ -6,7 +6,7 @@ class ProductTemplate(models.Model):
 
     membership_type_id = fields.Many2one(
         'club_membership.type',
-        string="Type d'adhésion",
-        help="Si renseigné, la vente de ce produit crée automatiquement une adhésion.",
+        string="Membership type",
+        help="If set, selling this product automatically creates a membership.",
         ondelete='set null',
     )

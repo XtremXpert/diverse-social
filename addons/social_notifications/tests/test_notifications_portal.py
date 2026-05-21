@@ -71,13 +71,13 @@ class TestNotificationsPortalData(TransactionCase):
         self.assertGreaterEqual(unread, 1)
 
     def test_notify_factory_ignores_self(self):
-        """_notify ne crée pas de notif si user == actor."""
+        """_notify does not create a notif if user == actor."""
         before = self.env['club_social_profile.notification'].sudo().search_count([
             ('user_id', '=', self.user.id),
         ])
         self.env['club_social_profile.notification']._notify(
             user_id=self.user.id,
-            actor_id=self.user.id,  # même utilisateur
+            actor_id=self.user.id,  # same user
             notif_type='post_like',
             body='Self notification',
         )
@@ -87,7 +87,7 @@ class TestNotificationsPortalData(TransactionCase):
         self.assertEqual(before, after)
 
     def test_notification_types_coverage(self):
-        """Les types de notification définis sont bien dans la selection."""
+        """Defined notification types are present in the selection."""
         fields_def = self.env['club_social_profile.notification']._fields['type']
         selection_keys = [k for k, _ in fields_def.selection]
         for t in ['connection_request', 'post_like', 'new_message', 'daily_digest']:
@@ -109,7 +109,7 @@ class TestNotificationsPortalData(TransactionCase):
         self.assertEqual(other_ids, [])
 
     def test_extended_notification_types_in_selection(self):
-        """Les types ajoutés par social_notifications doivent être dans la selection."""
+        """Types added by social_notifications must be in the selection."""
         fields_def = self.env['club_social_profile.notification']._fields['type']
         selection_keys = [k for k, _ in fields_def.selection]
         extended_types = [
@@ -120,7 +120,7 @@ class TestNotificationsPortalData(TransactionCase):
             'circle_added',
         ]
         for t in extended_types:
-            self.assertIn(t, selection_keys, f'Type manquant dans la sélection : {t}')
+            self.assertIn(t, selection_keys, f'Missing type in selection: {t}')
 
     def test_notification_with_url(self):
         """Une notification peut avoir une URL."""
@@ -134,7 +134,7 @@ class TestNotificationsPortalData(TransactionCase):
         self.assertEqual(n.url, '/social/feed')
 
     def test_notification_bus_push_no_error(self):
-        """La création déclenche le bus push sans erreur."""
+        """Creation triggers the bus push without error."""
         n = self.env['club_social_profile.notification'].sudo().create({
             'user_id': self.user.id,
             'actor_id': self.actor.id,
@@ -213,7 +213,7 @@ class TestNotificationsPortalHttp(HttpCase):
             'body': 'API single read test',
             'is_read': False,
         })
-        # Contournement _notify ignore user==actor : écriture directe
+        # Bypass: _notify ignores user==actor, so write directly
         notif.sudo().write({'is_read': False})
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
@@ -245,7 +245,7 @@ class TestNotificationsPortalHttp(HttpCase):
         self.assertEqual(resp.status_code, 404)
 
     def test_api_notif_to_dict_structure(self):
-        """La réponse API contient les champs attendus pour chaque notification."""
+        """API response contains the expected fields for each notification."""
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/social/api/notifications')

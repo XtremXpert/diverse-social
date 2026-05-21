@@ -5,7 +5,7 @@
         <field name="name">club_membership.membership.list</field>
         <field name="model">club_membership.membership</field>
         <field name="arch" type="xml">
-            <list string="Adhésions" default_order="start_date desc">
+            <list string="Memberships" default_order="start_date desc">
                 <field name="partner_id"/>
                 <field name="membership_type_id"/>
                 <field name="state"
@@ -24,18 +24,18 @@
         <field name="name">club_membership.membership.form</field>
         <field name="model">club_membership.membership</field>
         <field name="arch" type="xml">
-            <form string="Adhésion">
+            <form string="Membership">
                 <header>
-                    <button name="action_activate" string="Activer"
+                    <button name="action_activate" string="Activate"
                             type="object" class="btn-primary"
                             invisible="state not in ('pending', 'suspended')"/>
-                    <button name="action_suspend" string="Suspendre"
+                    <button name="action_suspend" string="Suspend"
                             type="object"
                             invisible="state != 'active'"/>
-                    <button name="action_cancel" string="Annuler"
+                    <button name="action_cancel" string="Cancel"
                             type="object"
                             invisible="state in ('cancelled', 'expired')"/>
-                    <button name="action_renew" string="Renouveler"
+                    <button name="action_renew" string="Renew"
                             type="object"
                             invisible="state not in ('active', 'expired')"/>
                     <field name="state" widget="statusbar"
@@ -43,19 +43,19 @@
                 </header>
                 <sheet>
                     <group>
-                        <group string="Membre">
+                        <group string="Member">
                             <field name="partner_id"/>
                             <field name="user_id" readonly="1"/>
                             <field name="membership_type_id"/>
                         </group>
-                        <group string="Période">
+                        <group string="Period">
                             <field name="start_date"/>
                             <field name="end_date"/>
                             <field name="fee_paid"/>
                             <field name="invoice_id"/>
                         </group>
                     </group>
-                    <field name="notes" placeholder="Notes internes..."/>
+                    <field name="notes" placeholder="Internal notes..."/>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
@@ -72,14 +72,14 @@
             <search>
                 <field name="partner_id"/>
                 <field name="membership_type_id"/>
-                <filter name="active" string="Actifs" domain="[('state','=','active')]"/>
-                <filter name="pending" string="En attente" domain="[('state','=','pending')]"/>
-                <filter name="expired" string="Expirés" domain="[('state','=','expired')]"/>
-                <filter name="suspended" string="Suspendus" domain="[('state','=','suspended')]"/>
+                <filter name="active" string="Active" domain="[('state','=','active')]"/>
+                <filter name="pending" string="Pending" domain="[('state','=','pending')]"/>
+                <filter name="expired" string="Expired" domain="[('state','=','expired')]"/>
+                <filter name="suspended" string="Suspended" domain="[('state','=','suspended')]"/>
                 <group>
                     <filter name="group_type" string="Type"
                             context="{'group_by': 'membership_type_id'}"/>
-                    <filter name="group_state" string="Statut"
+                    <filter name="group_state" string="Status"
                             context="{'group_by': 'state'}"/>
                 </group>
             </search>
@@ -87,7 +87,7 @@
     </record>
 
     <record id="action_club_membership" model="ir.actions.act_window">
-        <field name="name">Adhésions</field>
+        <field name="name">Memberships</field>
         <field name="res_model">club_membership.membership</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_club_membership_search"/>

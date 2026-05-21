@@ -9,7 +9,7 @@ class SafetyPortal(CustomerPortal):
             [('user_id', '=', request.env.user.id)], limit=1
         )
 
-    # ── Page sécurité ─────────────────────────────────────────────────────────
+    # ── Safety page ───────────────────────────────────────────────────────────
 
     @route('/safety', auth='user', website=True, sitemap=False)
     def safety_page(self, **kw):
@@ -51,7 +51,7 @@ class SafetyPortal(CustomerPortal):
             profile.sudo().action_panic_lift()
         return request.redirect('/safety')
 
-    # ── Déblocage depuis le portail ───────────────────────────────────────────
+    # ── Unblock from the portal ───────────────────────────────────────────────
 
     @route('/safety/block/<int:block_id>/remove', auth='user', methods=['POST'],
            website=True, csrf=True)
@@ -61,7 +61,7 @@ class SafetyPortal(CustomerPortal):
             block.unlink()
         return request.redirect('/safety')
 
-    # ── Désactiver un silence ─────────────────────────────────────────────────
+    # ── Unmute ────────────────────────────────────────────────────────────────
 
     @route('/safety/mute/<int:mute_id>/remove', auth='user', methods=['POST'],
            website=True, csrf=True)

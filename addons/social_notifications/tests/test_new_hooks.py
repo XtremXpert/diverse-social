@@ -151,7 +151,7 @@ class TestNegotiationHooks(TransactionCase):
         self.assertEqual(len(self._notifs(self.partner, 'negotiation_active')), before_part + 1)
 
     def test_action_sign_both_no_negotiation_signed_notif(self):
-        """Quand les deux ont signé, seul negotiation_active est envoyé, pas negotiation_signed."""
+        """When both have signed, only negotiation_active is sent, not negotiation_signed."""
         neg = self._make_negotiation()
         neg.with_user(self.initiator).action_share()
         neg.with_user(self.initiator).action_sign()

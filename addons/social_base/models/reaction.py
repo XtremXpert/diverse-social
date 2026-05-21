@@ -41,7 +41,7 @@ class SocialReaction(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Pré-charge les réactions existantes en batch (N+1 évité) avant create."""
+        """Pre-load existing reactions in batch (avoid N+1) before create."""
         post_keys = {}
         comment_keys = {}
         no_target = []

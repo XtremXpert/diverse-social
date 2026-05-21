@@ -12,8 +12,8 @@ class SocialGalleryPhotoNotification(models.Model):
                 user_id=photo.submitted_by_id.id,
                 actor_id=self.env.user.id,
                 notif_type='gallery_photo_approved',
-                body=_('Votre photo « %s » a été approuvée dans la galerie « %s ».',
-                        photo.name or _('sans titre'), photo.gallery_id.name),
+                body=_('Your photo "%s" was approved in the gallery "%s".',
+                        photo.name or _('untitled'), photo.gallery_id.name),
                 ref_model='social_gallery.photo',
                 ref_id=photo.id,
             )
@@ -27,7 +27,7 @@ class SocialGalleryPhotoNotification(models.Model):
                 user_id=photo.submitted_by_id.id,
                 actor_id=self.env.user.id,
                 notif_type='gallery_photo_rejected',
-                body=_('Votre photo « %s » a été rejetée.', photo.name or _('sans titre')),
+                body=_('Your photo "%s" was rejected.', photo.name or _('untitled')),
                 ref_model='social_gallery.photo',
                 ref_id=photo.id,
             )

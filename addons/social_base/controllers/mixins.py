@@ -5,7 +5,7 @@ from odoo.exceptions import AccessError
 
 
 class SocialBaseMixin:
-    """Utilitaires partagés pour les contrôleurs social_base."""
+    """Shared utilities for social_base controllers."""
 
     def _validate_auth(self):
         if not request.env.user or request.env.user.id == request.env.ref('base.public_user').id:

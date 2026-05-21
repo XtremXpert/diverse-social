@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="portal_members" name="Découverte de membres">
+    <template id="portal_members" name="Member discovery">
         <t t-call="portal.portal_layout">
-            <t t-set="head_title">Explorer les membres</t>
+            <t t-set="head_title">Explore members</t>
             <div class="o_portal_wrap">
                 <div class="container py-4">
 
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h2 class="mb-0" style="color:#1a1a2e;">
-                            Explorer les membres
+                            Explore members
                             <small class="text-muted fs-6 ms-2">
-                                <t t-out="total"/> résultat(s)
+                                <t t-out="total"/> result(s)
                             </small>
                         </h2>
                     </div>
 
                     <div class="row g-4">
 
-                        <!-- ── Panneau de filtres ── -->
+                        <!-- ── Filter panel ── -->
                         <div class="col-lg-3">
                             <form method="get" action="/members" id="filter_form">
 
-                                <!-- Recherche texte -->
+                                <!-- Text search -->
                                 <div class="mb-3">
                                     <input type="text" name="q" class="form-control"
-                                           placeholder="Nom, bio, ville…"
+                                           placeholder="Name, bio, city…"
                                            t-att-value="q"/>
                                 </div>
 
-                                <!-- Ville -->
+                                <!-- City -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Ville</label>
+                                    <label class="form-label fw-bold">City</label>
                                     <input type="text" name="city" class="form-control"
                                            placeholder="Montréal…"
                                            t-att-value="active_city"/>
                                 </div>
 
-                                <!-- Disponibilité -->
+                                <!-- Availability -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Disponibilité</label>
+                                    <label class="form-label fw-bold">Availability</label>
                                     <t t-foreach="avail_opts" t-as="av">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox"
@@ -51,9 +51,9 @@
                                     </t>
                                 </div>
 
-                                <!-- Genre -->
+                                <!-- Gender -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Genre</label>
+                                    <label class="form-label fw-bold">Gender</label>
                                     <t t-foreach="genders_opts" t-as="g">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox"
@@ -81,10 +81,10 @@
                                     </t>
                                 </div>
 
-                                <!-- Section BDSM (si module installé) -->
+                                <!-- BDSM section (only if the module is installed) -->
                                 <t t-if="has_bdsm">
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold">⛓️ Rôle BDSM</label>
+                                        <label class="form-label fw-bold">⛓️ BDSM Role</label>
                                         <t t-foreach="role_labels.items()" t-as="rl">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox"
@@ -98,7 +98,7 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold">Expérience</label>
+                                        <label class="form-label fw-bold">Experience</label>
                                         <t t-foreach="exp_labels.items()" t-as="el">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox"
@@ -112,9 +112,9 @@
                                     </div>
                                 </t>
 
-                                <!-- Âge -->
+                                <!-- Age -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Âge</label>
+                                    <label class="form-label fw-bold">Age</label>
                                     <div class="d-flex gap-2 align-items-center">
                                         <input type="number" name="min_age" class="form-control form-control-sm"
                                                min="18" max="99" placeholder="Min"
@@ -126,35 +126,35 @@
                                     </div>
                                 </div>
 
-                                <!-- Avec photo -->
+                                <!-- Has photo -->
                                 <div class="mb-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
                                                name="has_photo" value="1" id="has_photo"
                                                t-att-checked="active_has_photo or None"/>
                                         <label class="form-check-label" for="has_photo">
-                                            Avec photo de profil
+                                            With a profile picture
                                         </label>
                                     </div>
                                 </div>
 
                                 <button type="submit" class="btn w-100"
                                         style="background:#e94560; color:white;">
-                                    Filtrer
+                                    Filter
                                 </button>
                                 <a href="/members" class="btn btn-outline-secondary w-100 mt-2">
-                                    Réinitialiser
+                                    Reset
                                 </a>
                             </form>
                         </div>
 
-                        <!-- ── Grille de profils ── -->
+                        <!-- ── Profile grid ── -->
                         <div class="col-lg-9">
 
-                            <!-- Tri -->
+                            <!-- Sort -->
                             <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
-                                <span class="text-muted" style="font-size:0.85rem;">Trier par :</span>
-                                <t t-foreach="[('recent','Actifs récemment'),('new','Nouveaux membres'),('alpha','A–Z')]" t-as="s">
+                                <span class="text-muted" style="font-size:0.85rem;">Sort by:</span>
+                                <t t-foreach="[('recent','Recently active'),('new','New members'),('alpha','A–Z')]" t-as="s">
                                     <a t-attf-href="/members?sort=#{s[0]}&amp;q=#{q}"
                                        t-attf-class="btn btn-sm #{s[0] == sort and 'btn-dark' or 'btn-outline-secondary'}">
                                         <t t-out="s[1]"/>
@@ -162,7 +162,7 @@
                                 </t>
                             </div>
 
-                            <!-- Résultats -->
+                            <!-- Results -->
                             <t t-if="profiles">
                                 <div class="row row-cols-2 row-cols-md-3 g-3">
                                     <t t-foreach="profiles" t-as="profile">
@@ -185,11 +185,11 @@
                                                             <t t-out="(profile.stealth_name or profile.user_id.name or '?')[0].upper()"/>
                                                         </div>
                                                     </t>
-                                                    <!-- Badge disponibilité -->
+                                                    <!-- Availability badge -->
                                                     <t t-if="profile.availability == 'disponible'">
                                                         <span class="position-absolute top-0 end-0 m-1 badge"
                                                               style="background:#28a745; font-size:0.7rem;">
-                                                            🟢 Dispo
+                                                            🟢 Available
                                                         </span>
                                                     </t>
                                                 </div>
@@ -202,7 +202,7 @@
                                                             📍 <t t-out="profile.city"/>
                                                         </t>
                                                         <t t-if="profile.age and profile.age >= 18">
-                                                            · <t t-out="profile.age"/> ans
+                                                            · <t t-out="profile.age"/> years old
                                                         </t>
                                                     </div>
                                                     <t t-if="has_bdsm and profile.bdsm_role">
@@ -227,9 +227,9 @@
                             <t t-else="">
                                 <div class="text-center py-5 text-muted">
                                     <div style="font-size:2.5rem;" class="mb-2">🔍</div>
-                                    <p>Aucun membre ne correspond à ces critères.</p>
+                                    <p>No member matches these criteria.</p>
                                     <a href="/members" class="btn btn-outline-secondary btn-sm">
-                                        Effacer les filtres
+                                        Clear filters
                                     </a>
                                 </div>
                             </t>
@@ -241,11 +241,11 @@
         </t>
     </template>
 
-    <!-- Lien dans le portail -->
-    <template id="portal_my_home_members" inherit_id="portal.portal_my_home" name="Portail — Membres">
+    <!-- Portal navigation link -->
+    <template id="portal_my_home_members" inherit_id="portal.portal_my_home" name="Portal — Members">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Explorer les membres</t>
+                <t t-set="title">Explore members</t>
                 <t t-set="url">/members</t>
                 <t t-set="placeholder_count">0</t>
             </t>

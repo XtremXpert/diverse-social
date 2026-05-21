@@ -147,7 +147,7 @@ class TestClubSocialNotification(TransactionCase):
             user_id=self.user_a.id,
             actor_id=self.user_b.id,
             notif_type='connection_accepted',
-            body='Connexion acceptée',
+            body='Connection accepted',
         )
         self.Notif.with_user(self.user_a).mark_all_read(user_id=self.user_a.id)
         remaining = self.Notif.sudo().search_count([

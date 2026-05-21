@@ -2,7 +2,7 @@ from odoo import models, fields, api
 
 
 class SocialReaction(models.Model):
-    """Étend social_base.reaction avec le support des stories."""
+    """Extends social_base.reaction with story support."""
     _inherit = 'social_base.reaction'
 
     story_id = fields.Many2one('social_story.story', 'Story', ondelete='cascade', index=True)

@@ -246,14 +246,14 @@ class TestGovernance(TransactionCase):
         self.assertEqual(p.with_user(self.alice).my_vote, 'yes')
 
     def test_my_vote_false_when_not_voted(self):
-        """my_vote retourne False si l'utilisateur n'a pas voté."""
+        """my_vote returns False if the user has not voted."""
         p = self._make_proposal()
         p.sudo().write({'voting_closes_at': self._future()})
         p.action_start_voting()
         self.assertFalse(p.with_user(self.bob).my_vote)
 
     def test_my_vote_updates_on_change(self):
-        """my_vote reflète le nouveau choix après changement de vote."""
+        """my_vote reflects the new choice after vote change."""
         p = self._make_proposal()
         p.sudo().write({'voting_closes_at': self._future()})
         p.action_start_voting()
@@ -264,7 +264,7 @@ class TestGovernance(TransactionCase):
     # ── Approbation edge cases ────────────────────────────────────────────────
 
     def test_approval_pct_all_abstain(self):
-        """Que des abstentions → aucun vote décisif → 0%."""
+        """All abstentions → no decisive vote → 0%."""
         p = self._make_proposal()
         p.sudo().write({'voting_closes_at': self._future()})
         p.action_start_voting()
@@ -282,7 +282,7 @@ class TestGovernance(TransactionCase):
         self.assertEqual(p.approval_pct, 100)
 
     def test_multiple_voters_correct_counts(self):
-        """Trois votants différents : compteurs cohérents."""
+        """Three different voters: counters are consistent."""
         p = self._make_proposal()
         p.sudo().write({'voting_closes_at': self._future()})
         p.action_start_voting()
@@ -295,7 +295,7 @@ class TestGovernance(TransactionCase):
         self.assertEqual(p.vote_count, 3)
 
     def test_vote_upsert_no_duplicate(self):
-        """Changer de vote ne crée pas d'enregistrement supplémentaire."""
+        """Changing your vote does not create an extra record."""
         p = self._make_proposal()
         p.sudo().write({'voting_closes_at': self._future()})
         p.action_start_voting()
@@ -304,10 +304,10 @@ class TestGovernance(TransactionCase):
         votes = self.Vote.sudo().search([('proposal_id', '=', p.id), ('voter_id', '=', self.alice.id)])
         self.assertEqual(len(votes), 1)
 
-    # ── Log de décision ───────────────────────────────────────────────────────
+    # ── Decision log ──────────────────────────────────────────────────────────
 
     def test_decision_log_pagination(self):
-        """get_public_log supporte le paramètre offset."""
+        """get_public_log supports the offset parameter."""
         for i in range(3):
             self.Log.with_user(self.moderator).create({
                 'title': f'Log pagination {i}',
@@ -324,11 +324,11 @@ class TestGovernance(TransactionCase):
         self.assertTrue(ids1.isdisjoint(ids2))
 
     def test_decision_all_categories_accepted(self):
-        """Chaque valeur de category est acceptée."""
+        """Each category value is accepted."""
         categories = ['ban', 'warning', 'rule_change', 'content_removal', 'dispute', 'other']
         for cat in categories:
             log = self.Log.with_user(self.moderator).create({
-                'title': f'Décision {cat}',
+                'title': f'Decision {cat}',
                 'body': '<p>test</p>',
                 'category': cat,
                 'decision_date': '2026-04-01',

@@ -162,7 +162,7 @@ class TestSocialCircles(TransactionCase):
         self.assertEqual(level, 'member')
 
     def test_level_connection(self):
-        """Un utilisateur connecté mais non dans un cercle obtient le niveau 'connection'."""
+        """A connected user not in a circle gets the 'connection' level."""
         self.env['club_social_profile.connection'].sudo().create({
             'user_id': self.owner.id,
             'connected_user_id': self.acquaintance.id,
@@ -188,7 +188,7 @@ class TestSocialCircles(TransactionCase):
     # ── circle_count et ensure_circle ─────────────────────────────────────────
 
     def test_circle_count_updates(self):
-        """circle_count est incrémenté à la création d'un cercle."""
+        """circle_count is incremented when a circle is created."""
         before = self.owner_profile.circle_count
         self._make_circle(self.type_count)
         self.owner_profile.invalidate_recordset(['circle_count'])
@@ -220,13 +220,13 @@ class TestSocialCircles(TransactionCase):
         self.assertTrue(other_circle.exists())
 
     def test_owner_always_sees_own_profile(self):
-        """Le propriétaire voit toujours son profil même en visibilité 'private'."""
+        """The owner always sees their profile, even with 'private' visibility."""
         self.owner_profile.sudo().write({'detailed_visibility': 'private'})
         self.assertTrue(self.owner_profile.can_see_detailed_info(self.owner))
         self.owner_profile.sudo().write({'detailed_visibility': 'members'})
 
     def test_specific_circle_wrong_profile_raises(self):
-        """Attribuer un cercle d'un autre profil à detailed_visibility_circle_id lève ValidationError."""
+        """Assigning a circle from another profile to detailed_visibility_circle_id raises ValidationError."""
         other_user = self.env['res.users'].create({
             'name': 'Wrong Owner', 'login': 'circ_wrong_owner2', 'email': 'wo2@circles.test',
             'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],

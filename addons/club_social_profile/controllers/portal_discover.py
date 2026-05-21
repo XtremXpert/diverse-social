@@ -1,32 +1,44 @@
+from odoo import _
 from odoo.http import request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 
 
 _STEP = 24
 
-_GENDER_LABELS = {
-    'homme': 'Homme', 'femme': 'Femme',
-    'trans_homme': 'Homme trans', 'trans_femme': 'Femme trans',
-    'non_binaire': 'Non-binaire', 'autre': 'Autre',
-    'non_specifie': 'Non spécifié',
-}
-_ORIENTATION_LABELS = {
-    'hetero': 'Hétéro', 'gay': 'Gay / Lesbienne',
-    'bi': 'Bisexuel·le', 'pan': 'Pansexuel·le',
-    'asexuel': 'Asexuel·le', 'queer': 'Queer',
-    'autre': 'Autre', 'non_specifie': 'Non spécifié',
-}
-_AVAILABILITY_LABELS = {
-    'disponible': 'Disponible', 'couple_ouvert': 'Couple ouvert',
-    'couple_ferme': 'Couple fermé', 'pas_disponible': 'Pas disponible',
-    'non_specifie': 'Non spécifié',
-}
-_BDSM_ROLE_LABELS = {
-    'dominant': 'Dominant·e', 'soumis': 'Soumis·e', 'switch': 'Switch',
-    'maitre': 'Maître / Maîtresse', 'esclave': 'Esclave',
-    'sadique': 'Sadique', 'masochiste': 'Masochiste',
-    'curieux': 'Curieux·se', 'spectateur': 'Spectateur·trice', 'autre': 'Autre',
-}
+
+def _gender_labels():
+    return {
+        'homme': _('Man'), 'femme': _('Woman'),
+        'trans_homme': _('Trans man'), 'trans_femme': _('Trans woman'),
+        'non_binaire': _('Non-binary'), 'autre': _('Other'),
+        'non_specifie': _('Unspecified'),
+    }
+
+
+def _orientation_labels():
+    return {
+        'hetero': _('Heterosexual'), 'gay': _('Gay / Lesbian'),
+        'bi': _('Bisexual'), 'pan': _('Pansexual'),
+        'asexuel': _('Asexual'), 'queer': _('Queer'),
+        'autre': _('Other'), 'non_specifie': _('Unspecified'),
+    }
+
+
+def _availability_labels():
+    return {
+        'disponible': _('Available'), 'couple_ouvert': _('Open couple'),
+        'couple_ferme': _('Closed couple'), 'pas_disponible': _('Not available'),
+        'non_specifie': _('Unspecified'),
+    }
+
+
+def _bdsm_role_labels():
+    return {
+        'dominant': _('Dominant'), 'soumis': _('Submissive'), 'switch': _('Switch'),
+        'maitre': _('Master / Mistress'), 'esclave': _('Slave'),
+        'sadique': _('Sadist'), 'masochiste': _('Masochist'),
+        'curieux': _('Curious'), 'spectateur': _('Spectator'), 'autre': _('Other'),
+    }
 
 
 class DiscoverPortal(CustomerPortal):
@@ -36,16 +48,20 @@ class DiscoverPortal(CustomerPortal):
                  availability='', bdsm_role='', **kw):
         user = request.env.user
         Profile = request.env['club_social_profile.profile'].sudo()
+        gender_labels = _gender_labels()
+        orientation_labels = _orientation_labels()
+        availability_labels = _availability_labels()
+        bdsm_role_labels = _bdsm_role_labels()
 
-        # ── Utilisateurs bloqués ──────────────────────────────────────────
+        # ── Blocked users ─────────────────────────────────────────────────
         blocked_ids = set()
         if 'social_safety.block' in request.env:
             blocked_ids = request.env['social_safety.block'].sudo().get_blocked_ids_for(user)
 
-        # ── Connexions acceptées (pour panic mode + compat) ───────────────
+        # ── Accepted connections (for panic mode + compatibility) ─────────
         connected_user_ids = _get_connected_user_ids(user)
 
-        # ── Profils en panic mode (non connectés exclus) ──────────────────
+        # ── Profiles in panic mode (exclude non-connected ones) ───────────
         panic_excluded_ids = set()
         if 'panic_mode' in request.env['club_social_profile.profile']._fields:
             panic_profiles = Profile.search([
@@ -56,7 +72,7 @@ class DiscoverPortal(CustomerPortal):
 
         excluded_user_ids = (blocked_ids | panic_excluded_ids) - {user.id}
 
-        # ── Domaine de base ───────────────────────────────────────────────
+        # ── Base domain ───────────────────────────────────────────────────
         domain = [
             ('user_id', '!=', user.id),
             ('visibility', '=', 'members'),
@@ -64,17 +80,17 @@ class DiscoverPortal(CustomerPortal):
         if excluded_user_ids:
             domain.append(('user_id', 'not in', list(excluded_user_ids)))
 
-        # ── Filtres ───────────────────────────────────────────────────────
+        # ── Filters ───────────────────────────────────────────────────────
         if city:
             domain.append(('city', 'ilike', city.strip()))
-        if gender and gender in _GENDER_LABELS:
+        if gender and gender in gender_labels:
             domain.append(('gender', '=', gender))
-        if orientation and orientation in _ORIENTATION_LABELS:
+        if orientation and orientation in orientation_labels:
             domain.append(('orientation', '=', orientation))
-        if availability and availability in _AVAILABILITY_LABELS:
+        if availability and availability in availability_labels:
             domain.append(('availability', '=', availability))
         has_bdsm = 'club_social_profile_bdsm.kink' in request.env
-        if has_bdsm and bdsm_role and bdsm_role in _BDSM_ROLE_LABELS:
+        if has_bdsm and bdsm_role and bdsm_role in bdsm_role_labels:
             domain.append(('bdsm_role', '=', bdsm_role))
 
         # ── Pagination ────────────────────────────────────────────────────
@@ -90,7 +106,7 @@ class DiscoverPortal(CustomerPortal):
         profiles = Profile.search(domain, limit=_STEP, offset=pager['offset'],
                                   order='profile_view_count desc, id desc')
 
-        # ── Scores compatibilité BDSM ─────────────────────────────────────
+        # ── BDSM compatibility scores ─────────────────────────────────────
         compat_map = {}
         if has_bdsm:
             my_profile = Profile.search([('user_id', '=', user.id)], limit=1)
@@ -110,10 +126,10 @@ class DiscoverPortal(CustomerPortal):
             'has_bdsm': has_bdsm,
             'compat_map': compat_map,
             'connected_user_ids': connected_user_ids,
-            'gender_labels': _GENDER_LABELS,
-            'orientation_labels': _ORIENTATION_LABELS,
-            'availability_labels': _AVAILABILITY_LABELS,
-            'bdsm_role_labels': _BDSM_ROLE_LABELS,
+            'gender_labels': gender_labels,
+            'orientation_labels': orientation_labels,
+            'availability_labels': availability_labels,
+            'bdsm_role_labels': bdsm_role_labels,
             'page_name': 'discover',
         })
 

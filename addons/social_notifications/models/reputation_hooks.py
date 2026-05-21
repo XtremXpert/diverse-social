@@ -11,7 +11,7 @@ class SocialVouchingNotification(models.Model):
             user_id=newcomer_user.id,
             actor_id=self.env.user.id,
             notif_type='vouching_received',
-            body=_('%(name)s vous a parrainé dans la communauté.', name=self.env.user.name),
+            body=_('%(name)s vouched for you in the community.', name=self.env.user.name),
             ref_model='social_reputation.vouching',
             ref_id=vouching.id,
         )
@@ -25,6 +25,6 @@ class SocialVouchingNotification(models.Model):
                 user_id=vouching.newcomer_id.id,
                 actor_id=vouching.sponsor_id.id,
                 notif_type='vouching_withdrawn',
-                body=_('%(name)s a retiré son parrainage.', name=vouching.sponsor_id.name),
+                body=_('%(name)s withdrew their vouch.', name=vouching.sponsor_id.name),
             )
         return res

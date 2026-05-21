@@ -2,7 +2,7 @@
     'name': 'Social Notifications',
     'version': '19.0.1.0.0',
     'category': 'Social',
-    'summary': 'Notifications temps-réel pour toutes les activités sociales',
+    'summary': 'Real-time notifications for all social activities',
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [

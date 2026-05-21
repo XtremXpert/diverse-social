@@ -1,8 +1,8 @@
 {
-    'name': 'Club — Intégration membres',
+    'name': 'Club — Member Onboarding',
     'version': '19.0.1.0.0',
     'category': 'Social',
-    'summary': "Parcours guidé de complétion de profil pour les nouveaux membres",
+    'summary': "Guided profile completion flow for new members",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [

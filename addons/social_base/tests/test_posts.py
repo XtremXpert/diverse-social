@@ -116,7 +116,7 @@ class TestSocialPost(TransactionCase):
         post.increment_share_count()
         self.assertEqual(post.share_count, 2)
 
-    # ── Modération ────────────────────────────────────────────────────────────
+    # ── Moderation ────────────────────────────────────────────────────────────
 
     def test_submit_moderation(self):
         post = self._make_post()
@@ -134,7 +134,7 @@ class TestSocialPost(TransactionCase):
     def test_reject_post(self):
         post = self._make_post()
         post.action_submit_moderation()
-        post.action_reject('Contenu inapproprié')
+        post.action_reject('Inappropriate content')
         self.assertEqual(post.state, 'archived')
-        self.assertEqual(post.moderation_reason, 'Contenu inapproprié')
+        self.assertEqual(post.moderation_reason, 'Inappropriate content')
         self.assertTrue(post.moderation_date)

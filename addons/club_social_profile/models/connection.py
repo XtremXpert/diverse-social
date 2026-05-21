@@ -38,7 +38,7 @@ class ClubSocialConnection(models.Model):
     def action_accept(self):
         self.ensure_one()
         if self.connection_type == 'friend':
-            # Créer la connexion réciproque
+            # Create the reciprocal connection
             self.env['club_social_profile.connection'].create({
                 'user_id': self.connected_user_id.id,
                 'connected_user_id': self.user_id.id,
