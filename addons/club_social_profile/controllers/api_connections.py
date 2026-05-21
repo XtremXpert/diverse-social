@@ -21,11 +21,15 @@ class ClubSocialConnectionAPI(SocialBaseMixin, http.Controller):
             if not target_id:
                 return self._error_response('user_id required', 'INVALID_INPUT')
 
-            conn = request.env['club_social_profile.connection'].sudo().create({
-                'user_id': user.id,
-                'connected_user_id': int(target_id),
-                'connection_type': conn_type,
-            })
+            # Savepoint so the INSERT rolls back when _check_unique_connection
+            # raises (self-connect, duplicate) — otherwise `except ValidationError`
+            # swallows the exception and the partial row stays committed.
+            with request.env.cr.savepoint():
+                conn = request.env['club_social_profile.connection'].sudo().create({
+                    'user_id': user.id,
+                    'connected_user_id': int(target_id),
+                    'connection_type': conn_type,
+                })
             return self._success_response(self._conn_to_dict(conn))
 
         except ValidationError as e:

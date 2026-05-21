@@ -210,3 +210,37 @@ class TestConnectionsApiHttp(HttpCase):
         resp = self.url_open('/social/api/connections?state=pending')
         self.assertTrue(resp.json().get('success'))
         self.assertEqual(resp.json()['data']['connections'], [])
+
+    def test_self_connect_does_not_leak_into_db(self):
+        """Self-connect must hit the constraint AND roll back the INSERT.
+        Without a savepoint, the controller's `except ValidationError`
+        catches the error but leaves the partial row committed."""
+        self.authenticate('conn_api_sender', 'Test1234!')
+        resp = self.url_open('/social/api/connections', data={
+            'user_id': self.sender.id, 'connection_type': 'friend',
+        })
+        self.assertEqual(resp.status_code, 400)
+        leaked = self.env['club_social_profile.connection'].sudo().search([
+            ('user_id', '=', self.sender.id),
+            ('connected_user_id', '=', self.sender.id),
+        ])
+        self.assertFalse(leaked, f'Self-connect leaked: {leaked}')
+
+    def test_duplicate_connect_does_not_leak_into_db(self):
+        """A duplicate request must not double the count in DB."""
+        self.authenticate('conn_api_sender', 'Test1234!')
+        # First call succeeds
+        resp = self.url_open('/social/api/connections', data={
+            'user_id': self.recipient.id, 'connection_type': 'friend',
+        })
+        self.assertEqual(resp.status_code, 200)
+        # Second call must hit the unique-connection constraint and roll back
+        resp = self.url_open('/social/api/connections', data={
+            'user_id': self.recipient.id, 'connection_type': 'friend',
+        })
+        self.assertEqual(resp.status_code, 400)
+        count = self.env['club_social_profile.connection'].sudo().search_count([
+            ('user_id', '=', self.sender.id),
+            ('connected_user_id', '=', self.recipient.id),
+        ])
+        self.assertEqual(count, 1, 'Duplicate request leaked a second row')

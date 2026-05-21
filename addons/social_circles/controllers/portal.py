@@ -75,13 +75,15 @@ class CirclesPortal(CustomerPortal):
         if not circle_type:
             return request.redirect('/my/circles?error=type_required')
         profile = request.env['club_social_profile.profile'].get_or_create_for_user(request.env.user)
+        # Savepoint so the INSERT rolls back when _check_unique_type raises.
         try:
-            request.env['social_circles.circle'].create({
-                'profile_id': profile.id,
-                'type_id': circle_type.id,
-                'name': (name or '').strip() or False,
-                'description': (description or '').strip() or False,
-            })
+            with request.env.cr.savepoint():
+                request.env['social_circles.circle'].create({
+                    'profile_id': profile.id,
+                    'type_id': circle_type.id,
+                    'name': (name or '').strip() or False,
+                    'description': (description or '').strip() or False,
+                })
         except ValidationError:
             return request.redirect('/my/circles?error=duplicate_type')
         return request.redirect('/my/circles?created=1')
@@ -95,10 +97,11 @@ class CirclesPortal(CustomerPortal):
         if not name:
             return request.redirect('/my/circles?error=name_required')
         try:
-            circle.sudo().write({
-                'name': name,
-                'description': description.strip() or False,
-            })
+            with request.env.cr.savepoint():
+                circle.sudo().write({
+                    'name': name,
+                    'description': description.strip() or False,
+                })
         except ValidationError:
             return request.redirect('/my/circles?error=duplicate_name')
         return request.redirect('/my/circles?updated=1')
@@ -153,7 +156,8 @@ class CirclesPortal(CustomerPortal):
         else:
             vals['detailed_visibility_circle_id'] = False
         try:
-            profile.sudo().write(vals)
+            with request.env.cr.savepoint():
+                profile.sudo().write(vals)
         except ValidationError:
             pass
         return request.redirect('/my/circles?vis_saved=1')

@@ -86,7 +86,7 @@ class TestCirclesPortalData(TransactionCase):
         with self.assertRaises(AccessError):
             c.with_user(self.member).unlink()
 
-    # ── Membres ───────────────────────────────────────────────────────────
+    # ── Members ───────────────────────────────────────────────────────────
 
     def test_add_member(self):
         c = self._circle(self.type_add)
@@ -115,7 +115,7 @@ class TestCirclesPortalData(TransactionCase):
         c.add_member(self.member)
         self.assertEqual(c.member_count, 1)
 
-    # ── Visibilité détaillée ──────────────────────────────────────────────
+    # ── Detailed visibility ───────────────────────────────────────────────
 
     def test_can_see_detailed_members(self):
         self.profile.sudo().write({'detailed_visibility': 'members'})
@@ -169,7 +169,7 @@ class TestCirclesPortalData(TransactionCase):
     def test_connections_required_for_add_member(self):
         _connect(self.env, self.owner, self.member)
         from odoo.addons.social_circles.controllers.portal import _get_user_connections
-        # Simule request.env.user = owner en passant par le modèle directement
+        # Simulate request.env.user = owner via the model directly
         Connection = self.env['club_social_profile.connection'].sudo()
         sent = Connection.search([('user_id', '=', self.owner.id), ('state', '=', 'accepted')])
         recv = Connection.search([('connected_user_id', '=', self.owner.id), ('state', '=', 'accepted')])
@@ -332,8 +332,33 @@ class TestCirclesPortalHttp(HttpCase):
         circle.invalidate_recordset()
         self.assertNotIn(stranger, circle.member_ids)
 
+    def test_duplicate_type_create_does_not_leak(self):
+        """The unique constraint (profile_id, type_id) must roll back the
+        second INSERT — without a savepoint the controller's
+        `except ValidationError` would swallow the error and leave the
+        partial row committed."""
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
+        ct = _get_or_create_http_type(self.env, 'HTTP Duplicate Leak Type')
+        # First create succeeds
+        self.url_open('/my/circles/create', data={
+            'csrf_token': _csrf, 'type_id': str(ct.id), 'name': 'First',
+        })
+        # Second create on the same type must fail without leaking
+        self.url_open('/my/circles/create', data={
+            'csrf_token': _csrf, 'type_id': str(ct.id), 'name': 'Second',
+        })
+        admin = self.env.ref('base.user_admin')
+        profile = self.env['club_social_profile.profile'].sudo().search(
+            [('user_id', '=', admin.id)], limit=1)
+        circles = self.env['social_circles.circle'].sudo().search([
+            ('profile_id', '=', profile.id), ('type_id', '=', ct.id),
+        ])
+        self.assertEqual(len(circles), 1,
+                         f'Duplicate type leaked: {circles.mapped("name")}')
+
     def test_others_circles_section_visible_when_member(self):
-        """La section 'Cercles où je figure' s'affiche si on est membre d'un cercle d'un autre."""
+        """The "Circles I appear in" section is shown if you are a member of another user's circle."""
         group_social = self.env.ref('social_base.group_social_user')
         other_owner = self.env['res.users'].sudo().create({
             'name': 'OtherOwner', 'login': 'other_owner_circ',
@@ -356,4 +381,4 @@ class TestCirclesPortalHttp(HttpCase):
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Other Owner Circle', resp.content)
-        self.assertIn(b'Cercles o\xc3\xb9 je figure', resp.content)
+        self.assertIn(b'Circles o\xc3\xb9 je figure', resp.content)
