@@ -1,4 +1,6 @@
-from odoo.tests import TransactionCase, tagged
+import json
+
+from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.exceptions import ValidationError
 
 
@@ -133,7 +135,7 @@ class TestClubSocialConnection(TransactionCase):
         self.assertTrue(conn.accepted_date)
 
     def test_following_type_no_reciprocal(self):
-        """Le type 'following' ne crée pas de connexion réciproque."""
+        """The 'following' type does not create a reciprocal connection."""
         group_user = self.env.ref('social_base.group_social_user')
         user3 = self.env['res.users'].create({
             'name': 'Follower', 'login': 'conn_follower', 'email': 'follow@test.test',
@@ -150,3 +152,61 @@ class TestClubSocialConnection(TransactionCase):
             ('connected_user_id', '=', self.user1.id),
         ])
         self.assertFalse(reciprocal)
+
+
+@tagged('club_social_profile', 'connection', 'post_install', '-at_install')
+class TestConnectionsApiHttp(HttpCase):
+    """HTTP-level checks for /social/api/connections.
+
+    Pending requests are stored on the sender's row (connected_user_id is the
+    recipient) until acceptance creates the reciprocal. The list endpoint must
+    therefore look at connected_user_id when state='pending', otherwise the
+    recipient cannot see what's waiting for them.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        group_user = cls.env.ref('social_base.group_social_user')
+        cls.sender = cls.env['res.users'].create({
+            'name': 'Conn Sender', 'login': 'conn_api_sender',
+            'email': 'sender@conn.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_user.id)],
+        })
+        cls.recipient = cls.env['res.users'].create({
+            'name': 'Conn Recipient', 'login': 'conn_api_recipient',
+            'email': 'recipient@conn.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_user.id)],
+        })
+
+    def test_recipient_sees_pending_request(self):
+        self.authenticate('conn_api_sender', 'Test1234!')
+        resp = self.url_open('/social/api/connections', data={
+            'user_id': self.recipient.id, 'connection_type': 'friend',
+        })
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json().get('success'), resp.text)
+
+        self.authenticate('conn_api_recipient', 'Test1234!')
+        resp = self.url_open('/social/api/connections?state=pending')
+        self.assertEqual(resp.status_code, 200)
+        payload = resp.json()
+        self.assertTrue(payload.get('success'), resp.text)
+        connections = payload['data']['connections']
+        self.assertEqual(len(connections), 1,
+                         f'recipient should see one pending request, got: {connections}')
+        self.assertEqual(connections[0]['connected_user_id'], self.recipient.id)
+        self.assertEqual(connections[0]['user_id'], self.sender.id)
+
+    def test_sender_does_not_see_request_in_pending(self):
+        """state=pending lists requests waiting for the current user; the
+        sender's own outgoing request should not appear there."""
+        self.authenticate('conn_api_sender', 'Test1234!')
+        resp = self.url_open('/social/api/connections', data={
+            'user_id': self.recipient.id, 'connection_type': 'friend',
+        })
+        self.assertEqual(resp.status_code, 200)
+
+        resp = self.url_open('/social/api/connections?state=pending')
+        self.assertTrue(resp.json().get('success'))
+        self.assertEqual(resp.json()['data']['connections'], [])

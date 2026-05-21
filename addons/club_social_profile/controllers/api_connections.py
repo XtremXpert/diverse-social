@@ -40,9 +40,17 @@ class ClubSocialConnectionAPI(SocialBaseMixin, http.Controller):
     def api_list_connections(self, state='accepted', **kwargs):
         try:
             user = self._validate_auth()
-            domain = [('user_id', '=', user.id)]
-            if state:
-                domain.append(('state', '=', state))
+            # Pending requests live as a single row on the sender's side
+            # (connected_user_id is the recipient). The reciprocal row is only
+            # created at acceptance. So when listing pending, we must look at
+            # the receiving side; for accepted/rejected/blocked the user's own
+            # row is enough.
+            if state == 'pending':
+                domain = [('connected_user_id', '=', user.id), ('state', '=', 'pending')]
+            else:
+                domain = [('user_id', '=', user.id)]
+                if state:
+                    domain.append(('state', '=', state))
 
             connections = request.env['club_social_profile.connection'].sudo().search(domain)
             return self._success_response({
