@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <!-- Extension vue profil avec champs modération -->
+        <!-- Profile view extended with moderation fields -->
         <record id="view_csp_profile_moderation_form" model="ir.ui.view">
             <field name="name">club_social_profile.profile.form.moderation</field>
             <field name="model">club_social_profile.profile</field>
@@ -67,7 +67,6 @@
             <field name="res_model">club_social_moderation.report</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('state', '=', 'pending')]</field>
-            <field name="context">{'search_default_state_pending': 1}</field>
         </record>
 
         <menuitem id="menu_moderation_root" name="Moderation"

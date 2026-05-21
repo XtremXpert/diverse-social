@@ -65,11 +65,8 @@ class ClubSocialReport(models.Model):
             'social_base.comment': 'action_hide',   # sets state='hidden'
         }
         method_name = archivable.get(self.ref_model)
-        if not method_name:
+        if not method_name or self.ref_model not in self.env:
             return
-        Model = self.env.get(self.ref_model)
-        if not Model:
-            return
-        record = Model.sudo().browse(self.ref_id).exists()
+        record = self.env[self.ref_model].sudo().browse(self.ref_id).exists()
         if record and hasattr(record, method_name):
             getattr(record, method_name)()
