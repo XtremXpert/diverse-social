@@ -90,14 +90,18 @@ class TestSocialMessaging(TransactionCase):
         self.assertEqual(msg.author_id, self.user1)
         self.assertEqual(len(thread.message_ids), 1)
 
-    def test_empty_message_raises(self):
+    def test_blank_content_allowed_at_model_level(self):
+        """The model no longer enforces a non-blank content constraint —
+        messages can be attachment-only. The "empty message" check moved
+        to the controllers, which reject `not content and not files` at
+        the request boundary."""
         thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
-        with self.assertRaises(ValidationError):
-            self.env['social_messaging.message'].sudo().create({
-                'thread_id': thread.id,
-                'author_id': self.user1.id,
-                'content': '   ',
-            })
+        msg = self.env['social_messaging.message'].sudo().create({
+            'thread_id': thread.id,
+            'author_id': self.user1.id,
+            'content': '   ',
+        })
+        self.assertTrue(msg)
 
     def test_unread_count(self):
         thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
@@ -144,7 +148,7 @@ class TestSocialMessaging(TransactionCase):
         found = self.Thread.with_user(self.user3).search([('id', '=', thread.id)])
         self.assertFalse(found)
 
-    # ── Block supplémentaires ─────────────────────────────────────────────────
+    # ── Additional block tests ────────────────────────────────────────────────
 
     def test_reverse_block_prevents_send(self):
         """Si user2 bloque user1, user1 ne peut pas envoyer de message."""
@@ -161,7 +165,7 @@ class TestSocialMessaging(TransactionCase):
             self.Block.with_user(self.user2).unblock_user(self.user1)
 
     def test_group_thread_block_not_checked(self):
-        """Un fil à 3 participants n'est pas bloqué même si deux participants se bloquent."""
+        """A 3-participant thread is not blocked even if two participants block each other."""
         thread = self.Thread.sudo().create({
             'participant_ids': [(6, 0, [self.user1.id, self.user2.id, self.user3.id])],
         })
@@ -194,7 +198,7 @@ class TestSocialMessaging(TransactionCase):
         self.assertLessEqual(len(thread.last_message_preview), 80)
 
     def test_author_unread_count_zero(self):
-        """Les messages envoyés par user1 ne comptent pas comme non-lus pour user1."""
+        """Messages sent by user1 don't count as unread for user1."""
         thread = self.Thread.sudo()._get_or_create([self.user1.id, self.user2.id])
         self.env['social_messaging.message'].sudo().create({
             'thread_id': thread.id, 'author_id': self.user1.id, 'content': 'My message',

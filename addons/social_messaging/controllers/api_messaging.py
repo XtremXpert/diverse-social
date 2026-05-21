@@ -78,8 +78,8 @@ class SocialMessagingAPI(SocialBaseMixin, http.Controller):
                 return self._error_response('Thread not found', 'NOT_FOUND', 404)
 
             body = self._get_json_body()
-            content = body.get('content') or kwargs.get('content')
-            if not content or not content.strip():
+            content = (body.get('content') or kwargs.get('content') or '').strip()
+            if not content:
                 return self._error_response('Content required', 'INVALID_INPUT')
 
             msg = request.env['social_messaging.message'].sudo().create({
@@ -88,6 +88,7 @@ class SocialMessagingAPI(SocialBaseMixin, http.Controller):
                 'content': content,
                 'read_by_ids': [(4, user.id)],
             })
+            msg._broadcast('message_new')
             return self._success_response(self._message_to_dict(msg))
 
         except AccessError as e:

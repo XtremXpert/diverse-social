@@ -2,10 +2,15 @@
 <odoo>
 
     <!-- ══ Assets ════════════════════════════════════════════════════════ -->
-    <record id="assets_portal_chat" model="ir.asset">
-        <field name="name">Social Messaging Portal JS</field>
+    <record id="assets_messaging_thread_js" model="ir.asset">
+        <field name="name">Social Messaging — OWL component</field>
         <field name="bundle">web.assets_frontend</field>
-        <field name="path">/social_messaging/static/src/js/portal_chat.js</field>
+        <field name="path">/social_messaging/static/src/js/messaging_thread.js</field>
+    </record>
+    <record id="assets_messaging_thread_xml" model="ir.asset">
+        <field name="name">Social Messaging — OWL templates</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_messaging/static/src/xml/messaging_thread.xml</field>
     </record>
     <record id="assets_portal_chat_css" model="ir.asset">
         <field name="name">Social Messaging Portal CSS</field>
@@ -13,8 +18,8 @@
         <field name="path">/social_messaging/static/src/css/portal_chat.css</field>
     </record>
 
-    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
-    <template id="portal_my_home_messages" name="Messages privés"
+    <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
+    <template id="portal_my_home_messages" name="Private Messages"
               inherit_id="portal.portal_my_home" priority="30">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
             <t t-call="portal.portal_docs_entry">
@@ -25,22 +30,22 @@
         </xpath>
     </template>
 
-    <!-- ══ Liste des conversations ═══════════════════════════════════════ -->
-    <template id="portal_messages_list" name="Mes messages">
+    <!-- ══ Conversations list ════════════════════════════════════════════ -->
+    <template id="portal_messages_list" name="My Messages">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="False"/>
 
             <div class="container py-4" style="max-width:700px;">
                 <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">
-                    💬 Mes messages
+                    💬 My Messages
                 </h1>
 
                 <t t-if="not thread_data">
                     <div class="card text-center py-5">
                         <div style="font-size:2.5rem;" class="mb-2">💬</div>
-                        <p class="text-muted mb-0">Aucune conversation pour l'instant.</p>
+                        <p class="text-muted mb-0">No conversations yet.</p>
                         <p class="text-muted" style="font-size:0.85rem;">
-                            Visitez le profil d'un membre et cliquez sur « Message » pour démarrer.
+                            Visit a member's profile and click "Message" to start one.
                         </p>
                     </div>
                 </t>
@@ -68,7 +73,7 @@
                                     <div class="flex-grow-1 overflow-hidden">
                                         <div class="d-flex justify-content-between align-items-baseline">
                                             <span class="fw-semibold" style="font-size:0.95rem;">
-                                                <t t-out="(td.get('other_profile') and (td['other_profile'].stealth_name or td['other'].name)) or (td['other'] and td['other'].name) or 'Inconnu'"/>
+                                                <t t-out="(td.get('other_profile') and (td['other_profile'].stealth_name or td['other'].name)) or (td['other'] and td['other'].name) or 'Unknown'"/>
                                             </span>
                                             <span class="text-muted" style="font-size:0.75rem;">
                                                 <t t-if="td['thread'].last_message_date">
@@ -96,16 +101,16 @@
         </t>
     </template>
 
-    <!-- ══ Fil de discussion ══════════════════════════════════════════════ -->
+    <!-- ══ Thread view ═══════════════════════════════════════════════════ -->
     <template id="portal_messages_thread" name="Conversation">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="False"/>
 
             <div class="container py-4" style="max-width:700px;">
 
-                <!-- En-tête -->
+                <!-- Header -->
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <a href="/my/messages" class="btn btn-sm btn-outline-secondary">← Retour</a>
+                    <a href="/my/messages" class="btn btn-sm btn-outline-secondary">← Back</a>
                     <t t-if="other">
                         <div style="width:40px; height:40px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
                             <t t-if="other_profile and other_profile.profile_image">
@@ -124,52 +129,25 @@
                                 <t t-out="(other_profile and (other_profile.stealth_name or other.name)) or other.name"/>
                             </div>
                             <a t-attf-href="/profile/#{other.id}" class="text-muted" style="font-size:0.75rem;">
-                                Voir le profil →
+                                View profile →
                             </a>
                         </div>
                     </t>
                 </div>
 
-                <!-- Fenêtre de chat -->
-                <div class="card shadow-sm"
-                     id="sn_chat_container"
-                     t-att-data-thread-id="thread.id"
-                     t-att-data-last-message-id="last_message_id">
-
-                    <!-- Corps des messages -->
-                    <div id="sn_chat_body">
-                        <t t-foreach="messages" t-as="msg">
-                            <t t-set="_mine" t-value="msg.author_id.id == request.env.user.id"/>
-                            <div t-attf-class="sn-bubble-wrap #{('sn-mine' if _mine else 'sn-theirs')}"
-                                 t-att-data-msg-id="msg.id">
-                                <div class="sn-bubble" t-out="msg.content"/>
-                                <div class="sn-bubble-meta">
-                                    <t t-out="msg.create_date.strftime('%d/%m %H:%M') if msg.create_date else ''"/>
-                                </div>
-                            </div>
-                        </t>
-                    </div>
-
-                    <!-- Formulaire d'envoi -->
-                    <div class="card-footer p-2">
-                        <form id="sn_send_form" class="d-flex gap-2 align-items-end">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                            <textarea id="sn_message_input" name="content" rows="2"
-                                      class="form-control" placeholder="Votre message…"
-                                      style="resize:none; font-size:0.9rem;"></textarea>
-                            <button id="sn_send_btn" type="submit" class="btn"
-                                    style="background:#e94560; color:white; white-space:nowrap;">
-                                Envoyer
-                            </button>
-                        </form>
-                    </div>
+                <!-- Chat window (public OWL component — mounted by
+                     web.public_components via <owl-component>) -->
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="card shadow-sm o-sn-thread-card">
+                    <owl-component name="social_messaging.thread"
+                                   t-attf-props='{"threadId": #{thread.id}, "currentUserId": #{request.env.user.id}}'/>
                 </div>
 
             </div>
         </t>
     </template>
 
-    <!-- ══ Bouton Message sur la page profil ════════════════════════════ -->
+    <!-- ══ "Message" button on profile page ══════════════════════════════ -->
     <template id="portal_profile_message_start_form"
               inherit_id="club_social_profile.portal_profile_public">
         <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">

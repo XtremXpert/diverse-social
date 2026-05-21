@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- ════════ MessagingThread (root) ══════════════════════════════════════ -->
+<t t-name="social_messaging.MessagingThread">
+    <div class="o-sn-thread">
+        <div class="o-sn-thread-error alert alert-danger m-2"
+             t-if="state.error"
+             role="alert">
+            <t t-esc="state.error"/>
+        </div>
+
+        <div class="o-sn-thread-scroll" t-ref="scroll">
+            <div class="o-sn-thread-loading text-center text-muted py-4"
+                 t-if="state.loading">
+                Loading…
+            </div>
+            <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                <MessageBubble message="msg"
+                               currentUserId="props.currentUserId"
+                               onReact.bind="react"/>
+            </t>
+        </div>
+
+        <div class="o-sn-thread-composer">
+            <MessageComposer onSend.bind="sendMessage"/>
+        </div>
+    </div>
+</t>
+
+<!-- ════════ MessageBubble ═══════════════════════════════════════════════ -->
+<t t-name="social_messaging.MessageBubble">
+    <div t-attf-class="o-sn-bubble-wrap #{props.message.is_mine ? 'o-sn-mine' : 'o-sn-theirs'}"
+         t-att-data-msg-id="props.message.id">
+
+        <!-- Text bubble (if content) -->
+        <div class="o-sn-bubble"
+             t-if="props.message.content"
+             t-esc="props.message.content"/>
+
+        <!-- Image gallery -->
+        <div class="o-sn-bubble-images" t-if="imageAttachments.length">
+            <t t-foreach="imageAttachments" t-as="att" t-key="att.id">
+                <a t-att-href="att.url"
+                   target="_blank"
+                   class="o-sn-img-link">
+                    <img t-att-src="att.url" t-att-alt="att.name" loading="lazy"/>
+                </a>
+            </t>
+        </div>
+
+        <!-- Non-image attachments -->
+        <div class="o-sn-bubble-files" t-if="fileAttachments.length">
+            <t t-foreach="fileAttachments" t-as="att" t-key="att.id">
+                <a t-att-href="att.download_url"
+                   class="o-sn-file"
+                   t-att-title="att.name">
+                    <span class="o-sn-file-icon">📎</span>
+                    <span class="o-sn-file-name" t-esc="att.name"/>
+                </a>
+            </t>
+        </div>
+
+        <!-- Reaction bar -->
+        <div class="o-sn-reactions" t-if="props.message.reactions.length">
+            <t t-foreach="props.message.reactions" t-as="r" t-key="r.emoji">
+                <button type="button"
+                        t-attf-class="o-sn-reaction-chip #{hasMyReaction(r) ? 'o-sn-mine-reaction' : ''}"
+                        t-on-click="() => onPick(r.emoji)">
+                    <span class="o-sn-reaction-emoji" t-esc="r.emoji"/>
+                    <span class="o-sn-reaction-count" t-esc="r.count"/>
+                </button>
+            </t>
+        </div>
+
+        <!-- Meta + +emoji button -->
+        <div class="o-sn-bubble-meta">
+            <span class="o-sn-bubble-time" t-esc="props.message.create_date"/>
+            <span class="o-sn-react-wrap">
+                <button type="button"
+                        class="o-sn-react-btn"
+                        title="Add a reaction"
+                        t-on-click="togglePicker">
+                    😊+
+                </button>
+                <div class="o-sn-picker"
+                     t-if="state.pickerOpen">
+                    <t t-foreach="allowedEmojis" t-as="e" t-key="e">
+                        <button type="button"
+                                class="o-sn-picker-btn"
+                                t-on-click="() => onPick(e)"
+                                t-esc="e"/>
+                    </t>
+                </div>
+            </span>
+        </div>
+    </div>
+</t>
+
+<!-- ════════ MessageComposer ═════════════════════════════════════════════ -->
+<t t-name="social_messaging.MessageComposer">
+    <div class="o-sn-composer">
+        <!-- Preview of pending files before send -->
+        <div class="o-sn-composer-files" t-if="state.files.length">
+            <t t-foreach="state.files" t-as="entry" t-key="entry_index">
+                <div class="o-sn-composer-file">
+                    <img t-if="entry.isImage" t-att-src="entry.previewUrl" alt=""/>
+                    <span t-else="" class="o-sn-composer-file-icon">📎</span>
+                    <span class="o-sn-composer-file-name" t-esc="entry.name"/>
+                    <button type="button"
+                            class="o-sn-composer-file-remove"
+                            t-on-click="() => removeFile(entry_index)">×</button>
+                </div>
+            </t>
+        </div>
+
+        <div class="o-sn-composer-row">
+            <button type="button"
+                    class="o-sn-composer-attach"
+                    title="Attach files"
+                    t-on-click="openFilePicker">📎</button>
+            <input type="file"
+                   t-ref="fileInput"
+                   multiple="multiple"
+                   accept="image/*,application/pdf,.doc,.docx,.txt,.zip,.mp4"
+                   style="display:none;"
+                   t-on-change="onFilesChosen"/>
+            <textarea class="form-control o-sn-composer-text"
+                      t-ref="textarea"
+                      rows="1"
+                      placeholder="Your message…"
+                      t-model="state.text"
+                      t-on-keydown="onKeydown"/>
+            <button type="button"
+                    class="btn o-sn-composer-send"
+                    t-att-disabled="state.sending"
+                    t-on-click="submit">
+                <t t-if="state.sending">…</t>
+                <t t-else="">Send</t>
+            </button>
+        </div>
+    </div>
+</t>
+
+</templates>

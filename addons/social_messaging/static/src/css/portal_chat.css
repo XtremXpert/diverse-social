@@ -1,8 +1,249 @@
-#sn_chat_body { height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #f8f9fa; }
-.sn-bubble-wrap { display: flex; flex-direction: column; max-width: 72%; }
-.sn-mine { align-self: flex-end; align-items: flex-end; }
-.sn-theirs { align-self: flex-start; align-items: flex-start; }
-.sn-bubble { padding: 8px 12px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-.sn-mine .sn-bubble { background: #e94560; color: white; border-bottom-right-radius: 4px; }
-.sn-theirs .sn-bubble { background: white; color: #1a1a2e; border: 1px solid #dee2e6; border-bottom-left-radius: 4px; }
-.sn-bubble-meta { font-size: 0.7rem; color: #adb5bd; margin-top: 2px; padding: 0 4px; }
+/* ════════ Conteneur principal du fil (OWL) ═══════════════════════════ */
+.o-sn-thread {
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    min-height: 480px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.o-sn-thread-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+}
+
+/* ════════ Bulles ═════════════════════════════════════════════════════ */
+.o-sn-bubble-wrap {
+    display: flex;
+    flex-direction: column;
+    max-width: 78%;
+    gap: 4px;
+}
+.o-sn-mine    { align-self: flex-end;   align-items: flex-end; }
+.o-sn-theirs  { align-self: flex-start; align-items: flex-start; }
+
+.o-sn-bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.o-sn-mine   .o-sn-bubble { background: #e94560; color: white; border-bottom-right-radius: 4px; }
+.o-sn-theirs .o-sn-bubble { background: white;  color: #1a1a2e; border: 1px solid #dee2e6; border-bottom-left-radius: 4px; }
+
+/* ════════ Galerie d'images ═══════════════════════════════════════════ */
+.o-sn-bubble-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 4px;
+    max-width: 320px;
+}
+.o-sn-img-link {
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+.o-sn-img-link img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ════════ Pièces jointes non-images ═════════════════════════════════ */
+.o-sn-bubble-files {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.o-sn-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #dee2e6;
+    color: #1a1a2e;
+    font-size: 0.85rem;
+    text-decoration: none;
+    max-width: 320px;
+}
+.o-sn-mine .o-sn-file {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+}
+.o-sn-file:hover { text-decoration: underline; }
+.o-sn-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ════════ Réactions ═════════════════════════════════════════════════ */
+.o-sn-reactions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.o-sn-reaction-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid #dee2e6;
+    font-size: 0.78rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.o-sn-reaction-chip:hover { background: #f1f3f5; }
+.o-sn-mine-reaction { background: #ffe5ea; border-color: #e94560; }
+.o-sn-reaction-emoji { font-size: 0.95rem; }
+
+/* ════════ Meta + picker ═════════════════════════════════════════════ */
+.o-sn-bubble-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: #adb5bd;
+    padding: 0 4px;
+}
+.o-sn-react-wrap { position: relative; }
+.o-sn-react-btn {
+    background: none;
+    border: none;
+    color: #adb5bd;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+.o-sn-bubble-wrap:hover .o-sn-react-btn { opacity: 1; }
+.o-sn-picker {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 4px 6px;
+    display: flex;
+    gap: 2px;
+    margin-bottom: 4px;
+    z-index: 100;
+}
+.o-sn-theirs .o-sn-picker { left: 0; right: auto; }
+.o-sn-picker-btn {
+    background: none;
+    border: none;
+    font-size: 1.15rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 50%;
+    transition: background 0.15s;
+}
+.o-sn-picker-btn:hover { background: #f1f3f5; }
+
+/* ════════ Composer ══════════════════════════════════════════════════ */
+.o-sn-thread-composer {
+    border-top: 1px solid #dee2e6;
+    background: white;
+    padding: 8px;
+}
+.o-sn-composer-files {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+.o-sn-composer-file {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    max-width: 90px;
+}
+.o-sn-composer-file img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.o-sn-composer-file-icon { font-size: 1.6rem; }
+.o-sn-composer-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 80px;
+}
+.o-sn-composer-file-remove {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: #e94560;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.o-sn-composer-row {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+}
+.o-sn-composer-attach {
+    background: none;
+    border: 1px solid #dee2e6;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.o-sn-composer-attach:hover { background: #f1f3f5; }
+.o-sn-composer-text {
+    flex: 1 1 auto;
+    resize: none;
+    font-size: 0.9rem;
+    min-height: 36px;
+    max-height: 120px;
+}
+.o-sn-composer-send {
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 6px 18px;
+    white-space: nowrap;
+    cursor: pointer;
+    height: 36px;
+}
+.o-sn-composer-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ════════ Legacy (vue server-rendered initiale, fallback) ══════════ */
+#sn_chat_body { display: none; }  /* l'OWL prend le contrôle, on cache l'ancien rendu */
