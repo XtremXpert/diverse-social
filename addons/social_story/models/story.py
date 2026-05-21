@@ -68,7 +68,21 @@ class SocialStory(models.Model):
 
     @api.model
     def cron_cleanup_expired_stories(self):
-        cutoff = fields.Datetime.now() - timedelta(days=7)
+        now = fields.Datetime.now()
+        # `state` is a store=True compute on `expires_at`, but `expires_at`
+        # is itself a compute on `create_date` (immutable post-creation).
+        # Nothing ever rewrites either field, so the ORM never re-runs the
+        # compute and no story transitions active→expired on its own. The
+        # cron has to flip the state explicitly.
+        self.env.cr.execute("""
+            UPDATE social_story_story SET state = 'expired'
+            WHERE state = 'active' AND expires_at < %s
+            RETURNING id;
+        """, (now,))
+        expired_ids = [row[0] for row in self.env.cr.fetchall()]
+        if expired_ids:
+            self.browse(expired_ids).invalidate_recordset(['state'])
+        cutoff = now - timedelta(days=7)
         expired = self.search([('state', '=', 'expired'), ('expires_at', '<', cutoff)])
         count = len(expired)
         expired.unlink()

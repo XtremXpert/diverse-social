@@ -123,7 +123,7 @@ class TestSocialStory(TransactionCase):
         self.assertGreaterEqual(count, 3)
 
     def test_cron_keeps_archived_stories(self):
-        """Le cron ne supprime pas les stories archivées (seulement les expirées >7j)."""
+        """The cron does not delete archived stories (only expired ones older than 7 days)."""
         story = self.Story.sudo().create({'name': 'Archived Kept', 'author_id': self.user.id})
         story.action_archive()
         story_id = story.id
@@ -131,7 +131,7 @@ class TestSocialStory(TransactionCase):
         self.assertTrue(self.Story.sudo().browse(story_id).exists())
 
     def test_mark_as_viewed_multiple_users(self):
-        """Deux utilisateurs distincts incrémentent view_count à 2."""
+        """Two distinct users increment view_count to 2."""
         other_user = self.env['res.users'].create({
             'name': 'Other Viewer', 'login': 'story_other_viewer',
             'email': 'otherview@test.test',
@@ -158,7 +158,7 @@ class TestSocialStory(TransactionCase):
         self.assertEqual(story.media_type, 'photo')
 
     def test_reaction_no_target_model_false(self):
-        """Une réaction sans post, comment ou story → target_model False."""
+        """A reaction without post/comment/story → target_model False."""
         reaction = self.env['social_base.reaction'].create({
             'user_id': self.user.id,
             'type': 'like',
@@ -166,11 +166,61 @@ class TestSocialStory(TransactionCase):
         self.assertFalse(reaction.target_model)
 
     def test_story_to_dict_viewed_field(self):
-        """_story_to_dict retourne viewed=True après mark_as_viewed."""
+        """_story_to_dict returns viewed=True after mark_as_viewed."""
         story = self._make_story('Dict Viewed Story')
         story.mark_as_viewed(self.user)
         Feed = self.env['social_story.story'].sudo()
         self.assertIn(self.user, story.viewer_ids)
+
+    def test_cron_transitions_overdue_stories_to_expired(self):
+        """Cron must flip active→expired for stories past their deadline,
+        without anyone reading `story.state` first. `state` is store=True
+        over `expires_at`, and `expires_at` is itself computed from
+        `create_date` (immutable post-creation), so in production the
+        recompute never re-runs in the background — the cron has to do it
+        explicitly via SQL."""
+        story = self.Story.sudo().create({'name': 'Overdue', 'author_id': self.user.id})
+        # Flush so create's computes land in the DB before our SQL update.
+        self.env.flush_all()
+        past = fields.Datetime.now() - timedelta(hours=1)
+        self.env.cr.execute(
+            "UPDATE social_story_story SET expires_at = %s WHERE id = %s;",
+            (past, story.id),
+        )
+        # Invalidate cache so the ORM re-reads from the DB.
+        self.env.invalidate_all()
+
+        self.Story.cron_cleanup_expired_stories()
+
+        self.assertEqual(story.state, 'expired')
+        # Not deleted yet — under 7 days since expiration.
+        self.assertTrue(story.exists())
+
+    def test_cron_transitions_then_deletes_in_same_run(self):
+        """A story past both the 24h expiry and the 7-day retention should
+        transition AND be deleted in a single cron pass."""
+        story = self.Story.sudo().create({'name': 'Very Old', 'author_id': self.user.id})
+        self.env.flush_all()
+        old = fields.Datetime.now() - timedelta(days=8)
+        self.env.cr.execute(
+            "UPDATE social_story_story SET expires_at = %s WHERE id = %s;",
+            (old, story.id),
+        )
+        self.env.invalidate_all()
+        story_id = story.id
+
+        n = self.Story.cron_cleanup_expired_stories()
+
+        self.assertGreaterEqual(n, 1)
+        self.assertFalse(self.Story.sudo().browse(story_id).exists())
+
+    def test_cron_does_not_touch_unexpired_stories(self):
+        """Stories whose expires_at is still in the future stay 'active'."""
+        story = self._make_story('Still Active')
+        self.assertEqual(story.state, 'active')
+        self.Story.cron_cleanup_expired_stories()
+        story.invalidate_recordset(['state'])
+        self.assertEqual(story.state, 'active')
 
     def test_multiple_reactions_from_different_users(self):
         other_user = self.env['res.users'].create({
