@@ -64,7 +64,8 @@ class SocialGroupAPI(SocialBaseMixin, http.Controller):
             if not group.exists():
                 return self._error_response('Group not found', 'NOT_FOUND', 404)
 
-            result = group.with_user(request.env.user).action_join()
+            with request.env.cr.savepoint():
+                result = group.with_user(request.env.user).action_join()
             return self._success_response({'action': result.get('params', {}).get('type', 'ok')})
 
         except ValidationError as e:
@@ -83,7 +84,8 @@ class SocialGroupAPI(SocialBaseMixin, http.Controller):
             if not group.exists():
                 return self._error_response('Group not found', 'NOT_FOUND', 404)
 
-            group.with_user(request.env.user).action_leave()
+            with request.env.cr.savepoint():
+                group.with_user(request.env.user).action_leave()
             return self._success_response({'left': True})
 
         except ValidationError as e:

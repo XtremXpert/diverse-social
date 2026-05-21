@@ -142,7 +142,8 @@ class GovernancePortal(CustomerPortal):
         if choice not in ('yes', 'no', 'abstain'):
             return request.redirect(f'/governance/{proposal_id}?error=invalid_choice')
         try:
-            proposal.with_user(request.env.user).action_vote(choice)
+            with request.env.cr.savepoint():
+                proposal.with_user(request.env.user).action_vote(choice)
         except UserError as e:
             return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?voted=1')
@@ -159,7 +160,8 @@ class GovernancePortal(CustomerPortal):
         if proposal.author_id != user and not user.has_group('social_base.group_social_moderator'):
             raise Forbidden()
         try:
-            proposal.with_user(user).action_open()
+            with request.env.cr.savepoint():
+                proposal.with_user(user).action_open()
         except UserError as e:
             return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?opened=1')
@@ -182,7 +184,8 @@ class GovernancePortal(CustomerPortal):
             except Exception:
                 return request.redirect(f'/governance/{proposal_id}?error=invalid_date')
         try:
-            proposal.with_user(user).action_start_voting()
+            with request.env.cr.savepoint():
+                proposal.with_user(user).action_start_voting()
         except UserError as e:
             return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?voting_started=1')
@@ -199,7 +202,8 @@ class GovernancePortal(CustomerPortal):
         if proposal.author_id != user and not user.has_group('social_base.group_social_moderator'):
             raise Forbidden()
         try:
-            proposal.with_user(user).action_withdraw()
+            with request.env.cr.savepoint():
+                proposal.with_user(user).action_withdraw()
         except UserError as e:
             return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?withdrawn=1')
