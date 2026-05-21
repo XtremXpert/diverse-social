@@ -166,7 +166,10 @@ class TestProfileEditHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit?section=preferences')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Visibility', resp.text)
+        # Assert structural anchors instead of translated labels so the
+        # test passes regardless of the rendering language.
+        self.assertIn('name="visibility"', resp.text)
+        self.assertIn('name="availability"', resp.text)
 
     def test_save_identity_redirects(self):
         self.authenticate('admin', 'admin')
@@ -201,7 +204,10 @@ class TestProfileEditHttp(HttpCase):
             data={'csrf_token': _csrf, 'birth_year': str(datetime.date.today().year - 16)},
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('18 ans', resp.text)
+        # The error message goes through _() so the wording shifts with the
+        # user's language. Test the structural marker: the page renders the
+        # bootstrap alert-danger container only when an error is present.
+        self.assertIn('alert-danger', resp.text)
 
     def test_save_preferences_ok(self):
         self.authenticate('admin', 'admin')
@@ -221,12 +227,26 @@ class TestProfileEditHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Identity', resp.text)
-        self.assertIn('Preferences', resp.text)
+        # The visible tab labels go through _() and shift with language.
+        # Assert on the hrefs that route to each section instead.
+        self.assertIn('section=identity', resp.text)
+        self.assertIn('section=preferences', resp.text)
 
 
 @tagged('club_social_profile', 'profile_portal', 'post_install', '-at_install')
 class TestProfilePortalHttp(HttpCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # The /profile/<id> route requires the *target* user to be a social
+        # network member (a3837f7); the demo admin user is not in
+        # group_social_user by default, so every test that hits its own
+        # profile would return 404.
+        admin = cls.env.ref('base.user_admin')
+        admin.sudo().write({
+            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+        })
 
     def test_profile_unauthenticated_redirects(self):
         resp = self.url_open('/profile/1', allow_redirects=False)

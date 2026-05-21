@@ -50,7 +50,7 @@ class TestPortalDiscoverData(TransactionCase):
     def _search(self, **filters):
         """Helper: mimics the controller domain."""
         from odoo.addons.club_social_profile.controllers.portal_discover import (
-            _GENDER_LABELS, _ORIENTATION_LABELS, _AVAILABILITY_LABELS,
+            _gender_labels, _orientation_labels, _availability_labels,
         )
         domain = [
             ('user_id', '!=', self.searcher.id),
@@ -58,11 +58,11 @@ class TestPortalDiscoverData(TransactionCase):
         ]
         if filters.get('city'):
             domain.append(('city', 'ilike', filters['city']))
-        if filters.get('gender') and filters['gender'] in _GENDER_LABELS:
+        if filters.get('gender') and filters['gender'] in _gender_labels():
             domain.append(('gender', '=', filters['gender']))
-        if filters.get('orientation') and filters['orientation'] in _ORIENTATION_LABELS:
+        if filters.get('orientation') and filters['orientation'] in _orientation_labels():
             domain.append(('orientation', '=', filters['orientation']))
-        if filters.get('availability') and filters['availability'] in _AVAILABILITY_LABELS:
+        if filters.get('availability') and filters['availability'] in _availability_labels():
             domain.append(('availability', '=', filters['availability']))
         return self.Profile.sudo().search(domain)
 
