@@ -21,6 +21,11 @@
         'views/portal_dashboard.xml',
         'views/portal_discover.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'club_social_profile/static/src/js/profile_image_preview.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,
