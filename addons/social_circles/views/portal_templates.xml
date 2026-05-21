@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
+    <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
     <template id="portal_my_home_circles" name="Portal My Home: Circles"
               inherit_id="portal.portal_my_home" priority="45">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-if="my_circles_count is not None">
                 <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">Mes cercles de confiance</t>
+                    <t t-set="title">My circles de confiance</t>
                     <t t-set="url">/my/circles</t>
                     <t t-set="count" t-value="my_circles_count"/>
                 </t>
@@ -16,39 +16,39 @@
     </template>
 
     <!-- ══ Page principale ════════════════════════════════════════════════ -->
-    <template id="portal_my_circles" name="Mes cercles de confiance">
+    <template id="portal_my_circles" name="My circles de confiance">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="False"/>
 
             <div class="container py-4" style="max-width:820px;">
                 <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">
-                    🔵 Cercles de confiance
+                    🔵 Circles de confiance
                 </h1>
 
                 <!-- Alertes -->
                 <t t-if="request.params.get('created')">
-                    <div class="alert alert-success alert-dismissible">Cercle créé.</div>
+                    <div class="alert alert-success alert-dismissible">Circle created.</div>
                 </t>
                 <t t-if="request.params.get('updated')">
-                    <div class="alert alert-success alert-dismissible">Cercle mis à jour.</div>
+                    <div class="alert alert-success alert-dismissible">Circle updated.</div>
                 </t>
                 <t t-if="request.params.get('deleted')">
-                    <div class="alert alert-info alert-dismissible">Cercle supprimé.</div>
+                    <div class="alert alert-info alert-dismissible">Circle deleted.</div>
                 </t>
                 <t t-if="request.params.get('vis_saved')">
-                    <div class="alert alert-success alert-dismissible">Visibilité enregistrée.</div>
+                    <div class="alert alert-success alert-dismissible">Visibility saved.</div>
                 </t>
                 <t t-if="request.params.get('error') == 'name_required'">
                     <div class="alert alert-danger">Le nom est requis.</div>
                 </t>
                 <t t-if="request.params.get('error') == 'duplicate_name'">
-                    <div class="alert alert-danger">Un cercle avec ce nom existe déjà.</div>
+                    <div class="alert alert-danger">A circle with this name already exists.</div>
                 </t>
 
-                <!-- ── Visibilité détaillée ──────────────────────────── -->
+                <!-- ── Detailed visibility ───────────────────────────── -->
                 <div class="card mb-4">
                     <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
-                        🔒 Qui peut voir mes infos détaillées ?
+                        🔒 Who can see my detailed info?
                         <small class="fw-normal opacity-75 ms-2">bio, orientation, ville, looking for</small>
                     </div>
                     <div class="card-body">
@@ -56,7 +56,7 @@
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <t t-set="_dv" t-value="profile.detailed_visibility"/>
                             <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
-                                <t t-foreach="[('members','Tous les membres'),('circles','Tout cercle'),('specific','Cercle spécifique'),('connections','Connexions'),('private','Moi seul')]" t-as="opt">
+                                <t t-foreach="[('members','All members'),('circles','Any circle'),('specific','Specific circle'),('connections','Connections'),('private','Only me')]" t-as="opt">
                                     <label class="d-flex align-items-center gap-1 border rounded px-3 py-2"
                                            style="cursor:pointer; font-size:.88rem;">
                                         <input type="radio" name="detailed_visibility"
@@ -67,10 +67,10 @@
                                     </label>
                                 </t>
                             </div>
-                            <!-- Sélection cercle spécifique -->
+                            <!-- Specific circle selection -->
                             <div id="sn_specific_circle_row"
                                  t-attf-style="#{'display:none' if profile.detailed_visibility != 'specific' else ''}; margin-bottom:.75rem;">
-                                <label class="form-label" style="font-size:.85rem;">Cercle :</label>
+                                <label class="form-label" style="font-size:.85rem;">Circle :</label>
                                 <select name="detailed_visibility_circle_id" class="form-select form-select-sm w-auto d-inline-block ms-2">
                                     <option value="">— choisir —</option>
                                     <t t-foreach="circles" t-as="circ">
@@ -82,15 +82,15 @@
                             </div>
                             <button type="submit" class="btn btn-sm"
                                     style="background:#e94560; color:white;">
-                                Enregistrer la visibilité
+                                Save visibility
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- ── Créer un cercle ─────────────────────────────── -->
+                <!-- ── Create a circle ─────────────────────────────── -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0" style="color:#1a1a2e;">Mes cercles</h5>
+                    <h5 class="mb-0" style="color:#1a1a2e;">My circles</h5>
                     <button class="btn btn-sm" style="background:#e94560;color:white;"
                             data-bs-toggle="collapse" data-bs-target="#sn_create_circle_form">
                         + Nouveau cercle
@@ -98,23 +98,38 @@
                 </div>
                 <div class="collapse mb-4" id="sn_create_circle_form">
                     <div class="card card-body">
-                        <form action="/my/circles/create" method="post">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <input type="text" name="name" class="form-control form-control-sm"
-                                           placeholder="Nom du cercle *" required="required" maxlength="64"/>
+                        <t t-if="not available_types">
+                            <p class="text-muted mb-0">
+                                Tous les types de cercles disponibles sont déjà créés.
+                            </p>
+                        </t>
+                        <t t-else="">
+                            <form action="/my/circles/create" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2">
+                                    <div class="col-md-3">
+                                        <select name="type_id" class="form-select form-select-sm" required="required">
+                                            <option value="">— Type de cercle —</option>
+                                            <t t-foreach="available_types" t-as="ct">
+                                                <option t-att-value="ct.id" t-esc="ct.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="name" class="form-control form-control-sm"
+                                               placeholder="Surnom (optionnel)" maxlength="64"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" name="description" class="form-control form-control-sm"
+                                               placeholder="Description (optionnel)" maxlength="256"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-sm w-100"
+                                                style="background:#1a1a2e;color:white;">Create</button>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="description" class="form-control form-control-sm"
-                                           placeholder="Description (optionnel)" maxlength="256"/>
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-sm w-100"
-                                            style="background:#1a1a2e;color:white;">Créer</button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </t>
                     </div>
                 </div>
 
@@ -124,7 +139,7 @@
                         <div style="font-size:2rem;" class="mb-2">🔵</div>
                         <p class="text-muted mb-0">Vous n'avez pas encore de cercles de confiance.</p>
                         <p class="text-muted" style="font-size:.83rem;">
-                            Créez un cercle pour organiser vos connexions et contrôler qui voit vos infos sensibles.
+                            Create a circle to organize your connections and control who sees your sensitive info.
                         </p>
                     </div>
                 </t>
@@ -134,7 +149,7 @@
                     <t t-set="addable" t-value="cwa[1]"/>
                     <div class="card mb-3 shadow-sm">
 
-                        <!-- En-tête cercle -->
+                        <!-- Circle header -->
                         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
                              style="background:#1a1a2e; color:white;">
                             <div class="d-flex align-items-center gap-2">
@@ -145,7 +160,7 @@
                                 </span>
                             </div>
                             <div class="d-flex gap-2">
-                                <!-- Modifier -->
+                                <!-- Edit -->
                                 <button class="btn btn-sm btn-outline-light py-0"
                                         style="font-size:.75rem;"
                                         data-bs-toggle="collapse"
@@ -154,7 +169,7 @@
                                 </button>
                                 <!-- Supprimer -->
                                 <form t-attf-action="/my/circles/#{circle.id}/delete" method="post" class="d-inline"
-                                      onsubmit="return confirm('Supprimer le cercle « ' + this.dataset.name + ' » ?')"
+                                      onsubmit="return confirm('Delete the circle « ' + this.dataset.name + ' » ?')"
                                       t-att-data-name="circle.name">
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                     <button type="submit" class="btn btn-sm btn-outline-danger py-0"
@@ -215,7 +230,7 @@
                             </div>
                         </t>
 
-                        <!-- Membres actuels -->
+                        <!-- Members actuels -->
                         <t t-if="circle.member_ids">
                             <ul class="list-group list-group-flush">
                                 <t t-foreach="circle.member_ids" t-as="member">
@@ -254,7 +269,7 @@
 
                 <!-- ── Dans quels cercles des autres suis-je ? ──────── -->
                 <t t-if="others_circles">
-                    <h5 class="mt-4 mb-3" style="color:#1a1a2e;">Cercles où je figure</h5>
+                    <h5 class="mt-4 mb-3" style="color:#1a1a2e;">Circles I appear in</h5>
                     <div class="list-group shadow-sm mb-4">
                         <t t-foreach="others_circles" t-as="oc">
                             <div class="list-group-item py-2 px-3">
