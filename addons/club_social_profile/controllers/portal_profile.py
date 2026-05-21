@@ -12,7 +12,11 @@ class ProfilePortal(CustomerPortal):
     def public_profile(self, user_id, **kw):
         viewer = request.env.user
         target_user = request.env['res.users'].sudo().browse(user_id)
-        if not target_user.exists() or target_user.share:
+        # We require the target to be a social network member, not to be
+        # "internal". Since the portal/internal refactor, regular members
+        # are portal users (share=True) and target_user.share no longer
+        # discriminates anything useful.
+        if not target_user.exists() or not target_user.has_group('social_base.group_social_user'):
             return request.not_found()
 
         profile = request.env['club_social_profile.profile'].sudo().search(
@@ -21,7 +25,7 @@ class ProfilePortal(CustomerPortal):
         if not profile:
             return request.not_found()
 
-        # Blocage → 404 (ne pas révéler l'existence)
+        # Block → 404 (do not reveal existence)
         if 'social_safety.block' in request.env:
             if request.env['social_safety.block'].is_blocked(viewer, target_user):
                 return request.not_found()
@@ -34,7 +38,7 @@ class ProfilePortal(CustomerPortal):
         )
         is_member = viewer.has_group('social_base.group_social_user')
 
-        # Vérification visibilité
+        # Visibility check
         if not is_own:
             if profile.visibility == 'connections' and not is_connected:
                 display_name = profile.stealth_name or target_user.name
@@ -52,14 +56,14 @@ class ProfilePortal(CustomerPortal):
                     'connection_state': None,
                 })
 
-        # Enregistrement visite (pas de self-visit, dédup 1h)
+        # Record visit (no self-visit, 1-hour dedup window)
         if not is_own:
             _record_visit(profile, viewer)
 
-        # État de connexion pour les boutons d'action
+        # Connection state for action buttons
         connection_state = _get_connection_state(Connection, viewer, target_user) if not is_own else None
 
-        # Posts récents publics/membres
+        # Recent public/members posts
         post_domain = [
             ('author_id', '=', viewer.id if is_own else user_id),
             ('state', '=', 'published'),
@@ -70,10 +74,10 @@ class ProfilePortal(CustomerPortal):
             post_domain, order='create_date desc', limit=6
         )
 
-        # Galeries (optionnel)
+        # Galleries (optional)
         galleries = _get_galleries(profile, viewer, is_own, is_connected)
 
-        # Connexions mutuelles (hors soi-même)
+        # Mutual connections (excluding self)
         mutual_connections = []
         if not is_own and is_connected:
             mutual_connections = _get_mutual_connections(Connection, viewer, target_user)
@@ -140,7 +144,7 @@ def _get_galleries(profile, viewer, is_own, is_connected):
 
 
 def _get_mutual_connections(Connection, viewer, target_user):
-    """Retourne jusqu'à 6 profils connectés aux deux utilisateurs."""
+    """Return up to 6 profiles connected to both users."""
     viewer_connected_ids = set(Connection.search([
         ('user_id', '=', viewer.id), ('state', '=', 'accepted'),
     ]).mapped('connected_user_id.id')) | set(Connection.search([
