@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from werkzeug.exceptions import Forbidden, NotFound
 
@@ -6,6 +7,11 @@ from odoo import _, fields
 from odoo.exceptions import UserError
 from odoo.http import request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+
+
+def _redirect_error(proposal_id, exc):
+    # quote so multi-line ORM error messages don't break the Location header.
+    return request.redirect(f'/governance/{proposal_id}?error={quote(str(exc), safe="")}')
 
 
 def _state_labels():
@@ -138,7 +144,7 @@ class GovernancePortal(CustomerPortal):
         try:
             proposal.with_user(request.env.user).action_vote(choice)
         except UserError as e:
-            return request.redirect(f'/governance/{proposal_id}?error={e}')
+            return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?voted=1')
 
     # ── Open a proposal ────────────────────────────────────────────────────────
@@ -155,7 +161,7 @@ class GovernancePortal(CustomerPortal):
         try:
             proposal.with_user(user).action_open()
         except UserError as e:
-            return request.redirect(f'/governance/{proposal_id}?error={e}')
+            return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?opened=1')
 
     # ── Start voting ───────────────────────────────────────────────────────────
@@ -178,7 +184,7 @@ class GovernancePortal(CustomerPortal):
         try:
             proposal.with_user(user).action_start_voting()
         except UserError as e:
-            return request.redirect(f'/governance/{proposal_id}?error={e}')
+            return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?voting_started=1')
 
     # ── Retirer une proposition ────────────────────────────────────────────────
@@ -195,7 +201,7 @@ class GovernancePortal(CustomerPortal):
         try:
             proposal.with_user(user).action_withdraw()
         except UserError as e:
-            return request.redirect(f'/governance/{proposal_id}?error={e}')
+            return _redirect_error(proposal_id, e)
         return request.redirect(f'/governance/{proposal_id}?withdrawn=1')
 
     # ── Decisions log ──────────────────────────────────────────────────────────
