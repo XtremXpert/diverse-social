@@ -64,10 +64,16 @@ class ReputationPortal(CustomerPortal):
         if not newcomer.exists() or newcomer not in connections:
             return request.redirect('/my/vouching?error=not_connected')
 
+        # Wrap in a savepoint: vouch_for() does a create() and constraints
+        # (circular, self-vouching) raise ValidationError after the INSERT
+        # is already in the current transaction. Without a savepoint, the
+        # `except UserError` swallows the exception and the partial row
+        # gets committed when the controller returns a normal response.
         try:
-            request.env['social_reputation.vouching'].sudo().with_user(user).vouch_for(
-                newcomer, statement=(statement or '').strip() or None
-            )
+            with request.env.cr.savepoint():
+                request.env['social_reputation.vouching'].sudo().with_user(user).vouch_for(
+                    newcomer, statement=(statement or '').strip() or None
+                )
         except UserError as e:
             return request.redirect(f'/my/vouching?error={e}')
         return request.redirect('/my/vouching?vouched=1')

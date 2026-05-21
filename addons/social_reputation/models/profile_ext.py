@@ -13,6 +13,7 @@ class ClubSocialProfile(models.Model):
     )
     vouching_given_count = fields.Integer(
         compute='_compute_vouching_counts',
+        compute_sudo=True,
     )
 
     # ── Vouchings received (I am the newcomer) ────────────────────────────────
@@ -23,15 +24,18 @@ class ClubSocialProfile(models.Model):
     )
     vouching_received_count = fields.Integer(
         compute='_compute_vouching_counts',
+        compute_sudo=True,
     )
     is_vouched = fields.Boolean(
         compute='_compute_vouching_counts',
+        compute_sudo=True,
         string='Has Sponsor',
         help='True if at least one active vouching exists for this profile.',
     )
     sponsor_ids = fields.Many2many(
         'res.users',
         compute='_compute_sponsor_ids',
+        compute_sudo=True,
         string='Sponsors',
     )
 

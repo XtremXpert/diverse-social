@@ -249,3 +249,73 @@ class TestPortalReputationHttp(HttpCase):
         resp = self.url_open('/my/vouching')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Personnes parrain', resp.content)
+
+    def test_circular_vouch_does_not_leak_into_db(self):
+        """If B has vouched A, A vouching B must raise ValidationError AND
+        the partial INSERT must be rolled back. Without a savepoint around
+        the controller's create call, the row stayed committed despite the
+        constraint firing."""
+        newcomer = self._setup()
+        admin = self.env.ref('base.user_admin')
+        Vouching = self.env['social_reputation.vouching'].sudo()
+        # newcomer vouches admin first
+        Vouching.create({'sponsor_id': newcomer.id, 'newcomer_id': admin.id})
+
+        # Now admin tries to vouch newcomer — should hit the circular check.
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
+        self.url_open('/my/vouching/give', data={
+            'csrf_token': _csrf,
+            'newcomer_id': str(newcomer.id),
+            'statement': 'Should be blocked',
+        })
+
+        reverse = Vouching.search([
+            ('sponsor_id', '=', admin.id),
+            ('newcomer_id', '=', newcomer.id),
+        ])
+        self.assertFalse(reverse,
+                         f'Circular vouching leaked into DB: {reverse}')
+
+
+@tagged('social_reputation', 'reputation', 'post_install', '-at_install')
+class TestVouchingComputeSudo(TransactionCase):
+    """Counts on a profile must reflect reality regardless of the viewer.
+
+    The ir.rule on social_reputation.vouching restricts plain social_users
+    to rows where they are sponsor_id or newcomer_id. Without compute_sudo
+    on _compute_vouching_counts, a viewer who isn't either always sees
+    0 / is_vouched=False on someone else's profile — useless for display."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        group_social = cls.env.ref('social_base.group_social_user')
+        cls.sponsor = cls.env['res.users'].create({
+            'name': 'Compute Sponsor', 'login': 'compute_sponsor',
+            'email': 'cs@rep.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        cls.newcomer = cls.env['res.users'].create({
+            'name': 'Compute Newcomer', 'login': 'compute_newcomer',
+            'email': 'cn@rep.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        cls.viewer = cls.env['res.users'].create({
+            'name': 'Compute Viewer', 'login': 'compute_viewer',
+            'email': 'cv@rep.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_social.id)],
+        })
+        cls.env['club_social_profile.profile'].sudo().get_or_create_for_user(cls.newcomer)
+        cls.env['social_reputation.vouching'].sudo().create({
+            'sponsor_id': cls.sponsor.id,
+            'newcomer_id': cls.newcomer.id,
+        })
+
+    def test_unrelated_viewer_sees_correct_count(self):
+        profile = self.env['club_social_profile.profile'].sudo().search(
+            [('user_id', '=', self.newcomer.id)], limit=1)
+        as_viewer = profile.with_user(self.viewer)
+        self.assertEqual(as_viewer.vouching_received_count, 1)
+        self.assertTrue(as_viewer.is_vouched)
+        self.assertIn(self.sponsor, as_viewer.sponsor_ids)
