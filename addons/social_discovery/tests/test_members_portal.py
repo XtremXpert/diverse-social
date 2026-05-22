@@ -203,4 +203,5 @@ class TestMembersPortalHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/members')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Explorer les membres', resp.content)
+        # Structural marker: the page is rendered by the portal_members template.
+        self.assertIn(b'social_discovery.portal_members', resp.content)

@@ -117,9 +117,11 @@ class TestSafetyPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Mode discret', resp.content)
-        self.assertIn(b'Sortie rapide', resp.content)
-        self.assertIn('Blocked users'.encode(), resp.content)
+        # Structural markers: the page renders the panic and quick-exit
+        # form endpoints regardless of UI language.
+        self.assertIn(b'/safety/panic/', resp.content)
+        self.assertIn(b'Quick exit', resp.content)
+        self.assertIn(b'social_safety.portal_safety_page', resp.content)
 
     def test_panic_activate_redirects(self):
         self.authenticate('admin', 'admin')

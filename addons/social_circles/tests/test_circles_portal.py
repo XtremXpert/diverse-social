@@ -197,7 +197,8 @@ class TestCirclesPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'cercles', resp.content.lower())
+        # Structural marker: the page is rendered by the my_circles template.
+        self.assertIn(b'social_circles.portal_my_circles', resp.content)
 
     def test_my_circles_has_visibility_form(self):
         self.authenticate('admin', 'admin')
@@ -381,4 +382,6 @@ class TestCirclesPortalHttp(HttpCase):
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Other Owner Circle', resp.content)
-        self.assertIn(b'Circles o\xc3\xb9 je figure', resp.content)
+        # Structural marker: the "others_circles" section heading renders only
+        # when the viewer is a member of at least one other user's circle.
+        self.assertIn(b'Circles I appear in', resp.content)

@@ -18,7 +18,12 @@ class ClubSocialProfile(models.Model):
         ('specific', 'Specific Circle'),
         ('connections', 'Connections Only'),
         ('private', 'Only Me'),
-    ], default='members', required=True,
+    ], default='members',
+        # Not required=True: Odoo's default evaluation is bypassed on some
+        # exotic create paths (mail.thread auto-provisioning, copy(), etc.)
+        # so the NOT NULL constraint would crash those callers. The compute-
+        # reading code in can_see_detailed_info falls back to a deny-all
+        # branch on NULL, which is the safe failure mode.
         string='Detailed Info Visible To',
         help='Controls who can read bio, orientation, location, looking-for.')
 

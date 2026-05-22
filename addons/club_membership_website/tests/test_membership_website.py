@@ -180,7 +180,8 @@ class TestMembershipWebsiteHttp(HttpCase):
         """La page /membership est accessible sans authentification."""
         response = self.url_open('/membership')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Become a member', response.content)
+        # Structural marker: the membership join form is rendered.
+        self.assertIn(b'/membership/join/', response.content)
 
     def test_membership_page_shows_types(self):
         """The /membership page displays membership types."""
