@@ -7,6 +7,11 @@ class TestMembershipSale(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # Ensure a chart of accounts is loaded so tests can create
+        # account.move records (without demo data, no sale journal exists).
+        company = cls.env.company
+        if not company.chart_template:
+            cls.env['account.chart.template'].sudo().try_loading('generic_coa', company=company)
         cls.group_user = cls.env.ref('base.group_user')
         cls.group_social = cls.env.ref('social_base.group_social_user')
         cls.type_regular = cls.env.ref('club_membership.membership_type_regular')

@@ -238,7 +238,7 @@ class TestOnboardingPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=about')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'genre', resp.content.lower())
+        self.assertIn(b'gender', resp.content.lower())
         self.assertIn(b'orientation', resp.content.lower())
 
     def test_onboarding_preferences_shows_looking_for(self):
@@ -246,7 +246,7 @@ class TestOnboardingPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/onboarding?step=preferences')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('cherche'.encode(), resp.content.lower())
+        self.assertIn(b'looking', resp.content.lower())
 
     def test_skip_redirects(self):
         self.authenticate('admin', 'admin')

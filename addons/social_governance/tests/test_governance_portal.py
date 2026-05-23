@@ -192,7 +192,7 @@ class TestGovernancePortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/governance')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Gouvernance', resp.content)
+        self.assertIn(b'Community governance', resp.content)
 
     def test_governance_log_authenticated_ok(self):
         self.authenticate('admin', 'admin')

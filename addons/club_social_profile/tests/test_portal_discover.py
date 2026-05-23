@@ -194,7 +194,7 @@ class TestPortalDiscoverHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'couvrir', resp.content)
+        self.assertIn(b'Discover members', resp.content)
 
     def test_discover_shows_member_profiles(self):
         self.authenticate('admin', 'admin')
@@ -212,7 +212,7 @@ class TestPortalDiscoverHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?city=ZZZVilleInexistante')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'0 membre', resp.content)
+        self.assertIn(b'0 member', resp.content)
 
     def test_discover_filter_gender(self):
         self.authenticate('admin', 'admin')

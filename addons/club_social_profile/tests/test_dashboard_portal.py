@@ -169,8 +169,8 @@ class TestDashboardHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/dashboard')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Vues profil', resp.content)
-        self.assertIn(b'Nouvelles connexions', resp.content)
+        self.assertIn(b'Profile views', resp.content)
+        self.assertIn(b'New connections', resp.content)
 
     def test_dashboard_contains_profile_card(self):
         admin = self.env.ref('base.user_admin')
@@ -178,10 +178,10 @@ class TestDashboardHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/dashboard')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Voir mon profil', resp.content)
+        self.assertIn(b'View my profile', resp.content)
 
     def test_dashboard_has_breadcrumb(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/dashboard')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Tableau de bord', resp.content)
+        self.assertIn(b'Dashboard', resp.content)
