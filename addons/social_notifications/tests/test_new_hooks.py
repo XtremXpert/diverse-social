@@ -4,8 +4,9 @@ from odoo.tests import TransactionCase, tagged
 
 
 def _make_social_user(env, name, login, extra_groups=None):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
-    group_ids = [(4, group_social.id)]
+    group_ids = [(4, group_user.id), (4, group_social.id)]
     for g in (extra_groups or []):
         group_ids.append((4, g.id))
     return env['res.users'].create({

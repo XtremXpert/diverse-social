@@ -3,11 +3,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@story.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -151,11 +152,12 @@ class TestStoryPortalHttp(HttpCase):
 
     def test_story_archive_by_owner(self):
         """The owner can archive their own story."""
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         owner = self.env['res.users'].sudo().create({
             'name': 'Story Owner HTTP', 'login': 'story_owner_http',
             'email': 'owner@story.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         story = self.env['social_story.story'].sudo().create({
             'name': 'My Own Story HTTP', 'author_id': owner.id,
@@ -173,11 +175,12 @@ class TestStoryPortalHttp(HttpCase):
     def test_api_list_stories_returns_json(self):
         """GET /social/api/stories retourne du JSON avec une liste de stories."""
         import json
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         api_user = self.env['res.users'].sudo().create({
             'name': 'API Story User', 'login': 'api_story_user',
             'email': 'api@story.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         self.authenticate('api_story_user', 'Test1234!')
         _csrf = Request.csrf_token(self)
@@ -200,11 +203,12 @@ class TestStoryPortalHttp(HttpCase):
     def test_api_view_story_increments_count(self):
         """POST /social/api/stories/<id>/view increments view_count."""
         import json
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         viewer = self.env['res.users'].sudo().create({
             'name': 'API Viewer', 'login': 'api_viewer_story',
             'email': 'viewer@story.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         story = self.env['social_story.story'].sudo().create({
