@@ -136,9 +136,6 @@ class TestBlogVisibilityMixin(common.TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.rel_type = cls.env['res.partner.relation.type'].create({
-            'name': 'Partenaire de', 'name_inverse': 'Partenaire de', 'is_symmetric': True,
-        })
         cls.user_owner = cls.env['res.users'].create({
             'name': 'Owner', 'login': 'owner_blog', 'email': 'owner_blog@test.com',
         })
@@ -162,35 +159,6 @@ class TestBlogVisibilityMixin(common.TransactionCase):
     def test_members_accessible_to_internal(self):
         blog = self._blog('members')
         self.assertTrue(blog._is_accessible_by(self.partner_other))
-
-    def test_relations_with_matching_relation(self):
-        blog = self._blog(
-            'relations',
-            owner_partner_id=self.partner_owner.id,
-            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
-        )
-        self.env['res.partner.relation'].create({
-            'left_partner_id': self.partner_owner.id,
-            'right_partner_id': self.partner_other.id,
-            'type_id': self.rel_type.id,
-        })
-        self.assertTrue(blog._is_accessible_by(self.partner_other))
-
-    def test_relations_without_relation(self):
-        blog = self._blog(
-            'relations',
-            owner_partner_id=self.partner_owner.id,
-            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
-        )
-        self.assertFalse(blog._is_accessible_by(self.partner_other))
-
-    def test_relations_owner_always_visible(self):
-        blog = self._blog(
-            'relations',
-            owner_partner_id=self.partner_owner.id,
-            allowed_relation_type_ids=[(6, 0, [self.rel_type.id])],
-        )
-        self.assertTrue(blog._is_accessible_by(self.partner_owner))
 
     def test_connections_no_owner_fallback_to_members(self):
         """Sans owner_partner_id, connections se replie sur 'membres'."""

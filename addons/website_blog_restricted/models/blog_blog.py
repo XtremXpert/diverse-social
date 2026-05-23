@@ -8,10 +8,10 @@ class BlogBlog(models.Model):
     # Les blogs sont publics par défaut (différent du défaut 'members' du mixin)
     visibility = fields.Selection(default='public')
 
-    # Propriétaire du blog — nécessaire pour les niveaux 'connections' et 'relations'
+    # Propriétaire du blog — nécessaire pour le niveau 'connections'
     owner_partner_id = fields.Many2one(
         'res.partner', string="Auteur / Propriétaire",
-        help="Utilisé pour les règles de visibilité par connexion ou relation. "
+        help="Utilisé pour les règles de visibilité par connexion. "
              "Laisser vide si le blog n'a pas de propriétaire spécifique.",
     )
 

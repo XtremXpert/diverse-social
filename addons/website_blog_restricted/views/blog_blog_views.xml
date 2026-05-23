@@ -8,12 +8,8 @@
     <field name="arch" type="xml">
         <field name="website_id" position="after">
             <field name="owner_partner_id"
-                   placeholder="Optionnel — requis pour les niveaux Connexions et Relations"/>
+                   placeholder="Optionnel — requis pour le niveau Connexions"/>
             <field name="visibility" widget="radio"/>
-            <field name="allowed_relation_type_ids"
-                   widget="many2many_tags"
-                   options="{'no_create': True}"
-                   invisible="visibility != 'relations'"/>
         </field>
     </field>
 </record>
