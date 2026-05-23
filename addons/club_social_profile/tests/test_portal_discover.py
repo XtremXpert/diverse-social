@@ -2,11 +2,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_member(env, name, login, **profile_vals):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     user = env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@disc.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
     profile = env['club_social_profile.profile'].sudo().get_or_create_for_user(user)
     if profile_vals:
@@ -156,11 +157,12 @@ class TestPortalDiscoverHttp(HttpCase):
 
     @classmethod
     def _create_disc_user(cls, env):
+        group_user = env.ref('base.group_user')
         group_social = env.ref('social_base.group_social_user')
         u1 = env['res.users'].create({
             'name': 'DiscHTTP1', 'login': 'disc_http1_class',
             'email': 'disc_http1_class@disc.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         p1 = env['club_social_profile.profile'].sudo().get_or_create_for_user(u1)
         p1.sudo().write({
@@ -170,11 +172,12 @@ class TestPortalDiscoverHttp(HttpCase):
         return u1, p1
 
     def _setup(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         u1 = self.env['res.users'].create({
             'name': 'DiscHTTP1', 'login': 'disc_http1',
             'email': 'disc_http1@disc.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         p1 = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(u1)
         p1.sudo().write({
@@ -224,11 +227,12 @@ class TestPortalDiscoverHttp(HttpCase):
         self.assertIn(b'disc_http1_class', resp.content)
 
     def test_discover_connections_only_not_shown(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         hidden_user = self.env['res.users'].create({
             'name': 'DiscHiddenHTTP', 'login': 'disc_hidden_http',
             'email': 'disc_hidden_http@disc.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         hidden_profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(hidden_user)
         hidden_profile.sudo().write({'visibility': 'connections'})

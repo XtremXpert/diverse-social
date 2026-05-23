@@ -11,11 +11,12 @@ class TestGovernance(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         group_mod = cls.env.ref('social_base.group_social_moderator')
 
         def make_user(name, login, extra_groups=None):
-            groups = [(4, group_user.id)]
+            groups = [(4, group_user.id), (4, group_social.id)]
             for g in (extra_groups or []):
                 groups.append((4, g.id))
             return cls.env['res.users'].create({

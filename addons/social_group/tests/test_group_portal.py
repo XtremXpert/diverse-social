@@ -3,11 +3,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@portal.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -199,11 +200,12 @@ class TestGroupPortalHttp(HttpCase):
         self.assertEqual(group.privacy, 'private')
 
     def test_edit_group_by_non_admin_forbidden(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].create({
             'name': 'NonAdmin', 'login': 'non_admin_http',
             'email': 'non_admin@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         group = self.env['social_group.group'].sudo().create({
@@ -230,11 +232,12 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_approve_request_by_creator(self):
         admin = self.env.ref('base.user_admin')
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         requester = self.env['res.users'].create({
             'name': 'Requester', 'login': 'requester_http',
             'email': 'req@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         group = self.env['social_group.group'].sudo().create({
             'name': 'Approval Group', 'privacy': 'private',
@@ -254,11 +257,12 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_reject_request_by_creator(self):
         admin = self.env.ref('base.user_admin')
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         requester2 = self.env['res.users'].create({
             'name': 'Requester2', 'login': 'requester2_http',
             'email': 'req2@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         group = self.env['social_group.group'].sudo().create({
             'name': 'Reject Test Group', 'privacy': 'private',
@@ -276,16 +280,17 @@ class TestGroupPortalHttp(HttpCase):
         self.assertEqual(req.state, 'rejected')
 
     def test_approve_request_by_non_mod_forbidden(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         creator = self.env['res.users'].create({
             'name': 'Creator', 'login': 'creator_http',
             'email': 'creator@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         requester3 = self.env['res.users'].create({
             'name': 'Requester3', 'login': 'requester3_http',
             'email': 'req3@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         group = self.env['social_group.group'].sudo().create({
             'name': 'Non-mod Test Group', 'privacy': 'private',
@@ -304,11 +309,12 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_approve_cross_group_injection_raises(self):
         admin = self.env.ref('base.user_admin')
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other_user = self.env['res.users'].create({
             'name': 'CrossUser', 'login': 'cross_user_http',
             'email': 'cross@test.com', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         group_a = self.env['social_group.group'].sudo().create({
             'name': 'Group A', 'privacy': 'private',

@@ -77,7 +77,10 @@ class TestReport(TransactionCase):
             'name': 'Reporter',
             'login': 'reporter_mod_test',
             'partner_id': partner.id,
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
         })
         self.Report = self.env['club_social_moderation.report']
 

@@ -10,13 +10,14 @@ class TestSocialOnboarding(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
 
         cls.user = cls.env['res.users'].create({
             'name': 'Onboarding User',
             'login': 'onb_user',
             'email': 'onb@test.test',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.type_regular = cls.env.ref('club_membership.membership_type_regular')
 

@@ -4,11 +4,12 @@ from odoo.exceptions import UserError
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@rep.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -137,11 +138,12 @@ class TestPortalReputationData(TransactionCase):
 class TestPortalReputationHttp(HttpCase):
 
     def _setup(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         newcomer = self.env['res.users'].create({
             'name': 'RepHTTPNewcomer', 'login': 'rep_http_newcomer',
             'email': 'rep_http_newcomer@rep.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         group_social = self.env.ref('social_base.group_social_user')
@@ -290,21 +292,22 @@ class TestVouchingComputeSudo(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
         cls.sponsor = cls.env['res.users'].create({
             'name': 'Compute Sponsor', 'login': 'compute_sponsor',
             'email': 'cs@rep.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.newcomer = cls.env['res.users'].create({
             'name': 'Compute Newcomer', 'login': 'compute_newcomer',
             'email': 'cn@rep.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.viewer = cls.env['res.users'].create({
             'name': 'Compute Viewer', 'login': 'compute_viewer',
             'email': 'cv@rep.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.env['club_social_profile.profile'].sudo().get_or_create_for_user(cls.newcomer)
         cls.env['social_reputation.vouching'].sudo().create({

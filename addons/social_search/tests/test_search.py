@@ -9,13 +9,14 @@ class TestSocialSearch(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
         group_mod = cls.env.ref('social_base.group_social_moderator')
         group_event_desk = cls.env.ref('event.group_event_registration_desk')
         group_event_user = cls.env.ref('event.group_event_user')
 
         def make_user(name, login, extra_groups=None):
-            groups = [(4, group_social.id), (4, group_event_desk.id)]
+            groups = [(4, group_user.id), (4, group_social.id), (4, group_event_desk.id)]
             for g in (extra_groups or []):
                 groups.append((4, g.id))
             return cls.env['res.users'].create({
@@ -311,12 +312,12 @@ class TestSocialSearch(TransactionCase):
         self.assertIsNotNone(item)
         self.assertTrue(item['is_shared'])
 
-    def test_gallery_private_excluded(self):
-        """Les galeries privées ne sont pas retournées."""
+    def test_gallery_connections_excluded(self):
+        """Les galeries restreintes aux connexions ne sont pas retournées pour un non-connecté."""
         gallery = self.env['social_gallery.gallery'].sudo().create({
-            'name': 'Galerie Privée Srch',
+            'name': 'Galerie Connexions Srch',
             'owner_id': self.alice.id,
-            'visibility': 'private',
+            'visibility': 'connections',
         })
         results = self.Search.with_user(self.alice)._search_galleries('Privée Srch', 20, 0)
         ids = [r['id'] for r in results]

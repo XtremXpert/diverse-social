@@ -12,13 +12,14 @@ class TestSocialFeed(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
         group_mod = cls.env.ref('social_base.group_social_moderator')
         group_event_desk = cls.env.ref('event.group_event_registration_desk')
         group_event_user = cls.env.ref('event.group_event_user')
 
         def make_user(name, login, extra=None):
-            groups = [(4, group_social.id), (4, group_event_desk.id)]
+            groups = [(4, group_user.id), (4, group_social.id), (4, group_event_desk.id)]
             for g in (extra or []):
                 groups.append((4, g.id))
             return cls.env['res.users'].create({
@@ -640,12 +641,12 @@ class TestSocialFeed(TransactionCase):
         ids = [i['id'] for i in result['items'] if i['item_type'] == 'gallery']
         self.assertNotIn(photo.id, ids)
 
-    def test_gallery_private_gallery_excluded(self):
-        """Les photos d'une galerie privée ne doivent pas apparaître."""
+    def test_gallery_connections_gallery_excluded(self):
+        """Les photos d'une galerie restreinte aux connexions ne doivent pas apparaître pour un non-connecté."""
         gallery = self.env['social_gallery.gallery'].sudo().create({
-            'name': 'Galerie Feed Privée',
+            'name': 'Galerie Feed Connexions',
             'owner_id': self.alice.id,
-            'visibility': 'private',
+            'visibility': 'connections',
         })
         photo = self.env['social_gallery.photo'].sudo().create({
             'gallery_id': gallery.id,

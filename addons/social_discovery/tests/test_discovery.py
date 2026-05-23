@@ -8,12 +8,13 @@ class TestDiscovery(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
 
         def make_user(name, login, email):
             return cls.env['res.users'].create({
                 'name': name, 'login': login, 'email': email,
-                'group_ids': [(4, group_user.id)],
+                'group_ids': [(4, group_user.id), (4, group_social.id)],
             })
 
         cls.searcher_user = make_user('Searcher', 'disc_searcher', 'searcher@disc.test')

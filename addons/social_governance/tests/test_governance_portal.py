@@ -7,8 +7,9 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login, moderator=False):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
-    group_ids = [(4, group_social.id)]
+    group_ids = [(4, group_user.id), (4, group_social.id)]
     if moderator:
         group_ids.append((4, env.ref('social_base.group_social_moderator').id))
     return env['res.users'].create({
@@ -158,12 +159,13 @@ class TestGovernancePortalData(TransactionCase):
 class TestGovernancePortalHttp(HttpCase):
 
     def _setup_mod(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         group_mod = self.env.ref('social_base.group_social_moderator')
         mod = self.env['res.users'].create({
             'name': 'GovHTTPMod', 'login': 'gov_http_mod',
             'email': 'gov_http_mod@gov.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id), (4, group_mod.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id), (4, group_mod.id)],
         })
         return mod
 
@@ -340,7 +342,10 @@ class TestGovernancePortalHttp(HttpCase):
         member = self.env['res.users'].create({
             'name': 'GovMemberHTTP', 'login': 'gov_member_http',
             'email': 'gov_member_http@gov.test', 'password': 'Test1234!',
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
         })
         self.authenticate('gov_member_http', 'Test1234!')
         _csrf = Request.csrf_token(self)

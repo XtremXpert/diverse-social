@@ -3,11 +3,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@msg.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -125,12 +126,13 @@ class TestPortalMessagingHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_messages_start_creates_thread(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].create({
             'name': 'MsgHttpOther', 'login': 'msg_http_other',
             'email': 'msg_http_other@test.test',
             'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
@@ -145,12 +147,13 @@ class TestPortalMessagingHttp(HttpCase):
         self.assertTrue(thread)
 
     def test_send_message_ajax(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].create({
             'name': 'MsgHttpSend', 'login': 'msg_http_send',
             'email': 'msg_http_send@test.test',
             'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
@@ -169,12 +172,13 @@ class TestPortalMessagingHttp(HttpCase):
         self.assertEqual(data['message']['content'], 'Test AJAX send')
 
     def test_poll_returns_json(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].create({
             'name': 'MsgHttpPoll', 'login': 'msg_http_poll',
             'email': 'msg_http_poll@test.test',
             'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
@@ -190,11 +194,12 @@ class TestPortalMessagingHttp(HttpCase):
         self.assertIn('messages', data)
 
     def test_thread_view_as_participant(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         participant = self.env['res.users'].sudo().create({
             'name': 'ThreadParticipant', 'login': 'thread_participant_http',
             'email': 'participant@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
@@ -206,21 +211,22 @@ class TestPortalMessagingHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_thread_view_as_outsider_returns_404(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         user_x = self.env['res.users'].sudo().create({
             'name': 'ThreadX', 'login': 'thread_x_http',
             'email': 'x@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         user_y = self.env['res.users'].sudo().create({
             'name': 'ThreadY', 'login': 'thread_y_http',
             'email': 'y@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         outsider = self.env['res.users'].sudo().create({
             'name': 'ThreadOutsider', 'login': 'thread_outsider_http',
             'email': 'outsider@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [user_x.id, user_y.id]
@@ -232,11 +238,12 @@ class TestPortalMessagingHttp(HttpCase):
 
     def test_send_empty_content_returns_error(self):
         import json
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].sudo().create({
             'name': 'SendEmptyOther', 'login': 'send_empty_other',
             'email': 'send_empty@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
@@ -254,16 +261,17 @@ class TestPortalMessagingHttp(HttpCase):
 
     def test_send_blocked_returns_error(self):
         import json
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         blocker = self.env['res.users'].sudo().create({
             'name': 'BlockerSend', 'login': 'blocker_send_http',
             'email': 'blocker_send@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         blocked = self.env['res.users'].sudo().create({
             'name': 'BlockedSend', 'login': 'blocked_send_http',
             'email': 'blocked_send@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [blocker.id, blocked.id]
@@ -282,21 +290,22 @@ class TestPortalMessagingHttp(HttpCase):
 
     def test_poll_outsider_returns_error(self):
         import json
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         px = self.env['res.users'].sudo().create({
             'name': 'PollX', 'login': 'poll_x_http',
             'email': 'poll_x@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         py = self.env['res.users'].sudo().create({
             'name': 'PollY', 'login': 'poll_y_http',
             'email': 'poll_y@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         outsider = self.env['res.users'].sudo().create({
             'name': 'PollOutsider', 'login': 'poll_outsider_http',
             'email': 'poll_outsider@msg.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [px.id, py.id]

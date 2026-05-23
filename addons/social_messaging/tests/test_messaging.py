@@ -8,18 +8,19 @@ class TestSocialMessaging(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
         cls.user1 = cls.env['res.users'].create({
             'name': 'Msg User 1', 'login': 'msg_test_user1', 'email': 'msg1@test.test',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.user2 = cls.env['res.users'].create({
             'name': 'Msg User 2', 'login': 'msg_test_user2', 'email': 'msg2@test.test',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.user3 = cls.env['res.users'].create({
             'name': 'Msg User 3', 'login': 'msg_test_user3', 'email': 'msg3@test.test',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.Thread = cls.env['social_messaging.thread']
         cls.Block = cls.env['social_safety.block']

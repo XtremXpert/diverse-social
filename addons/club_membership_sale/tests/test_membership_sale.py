@@ -7,6 +7,7 @@ class TestMembershipSale(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.group_user = cls.env.ref('base.group_user')
         cls.group_social = cls.env.ref('social_base.group_social_user')
         cls.type_regular = cls.env.ref('club_membership.membership_type_regular')
         cls.type_trial = cls.env.ref('club_membership.membership_type_trial')

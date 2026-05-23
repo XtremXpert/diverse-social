@@ -3,11 +3,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@notif.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -226,11 +227,12 @@ class TestNotificationsPortalHttp(HttpCase):
 
     def test_api_mark_read_other_user_404(self):
         """POST mark read sur la notification d'un autre utilisateur → 404."""
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other = self.env['res.users'].sudo().create({
             'name': 'Other404', 'login': 'other_404_notif',
             'email': 'other404@notif.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         notif = self.env['club_social_profile.notification'].sudo().create({

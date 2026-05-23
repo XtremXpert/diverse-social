@@ -10,6 +10,7 @@ class TestClubMembership(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.group_user = cls.env.ref('base.group_user')
         cls.group_social = cls.env.ref('social_base.group_social_user')
 
         cls.partner_alice = cls.env['res.partner'].create({

@@ -10,18 +10,19 @@ class TestSocialAnalytics(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        group_user = cls.env.ref('base.group_user')
         group_social = cls.env.ref('social_base.group_social_user')
         group_mod = cls.env.ref('social_base.group_social_moderator')
 
         cls.moderator = cls.env['res.users'].create({
             'name': 'Modo Analytics', 'login': 'anlt_modo',
             'email': 'modo@analytics.test',
-            'group_ids': [(4, group_social.id), (4, group_mod.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id), (4, group_mod.id)],
         })
         cls.user = cls.env['res.users'].create({
             'name': 'User Analytics', 'login': 'anlt_user',
             'email': 'user@analytics.test',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
 
         cls.Dashboard = cls.env['social_analytics.dashboard']
@@ -284,13 +285,13 @@ class TestSocialAnalytics(TransactionCase):
         after = self.Dashboard._gallery_stats(month_ago)['galleries_total']
         self.assertEqual(after, before + 1)
 
-    def test_private_gallery_not_counted(self):
+    def test_connections_gallery_not_counted(self):
         month_ago = datetime.datetime.now() - datetime.timedelta(days=30)
         before = self.Dashboard._gallery_stats(month_ago)['galleries_total']
         self.env['social_gallery.gallery'].sudo().create({
-            'name': 'Anlt Private Gallery',
+            'name': 'Anlt Connections Gallery',
             'owner_id': self.user.id,
-            'visibility': 'private',
+            'visibility': 'connections',
         })
         after = self.Dashboard._gallery_stats(month_ago)['galleries_total']
         self.assertEqual(after, before)
@@ -481,19 +482,20 @@ class TestSocialAnalyticsHttp(HttpCase):
 
     def setUp(self):
         super().setUp()
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         group_mod = self.env.ref('social_base.group_social_moderator')
         self.moderator = self.env['res.users'].sudo().create({
             'name': 'API Modo', 'login': 'api_modo_anlt',
             'email': 'api_modo@analytics.test',
             'password': 'Test1234!',
-            'group_ids': [(4, group_social.id), (4, group_mod.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id), (4, group_mod.id)],
         })
         self.regular_user = self.env['res.users'].sudo().create({
             'name': 'API User', 'login': 'api_user_anlt',
             'email': 'api_user@analytics.test',
             'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
 
     def test_dashboard_api_moderator_200(self):

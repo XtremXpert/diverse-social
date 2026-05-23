@@ -8,22 +8,23 @@ class TestSocialCircles(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         cls.owner = cls.env['res.users'].create({
             'name': 'Circle Owner', 'login': 'circles_owner', 'email': 'owner@circles.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.friend = cls.env['res.users'].create({
             'name': 'Friend', 'login': 'circles_friend', 'email': 'friend@circles.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.acquaintance = cls.env['res.users'].create({
             'name': 'Acquaintance', 'login': 'circles_acquaintance', 'email': 'acq@circles.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.stranger = cls.env['res.users'].create({
             'name': 'Stranger', 'login': 'circles_stranger', 'email': 'stranger@circles.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.Profile = cls.env['club_social_profile.profile']
         cls.owner_profile = cls.Profile.get_or_create_for_user(cls.owner)
@@ -209,7 +210,10 @@ class TestSocialCircles(TransactionCase):
         """Two different profiles can each have a circle of the same type."""
         other_user = self.env['res.users'].create({
             'name': 'Other Owner', 'login': 'circ_other_owner', 'email': 'other@circles.test',
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
         })
         other_profile = self.Profile.get_or_create_for_user(other_user)
         self._make_circle(self.type_shared)
@@ -229,7 +233,10 @@ class TestSocialCircles(TransactionCase):
         """Assigning a circle from another profile to detailed_visibility_circle_id raises ValidationError."""
         other_user = self.env['res.users'].create({
             'name': 'Wrong Owner', 'login': 'circ_wrong_owner2', 'email': 'wo2@circles.test',
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
         })
         other_profile = self.Profile.get_or_create_for_user(other_user)
         foreign_circle = self.env['social_circles.circle'].sudo().create({

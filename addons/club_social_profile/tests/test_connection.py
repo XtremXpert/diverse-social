@@ -10,14 +10,15 @@ class TestClubSocialConnection(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         cls.user1 = cls.env['res.users'].create({
             'name': 'Conn User 1', 'login': 'conn_test_user1', 'email': 'conn1@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.user2 = cls.env['res.users'].create({
             'name': 'Conn User 2', 'login': 'conn_test_user2', 'email': 'conn2@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.Conn = cls.env['club_social_profile.connection']
 
@@ -136,10 +137,11 @@ class TestClubSocialConnection(TransactionCase):
 
     def test_following_type_no_reciprocal(self):
         """The 'following' type does not create a reciprocal connection."""
-        group_user = self.env.ref('social_base.group_social_user')
+        group_user = self.env.ref('base.group_user')
+        group_social = self.env.ref('social_base.group_social_user')
         user3 = self.env['res.users'].create({
             'name': 'Follower', 'login': 'conn_follower', 'email': 'follow@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         conn = self.Conn.create({
             'user_id': self.user1.id,
@@ -167,16 +169,17 @@ class TestConnectionsApiHttp(HttpCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         cls.sender = cls.env['res.users'].create({
             'name': 'Conn Sender', 'login': 'conn_api_sender',
             'email': 'sender@conn.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.recipient = cls.env['res.users'].create({
             'name': 'Conn Recipient', 'login': 'conn_api_recipient',
             'email': 'recipient@conn.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
 
     def test_recipient_sees_pending_request(self):

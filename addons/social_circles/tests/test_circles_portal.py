@@ -3,11 +3,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@circles.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -360,11 +361,12 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_others_circles_section_visible_when_member(self):
         """The "Circles I appear in" section is shown if you are a member of another user's circle."""
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         other_owner = self.env['res.users'].sudo().create({
             'name': 'OtherOwner', 'login': 'other_owner_circ',
             'email': 'other_owner@circles.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         admin = self.env.ref('base.user_admin')
         other_profile = self.env['club_social_profile.profile'].sudo().create({

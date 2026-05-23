@@ -9,7 +9,10 @@ class TestSocialPost(TransactionCase):
         super().setUpClass()
         cls.user = cls.env['res.users'].create({
             'name': 'Post Test User', 'login': 'post_test_user', 'email': 'post@test.test',
-            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, cls.env.ref('base.group_user').id),
+                (4, cls.env.ref('social_base.group_social_user').id),
+            ],
         })
         cls.Post = cls.env['social_base.post']
 

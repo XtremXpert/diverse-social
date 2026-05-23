@@ -8,12 +8,13 @@ class TestReputation(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
 
         def make_user(name, login, email):
             return cls.env['res.users'].create({
                 'name': name, 'login': login, 'email': email,
-                'group_ids': [(4, group_user.id)],
+                'group_ids': [(4, group_user.id), (4, group_social.id)],
             })
 
         cls.alice = make_user('Alice', 'rep_alice', 'alice@rep.test')
@@ -163,7 +164,11 @@ class TestReputation(TransactionCase):
         group_mod = self.env.ref('social_base.group_social_moderator')
         moderator = self.env['res.users'].create({
             'name': 'Modo Rep', 'login': 'rep_modo', 'email': 'modo@rep.test',
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id), (4, group_mod.id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+                (4, group_mod.id),
+            ],
         })
         v = self.Vouching.with_user(self.alice).vouch_for(self.carol)
         v.with_user(moderator).action_withdraw(reason='Modération')
@@ -220,7 +225,10 @@ class TestReputation(TransactionCase):
         """Un profil sans sponsor retourne une liste vide."""
         fresh_user = self.env['res.users'].create({
             'name': 'Fresh User', 'login': 'rep_fresh', 'email': 'fresh@rep.test',
-            'group_ids': [(4, self.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
         })
         fresh_p = self.env['club_social_profile.profile'].get_or_create_for_user(fresh_user)
         chain = fresh_p.get_vouching_chain(depth=3)

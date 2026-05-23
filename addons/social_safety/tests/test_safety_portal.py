@@ -4,11 +4,12 @@ from odoo.exceptions import UserError
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@safety.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -151,11 +152,12 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertIn('Esc'.encode(), resp.content)
 
     def test_panic_activate_changes_db_state(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         owner = self.env['res.users'].sudo().create({
             'name': 'Panic Owner', 'login': 'panic_owner_http',
             'email': 'panic@safety.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         self.authenticate('panic_owner_http', 'Test1234!')
@@ -165,11 +167,12 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertTrue(profile.panic_mode)
 
     def test_panic_lift_changes_db_state(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         owner = self.env['res.users'].sudo().create({
             'name': 'Panic Lifter', 'login': 'panic_lifter_http',
             'email': 'lifter@safety.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         profile.sudo().write({'panic_mode': True, 'panic_saved_visibility': 'members'})
@@ -180,11 +183,12 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertFalse(profile.panic_mode)
 
     def test_remove_block_via_portal(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         blocker = self.env['res.users'].sudo().create({
             'name': 'Block Remover', 'login': 'block_remover_http',
             'email': 'remover@safety.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         blocked = self.env['res.users'].sudo().create({
             'name': 'Blocked User', 'login': 'blocked_user_http',
@@ -204,6 +208,7 @@ class TestSafetyPortalHttp(HttpCase):
 
     def test_remove_block_by_non_owner_ignored(self):
         """Un utilisateur ne peut pas supprimer le bloc d'un autre."""
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         blocker = self.env['res.users'].sudo().create({
             'name': 'Block Owner2', 'login': 'block_owner2_http',
@@ -216,7 +221,7 @@ class TestSafetyPortalHttp(HttpCase):
         intruder = self.env['res.users'].sudo().create({
             'name': 'Intruder', 'login': 'intruder_block_http',
             'email': 'intruder@safety.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         block = self.env['social_safety.block'].sudo().create({
             'blocker_id': blocker.id, 'blocked_id': blocked.id,
@@ -230,11 +235,12 @@ class TestSafetyPortalHttp(HttpCase):
         self.assertTrue(self.env['social_safety.block'].sudo().browse(block.id).exists())
 
     def test_remove_mute_via_portal(self):
+        group_user = self.env.ref('base.group_user')
         group_social = self.env.ref('social_base.group_social_user')
         muter = self.env['res.users'].sudo().create({
             'name': 'Mute Remover', 'login': 'mute_remover_http',
             'email': 'mute_remover@safety.test', 'password': 'Test1234!',
-            'group_ids': [(4, group_social.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         muted = self.env['res.users'].sudo().create({
             'name': 'Muted User', 'login': 'muted_user_http',

@@ -10,7 +10,10 @@ class TestClubSocialProfile(TransactionCase):
         super().setUpClass()
         cls.user = cls.env['res.users'].create({
             'name': 'Profile Test User', 'login': 'profile_test_user', 'email': 'profile@test.test',
-            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, cls.env.ref('base.group_user').id),
+                (4, cls.env.ref('social_base.group_social_user').id),
+            ],
         })
         cls.Profile = cls.env['club_social_profile.profile']
 
@@ -69,14 +72,15 @@ class TestClubSocialNotification(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         cls.user_a = cls.env['res.users'].create({
             'name': 'Notif A', 'login': 'notif_a', 'email': 'notifia@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.user_b = cls.env['res.users'].create({
             'name': 'Notif B', 'login': 'notif_b', 'email': 'notifib@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.Notif = cls.env['club_social_profile.notification']
 
@@ -163,14 +167,15 @@ class TestProfileVisit(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         cls.owner = cls.env['res.users'].create({
             'name': 'Visit Owner', 'login': 'visit_owner', 'email': 'vowner@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.visitor = cls.env['res.users'].create({
             'name': 'Visitor', 'login': 'visit_visitor', 'email': 'visitor@test.test',
-            'group_ids': [(4, group_user.id)],
+            'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         cls.profile = cls.env['club_social_profile.profile'].get_or_create_for_user(cls.owner)
         cls.visitor_profile = cls.env['club_social_profile.profile'].get_or_create_for_user(cls.visitor)

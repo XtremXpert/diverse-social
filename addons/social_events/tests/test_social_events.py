@@ -9,14 +9,15 @@ class TestSocialEvents(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        group_user = cls.env.ref('social_base.group_social_user')
+        group_user = cls.env.ref('base.group_user')
+        group_social = cls.env.ref('social_base.group_social_user')
         group_mod = cls.env.ref('social_base.group_social_moderator')
         # Ensure event access is available regardless of implied-group propagation timing
         group_event_desk = cls.env.ref('event.group_event_registration_desk')
         group_event_user = cls.env.ref('event.group_event_user')
 
         def make_user(name, login, extra_groups=None):
-            groups = [(4, group_user.id), (4, group_event_desk.id)]
+            groups = [(4, group_user.id), (4, group_social.id), (4, group_event_desk.id)]
             for g in (extra_groups or []):
                 groups.append((4, g.id))
             return cls.env['res.users'].create({

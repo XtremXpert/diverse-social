@@ -5,11 +5,12 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 
 def _make_member_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     user = env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@onboarding.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
     return user
 
