@@ -20,6 +20,7 @@
         'views/portal_profile_edit.xml',
         'views/portal_dashboard.xml',
         'views/portal_discover.xml',
+        'views/portal_connections.xml',
     ],
     'assets': {
         'web.assets_frontend': [
