@@ -6,7 +6,7 @@ from odoo import models, fields, api
 class SocialStory(models.Model):
     _name = 'social_story.story'
     _description = 'Social Story'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'club.visibility.mixin']
     _order = 'create_date desc'
 
     name = fields.Char('Title', required=True)
@@ -57,6 +57,16 @@ class SocialStory(models.Model):
                 story.media_type = 'video' if att.mimetype.startswith('video/') else 'photo'
             else:
                 story.media_type = 'photo'
+
+    def _visibility_owner_partner(self):
+        self.ensure_one()
+        return self.author_id.partner_id
+
+    def is_accessible_by(self, user):
+        """Helper accepting res.users or res.partner."""
+        self.ensure_one()
+        partner = user.partner_id if hasattr(user, 'partner_id') else user
+        return self._is_accessible_by(partner)
 
     def mark_as_viewed(self, user):
         self.ensure_one()

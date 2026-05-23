@@ -178,7 +178,7 @@ class TestSocialNotifications(TransactionCase):
 
     # ── Story hooks ───────────────────────────────────────────────────────────
 
-    def test_story_notifies_connections(self):
+    def test_story_connections_notifies_connections(self):
         self.env['club_social_profile.connection'].sudo().create({
             'user_id': self.alice.id,
             'connected_user_id': self.bob.id,
@@ -189,16 +189,29 @@ class TestSocialNotifications(TransactionCase):
         self.env['social_story.story'].sudo().create({
             'author_id': self.alice.id,
             'name': 'Ma story',
+            'visibility': 'connections',
         })
         self.assertEqual(len(self._notifs_for(self.bob, 'story_new')), before + 1)
 
-    def test_story_does_not_notify_non_connections(self):
+    def test_story_connections_does_not_notify_non_connections(self):
         before = len(self._notifs_for(self.carol, 'story_new'))
         self.env['social_story.story'].sudo().create({
             'author_id': self.alice.id,
             'name': 'Private story',
+            'visibility': 'connections',
         })
         self.assertEqual(len(self._notifs_for(self.carol, 'story_new')), before)
+
+    def test_story_members_notifies_all_members(self):
+        before_bob = len(self._notifs_for(self.bob, 'story_new'))
+        before_carol = len(self._notifs_for(self.carol, 'story_new'))
+        self.env['social_story.story'].sudo().create({
+            'author_id': self.alice.id,
+            'name': 'Members story',
+            'visibility': 'members',
+        })
+        self.assertEqual(len(self._notifs_for(self.bob, 'story_new')), before_bob + 1)
+        self.assertEqual(len(self._notifs_for(self.carol, 'story_new')), before_carol + 1)
 
     # ── Mark read ─────────────────────────────────────────────────────────────
 

@@ -18,14 +18,15 @@ class SocialStoriesAPI(SocialBaseMixin, http.Controller):
             body = self._get_json_body()
             title = body.get('title') or kwargs.get('title')
             attachment_ids = body.get('attachment_ids') or kwargs.get('attachment_ids', [])
+            visibility = body.get('visibility') or kwargs.get('visibility')
 
             if not title or not attachment_ids:
                 return self._error_response('Title and media required', 'INVALID_INPUT')
 
-            story = request.env['social_story.story'].sudo().create({
-                'name': title,
-                'author_id': user.id,
-            })
+            vals = {'name': title, 'author_id': user.id}
+            if visibility in ('public', 'members', 'connections'):
+                vals['visibility'] = visibility
+            story = request.env['social_story.story'].sudo().create(vals)
 
             for attachment_id in attachment_ids:
                 att = request.env['ir.attachment'].sudo().browse(attachment_id)
@@ -45,6 +46,7 @@ class SocialStoriesAPI(SocialBaseMixin, http.Controller):
         try:
             user = self._validate_auth()
             stories = request.env['social_story.story'].sudo().search([('state', '=', 'active')])
+            stories = stories.filtered(lambda s: s.is_accessible_by(user))
             return self._success_response({
                 'stories': [self._story_to_dict(s, user) for s in stories],
                 'total': len(stories),
@@ -63,6 +65,8 @@ class SocialStoriesAPI(SocialBaseMixin, http.Controller):
             story = request.env['social_story.story'].sudo().browse(story_id)
             if not story.exists():
                 return self._error_response('Story not found', 'NOT_FOUND', 404)
+            if not story.is_accessible_by(user):
+                return self._error_response('Access denied', 'FORBIDDEN', 403)
             story.mark_as_viewed(user)
             return self._success_response({'view_count': story.view_count})
 

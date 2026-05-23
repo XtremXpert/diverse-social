@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="author_id"/>
                     <field name="media_type"/>
+                    <field name="visibility"/>
                     <field name="state"/>
                     <field name="view_count"/>
                     <field name="expires_at"/>

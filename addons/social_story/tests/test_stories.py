@@ -14,7 +14,10 @@ class TestSocialStory(TransactionCase):
             'name': 'Story Test User',
             'login': 'story_test_user',
             'email': 'story@test.test',
-            'group_ids': [(4, cls.env.ref('social_base.group_social_user').id)],
+            'group_ids': [
+                (4, cls.env.ref('base.group_user').id),
+                (4, cls.env.ref('social_base.group_social_user').id),
+            ],
         })
         cls.Story = cls.env['social_story.story']
 
@@ -236,3 +239,73 @@ class TestSocialStory(TransactionCase):
             'story_id': story.id, 'user_id': other_user.id, 'type': 'like',
         })
         self.assertEqual(len(story.reaction_ids), 2)
+
+    # ── Visibility ────────────────────────────────────────────────────────
+
+    def test_default_visibility_members(self):
+        story = self._make_story()
+        self.assertEqual(story.visibility, 'members')
+
+    def test_public_accessible_to_all(self):
+        portal_user = self.env['res.users'].create({
+            'name': 'Portal Reader', 'login': 'story_portal_reader',
+            'email': 'sportal@test.test',
+            'group_ids': [(4, self.env.ref('base.group_portal').id)],
+        })
+        story = self._make_story()
+        story.visibility = 'public'
+        self.assertTrue(story.is_accessible_by(portal_user))
+
+    def test_members_accessible_to_internal(self):
+        other = self.env['res.users'].create({
+            'name': 'Other Member', 'login': 'story_other_member',
+            'email': 'omember@test.test',
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
+        })
+        story = self._make_story()  # default 'members'
+        self.assertTrue(story.is_accessible_by(other))
+
+    def test_members_not_accessible_to_portal(self):
+        portal_user = self.env['res.users'].create({
+            'name': 'Portal Outsider', 'login': 'story_portal_outsider',
+            'email': 'soutsider@test.test',
+            'group_ids': [(4, self.env.ref('base.group_portal').id)],
+        })
+        story = self._make_story()
+        self.assertFalse(story.is_accessible_by(portal_user))
+
+    def test_connections_accessible_only_to_connections(self):
+        friend = self.env['res.users'].create({
+            'name': 'Friend', 'login': 'story_friend',
+            'email': 'sfriend@test.test',
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
+        })
+        stranger = self.env['res.users'].create({
+            'name': 'Stranger', 'login': 'story_stranger',
+            'email': 'sstranger@test.test',
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, self.env.ref('social_base.group_social_user').id),
+            ],
+        })
+        self.env['club_social_profile.connection'].create({
+            'user_id': self.user.id,
+            'connected_user_id': friend.id,
+            'connection_type': 'friend',
+            'state': 'accepted',
+        })
+        story = self._make_story()
+        story.visibility = 'connections'
+        self.assertTrue(story.is_accessible_by(friend))
+        self.assertFalse(story.is_accessible_by(stranger))
+
+    def test_owner_always_accesses_own_story(self):
+        story = self._make_story()
+        story.visibility = 'connections'
+        self.assertTrue(story.is_accessible_by(self.user))
