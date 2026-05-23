@@ -21,9 +21,9 @@ class GalleryPortal(CustomerPortal):
 
     @route('/gallery', auth='user', website=True, sitemap=True)
     def gallery_list(self, **kw):
-        galleries = request.env['social_gallery.gallery'].search(
-            [('visibility', 'in', ['public', 'members'])], order='sequence, id'
-        )
+        user = request.env.user
+        galleries = request.env['social_gallery.gallery'].search([], order='sequence, id')
+        galleries = galleries.filtered(lambda g: g.is_accessible_by(user))
         return request.render('social_gallery.portal_gallery_list', {
             'galleries': galleries,
             'page_name': 'gallery',
@@ -34,6 +34,8 @@ class GalleryPortal(CustomerPortal):
         gallery = request.env['social_gallery.gallery'].browse(gallery_id).exists()
         if not gallery:
             raise NotFound()
+        if not gallery.is_accessible_by(request.env.user):
+            raise Forbidden()
 
         approved = gallery.photo_ids.filtered(lambda p: p.state == 'approved').sorted('sequence')
         total = len(approved)
@@ -87,7 +89,7 @@ class GalleryPortal(CustomerPortal):
         name = (name or '').strip()
         if not name:
             return request.redirect('/my/gallery?error=name_required')
-        if visibility not in ('public', 'members', 'private'):
+        if visibility not in ('public', 'members', 'connections'):
             visibility = 'members'
         request.env['social_gallery.gallery'].sudo().create({
             'name': name,

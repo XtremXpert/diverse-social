@@ -5,7 +5,7 @@
         <record id="social_gallery_user_rule" model="ir.rule">
             <field name="name">Social Gallery: User Access</field>
             <field name="model_id" ref="model_social_gallery_gallery"/>
-            <field name="domain_force">['|', ('visibility', 'in', ['public', 'members']), ('owner_id', '=', user.id)]</field>
+            <field name="domain_force">['|', ('visibility', 'in', ['public', 'members', 'connections']), ('owner_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>

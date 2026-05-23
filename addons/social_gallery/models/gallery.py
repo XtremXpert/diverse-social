@@ -4,6 +4,7 @@ from odoo import api, fields, models
 class SocialGallery(models.Model):
     _name = 'social_gallery.gallery'
     _description = 'Social Gallery'
+    _inherit = ['club.visibility.mixin']
     _order = 'sequence, id'
 
     name = fields.Char('Title', required=True)
@@ -15,11 +16,6 @@ class SocialGallery(models.Model):
         default=False,
         help='Shared galleries accept submissions from all members.',
     )
-    visibility = fields.Selection([
-        ('public', 'Public'),
-        ('members', 'Members Only'),
-        ('private', 'Owner Only'),
-    ], default='members', required=True)
 
     photo_ids = fields.One2many('social_gallery.photo', 'gallery_id', 'Photos')
     photo_count = fields.Integer(compute='_compute_photo_count', store=True)
@@ -38,6 +34,16 @@ class SocialGallery(models.Model):
             gallery.photo_count = len(gallery.photo_ids)
             gallery.approved_photo_count = len(gallery.photo_ids.filtered(lambda p: p.state == 'approved'))
             gallery.pending_photo_count = len(gallery.photo_ids.filtered(lambda p: p.state == 'pending'))
+
+    def _visibility_owner_partner(self):
+        self.ensure_one()
+        return self.owner_id.partner_id
+
+    def is_accessible_by(self, user):
+        """Helper accepting res.users or res.partner."""
+        self.ensure_one()
+        partner = user.partner_id if hasattr(user, 'partner_id') else user
+        return self._is_accessible_by(partner)
 
 
 class SocialGalleryPhoto(models.Model):

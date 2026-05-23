@@ -15,11 +15,12 @@ class SocialGalleryAPI(SocialBaseMixin, http.Controller):
     def api_list_galleries(self, owner_id=None, **kwargs):
         try:
             user = self._validate_auth()
-            domain = [('visibility', 'in', ['public', 'members'])]
+            domain = []
             if owner_id:
                 domain.append(('owner_id', '=', int(owner_id)))
 
             galleries = request.env['social_gallery.gallery'].sudo().search(domain, order='sequence, id')
+            galleries = galleries.filtered(lambda g: g.is_accessible_by(user))
             return self._success_response({
                 'galleries': [self._gallery_to_dict(g) for g in galleries],
             })
@@ -33,10 +34,12 @@ class SocialGalleryAPI(SocialBaseMixin, http.Controller):
     @http.route('/social/api/galleries/<int:gallery_id>/photos', type='http', auth='user', methods=['GET'], csrf=False)
     def api_list_photos(self, gallery_id, **kwargs):
         try:
-            self._validate_auth()
+            user = self._validate_auth()
             gallery = request.env['social_gallery.gallery'].sudo().browse(gallery_id)
             if not gallery.exists():
                 return self._error_response('Gallery not found', 'NOT_FOUND', 404)
+            if not gallery.is_accessible_by(user):
+                return self._error_response('Access denied', 'FORBIDDEN', 403)
 
             photos = gallery.photo_ids.filtered(lambda p: p.state == 'approved')
             return self._success_response({

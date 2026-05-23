@@ -12,11 +12,12 @@ _PNG_B64 = base64.b64encode(_TINY_PNG).decode('ascii')
 
 
 def _make_social_user(env, name, login):
+    group_user = env.ref('base.group_user')
     group_social = env.ref('social_base.group_social_user')
     return env['res.users'].create({
         'name': name, 'login': login, 'email': f'{login}@gallery.test',
         'password': 'Test1234!',
-        'group_ids': [(4, group_social.id)],
+        'group_ids': [(4, group_user.id), (4, group_social.id)],
     })
 
 
@@ -55,10 +56,11 @@ class TestPortalGalleryData(TransactionCase):
         galleries = self.Gallery.sudo().search([('visibility', 'in', ['public', 'members'])])
         self.assertIn(g, galleries)
 
-    def test_gallery_list_excludes_private(self):
-        g = self._gallery(visibility='private')
-        galleries = self.Gallery.sudo().search([('visibility', 'in', ['public', 'members'])])
-        self.assertNotIn(g, galleries)
+    def test_gallery_list_excludes_connections_only_for_non_connections(self):
+        """A 'connections' gallery is filtered out for users with no link to the owner."""
+        g = self._gallery(visibility='connections')
+        # self.other has no connection with self.user (gallery owner)
+        self.assertFalse(g.is_accessible_by(self.other))
 
     # ── Photos approuvées visibles ────────────────────────────────────────
 
