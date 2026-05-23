@@ -1,9 +1,15 @@
-"""Form-based connection request — used by the "+ Connect" button on /profile/<id>.
+"""Form-based connection actions — used by the buttons on /profile/<id>.
 
-The button POSTs to /api/connections/request/<target_user_id> with a CSRF token,
-expecting a redirect back to the profile. The JSON API at /social/api/connections
-is the right surface for AJAX clients, but the public profile template uses a
-plain HTML form, so we expose this form-level wrapper here.
+The public profile template renders three buttons depending on the connection
+state with the viewing user (cf. portal_profile_public.xml):
+
+  - "+ Connect"          → POST /api/connections/request/<target_user_id>
+  - "Accept the request" → POST /api/connections/accept/<target_user_id>
+  - "✓ Connected"        → POST /api/connections/remove/<target_user_id> (unfriend)
+
+The JSON API at /social/api/connections is the right surface for AJAX clients,
+but those template buttons are plain HTML forms with a CSRF token, so we expose
+form-level wrappers here that redirect back to the profile page.
 """
 import logging
 
@@ -16,7 +22,7 @@ from odoo.http import request
 _logger = logging.getLogger(__name__)
 
 
-class PortalConnectionRequest(http.Controller):
+class PortalConnectionActions(http.Controller):
 
     @http.route(
         '/api/connections/request/<int:target_user_id>',
@@ -42,3 +48,51 @@ class PortalConnectionRequest(http.Controller):
             _logger.exception('Error creating connection request to user %s', target_user_id)
             return request.redirect(f'{redirect_base}?error=internal_error')
         return request.redirect(f'{redirect_base}?connection_requested=1')
+
+    @http.route(
+        '/api/connections/accept/<int:target_user_id>',
+        type='http', auth='user', methods=['POST'], website=True, csrf=True,
+    )
+    def portal_connection_accept(self, target_user_id, **kwargs):
+        """Accept the pending request `target_user_id` sent to the current user."""
+        Connection = request.env['club_social_profile.connection'].sudo()
+        redirect_base = f'/profile/{target_user_id}'
+        conn = Connection.search([
+            ('user_id', '=', target_user_id),
+            ('connected_user_id', '=', request.env.user.id),
+            ('state', '=', 'pending'),
+        ], limit=1)
+        if not conn:
+            return request.redirect(f'{redirect_base}?error=no_pending_request')
+        try:
+            conn.action_accept()
+        except (ValidationError, AccessError) as e:
+            return request.redirect(f'{redirect_base}?{url_encode({"error": str(e)})}')
+        except Exception:
+            _logger.exception('Error accepting connection from user %s', target_user_id)
+            return request.redirect(f'{redirect_base}?error=internal_error')
+        return request.redirect(f'{redirect_base}?connection_accepted=1')
+
+    @http.route(
+        '/api/connections/remove/<int:target_user_id>',
+        type='http', auth='user', methods=['POST'], website=True, csrf=True,
+    )
+    def portal_connection_remove(self, target_user_id, **kwargs):
+        """Unfriend `target_user_id` — removes both reciprocal accepted rows."""
+        Connection = request.env['club_social_profile.connection'].sudo()
+        redirect_base = f'/profile/{target_user_id}'
+        conn = Connection.search([
+            ('user_id', '=', request.env.user.id),
+            ('connected_user_id', '=', target_user_id),
+            ('state', '=', 'accepted'),
+        ], limit=1)
+        if not conn:
+            return request.redirect(f'{redirect_base}?error=not_connected')
+        try:
+            conn.action_unfriend()
+        except (ValidationError, AccessError) as e:
+            return request.redirect(f'{redirect_base}?{url_encode({"error": str(e)})}')
+        except Exception:
+            _logger.exception('Error removing connection with user %s', target_user_id)
+            return request.redirect(f'{redirect_base}?error=internal_error')
+        return request.redirect(f'{redirect_base}?connection_removed=1')
