@@ -19,6 +19,9 @@ def _step_titles():
 
 class OnboardingPortal(CustomerPortal):
 
+    # Redécore explicitement la route de CustomerPortal.home pour éviter le
+    # warning "endpoint not decorated by @route(), decorating it myself" au boot.
+    @route(['/my', '/my/home'], type='http', auth='user', website=True)
     def home(self, **kw):
         """Redirect newly active members to /onboarding (once per session)."""
         if not request.session.get('onboarding_prompted'):
