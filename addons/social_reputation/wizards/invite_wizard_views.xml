@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_invite_wizard_form" model="ir.ui.view">
+        <field name="name">social_reputation.invite_wizard.form</field>
+        <field name="model">social_reputation.invite_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Invite a Newcomer">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Invite Someone to Join</h2>
+                        <p class="text-muted">
+                            You will personally vouch for this person. They will
+                            receive a token-protected signup link. Membership
+                            payment is still required for access.
+                        </p>
+                    </div>
+                    <group>
+                        <field name="email" placeholder="newcomer@example.com"/>
+                        <field name="statement"
+                               placeholder="Why are you vouching for this person? Shown in the invitation email."/>
+                        <field name="send_now"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_invitation" type="object"
+                            string="Send Invitation" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_invite_wizard" model="ir.actions.act_window">
+        <field name="name">Invite Someone by Email</field>
+        <field name="res_model">social_reputation.invite_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_invite_wizard"
+              name="Invite by Email"
+              parent="menu_reputation_root"
+              action="action_invite_wizard"
+              sequence="50"
+              groups="social_base.group_social_user"/>
+
+</odoo>

@@ -20,6 +20,7 @@
         'views/menus.xml',
         'views/portal_templates.xml',
         'views/invitation_templates.xml',
+        'wizards/invite_wizard_views.xml',
     ],
     'installable': True,
     'application': False,

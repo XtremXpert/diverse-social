@@ -28,6 +28,15 @@
                 <t t-if="request.params.get('withdrawn')">
                     <div class="alert alert-info">Parrainage retiré.</div>
                 </t>
+                <t t-if="request.params.get('invited')">
+                    <div class="alert alert-success">Invitation envoyée par email.</div>
+                </t>
+                <t t-if="request.params.get('resent')">
+                    <div class="alert alert-info">Email d'invitation renvoyé.</div>
+                </t>
+                <t t-if="request.params.get('cancelled')">
+                    <div class="alert alert-info">Invitation annulée.</div>
+                </t>
                 <t t-if="error or request.params.get('error')">
                     <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
                 </t>
@@ -65,6 +74,78 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- ── Inviter quelqu'un par email ─────────────────── -->
+                <div class="card mb-4" style="border-left:3px solid #e94560;">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <strong style="color:#1a1a2e;">Inviter quelqu'un à rejoindre</strong>
+                            <div class="text-muted" style="font-size:.85rem;">
+                                Envoie une invitation par email. La personne sera
+                                automatiquement parrainée par toi à l'inscription.
+                            </div>
+                        </div>
+                        <a href="/my/vouching/invite" class="btn btn-sm"
+                           style="background:#e94560;color:white;">
+                            ✉ Inviter par email
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ── Invitations envoyées ────────────────────────── -->
+                <t t-if="invitations">
+                    <h5 class="mb-3" style="color:#1a1a2e;">
+                        Invitations envoyées
+                        <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
+                            <t t-esc="len(invitations)"/>
+                        </span>
+                    </h5>
+                    <div class="list-group shadow-sm mb-4">
+                        <t t-foreach="invitations" t-as="inv">
+                            <div t-attf-class="list-group-item py-3 #{'opacity-50' if inv.state == 'expired' else ''}">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <div>
+                                        <div class="fw-semibold" style="color:#1a1a2e;"
+                                             t-esc="inv.invite_email or inv.newcomer_id.email"/>
+                                        <small class="text-muted">
+                                            Envoyée le <span t-field="inv.invited_at" t-options='{"widget":"date"}'/>
+                                            <t t-if="inv.state == 'invited'">
+                                                · Expire le <span t-field="inv.expires_at" t-options='{"widget":"date"}'/>
+                                            </t>
+                                        </small>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <t t-if="inv.state == 'invited'">
+                                            <span class="badge bg-warning text-dark">En attente</span>
+                                            <form t-attf-action="/my/vouching/invite/#{inv.id}/resend" method="post" class="d-inline">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0"
+                                                        style="font-size:.75rem;">Renvoyer</button>
+                                            </form>
+                                            <form t-attf-action="/my/vouching/invite/#{inv.id}/cancel" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Annuler cette invitation ?');">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger py-0"
+                                                        style="font-size:.75rem;">Annuler</button>
+                                            </form>
+                                        </t>
+                                        <t t-elif="inv.state == 'pending_payment'">
+                                            <span class="badge bg-info">Adhésion en attente</span>
+                                        </t>
+                                        <t t-elif="inv.state == 'expired'">
+                                            <span class="badge bg-secondary">Expirée</span>
+                                        </t>
+                                    </div>
+                                </div>
+                                <t t-if="inv.statement">
+                                    <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.85rem;">
+                                        « <t t-esc="inv.statement"/> »
+                                    </p>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </t>
 
                 <!-- ── Parrainer quelqu'un ─────────────────────────── -->
                 <t t-if="vouchable">
@@ -250,6 +331,75 @@
                     </t>
                 </div>
 
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Formulaire invitation par email ════════════════════════════════ -->
+    <template id="portal_vouching_invite" name="Inviter par email">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4" style="max-width:680px;">
+                <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">
+                    ✉ Inviter quelqu'un par email
+                </h1>
+
+                <t t-if="error">
+                    <div class="alert alert-danger">
+                        <t t-out="error"/>
+                    </div>
+                </t>
+
+                <p class="text-muted">
+                    Tu vas personnellement parrainer cette personne. Elle recevra
+                    un lien sécurisé pour créer son compte et devra ensuite
+                    régler son adhésion pour accéder au réseau.
+                </p>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/my/vouching/invite/submit" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="vouch_invite_email">
+                                    Email de la personne à inviter
+                                </label>
+                                <input id="vouch_invite_email" type="email"
+                                       name="email" class="form-control"
+                                       required="required" autofocus="autofocus"
+                                       t-att-value="email"
+                                       placeholder="prenom@example.com"/>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="vouch_invite_statement">
+                                    Déclaration <small class="text-muted">(visible dans l'email)</small>
+                                </label>
+                                <textarea id="vouch_invite_statement"
+                                          name="statement" class="form-control"
+                                          rows="3" maxlength="500"
+                                          placeholder="Comment tu connais cette personne et pourquoi tu la parraines."
+                                          t-out="statement"/>
+                            </div>
+
+                            <p class="small text-muted">
+                                ⚠ Si tu retires ce parrainage plus tard et que la
+                                personne n'a aucun autre parrain actif, son accès
+                                au réseau sera suspendu.
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn"
+                                        style="background:#e94560;color:white;">
+                                    Envoyer l'invitation
+                                </button>
+                                <a href="/my/vouching" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </t>
     </template>

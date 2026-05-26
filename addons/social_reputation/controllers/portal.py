@@ -24,7 +24,16 @@ class ReputationPortal(CustomerPortal):
     def my_vouching(self, **kw):
         user = request.env.user
         Vouching = request.env['social_reputation.vouching'].sudo()
-        given = Vouching.search([('sponsor_id', '=', user.id)], order='create_date desc')
+        # Vouchings sur des users existants
+        given = Vouching.search([
+            ('sponsor_id', '=', user.id),
+            ('newcomer_id', '!=', False),
+        ], order='create_date desc')
+        # Invitations en attente (newcomer pas encore inscrit, ou en attente de paiement)
+        invitations = Vouching.search([
+            ('sponsor_id', '=', user.id),
+            ('state', 'in', ['invited', 'pending_payment', 'expired']),
+        ], order='create_date desc')
         received = Vouching.search([('newcomer_id', '=', user.id)], order='create_date desc')
 
         connections = _get_user_connections(user)
@@ -40,12 +49,79 @@ class ReputationPortal(CustomerPortal):
 
         return request.render('social_reputation.portal_my_vouching', {
             'given': given,
+            'invitations': invitations,
             'received': received,
             'vouchable': vouchable,
             'chain': chain,
             'page_name': 'vouching',
             'error': kw.get('error'),
         })
+
+    # ── Inviter quelqu'un par email ────────────────────────────────────────
+
+    @route('/my/vouching/invite', auth='user', website=True)
+    def vouching_invite_form(self, **kw):
+        return request.render('social_reputation.portal_vouching_invite', {
+            'page_name': 'vouching_invite',
+            'email': kw.get('email', ''),
+            'statement': kw.get('statement', ''),
+            'error': kw.get('error'),
+        })
+
+    @route('/my/vouching/invite/submit', auth='user', methods=['POST'],
+           website=True, csrf=True)
+    def vouching_invite_submit(self, email='', statement='', **kw):
+        email = (email or '').strip()
+        statement = (statement or '').strip() or None
+        if not email or '@' not in email:
+            return request.redirect(
+                f'/my/vouching/invite?error=email_invalid&statement={statement or ""}'
+            )
+        try:
+            with request.env.cr.savepoint():
+                vouching = request.env['social_reputation.vouching'].with_user(
+                    request.env.user,
+                ).action_invite_email(email=email, statement=statement)
+                vouching.action_send_invitation_email()
+        except UserError as e:
+            from urllib.parse import quote
+            return request.redirect(
+                f'/my/vouching/invite?error={quote(str(e))}'
+                f'&email={quote(email)}&statement={quote(statement or "")}'
+            )
+        return request.redirect('/my/vouching?invited=1')
+
+    @route('/my/vouching/invite/<int:vouching_id>/resend', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def vouching_invite_resend(self, vouching_id, **kw):
+        v = request.env['social_reputation.vouching'].sudo().browse(vouching_id)
+        if not v.exists() or v.sponsor_id != request.env.user:
+            raise Forbidden()
+        if v.state != 'invited':
+            return request.redirect('/my/vouching?error=invitation_not_pending')
+        try:
+            v.action_send_invitation_email()
+        except UserError as e:
+            from urllib.parse import quote
+            return request.redirect(f'/my/vouching?error={quote(str(e))}')
+        return request.redirect('/my/vouching?resent=1')
+
+    @route('/my/vouching/invite/<int:vouching_id>/cancel', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def vouching_invite_cancel(self, vouching_id, **kw):
+        v = request.env['social_reputation.vouching'].sudo().browse(vouching_id)
+        if not v.exists() or v.sponsor_id != request.env.user:
+            raise Forbidden()
+        if v.state not in ('invited', 'pending_payment'):
+            return request.redirect('/my/vouching?error=invitation_not_cancellable')
+        # Annuler une invitation = withdraw avec raison standard.
+        # action_withdraw exige une raison; on en fournit une par défaut.
+        try:
+            v.with_user(request.env.user).action_withdraw(reason='Cancelled by sponsor')
+        except UserError as e:
+            from urllib.parse import quote
+            return request.redirect(f'/my/vouching?error={quote(str(e))}')
+        return request.redirect('/my/vouching?cancelled=1')
 
     # ── Parrainer ──────────────────────────────────────────────────────────
 

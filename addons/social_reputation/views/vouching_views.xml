@@ -7,27 +7,52 @@
         <field name="arch" type="xml">
             <form string="Vouching">
                 <header>
-                    <button name="action_withdraw" type="object" string="Withdraw Vouching"
-                            invisible="state != 'active'"
+                    <button name="action_send_invitation_email" type="object"
+                            string="Resend Invitation Email"
+                            invisible="state != 'invited' or not invite_email"
+                            class="btn-primary"/>
+                    <button name="action_withdraw" type="object"
+                            string="Withdraw Vouching"
+                            invisible="state not in ['active', 'pending_payment']"
                             class="btn-danger"
-                            confirm="Withdraw this vouching? You must provide a reason."/>
-                    <field name="state" widget="statusbar"/>
+                            confirm="Withdraw this vouching? If this is the newcomer's last active sponsor, their access will be revoked. You must provide a reason."/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="invited,pending_payment,active"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
                             <field name="sponsor_id" readonly="1"/>
-                            <field name="newcomer_id" readonly="state != 'draft'"/>
+                            <field name="newcomer_id"
+                                   readonly="state != 'invited'"
+                                   invisible="state == 'invited' and not newcomer_id"/>
                             <field name="create_date" readonly="1"/>
+                        </group>
+                        <group invisible="state not in ['invited', 'pending_payment', 'expired']">
+                            <field name="invite_email" readonly="state != 'invited'"/>
+                            <field name="invited_at" readonly="1"
+                                   invisible="not invited_at"/>
+                            <field name="expires_at"
+                                   readonly="state in ['active', 'withdrawn', 'expired']"
+                                   invisible="not expires_at"/>
                         </group>
                         <group invisible="state != 'withdrawn'">
                             <field name="withdrawn_at" readonly="1"/>
                             <field name="withdrawn_reason"/>
                         </group>
                     </group>
+                    <div invisible="state != 'invited' or not invite_token" class="mt-2">
+                        <p class="text-muted">
+                            <strong>Invitation token</strong> (use it to rebuild
+                            the URL <code>{base}/vouching/accept/{token}</code>
+                            if the email did not reach the recipient):
+                        </p>
+                        <field name="invite_token" readonly="1" nolabel="1"/>
+                    </div>
                     <group string="Statement">
                         <field name="statement" nolabel="1"
-                               placeholder="Why are you vouching for this person?"/>
+                               readonly="state in ['active', 'withdrawn', 'expired']"
+                               placeholder="Why are you vouching for this person? Shown in the invitation email."/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -40,12 +65,16 @@
         <field name="model">social_reputation.vouching</field>
         <field name="arch" type="xml">
             <list string="Vouchings"
-                  decoration-muted="state == 'withdrawn'"
-                  decoration-success="state == 'active'">
+                  decoration-muted="state in ['withdrawn', 'expired']"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'invited'"
+                  decoration-info="state == 'pending_payment'">
                 <field name="sponsor_id"/>
-                <field name="newcomer_id"/>
+                <field name="newcomer_id" optional="show"/>
+                <field name="invite_email" optional="show"/>
                 <field name="state"/>
                 <field name="create_date"/>
+                <field name="expires_at" optional="hide"/>
                 <field name="withdrawn_at" optional="hide"/>
             </list>
         </field>
