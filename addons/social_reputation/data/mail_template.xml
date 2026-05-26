@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_template_vouching_invitation" model="mail.template">
+        <field name="name">Vouching: Invitation Email</field>
+        <field name="model_id" ref="model_social_reputation_vouching"/>
+        <field name="subject">{{ object.sponsor_id.name }} t'invite à rejoindre Diverse Cité</field>
+        <field name="email_from">{{ (object.sponsor_id.email_formatted or user.company_id.email or 'noreply@diverse-cite.com') }}</field>
+        <field name="email_to">{{ object.invite_email }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+<div style="margin:0px; padding:0px; font-family:Arial, sans-serif;">
+    <p>Bonjour,</p>
+
+    <p><strong><t t-out="object.sponsor_id.name or ''"/></strong>
+       te parraine personnellement pour rejoindre <strong>Diverse Cité</strong>,
+       le réseau social privé de notre communauté.</p>
+
+    <t t-if="object.statement">
+        <blockquote style="border-left:3px solid #e94560; padding-left:12px; color:#555;">
+            <em>«&#160;<t t-out="object.statement or ''"/>&#160;»</em>
+        </blockquote>
+    </t>
+
+    <p>Pour créer ton compte, clique sur le bouton ci-dessous :</p>
+
+    <p>
+        <a t-att-href="object._get_invitation_url()"
+           style="background-color:#e94560; color:white; padding:12px 24px;
+                  text-decoration:none; border-radius:5px; font-weight:bold;
+                  display:inline-block;">
+            Accepter l'invitation
+        </a>
+    </p>
+
+    <p style="font-size:0.9em; color:#666;">
+        Ou copie ce lien dans ton navigateur :<br/>
+        <a t-att-href="object._get_invitation_url()" t-out="object._get_invitation_url()"/>
+    </p>
+
+    <p style="font-size:0.85em; color:#888;">
+        Cette invitation expire le
+        <strong t-out="object.expires_at and object.expires_at.strftime('%d %B %Y') or ''"/>.
+        Après création de ton compte, tu devras compléter une adhésion pour
+        accéder au réseau. Si <t t-out="object.sponsor_id.name or ''"/> retire son
+        parrainage et que tu n'as pas d'autres parrains actifs, ton accès au
+        réseau sera suspendu.
+    </p>
+</div>
+        </field>
+        <field name="lang">{{ object.sponsor_id.lang }}</field>
+    </record>
+
+</odoo>

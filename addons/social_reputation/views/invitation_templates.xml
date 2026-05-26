@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Token invalide ─────────────────────────────────────────────── -->
+    <template id="invitation_invalid" name="Vouching invitation invalid">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <h2>Lien d'invitation invalide</h2>
+                                <p class="text-muted mt-3">
+                                    Ce lien d'invitation est inconnu, déjà utilisé,
+                                    ou a été révoqué par le parrain.
+                                </p>
+                                <a href="/" class="btn btn-secondary mt-2">
+                                    Retour à l'accueil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Token expiré ───────────────────────────────────────────────── -->
+    <template id="invitation_expired" name="Vouching invitation expired">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <h2>Invitation expirée</h2>
+                                <p class="text-muted mt-3">
+                                    Cette invitation a dépassé sa date limite.
+                                    Demande à ton parrain de t'envoyer une nouvelle
+                                    invitation.
+                                </p>
+                                <a href="/" class="btn btn-secondary mt-2">
+                                    Retour à l'accueil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Formulaire signup tokenisé ─────────────────────────────────── -->
+    <template id="invitation_form" name="Vouching invitation signup form">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="card-title">Tu es invité·e&#160;!</h2>
+                                <p class="lead">
+                                    <strong t-out="sponsor_name"/>
+                                    te parraine pour rejoindre
+                                    <strong>Diverse Cité</strong>.
+                                </p>
+
+                                <t t-if="statement">
+                                    <blockquote class="blockquote border-start ps-3 text-muted">
+                                        <em>«&#160;<t t-out="statement"/>&#160;»</em>
+                                    </blockquote>
+                                </t>
+
+                                <t t-if="error">
+                                    <div class="alert alert-danger" role="alert">
+                                        <t t-if="error == 'name_required'">Le nom est obligatoire.</t>
+                                        <t t-elif="error == 'password_too_short'">Le mot de passe doit faire au moins 8 caractères.</t>
+                                        <t t-elif="error == 'password_mismatch'">Les mots de passe ne correspondent pas.</t>
+                                        <t t-elif="error == 'email_already_used'">Un compte existe déjà pour cet email. <a href="/web/login">Connecte-toi</a>.</t>
+                                        <t t-elif="error == 'signup_failed'">La création du compte a échoué. Réessaie ou contacte un administrateur.</t>
+                                        <t t-else=""><t t-out="error"/></t>
+                                    </div>
+                                </t>
+
+                                <form t-attf-action="/vouching/accept/{{ token }}/submit"
+                                      method="post" class="mt-4">
+                                    <input type="hidden" name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control"
+                                               t-att-value="invite_email"
+                                               readonly="readonly"/>
+                                        <small class="form-text text-muted">
+                                            Cet email a été fixé par ton parrain et sert d'identifiant.
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="vouching_name">
+                                            Ton nom (visible des autres membres)
+                                        </label>
+                                        <input id="vouching_name" name="name"
+                                               type="text" class="form-control"
+                                               required="required" autofocus="autofocus"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="vouching_password">
+                                            Mot de passe (8 caractères min.)
+                                        </label>
+                                        <input id="vouching_password" name="password"
+                                               type="password" class="form-control"
+                                               required="required" minlength="8"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="vouching_password_confirm">
+                                            Confirmation du mot de passe
+                                        </label>
+                                        <input id="vouching_password_confirm"
+                                               name="password_confirm"
+                                               type="password" class="form-control"
+                                               required="required" minlength="8"/>
+                                    </div>
+
+                                    <p class="small text-muted">
+                                        Après la création de ton compte, tu seras redirigé·e
+                                        vers la page d'adhésion pour finaliser ton accès.
+                                    </p>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        Créer mon compte
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -255,3 +255,28 @@ class SocialVouching(models.Model):
         ])
         if stale:
             stale.write({'state': 'expired'})
+
+    # ── Email plumbing ──────────────────────────────────────────────────────
+
+    def _get_invitation_url(self):
+        """Absolute URL to the invitation acceptance page."""
+        self.ensure_one()
+        if not self.invite_token:
+            return ''
+        base = self.env['ir.config_parameter'].sudo().get_param(
+            'web.base.url', 'http://localhost:8069',
+        )
+        return f'{base}/vouching/accept/{self.invite_token}'
+
+    def action_send_invitation_email(self):
+        """Send the invitation email via the mail.template."""
+        template = self.env.ref(
+            'social_reputation.mail_template_vouching_invitation',
+            raise_if_not_found=False,
+        )
+        if not template:
+            raise UserError(_('Invitation email template is missing.'))
+        for rec in self:
+            if rec.state != 'invited' or not rec.invite_email:
+                continue
+            template.sudo().send_mail(rec.id, force_send=True)
