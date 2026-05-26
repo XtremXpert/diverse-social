@@ -19,6 +19,6 @@
         'views/portal_members.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
 }

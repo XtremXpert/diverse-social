@@ -54,6 +54,6 @@
         'wizards/social_anonymize_wizard_views.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
 }

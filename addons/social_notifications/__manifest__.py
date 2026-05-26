@@ -26,6 +26,6 @@
         'views/portal_notifications_page.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
 }

@@ -17,6 +17,6 @@
         'views/portal_templates.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
 }

@@ -20,6 +20,6 @@
         'views/portal_messaging.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
 }
