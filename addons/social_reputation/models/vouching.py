@@ -256,6 +256,26 @@ class SocialVouching(models.Model):
         if stale:
             stale.write({'state': 'expired'})
 
+    @api.model
+    def cron_expire_invitations(self):
+        """Public alias for _cron_expire_invitations (callable via XML-RPC)."""
+        self._cron_expire_invitations()
+        return True
+
+    @api.model
+    def enforce_chain_of_trust_for_user(self, user_id):
+        """Public XML-RPC-callable wrapper around _enforce_chain_of_trust.
+
+        Useful for tests and external integrations that need to re-evaluate
+        a user's access after manipulating vouching rows directly. The actual
+        logic lives in _enforce_chain_of_trust to keep the existing call site
+        in action_withdraw stable.
+        """
+        user = self.env['res.users'].sudo().browse(user_id)
+        if user.exists():
+            self._enforce_chain_of_trust(user)
+        return True
+
     # ── Email plumbing ──────────────────────────────────────────────────────
 
     def _get_invitation_url(self):

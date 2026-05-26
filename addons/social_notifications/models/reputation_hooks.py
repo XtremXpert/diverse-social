@@ -21,6 +21,10 @@ class SocialVouchingNotification(models.Model):
         res = super().action_withdraw(reason=reason)
         Notif = self.env['club_social_profile.notification']
         for vouching in self:
+            # Cas d'une invitation cancellée avant signup : pas de newcomer
+            # à notifier (et le INSERT échouerait sur user_id NOT NULL).
+            if not vouching.newcomer_id:
+                continue
             Notif._notify(
                 user_id=vouching.newcomer_id.id,
                 actor_id=vouching.sponsor_id.id,

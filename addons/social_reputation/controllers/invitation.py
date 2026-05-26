@@ -88,8 +88,12 @@ class VouchingInvitation(Controller):
             return fail('signup_failed')
 
         # Auto-login then send the user to the membership join page so they
-        # can complete the payment that activates their vouching.
-        request.session.authenticate(request.db, email, password)
+        # can complete the payment that activates their vouching. Odoo 19's
+        # Session.authenticate(env, credential_dict) — not (db, login, pwd).
+        request.session.authenticate(
+            request.env,
+            {'type': 'password', 'login': email, 'password': password},
+        )
         return request.redirect('/membership?invited=1')
 
     # ─────────────────────────── Helpers ────────────────────────────────────
