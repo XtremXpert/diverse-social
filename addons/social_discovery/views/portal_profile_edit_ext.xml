@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the show_on_map opt-in toggle into the existing visibility card. -->
+    <template id="portal_profile_edit_show_on_map"
+              inherit_id="club_social_profile.portal_profile_edit">
+        <xpath expr="//div[@id='card_visibility']//div[@class='card-body']" position="inside">
+            <hr class="my-3"/>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox"
+                       name="show_on_map" id="show_on_map" value="1"
+                       t-att-checked="profile.show_on_map and 'checked' or None"/>
+                <label class="form-check-label" for="show_on_map">
+                    <strong>Show me on the members map</strong><br/>
+                    <small class="text-muted">
+                        Your position will be obfuscated within a ~2–3 km radius.
+                        Only members who have also opted in (or moderators) can see the map.
+                    </small>
+                </label>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

@@ -184,7 +184,7 @@
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                             <!-- Visibility + availability -->
-                            <div class="card mb-4">
+                            <div class="card mb-4" id="card_visibility">
                                 <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
                                     🔒 Visibility and availability
                                 </div>

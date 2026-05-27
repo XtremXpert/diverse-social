@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Map page (full-width) -->
+    <template id="members_map_page" name="Members map">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Members map</t>
+            <div class="o_portal_wrap">
+                <div class="container-fluid py-4">
+
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="mb-0" style="color:#1a1a2e;">Members map</h2>
+                        <div class="d-flex gap-2">
+                            <a href="/members" class="btn btn-sm btn-outline-secondary">
+                                <i class="fa fa-list"/>
+                                <span class="ms-1">List view</span>
+                            </a>
+                            <a href="/my/profile/edit#privacy" class="btn btn-sm btn-outline-secondary">
+                                <i class="fa fa-cog"/>
+                                <span class="ms-1">Map settings</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mb-3">
+                        Positions are obfuscated within a ~2–3 km radius. Tiles &amp; geocoding by
+                        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.
+                        <t t-if="is_moderator">
+                            <span class="badge bg-warning text-dark ms-2">Moderator view: all members visible</span>
+                        </t>
+                    </p>
+
+                    <div id="members_map"
+                         data-endpoint="/members/map.json"
+                         data-default-lat="46.0"
+                         data-default-lng="-72.0"
+                         data-default-zoom="7"
+                         style="height: 70vh; min-height: 500px;
+                                border: 1px solid #ddd; border-radius: 4px;"/>
+
+                    <div id="members_map_status" class="small text-muted mt-2"/>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Shown when a non-moderator hasn't opted in yet -->
+    <template id="members_map_opt_in_required" name="Members map — opt-in required">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Members map</t>
+            <div class="o_portal_wrap">
+                <div class="container py-5">
+                    <div class="text-center" style="max-width: 540px; margin: 0 auto;">
+                        <div style="font-size: 3rem;">🗺️</div>
+                        <h3 class="mt-3">Show me on the map to see the map</h3>
+                        <p class="text-muted">
+                            The members map is mutual: to see where other members are,
+                            you must agree to be shown yourself. Your position will be
+                            obfuscated within a ~2–3 km radius — never your exact
+                            address.
+                        </p>
+                        <a href="/my/profile/edit#privacy" class="btn btn-primary mt-2">
+                            Open my privacy settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

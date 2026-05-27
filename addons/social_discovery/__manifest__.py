@@ -1,6 +1,6 @@
 {
     'name': 'Social Discovery',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
     'summary': 'Consensual profile discovery: you search, not the algorithm',
     'author': 'Bemade',
@@ -8,16 +8,28 @@
     'depends': [
         'club_social_profile',
         'social_circles',
+        'base_geolocalize',
         'portal',
     ],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
         'data/values.xml',
+        'data/cron.xml',
         'views/criteria_views.xml',
         'views/menus.xml',
         'views/portal_members.xml',
+        'views/portal_members_map.xml',
+        'views/portal_profile_edit_ext.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'social_discovery/static/lib/leaflet/leaflet.css',
+            'social_discovery/static/lib/leaflet/leaflet.js',
+            'social_discovery/static/src/js/members_map.js',
+            'social_discovery/static/src/css/members_map.css',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

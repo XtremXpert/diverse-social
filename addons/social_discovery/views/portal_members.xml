@@ -13,6 +13,10 @@
                                 <t t-out="total"/> result(s)
                             </small>
                         </h2>
+                        <a href="/members/map" class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-map-o"/>
+                            <span class="ms-1">Map view</span>
+                        </a>
                     </div>
 
                     <div class="row g-4">

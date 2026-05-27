@@ -1,0 +1,17 @@
+.members_map_popup {
+    min-width: 160px;
+    line-height: 1.4;
+}
+.members_map_popup a {
+    text-decoration: none;
+}
+.members_map_popup a:hover {
+    text-decoration: underline;
+}
+
+/* Ensure the map sits below modals and dropdowns. Leaflet defaults are 400+. */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 400 !important;
+}
