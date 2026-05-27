@@ -12,7 +12,10 @@
               name="Quick exit">
         <xpath expr="//header" position="inside">
             <t t-if="request.env.user and not request.env.user._is_public()">
-                <t t-set="_exit_url" t-value="request.env['ir.config_parameter'].sudo().get_param('social_safety.quick_exit_url', 'https://www.meteomedia.com/')"/>
+                <t t-set="_get_param" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
+                <t t-set="_exit_url" t-value="_get_param('social_safety.quick_exit_url', 'https://www.meteomedia.com/')"/>
+                <t t-set="_camouflage_title" t-value="_get_param('social_safety.camouflage_title', 'MétéoMédia — Prévisions Québec')"/>
+                <t t-set="_camouflage_favicon" t-value="_get_param('social_safety.camouflage_favicon', 'data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;text y=&quot;14&quot; font-size=&quot;14&quot;&gt;⛅&lt;/text&gt;&lt;/svg&gt;')"/>
                 <style>
                     #social_quick_exit {
                         position: fixed;
@@ -43,6 +46,8 @@
                 </style>
                 <button id="social_quick_exit"
                         t-att-data-exit-url="_exit_url"
+                        t-att-data-camouflage-title="_camouflage_title"
+                        t-att-data-camouflage-favicon="_camouflage_favicon"
                         title="Quick exit (also: press Esc twice)">
                     ⏻
                 </button>
