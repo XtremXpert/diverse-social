@@ -34,6 +34,7 @@ class MembersPortal(CustomerPortal):
         city          = args.get('city', '').strip()
         min_age       = _int_or(args.get('min_age'), 18)
         max_age       = _int_or(args.get('max_age'), 0)
+        min_compat    = max(0, min(_int_or(args.get('min_compat'), 0), 100))
 
         domain = _build_domain(
             user, q, genders, orientations, availabilities,
@@ -41,6 +42,9 @@ class MembersPortal(CustomerPortal):
         )
 
         Profile = request.env['club_social_profile.profile'].sudo()
+        Profile_base = request.env['club_social_profile.profile']
+        has_bdsm = 'bdsm_role' in Profile_base._fields
+
         total = Profile.search_count(domain)
         pager = portal_pager(
             url='/members',
@@ -56,9 +60,27 @@ class MembersPortal(CustomerPortal):
             offset=pager['offset'],
         )
 
-        # Filter dropdown data
-        Profile_base = request.env['club_social_profile.profile']
-        has_bdsm = 'bdsm_role' in Profile_base._fields
+        # ── Compatibility scoring (BDSM module only) ──────────────────────────
+        # Computed per-page (≤ _PAGE_SIZE) — bounded cost regardless of total
+        # candidates. min_compat applies a Python filter post-search; the
+        # pager's "total" still reflects the SQL-level count.
+        compat_scores = {}
+        if has_bdsm and profiles:
+            my_profile = Profile.search([('user_id', '=', user.id)], limit=1)
+            if my_profile:
+                # Prefetch kink_level_ids to amortize the per-candidate cost
+                # of compute_compatibility.
+                profiles.mapped('kink_level_ids')
+                my_profile.mapped('kink_level_ids')
+                for p in profiles:
+                    try:
+                        compat_scores[p.id] = my_profile.compute_compatibility(p)['score']
+                    except Exception:
+                        compat_scores[p.id] = 0
+            if min_compat:
+                profiles = profiles.filtered(
+                    lambda p: compat_scores.get(p.id, 0) >= min_compat
+                )
 
         genders_opts      = request.env['social_discovery.gender_value'].sudo().search([])
         orientations_opts = request.env['social_discovery.orientation_value'].sudo().search([])
@@ -96,6 +118,8 @@ class MembersPortal(CustomerPortal):
             'active_city': city,
             'active_min_age': min_age,
             'active_max_age': max_age,
+            'active_min_compat': min_compat,
+            'compat_scores': compat_scores,
             # dropdown options
             'genders_opts': genders_opts,
             'orientations_opts': orientations_opts,

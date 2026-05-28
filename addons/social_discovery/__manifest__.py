@@ -1,6 +1,6 @@
 {
     'name': 'Social Discovery',
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Social',
     'summary': 'Consensual profile discovery: you search, not the algorithm',
     'author': 'Bemade',

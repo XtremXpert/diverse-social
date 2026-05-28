@@ -142,6 +142,25 @@
                                     </div>
                                 </div>
 
+                                <!-- Minimum compatibility (BDSM module only) -->
+                                <t t-if="has_bdsm">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold" for="min_compat">
+                                            Compatibility ≥
+                                        </label>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <input type="number" name="min_compat" id="min_compat"
+                                                   class="form-control form-control-sm"
+                                                   min="0" max="100" step="5" placeholder="0"
+                                                   t-att-value="active_min_compat if active_min_compat else ''"/>
+                                            <span>%</span>
+                                        </div>
+                                        <div class="form-text" style="font-size:0.75rem;">
+                                            Filter on the match score with your profile.
+                                        </div>
+                                    </div>
+                                </t>
+
                                 <button type="submit" class="btn w-100"
                                         style="background:#e94560; color:white;">
                                     Filter
@@ -194,6 +213,14 @@
                                                         <span class="position-absolute top-0 end-0 m-1 badge"
                                                               style="background:#28a745; font-size:0.7rem;">
                                                             🟢 Available
+                                                        </span>
+                                                    </t>
+                                                    <!-- Compatibility badge -->
+                                                    <t t-if="has_bdsm and compat_scores.get(profile.id, 0) > 0">
+                                                        <span class="position-absolute bottom-0 start-0 m-1 badge"
+                                                              style="background:rgba(0,0,0,.65); color:#fff; font-size:0.7rem;"
+                                                              t-attf-title="Match score: #{compat_scores[profile.id]}">
+                                                            <t t-out="compat_scores[profile.id]"/>% match
                                                         </span>
                                                     </t>
                                                 </div>
