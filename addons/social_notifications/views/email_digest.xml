@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Reactivation digest email — sent by the daily cron when a member
+         has unread notifications and hasn't logged in for a few days. -->
+    <template id="email_notification_digest" name="Notification Digest Email">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f8f8;">
+
+            <div style="background: #1a1a2e; padding: 24px 32px; text-align: center;">
+                <div style="font-size: 32px; line-height: 1;">⛅</div>
+                <p style="color: #ccc; margin: 8px 0 0; font-size: 13px;">
+                    You have <strong style="color:#fff;" t-out="total"/> pending notification(s)
+                </p>
+            </div>
+
+            <div style="background: white; padding: 28px 32px;">
+                <p style="color: #444; margin: 0 0 18px;">
+                    Hi <t t-out="user.name"/>, here's what you missed while away.
+                </p>
+
+                <t t-foreach="summary" t-as="group">
+                    <div style="padding: 14px 0; border-bottom: 1px solid #eee;">
+                        <div style="font-size: 14px; color: #333;">
+                            <strong t-out="group['count']"/>
+                            <t t-out="group['label']"/>
+                        </div>
+                        <t t-if="group['sample_names']">
+                            <div style="font-size: 13px; color: #888; margin-top: 4px;">
+                                <t t-foreach="group['sample_names']" t-as="n">
+                                    <t t-out="n"/><t t-if="not n_last">, </t>
+                                </t>
+                                <t t-if="group['extra_count'] &gt; 0">
+                                    and <t t-out="group['extra_count']"/> other(s)
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <div style="text-align: center; margin: 24px 0 4px;">
+                    <a t-attf-href="#{base_url}/social/notifications"
+                       style="display: inline-block; background: #e94560; color: white;
+                              text-decoration: none; padding: 12px 24px; border-radius: 6px;
+                              font-weight: bold;">
+                        See all notifications
+                    </a>
+                </div>
+            </div>
+
+            <div style="padding: 14px 32px; text-align: center; color: #aaa; font-size: 11px;">
+                You're receiving this because you have unread notifications and
+                haven't visited in a few days.
+                <br/>
+                <a t-att-href="unsubscribe_url" style="color: #aaa;">
+                    Stop these reminders
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <!-- One-click unsubscribe confirmation page -->
+    <template id="digest_unsubscribed_page" name="Digest unsubscribed">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Reminders disabled</t>
+            <div class="o_portal_wrap">
+                <div class="container py-5">
+                    <div class="text-center" style="max-width:480px; margin:0 auto;">
+                        <div style="font-size:3rem;">🔕</div>
+                        <h3 class="mt-3">Reminders disabled</h3>
+                        <p class="text-muted">
+                            You won't receive reactivation reminder emails anymore.
+                            You can turn them back on from your profile preferences
+                            at any time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Token invalid / mismatch -->
+    <template id="digest_unsubscribe_invalid" name="Digest unsubscribe invalid">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Invalid link</t>
+            <div class="o_portal_wrap">
+                <div class="container py-5">
+                    <div class="text-center" style="max-width:480px; margin:0 auto;">
+                        <div style="font-size:3rem;">⚠️</div>
+                        <h3 class="mt-3">This link isn't valid</h3>
+                        <p class="text-muted">
+                            The unsubscribe link couldn't be verified. Check that
+                            you opened the most recent reminder email, or sign in
+                            and turn off digest emails from your profile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

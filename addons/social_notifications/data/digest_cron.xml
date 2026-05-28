@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Configurable digest parameters. Defaults err on the side of
+             privacy + restraint: 3 days of inactivity required, 7 days
+             between digests, neutral subject line. -->
+        <record id="param_digest_subject" model="ir.config_parameter">
+            <field name="key">social_notifications.digest_subject</field>
+            <field name="value">You have %(count)d pending notifications</field>
+        </record>
+
+        <record id="param_digest_inactivity_days" model="ir.config_parameter">
+            <field name="key">social_notifications.digest_inactivity_days</field>
+            <field name="value">3</field>
+        </record>
+
+        <record id="param_digest_min_interval_days" model="ir.config_parameter">
+            <field name="key">social_notifications.digest_min_interval_days</field>
+            <field name="value">7</field>
+        </record>
+
+        <!-- Daily cron — sends to users matching all eligibility criteria.
+             Throttled per-user via res.users.last_notification_digest_sent. -->
+        <record id="cron_send_reactivation_digests" model="ir.cron">
+            <field name="name">Social: send reactivation notification digests</field>
+            <field name="model_id" ref="model_social_notifications_digest_service"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_send_reactivation_digests()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+    </data>
+</odoo>

@@ -8,3 +8,5 @@ from . import messaging_hooks
 from . import negotiation_hooks
 from . import reputation_hooks
 from . import story_hooks
+from . import res_users_ext
+from . import digest_service

@@ -1,8 +1,8 @@
 {
     'name': 'Social Notifications',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
-    'summary': 'Real-time notifications for all social activities',
+    'summary': 'Real-time notifications for all social activities + reactivation digest',
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
@@ -21,9 +21,11 @@
     'data': [
         'security/ir.model.access.csv',
         'data/website_menu.xml',
+        'data/digest_cron.xml',
         'views/notification_views.xml',
         'views/portal_notification_bell.xml',
         'views/portal_notifications_page.xml',
+        'views/email_digest.xml',
     ],
     'installable': True,
     'application': False,
