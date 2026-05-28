@@ -21,6 +21,7 @@
         'views/portal_members.xml',
         'views/portal_members_map.xml',
         'views/portal_profile_edit_ext.xml',
+        'views/portal_dashboard_ext.xml',
     ],
     'assets': {
         'web.assets_frontend': [

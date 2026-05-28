@@ -210,7 +210,7 @@
                     </div>
 
                     <!-- ── Sidebar ────────────────────────────────────── -->
-                    <div class="col-lg-4">
+                    <div class="col-lg-4" id="dashboard_sidebar">
 
                         <!-- My groups -->
                         <t t-if="my_groups">

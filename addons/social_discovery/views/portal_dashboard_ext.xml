@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject a "Suggested members" section into the dashboard sidebar,
+         right at the top (before My groups) so it gets the visual prominence
+         that an algorithmic feed deserves. Suggestions are computed inline
+         via the social_discovery.suggestion_service AbstractModel — no
+         controller override required. -->
+    <template id="portal_dashboard_suggestions"
+              inherit_id="club_social_profile.portal_dashboard">
+        <xpath expr="//div[@id='dashboard_sidebar']/*[1]" position="before">
+            <t t-set="discovery_suggestions"
+               t-value="request.env['social_discovery.suggestion_service'].get_suggestions(limit=6)"/>
+            <t t-if="discovery_suggestions">
+                <div class="card mb-4">
+                    <div class="card-header fw-bold d-flex justify-content-between align-items-center"
+                         style="background:#1a1a2e; color:white;">
+                        <span>✨ You might like</span>
+                        <a href="/members" class="text-white" style="font-size:0.8rem;">
+                            Browse all →
+                        </a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <t t-foreach="discovery_suggestions" t-as="sug">
+                            <t t-set="sp" t-value="sug['profile']"/>
+                            <a t-attf-href="/profile/#{sp.user_id.id}"
+                               class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2">
+                                <div style="width:36px; height:36px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                                    <t t-if="sp.profile_image">
+                                        <img t-attf-src="/web/image/club_social_profile.profile/#{sp.id}/profile_image"
+                                             class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="d-flex align-items-center justify-content-center h-100"
+                                             style="color:white; font-size:14px;">
+                                            <t t-out="(sp.stealth_name or sp.user_id.name or '?')[0].upper()"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="flex-grow-1 text-truncate">
+                                    <div style="font-size:0.9rem;"
+                                         t-out="sp.stealth_name or sp.user_id.name"/>
+                                    <t t-if="sp.city">
+                                        <div class="text-muted text-truncate" style="font-size:0.75rem;">
+                                            📍 <t t-out="sp.city"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <t t-if="sug['score'] >= 50">
+                                    <span class="badge bg-success-subtle text-success-emphasis ms-auto"
+                                          style="font-size:0.7rem;"
+                                          t-attf-title="Match score: #{sug['score']}">
+                                        <t t-out="sug['score']"/>%
+                                    </span>
+                                </t>
+                            </a>
+                        </t>
+                    </ul>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
