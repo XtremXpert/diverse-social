@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Install / push controls injected into /my/profile/edit, in the
+         existing #card_visibility (privacy) section. Opt-in by design:
+         users must explicitly tap to install or enable push, never auto-prompted. -->
+    <template id="portal_profile_edit_pwa"
+              inherit_id="club_social_profile.portal_profile_edit">
+        <xpath expr="//div[@id='card_visibility']//div[@class='card-body']" position="inside">
+            <hr class="my-3"/>
+            <div id="pwa_controls" class="mb-2">
+                <label class="form-label fw-semibold">App installation</label>
+                <div class="d-flex flex-column gap-2">
+                    <button type="button" id="pwa_install_btn"
+                            class="btn btn-sm btn-outline-primary"
+                            style="display:none;">
+                        📱 Install as an app
+                    </button>
+                    <div id="pwa_install_unavailable" class="text-muted small">
+                        Add this site to your home screen from your browser menu
+                        (the install button appears here on supported browsers).
+                    </div>
+                    <button type="button" id="pwa_push_btn"
+                            class="btn btn-sm btn-outline-primary"
+                            style="display:none;">
+                        🔔 Enable generic notifications
+                    </button>
+                    <div class="form-text" style="font-size:0.75rem;">
+                        Notifications are intentionally generic — they never
+                        reveal a sender name or message preview on your lock
+                        screen.
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
