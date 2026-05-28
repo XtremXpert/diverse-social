@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject `<meta name="robots" content="noindex, nofollow, noarchive">`
+         into the <head> of sensitive frontend pages (same set as the
+         camouflage paths). Public pages (/, /shop, /event, /membership)
+         keep their default indexable behaviour for acquisition SEO.
+
+         Note: this only covers respectful crawlers (Google, Bing,
+         DuckDuckGo, etc.). Slack/Discord link unfurling ignores robots
+         meta — the og:/twitter: tags are stripped by JS at
+         DOMContentLoaded as a best-effort second layer, see
+         share_lockdown.js. For true unfurl-proof, an HTTP middleware
+         setting X-Robots-Tag is a follow-up. -->
+    <template id="portal_share_lockdown_meta"
+              inherit_id="web.frontend_layout"
+              name="Share lockdown — noindex on sensitive paths">
+        <xpath expr="//head" position="inside">
+            <t t-set="_safety_is_sensitive"
+               t-value="request and request.env['social_safety.helper'].sudo().is_sensitive_path(request.httprequest.path)"/>
+            <t t-if="_safety_is_sensitive">
+                <meta name="robots" content="noindex, nofollow, noarchive"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

@@ -81,6 +81,34 @@
         }
     }
 
+    // ── Share lockdown ──────────────────────────────────────────────────────
+    //
+    // Strip Open Graph + Twitter card meta tags on sensitive paths so that
+    // a member who accidentally pastes the URL in Slack/Discord/Signal
+    // doesn't surface a "Member discovery | Diverse Cité" preview card.
+    //
+    // The server already emits a `<meta name="robots" content="noindex">`
+    // on these paths (see views/portal_share_lockdown.xml) which covers
+    // search engines. This handles the link-unfurling case for chat apps.
+    function stripShareMeta() {
+        if (!shouldCamouflage()) {
+            return;
+        }
+        var selectors = [
+            'meta[property^="og:"]',
+            'meta[property^="article:"]',
+            'meta[name^="twitter:"]',
+            'meta[name="description"]',
+            'link[rel="canonical"]',
+        ];
+        for (var i = 0; i < selectors.length; i++) {
+            var nodes = document.querySelectorAll(selectors[i]);
+            for (var j = 0; j < nodes.length; j++) {
+                nodes[j].parentNode.removeChild(nodes[j]);
+            }
+        }
+    }
+
     // ── Wiring ──────────────────────────────────────────────────────────────
 
     function wireButton() {
@@ -94,9 +122,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             wireButton();
             applyCamouflage();
+            stripShareMeta();
         });
     } else {
         wireButton();
         applyCamouflage();
+        stripShareMeta();
     }
 })();

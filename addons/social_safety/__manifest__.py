@@ -1,8 +1,8 @@
 {
     'name': 'Social Safety',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
-    'summary': 'Block, mute, and panic mode — personal safety controls',
+    'summary': 'Block, mute, panic mode, camouflage + share-lockdown on sensitive paths',
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
@@ -19,6 +19,7 @@
         'views/mute_views.xml',
         'views/menus.xml',
         'views/portal_safety.xml',
+        'views/portal_share_lockdown.xml',
     ],
     'installable': True,
     'application': False,
