@@ -54,6 +54,10 @@ class SuggestionService(models.AbstractModel):
         excluded_user_ids = existing_conn_user_ids | blocked_ids | {user.id}
 
         # ── Candidate pool ────────────────────────────────────────────────────
+        # show_in_suggestions is the opt-out toggle (default True). It's
+        # distinct from /members visibility: a member can stay listed
+        # in the directory while opting out of being algorithmically
+        # pushed into someone else's dashboard.
         group_social_user = self.env.ref('social_base.group_social_user')
         candidates = Profile.search([
             ('user_id', 'not in', list(excluded_user_ids)),
@@ -61,6 +65,7 @@ class SuggestionService(models.AbstractModel):
             ('user_id.all_group_ids', 'in', [group_social_user.id]),
             ('visibility', '=', 'members'),
             ('onboarding_done', '=', True),
+            ('show_in_suggestions', '=', True),
         ], limit=_CANDIDATE_CAP)
 
         if not candidates:

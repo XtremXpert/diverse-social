@@ -34,6 +34,19 @@ class ClubSocialProfile(models.Model):
         help='Opt-in. Your position will be obfuscated within a ~2-3 km radius.',
     )
 
+    # ── Dashboard suggestions (opt-out) ───────────────────────────────────────
+    # Unlike show_on_map this is opt-out: by default every member with
+    # visibility=members + onboarding_done is a candidate for somebody
+    # else's "You might like" section. Users who want to be reachable
+    # via the directory but not algorithmically pushed can untoggle this.
+    show_in_suggestions = fields.Boolean(
+        string='Include me in member suggestions',
+        default=True,
+        help='Opt-out. When off, your profile never appears in the '
+             '"You might like" section on other members\' dashboards. '
+             'You still appear in /members and /discover.',
+    )
+
     # Raw geocoded centroid of city/region — never exposed publicly.
     geo_lat = fields.Float(digits=(10, 7), readonly=True)
     geo_lng = fields.Float(digits=(10, 7), readonly=True)

@@ -116,3 +116,32 @@ class TestSuggestionService(TransactionCase):
         results = self.Service.get_suggestions(user=self.alice_user)
         user_ids = [r['profile'].user_id.id for r in results]
         self.assertNotIn(self.bob_user.id, user_ids)
+
+    def test_show_in_suggestions_default_true(self):
+        """Every freshly-created profile is opted in by default."""
+        self.assertTrue(self.alice.show_in_suggestions)
+        self.assertTrue(self.bob.show_in_suggestions)
+
+    def test_optout_excludes_from_suggestions(self):
+        """A user who untoggles show_in_suggestions disappears from peers' feeds."""
+        self.bob.show_in_suggestions = False
+        results = self.Service.get_suggestions(user=self.alice_user)
+        user_ids = [r['profile'].user_id.id for r in results]
+        self.assertNotIn(self.bob_user.id, user_ids,
+                         'opt-out should remove bob from suggestions')
+        # carol is still listed — the opt-out is per-user
+        self.assertIn(self.carol_user.id, user_ids)
+
+    def test_optout_does_not_block_directory(self):
+        """show_in_suggestions=False only hides from suggestions, not /members.
+
+        Sanity check on the query: a plain search on visibility=members
+        still finds the opt-out user — the directory must stay populated.
+        """
+        self.bob.show_in_suggestions = False
+        listed = self.env['club_social_profile.profile'].sudo().search([
+            ('visibility', '=', 'members'),
+            ('onboarding_done', '=', True),
+            ('user_id', '=', self.bob_user.id),
+        ])
+        self.assertTrue(listed, 'opt-out user must remain searchable in /members')
