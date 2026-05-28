@@ -1,8 +1,8 @@
 {
     'name': 'Social Feed',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
-    'summary': "Fil d'actualité agrégé : posts, stories, événements, propositions",
+    'summary': "Fil d'actualité agrégé : posts, stories, événements, propositions, préférences + read state",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
@@ -18,6 +18,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/cron.xml',
         'views/portal_transparency_templates.xml',
     ],
     'installable': True,

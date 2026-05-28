@@ -1,1 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_feed_preference_user,social_feed.user_preference user,model_social_feed_user_preference,base.group_user,1,1,1,1
+access_feed_preference_portal,social_feed.user_preference portal,model_social_feed_user_preference,base.group_portal,1,1,1,1
+access_feed_preference_system,social_feed.user_preference system,model_social_feed_user_preference,base.group_system,1,1,1,1
+access_feed_read_marker_user,social_feed.read_marker user,model_social_feed_read_marker,base.group_user,1,1,1,1
+access_feed_read_marker_portal,social_feed.read_marker portal,model_social_feed_read_marker,base.group_portal,1,1,1,1
+access_feed_read_marker_system,social_feed.read_marker system,model_social_feed_read_marker,base.group_system,1,1,1,1

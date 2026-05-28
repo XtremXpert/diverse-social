@@ -89,10 +89,30 @@ class SocialFeedService(models.AbstractModel):
         else:
             items.sort(key=lambda x: x['timestamp'], reverse=True)
 
+        page = items[offset: offset + limit]
+        self._annotate_read_state(page, ctx['user'])
+
         return {
-            'items': items[offset: offset + limit],
+            'items': page,
             'has_more': len(items) > offset + limit,
         }
+
+    # ── Read state ────────────────────────────────────────────────────────────
+
+    @api.model
+    def _annotate_read_state(self, items, user):
+        """Set 'is_read': bool on each item in the slice.
+
+        One batched query against social_feed.read_marker regardless of
+        page size, scoped to (item_type, item_id) pairs in the slice.
+        """
+        if not items:
+            return
+        read_set = self.env['social_feed.read_marker'].sudo().read_set_for_user(
+            user.id, items=items,
+        )
+        for it in items:
+            it['is_read'] = (it.get('item_type'), it.get('id')) in read_set
 
     # ── Relevance scoring ─────────────────────────────────────────────────────
 
@@ -161,7 +181,13 @@ class SocialFeedService(models.AbstractModel):
         elif itype == 'story':
             type_boost = 1.2
 
-        return (1.0 + engagement) * decay * connection_factor * type_boost
+        # 5. Per-user preference boost (Feed v2) ──────────────────────────────
+        # Multiplies the final score by whatever the user has configured
+        # for this item type (1.0 default = no change). The boost_factor
+        # is already clamped at write time, so we trust the value here.
+        user_boost = (ctx.get('user_boosts') or {}).get(itype, 1.0)
+
+        return (1.0 + engagement) * decay * connection_factor * type_boost * user_boost
 
     # ── Context helpers ───────────────────────────────────────────────────────
 
@@ -179,12 +205,16 @@ class SocialFeedService(models.AbstractModel):
         circle_ids = self.env['social_circles.circle'].search(
             [('member_ids', 'in', [user.id])]
         ).ids
+        # Per-user type boosts (Feed v2). Sparse: only types the user
+        # explicitly tweaked appear here. Missing types implicitly use 1.0.
+        user_boosts = self.env['social_feed.user_preference'].sudo().boosts_for_user(user.id)
         return {
             'user': user,
             'blocked_ids': blocked_ids,
             'connection_user_ids': connection_user_ids,
             'member_group_ids': member_group_ids,
             'circle_ids': circle_ids,
+            'user_boosts': user_boosts,
         }
 
     # ── Posts ─────────────────────────────────────────────────────────────────
