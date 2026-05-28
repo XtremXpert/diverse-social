@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Démo : groupes thématiques pré-créés pour amorcer la communauté.
+             Le créateur (base.user_admin) sera remplacé par un compte modérateur
+             local à la première installation en production. -->
+
+        <record id="group_loisirs" model="social_group.group">
+            <field name="name">Comité des loisirs</field>
+            <field name="description">Activités du village — patinoire, fête nationale, marché de Noël, sorties familiales.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_petites_annonces" model="social_group.group">
+            <field name="name">Petites annonces — entraide</field>
+            <field name="description">À vendre, à donner, services rendus, covoiturage, échange d'outils. Pas de commerce professionnel.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_ecole" model="social_group.group">
+            <field name="name">Parents — École Sainte-Famille</field>
+            <field name="description">Information aux parents, devoirs, sorties scolaires, comité de parents.</field>
+            <field name="privacy">private</field>
+            <field name="join_type">approval</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_fabrique" model="social_group.group">
+            <field name="name">Fabrique paroissiale</field>
+            <field name="description">Vie paroissiale, célébrations, marguilliers, restauration de l'église.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_pompiers" model="social_group.group">
+            <field name="name">Brigade incendie — alertes</field>
+            <field name="description">Annonces officielles de la brigade : panne d'eau, alertes météo, sécurité routière. Lecture seule, post par modérateurs.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="require_moderation" eval="True"/>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_aines" model="social_group.group">
+            <field name="name">Club des aînés</field>
+            <field name="description">Activités des aînés, cartes du jeudi, soupers communautaires, transport bénévole.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="group_municipal" model="social_group.group">
+            <field name="name">Conseil municipal — vie démocratique</field>
+            <field name="description">Ordres du jour, procès-verbaux, consultations citoyennes, suivi des propositions en gouvernance.</field>
+            <field name="privacy">public</field>
+            <field name="join_type">open</field>
+            <field name="creator_id" ref="base.user_admin"/>
+        </record>
+    </data>
+</odoo>

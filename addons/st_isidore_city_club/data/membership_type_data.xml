@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Type d'adhésion par défaut accordé aux résidents approuvés.
+             Gratuit + durée illimitée (à vie). Sert uniquement à déclencher
+             l'octroi de social_base.group_social_user via le workflow standard
+             de club_membership.action_activate(). -->
+        <record id="membership_type_resident" model="club_membership.type">
+            <field name="name">Résident de St-Isidore</field>
+            <field name="sequence">10</field>
+            <field name="description">Adhésion gratuite à vie pour les résidents vérifiés.</field>
+            <field name="fee">0.0</field>
+            <field name="duration_months">0</field>
+            <field name="is_resident_default" eval="True"/>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>
