@@ -1,8 +1,16 @@
 {
     'name': 'Social PWA',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Social',
     'summary': 'Progressive Web App: installable home screen icon, offline shell, generic-payload push',
+    'description': """
+        Push notifications require pywebpush to actually deliver — the
+        push service in models/push_service.py soft-imports it and
+        silently no-ops if missing, so the rest of the module (manifest,
+        service worker, install button) still works without the pip
+        package. Production deployments that want push need to install
+        pywebpush separately.
+    """,
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
@@ -10,9 +18,6 @@
         'portal',
         'club_social_profile',
     ],
-    'external_dependencies': {
-        'python': ['pywebpush'],
-    },
     'data': [
         'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
