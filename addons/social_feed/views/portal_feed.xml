@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_feed_page" name="Social feed">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Feed</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width: 720px;">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="mb-0" style="color:#1a1a2e;">Feed</h2>
+                        <div class="btn-group btn-group-sm" role="tablist">
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-feed-sort="relevance" id="feed_sort_relevance">
+                                For me
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-feed-sort="recent" id="feed_sort_recent">
+                                Most recent
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    id="feed_prefs_toggle" aria-expanded="false"
+                                    aria-controls="feed_prefs_panel"
+                                    title="Tune what you see">
+                                ⚙️
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preferences panel (hidden by default) -->
+                    <div id="feed_prefs_panel" class="card mb-3" style="display:none;">
+                        <div class="card-body">
+                            <h6 class="card-title">Show me more / less of…</h6>
+                            <p class="text-muted small mb-3">
+                                Slide right to see more of a category, left to see less.
+                                1.0 means default.
+                            </p>
+                            <div id="feed_prefs_sliders"/>
+                        </div>
+                    </div>
+
+                    <!-- Feed list — JS populates this -->
+                    <div id="feed_list" aria-live="polite"/>
+
+                    <!-- Sentinel for IntersectionObserver -->
+                    <div id="feed_sentinel" style="height:1px;"/>
+
+                    <!-- Empty/loading/end states -->
+                    <div id="feed_status" class="text-center text-muted small py-4"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

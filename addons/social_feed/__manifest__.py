@@ -20,7 +20,14 @@
         'security/ir.model.access.csv',
         'data/cron.xml',
         'views/portal_transparency_templates.xml',
+        'views/portal_feed.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'social_feed/static/src/js/feed_page.js',
+            'social_feed/static/src/css/feed_page.css',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

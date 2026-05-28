@@ -1,0 +1,16 @@
+.feed-card {
+    transition: opacity .2s, background .2s;
+}
+.feed-card-read {
+    opacity: 0.55;
+}
+.feed-card-read .card-header {
+    opacity: 0.85;
+}
+.feed-card .feed-mark-btn {
+    font-size: 0.8rem;
+    color: #888;
+}
+.feed-card .feed-mark-btn:hover {
+    color: #e94560;
+}

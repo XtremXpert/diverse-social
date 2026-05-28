@@ -83,8 +83,14 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
     # ── Preferences ──────────────────────────────────────────────────────────
 
     @http.route('/social/api/feed/preferences', type='json', auth='user',
-                methods=['GET'], csrf=False)
+                methods=['POST'], csrf=False)
     def get_preferences(self, **kw):
+        """Returns current boosts + the available types + the allowed range.
+
+        type='json' forces POST in Odoo, so the read endpoint is also a
+        POST with an empty body. The write endpoint sits on a distinct
+        URL (/set) to avoid the ambiguity.
+        """
         try:
             user = self._validate_auth()
         except AccessError:
@@ -99,7 +105,7 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
             },
         }
 
-    @http.route('/social/api/feed/preferences', type='json', auth='user',
+    @http.route('/social/api/feed/preferences/set', type='json', auth='user',
                 methods=['POST'], csrf=False)
     def set_preference(self, item_type=None, boost_factor=None, **kw):
         try:
