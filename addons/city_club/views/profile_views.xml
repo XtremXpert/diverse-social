@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_profile_form_city_club" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.form.city_club</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+        <field name="arch" type="xml">
+            <!-- Status badge + action buttons at the top of the form. -->
+            <sheet position="before">
+                <header>
+                    <button name="action_verify_residency" type="object"
+                            string="Approve residency" class="btn-primary"
+                            invisible="residency_state == 'verified'"
+                            groups="social_base.group_social_moderator"/>
+                    <button name="action_reject_residency" type="object"
+                            string="Reject"
+                            invisible="residency_state in ('rejected', 'verified')"
+                            groups="social_base.group_social_moderator"/>
+                    <button name="action_reset_residency" type="object"
+                            string="Reset"
+                            invisible="residency_state in ('none', 'pending')"
+                            groups="social_base.group_social_moderator"/>
+                    <field name="residency_state" widget="statusbar"
+                           statusbar_visible="none,pending,verified"/>
+                </header>
+            </sheet>
+            <!-- Residency tab in the notebook. -->
+            <notebook position="inside">
+                <page string="Residency">
+                    <group>
+                        <group>
+                            <field name="residency_postal_code"/>
+                            <field name="residency_state" readonly="1"/>
+                            <field name="residency_submitted_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="residency_verified_at" readonly="1"/>
+                            <field name="residency_verified_by_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="residency_notes" placeholder="Notes from member or moderator..."/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Dedicated list view for moderators reviewing pending residencies. -->
+    <record id="action_residency_pending" model="ir.actions.act_window">
+        <field name="name">Pending residencies</field>
+        <field name="res_model">club_social_profile.profile</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('residency_state', '=', 'pending')]</field>
+        <field name="context">{'search_default_residency_state_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No residency requests waiting for review.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_profile_list_residency" model="ir.ui.view">
+        <field name="name">club_social_profile.profile.list.residency</field>
+        <field name="model">club_social_profile.profile</field>
+        <field name="inherit_id" ref="club_social_profile.view_csp_profile_list"/>
+        <field name="arch" type="xml">
+            <list position="inside">
+                <field name="residency_state" optional="show"/>
+                <field name="residency_postal_code" optional="show"/>
+                <field name="residency_submitted_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+</odoo>

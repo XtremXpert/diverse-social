@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Leaf modules override these with their city-specific values. -->
+        <record id="param_city_name" model="ir.config_parameter">
+            <field name="key">city_club.city_name</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_allowed_postal_codes" model="ir.config_parameter">
+            <field name="key">city_club.allowed_postal_codes</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_allowed_postal_prefix" model="ir.config_parameter">
+            <field name="key">city_club.allowed_postal_prefix</field>
+            <field name="value"></field>
+        </record>
+        <!-- Map default center (used by social_discovery leaf configs). -->
+        <record id="param_map_center_lat" model="ir.config_parameter">
+            <field name="key">city_club.map_center_lat</field>
+            <field name="value">0</field>
+        </record>
+        <record id="param_map_center_lng" model="ir.config_parameter">
+            <field name="key">city_club.map_center_lng</field>
+            <field name="value">0</field>
+        </record>
+        <record id="param_map_default_radius_km" model="ir.config_parameter">
+            <field name="key">city_club.map_default_radius_km</field>
+            <field name="value">5</field>
+        </record>
+    </data>
+</odoo>
