@@ -1,6 +1,6 @@
 {
     'name': 'Social Discovery',
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Social',
     'summary': 'Consensual profile discovery: you search, not the algorithm',
     'author': 'Bemade',
@@ -27,6 +27,9 @@
         'web.assets_frontend': [
             'social_discovery/static/lib/leaflet/leaflet.css',
             'social_discovery/static/lib/leaflet/leaflet.js',
+            'social_discovery/static/lib/leaflet.markercluster/MarkerCluster.css',
+            'social_discovery/static/lib/leaflet.markercluster/MarkerCluster.Default.css',
+            'social_discovery/static/lib/leaflet.markercluster/leaflet.markercluster.js',
             'social_discovery/static/src/js/members_map.js',
             'social_discovery/static/src/css/members_map.css',
         ],

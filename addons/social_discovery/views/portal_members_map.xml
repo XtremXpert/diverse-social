@@ -30,11 +30,22 @@
                         </t>
                     </p>
 
+                    <t t-set="_get" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
+                    <t t-set="_tile_url"
+                       t-value="_get('social_discovery.map_tile_url', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')"/>
+                    <t t-set="_tile_attr"
+                       t-value="_get('social_discovery.map_tile_attribution', '&amp;copy; &lt;a href=&quot;https://www.openstreetmap.org/copyright&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;OpenStreetMap&lt;/a&gt;')"/>
+                    <t t-set="_tile_max_zoom"
+                       t-value="_get('social_discovery.map_tile_max_zoom', '18')"/>
+
                     <div id="members_map"
                          data-endpoint="/members/map.json"
                          data-default-lat="46.0"
                          data-default-lng="-72.0"
                          data-default-zoom="7"
+                         t-att-data-tile-url="_tile_url"
+                         t-att-data-tile-attribution="_tile_attr"
+                         t-att-data-tile-max-zoom="_tile_max_zoom"
                          style="height: 70vh; min-height: 500px;
                                 border: 1px solid #ddd; border-radius: 4px;"/>
 

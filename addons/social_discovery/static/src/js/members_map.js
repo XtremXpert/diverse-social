@@ -28,17 +28,37 @@
         const defaultLng = parseFloat(el.dataset.defaultLng) || -72.0;
         const defaultZoom = parseInt(el.dataset.defaultZoom, 10) || 7;
         const endpoint = el.dataset.endpoint || '/members/map.json';
+        // Tile provider config — defaults to OpenStreetMap. Admins can swap
+        // to Mapbox/MapTiler via ir.config_parameter (social_discovery.map_tile_url,
+        // map_tile_attribution, map_tile_max_zoom) when traffic crosses the
+        // OSM Foundation usage policy threshold.
+        const tileUrl = el.dataset.tileUrl
+            || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const tileAttribution = el.dataset.tileAttribution
+            || '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+        const tileMaxZoom = parseInt(el.dataset.tileMaxZoom, 10) || 18;
 
         const initialView = restoreView() || { lat: defaultLat, lng: defaultLng, zoom: defaultZoom };
         const map = L.map(el, { worldCopyJump: true })
             .setView([initialView.lat, initialView.lng], initialView.zoom);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+        L.tileLayer(tileUrl, {
+            maxZoom: tileMaxZoom,
+            attribution: tileAttribution,
         }).addTo(map);
 
-        const markers = L.layerGroup().addTo(map);
+        // Marker clustering — prevents pixel pile-up when many opted-in
+        // members share the same jitter neighbourhood, and keeps the DOM
+        // light when the bbox returns close to the 500-cap. Falls back to
+        // a plain LayerGroup if the cluster plugin failed to load.
+        const markers = (typeof L.markerClusterGroup === 'function')
+            ? L.markerClusterGroup({
+                showCoverageOnHover: false,
+                spiderfyOnMaxZoom: true,
+                disableClusteringAtZoom: 16,
+                maxClusterRadius: 50,
+            }).addTo(map)
+            : L.layerGroup().addTo(map);
         const status = document.getElementById('members_map_status');
 
         let reloadTimer = null;
