@@ -77,3 +77,24 @@ class TestShareLockdownRendering(HttpCase):
         Helper = self.env['social_safety.helper']
         self.assertTrue(Helper.is_sensitive_path('/my/profile/edit'))
         self.assertFalse(Helper.is_sensitive_path('/shop'))
+
+    def test_sensitive_path_has_x_robots_tag_header(self):
+        """The HTTP response on a sensitive path carries X-Robots-Tag.
+
+        This is the layer that catches Slack/Discord unfurlers, which
+        ignore the meta robots tag in HTML but honour the header.
+        """
+        self.authenticate('lockdown_user', 'Test1234!')
+        resp = self.url_open('/members')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            resp.headers.get('X-Robots-Tag'),
+            'noindex, nofollow, noarchive',
+        )
+
+    def test_public_path_has_no_x_robots_tag_header(self):
+        resp = self.url_open('/web/login')
+        # Header must be absent (or at least not ours) on a page that's
+        # supposed to be indexable.
+        tag = resp.headers.get('X-Robots-Tag', '')
+        self.assertNotIn('noindex', tag)
