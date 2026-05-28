@@ -11,6 +11,15 @@ _SORT_MAP = {
 }
 _SORT_DEFAULT = 'recent'
 
+# sort='compat' is a special case: the score is computed in Python, so we
+# can't use SQL ORDER BY. We fetch a buffer of candidates, score them all,
+# then paginate the sorted result in Python. The buffer cap is the upper
+# bound on the candidate pool — beyond it, the sort becomes partial. For
+# the foreseeable membership size this is a non-issue; document and
+# revisit if /members ever returns > _COMPAT_BUFFER_CAP candidates.
+_COMPAT_BUFFER_CAP = 500
+_COMPAT_SORT = 'compat'
+
 
 class MembersPortal(CustomerPortal):
 
@@ -20,7 +29,8 @@ class MembersPortal(CustomerPortal):
         if not user.has_group('social_base.group_social_user'):
             return request.redirect('/web')
 
-        sort = sort if sort in _SORT_MAP else _SORT_DEFAULT
+        valid_sorts = set(_SORT_MAP) | {_COMPAT_SORT}
+        sort = sort if sort in valid_sorts else _SORT_DEFAULT
         page = max(1, int(page))
 
         # Filters from GET parameters (multi-value via getlist)
@@ -45,42 +55,88 @@ class MembersPortal(CustomerPortal):
         Profile_base = request.env['club_social_profile.profile']
         has_bdsm = 'bdsm_role' in Profile_base._fields
 
-        total = Profile.search_count(domain)
-        pager = portal_pager(
-            url='/members',
-            url_args=dict(sort=sort, q=q, **{k: v for k, v in args.items(multi=True) if k not in ('sort', 'q', 'page')}),
-            total=total,
-            page=page,
-            step=_PAGE_SIZE,
-        )
-        profiles = Profile.search(
-            domain,
-            order=_SORT_MAP[sort],
-            limit=_PAGE_SIZE,
-            offset=pager['offset'],
+        # sort=compat is only meaningful when the BDSM scoring exists. Fall
+        # back to the default sort silently otherwise.
+        if sort == _COMPAT_SORT and not has_bdsm:
+            sort = _SORT_DEFAULT
+
+        url_args = dict(
+            sort=sort, q=q,
+            **{k: v for k, v in args.items(multi=True) if k not in ('sort', 'q', 'page')},
         )
 
-        # ── Compatibility scoring (BDSM module only) ──────────────────────────
-        # Computed per-page (≤ _PAGE_SIZE) — bounded cost regardless of total
-        # candidates. min_compat applies a Python filter post-search; the
-        # pager's "total" still reflects the SQL-level count.
         compat_scores = {}
-        if has_bdsm and profiles:
+
+        if sort == _COMPAT_SORT:
+            # ── Python-paginated compatibility sort ──────────────────────────
+            # The score isn't a stored column, so we fetch a bounded buffer,
+            # score everything, filter on min_compat, then slice in Python.
+            # Pager total reflects the *filtered* count (what the user can
+            # actually browse), not the unfiltered candidate pool.
             my_profile = Profile.search([('user_id', '=', user.id)], limit=1)
+            buffer_profiles = Profile.search(
+                domain, order='write_date desc', limit=_COMPAT_BUFFER_CAP,
+            )
+            # Warm the cache once for all candidates.
+            buffer_profiles.mapped('kink_level_ids')
             if my_profile:
-                # Prefetch kink_level_ids to amortize the per-candidate cost
-                # of compute_compatibility.
-                profiles.mapped('kink_level_ids')
                 my_profile.mapped('kink_level_ids')
-                for p in profiles:
+
+            scored = []
+            for p in buffer_profiles:
+                if not my_profile:
+                    score = 0
+                else:
                     try:
-                        compat_scores[p.id] = my_profile.compute_compatibility(p)['score']
+                        score = my_profile.compute_compatibility(p)['score']
                     except Exception:
-                        compat_scores[p.id] = 0
-            if min_compat:
-                profiles = profiles.filtered(
-                    lambda p: compat_scores.get(p.id, 0) >= min_compat
-                )
+                        score = 0
+                if score < min_compat:
+                    continue
+                scored.append((score, p.id))
+                compat_scores[p.id] = score
+
+            # Stable sort: tie-break on id to keep the order deterministic
+            # across page navigations.
+            scored.sort(key=lambda x: (-x[0], x[1]))
+
+            total = len(scored)
+            pager = portal_pager(
+                url='/members', url_args=url_args,
+                total=total, page=page, step=_PAGE_SIZE,
+            )
+            page_ids = [pid for _, pid in scored[pager['offset']:pager['offset'] + _PAGE_SIZE]]
+            # browse() preserves order from the id list.
+            profiles = Profile.browse(page_ids)
+        else:
+            # ── SQL-paginated sort (recent / new / alpha) ─────────────────────
+            total = Profile.search_count(domain)
+            pager = portal_pager(
+                url='/members', url_args=url_args,
+                total=total, page=page, step=_PAGE_SIZE,
+            )
+            profiles = Profile.search(
+                domain,
+                order=_SORT_MAP[sort],
+                limit=_PAGE_SIZE,
+                offset=pager['offset'],
+            )
+
+            # Per-page compatibility scoring (existing behaviour).
+            if has_bdsm and profiles:
+                my_profile = Profile.search([('user_id', '=', user.id)], limit=1)
+                if my_profile:
+                    profiles.mapped('kink_level_ids')
+                    my_profile.mapped('kink_level_ids')
+                    for p in profiles:
+                        try:
+                            compat_scores[p.id] = my_profile.compute_compatibility(p)['score']
+                        except Exception:
+                            compat_scores[p.id] = 0
+                if min_compat:
+                    profiles = profiles.filtered(
+                        lambda p: compat_scores.get(p.id, 0) >= min_compat
+                    )
 
         genders_opts      = request.env['social_discovery.gender_value'].sudo().search([])
         orientations_opts = request.env['social_discovery.orientation_value'].sudo().search([])

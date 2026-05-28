@@ -183,6 +183,14 @@
                                         <t t-out="s[1]"/>
                                     </a>
                                 </t>
+                                <!-- "Best match" only makes sense when BDSM scoring is available. -->
+                                <t t-if="has_bdsm">
+                                    <a t-attf-href="/members?sort=compat&amp;q=#{q}"
+                                       t-attf-class="btn btn-sm #{sort == 'compat' and 'btn-dark' or 'btn-outline-secondary'}"
+                                       title="Sort by overall compatibility with your profile">
+                                        ⛓️ Best match
+                                    </a>
+                                </t>
                             </div>
 
                             <!-- Results -->

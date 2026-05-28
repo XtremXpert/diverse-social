@@ -81,3 +81,51 @@ class TestMembersCompat(HttpCase):
         self.assertIn(self.alice_user.name, body)
         self.assertIn(self.bob_user.name, body)
         self.assertIn('% match', body)
+
+    def test_sort_compat_orders_higher_score_first(self):
+        """sort=compat returns the highest-scoring profile first.
+
+        Pairing the searcher (dominant) with alice (soumis) gives a much
+        higher BDSM compat than with bob (dominant↔dominant). On
+        sort=compat alice must appear before bob in the rendered HTML.
+        """
+        self.authenticate('compat_searcher', 'Test1234!')
+        resp = self.url_open('/members?sort=compat')
+        self.assertEqual(resp.status_code, 200)
+        body = resp.text
+        # Both must appear
+        self.assertIn(self.alice_user.name, body)
+        self.assertIn(self.bob_user.name, body)
+        # Alice's name (higher compat) appears in the document earlier than bob's
+        self.assertLess(
+            body.index(self.alice_user.name),
+            body.index(self.bob_user.name),
+            'higher-scoring profile should come first under sort=compat',
+        )
+
+    def test_sort_compat_button_visible_when_bdsm_installed(self):
+        """The "Best match" sort tab appears in the UI when BDSM is on."""
+        self.authenticate('compat_searcher', 'Test1234!')
+        resp = self.url_open('/members')
+        self.assertIn('Best match', resp.text)
+        self.assertIn('sort=compat', resp.text)
+
+    def test_sort_compat_active_class_when_selected(self):
+        """The selected sort tab is styled btn-dark."""
+        self.authenticate('compat_searcher', 'Test1234!')
+        resp = self.url_open('/members?sort=compat')
+        body = resp.text
+        # Locate the Best match anchor and check it carries btn-dark
+        idx = body.index('Best match')
+        snippet = body[max(0, idx - 300):idx]
+        self.assertIn('btn-dark', snippet)
+
+    def test_sort_compat_respects_min_compat_filter(self):
+        """sort=compat applies min_compat — low-scoring profiles drop out."""
+        self.authenticate('compat_searcher', 'Test1234!')
+        score_bob = self.searcher.compute_compatibility(self.bob)['score']
+        threshold = score_bob + 5
+        resp = self.url_open(f'/members?sort=compat&min_compat={threshold}')
+        body = resp.text
+        self.assertNotIn(self.bob_user.name, body,
+                         f'bob (score={score_bob}) should be filtered by min_compat={threshold}')
