@@ -78,6 +78,49 @@
         </t>
     </template>
 
+    <!-- /my/profile/digest_preview — same content as the email, wrapped in
+         the portal layout with a "what you would receive" banner. -->
+    <template id="digest_preview_page" name="Digest preview">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Digest preview</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width: 680px;">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="mb-0">Digest preview</h3>
+                        <a href="/my/profile/edit?section=preferences"
+                           class="btn btn-sm btn-outline-secondary">
+                            ← Back to preferences
+                        </a>
+                    </div>
+
+                    <t t-if="not is_real">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Sample preview.</strong> You don't have any
+                            unread notifications right now, so we're showing
+                            what the digest would look like with a few of them.
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-secondary" role="alert">
+                            <strong>This is what you'd receive.</strong>
+                            Email subject would be
+                            <em>You have <t t-out="total"/> pending notifications</em>.
+                        </div>
+                    </t>
+
+                    <!-- Render the same body as the actual email, in a card
+                         styled to mimic an inbox preview. -->
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <t t-call="social_notifications.email_notification_digest"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
     <!-- Token invalid / mismatch -->
     <template id="digest_unsubscribe_invalid" name="Digest unsubscribe invalid">
         <t t-call="portal.portal_layout">

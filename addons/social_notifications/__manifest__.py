@@ -26,6 +26,7 @@
         'views/portal_notification_bell.xml',
         'views/portal_notifications_page.xml',
         'views/email_digest.xml',
+        'views/portal_profile_edit_ext.xml',
     ],
     'installable': True,
     'application': False,

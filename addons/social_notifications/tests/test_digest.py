@@ -205,3 +205,43 @@ class TestDigestSendFlow(HttpCase):
         # Same run again immediately — throttle window prevents resend.
         n2 = self.Service.cron_send_reactivation_digests()
         self.assertEqual(n2 or 0, 0)
+
+
+@tagged('social_notifications', 'digest', 'digest_preview', 'post_install', '-at_install')
+class TestDigestPreview(HttpCase):
+
+    def setUp(self):
+        super().setUp()
+        self.alice, _ = _make_user(self.env, 'preview_alice')
+        self.bob, _ = _make_user(self.env, 'preview_bob')
+
+    def test_preview_page_renders_dummy_when_no_unread(self):
+        """A user with zero unread notifs sees the sample preview."""
+        self.authenticate('preview_alice', 'Test1234!')
+        resp = self.url_open('/my/profile/digest_preview')
+        self.assertEqual(resp.status_code, 200)
+        body = resp.text
+        self.assertIn('Sample preview', body)
+        # The dummy summary has private messages + connection request
+        self.assertIn('private message', body)
+        # And the iconic Alice from the dummy data, not the real Alice user
+        # (display text inside the email body).
+        self.assertIn('Alice', body)
+
+    def test_preview_page_renders_real_summary_when_unread_exist(self):
+        """With actual unread notifications, the preview uses the real summary."""
+        _make_unread(self.env, self.alice, self.bob, 'new_message')
+        self.authenticate('preview_alice', 'Test1234!')
+        resp = self.url_open('/my/profile/digest_preview')
+        self.assertEqual(resp.status_code, 200)
+        body = resp.text
+        self.assertIn("This is what you'd receive", body)
+        self.assertNotIn('Sample preview', body)
+        # Real actor name (capitalized in _make_user)
+        self.assertIn(self.bob.name, body)
+
+    def test_preview_requires_auth(self):
+        """Anonymous requests are redirected to login."""
+        resp = self.url_open('/my/profile/digest_preview', allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+        self.assertIn('/web/login', resp.headers.get('Location', ''))

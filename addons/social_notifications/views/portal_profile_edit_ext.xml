@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add a "Preview" link next to the digest toggle in /my/profile/edit. -->
+    <template id="portal_profile_edit_digest_preview_link"
+              inherit_id="club_social_profile.portal_profile_edit">
+        <xpath expr="//div[@id='card_notifications']//div[@class='card-body']" position="inside">
+            <div class="mt-2">
+                <a href="/my/profile/digest_preview"
+                   class="small text-decoration-none">
+                    👁️ Preview the digest
+                </a>
+                <span class="text-muted small ms-1">
+                    — see what would land in your inbox.
+                </span>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

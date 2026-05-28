@@ -282,7 +282,7 @@
                             </t>
 
                             <!-- Notifications -->
-                            <div class="card mb-4">
+                            <div class="card mb-4" id="card_notifications">
                                 <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
                                     📧 Notifications
                                 </div>
