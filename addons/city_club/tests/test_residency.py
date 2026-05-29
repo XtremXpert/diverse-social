@@ -12,6 +12,16 @@ class TestResidency(TransactionCase):
         cls.Param.set_param('city_club.allowed_postal_prefix', 'G0S')
         cls.Param.set_param('city_club.allowed_postal_codes', '')
 
+        # Test DB may already carry a default resident type if a leaf module
+        # (e.g. st_isidore_city_club) is installed alongside city_club. The
+        # constraint allows only one active default — deactivate any pre-existing
+        # one for the duration of the test class.
+        existing_default = cls.env['club_membership.type'].search([
+            ('is_resident_default', '=', True),
+            ('active', '=', True),
+        ])
+        existing_default.write({'is_resident_default': False})
+
         cls.resident_type = cls.env['club_membership.type'].create({
             'name': 'Test resident',
             'duration_months': 0,
@@ -94,3 +104,38 @@ class TestResidency(TransactionCase):
         with self.assertRaises(UserError):
             self.profile.action_submit_residency(postal_code='H2X 1Y4')
         self.assertEqual(self.profile.residency_state, 'none')
+
+    def test_submit_notifies_moderators(self):
+        # Spin up a fresh moderator to receive the notif (the test class doesn't
+        # ship one, which is also why the other tests don't trigger this path).
+        moderator_group = self.env.ref('social_base.group_social_moderator')
+        moderator = self.env['res.users'].create({
+            'name': 'Mod', 'login': 'mod@stisidore.example',
+            'group_ids': [(4, moderator_group.id)],
+        })
+
+        self.profile.action_submit_residency(postal_code='G0S 2S0')
+
+        notifs = self.env['club_social_profile.notification'].sudo().search([
+            ('user_id', '=', moderator.id),
+            ('type', '=', 'residency_pending'),
+        ])
+        self.assertEqual(len(notifs), 1)
+        self.assertEqual(notifs.actor_id, self.user)
+        self.assertEqual(notifs.ref_model, 'club_social_profile.profile')
+        self.assertEqual(notifs.ref_id, self.profile.id)
+
+    def test_resubmit_pending_does_not_duplicate_notif(self):
+        moderator_group = self.env.ref('social_base.group_social_moderator')
+        self.env['res.users'].create({
+            'name': 'Mod', 'login': 'mod2@stisidore.example',
+            'group_ids': [(4, moderator_group.id)],
+        })
+        self.profile.action_submit_residency(postal_code='G0S 2S0')
+        # Idempotent — second call while state=pending should not re-notify.
+        self.profile.action_submit_residency(postal_code='G0S 2S0')
+        count = self.env['club_social_profile.notification'].sudo().search_count([
+            ('type', '=', 'residency_pending'),
+            ('actor_id', '=', self.user.id),
+        ])
+        self.assertEqual(count, 1)

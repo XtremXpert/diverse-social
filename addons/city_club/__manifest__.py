@@ -39,6 +39,7 @@ locaux).
         'views/membership_type_views.xml',
         'views/profile_views.xml',
         'views/menus.xml',
+        'views/residency_template.xml',
     ],
     'installable': True,
     'application': False,

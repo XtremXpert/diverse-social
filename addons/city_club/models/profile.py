@@ -67,6 +67,37 @@ class ClubSocialProfile(models.Model):
             'residency_state': 'pending',
             'residency_submitted_at': fields.Datetime.now(),
         })
+        self._notify_moderators_residency_pending()
+
+    def _notify_moderators_residency_pending(self):
+        """In-app ping to every active moderator that a residency awaits review."""
+        self.ensure_one()
+        moderator_group = self.env.ref('social_base.group_social_moderator')
+        moderators = self.env['res.users'].sudo().search([
+            ('group_ids', 'in', moderator_group.id),
+            ('active', '=', True),
+        ])
+        if not moderators:
+            return
+        Notification = self.env['club_social_profile.notification'].sudo()
+        body = _(
+            "%(name)s submitted residency for review (postal %(code)s)",
+            name=self.user_id.name or self.login,
+            code=self.residency_postal_code,
+        )
+        url = (
+            f'/odoo/action-city_club.action_residency_pending/{self.id}'
+        )
+        for moderator in moderators:
+            Notification._notify(
+                user_id=moderator.id,
+                actor_id=self.user_id.id,
+                notif_type='residency_pending',
+                body=body,
+                url=url,
+                ref_model='club_social_profile.profile',
+                ref_id=self.id,
+            )
 
     # ── Moderator actions ─────────────────────────────────────────────────────
 

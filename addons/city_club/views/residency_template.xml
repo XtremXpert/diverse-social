@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="residency_verify_page" name="Residency verification">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            <div class="row g-4 mt-1">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <t t-if="city_name">
+                                    Verify your residency in
+                                    <span t-esc="city_name"/>
+                                </t>
+                                <t t-else="">Verify your residency</t>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- State banner ─────────────────────────── -->
+                            <div t-if="profile.residency_state == 'verified'"
+                                 class="alert alert-success">
+                                <strong>You are a verified resident.</strong>
+                                You already have access to the community network.
+                                <a href="/social/feed" class="alert-link">Go to your feed</a>.
+                            </div>
+                            <div t-if="profile.residency_state == 'pending'"
+                                 class="alert alert-info">
+                                <strong>Your submission is pending review.</strong>
+                                A moderator will approve it shortly. You may update
+                                your postal code or notes below.
+                            </div>
+                            <div t-if="profile.residency_state == 'rejected'"
+                                 class="alert alert-warning">
+                                <strong>Your previous submission was rejected.</strong>
+                                Please re-submit with a valid postal code or additional notes
+                                explaining your residency.
+                            </div>
+
+                            <!-- Error ────────────────────────────────── -->
+                            <div t-if="error" class="alert alert-danger">
+                                <span t-esc="error"/>
+                            </div>
+
+                            <!-- Form ─────────────────────────────────── -->
+                            <t t-if="profile.residency_state != 'verified'">
+                                <form method="POST" action="/residency/verify"
+                                      class="mt-3">
+                                    <input type="hidden" name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label for="postal_code" class="form-label">
+                                            Postal code <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="postal_code"
+                                               id="postal_code"
+                                               class="form-control"
+                                               placeholder="A1A 1A1"
+                                               maxlength="10"
+                                               required="required"
+                                               t-att-value="form_postal_code or ''"/>
+                                        <small class="form-text text-muted">
+                                            Canadian format (A1A 1A1). Used by moderators
+                                            to confirm you live in the community.
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">
+                                            Notes (optional)
+                                        </label>
+                                        <textarea name="notes" id="notes"
+                                                  class="form-control" rows="4"
+                                                  placeholder="e.g. resident since 2019, rang 3 ouest"
+                                                  t-esc="form_notes or ''"/>
+                                        <small class="form-text text-muted">
+                                            Any context that helps a moderator confirm your
+                                            residency (street name, since when, etc.).
+                                        </small>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <t t-if="profile.residency_state == 'pending'">
+                                            Update submission
+                                        </t>
+                                        <t t-else="">
+                                            Submit for review
+                                        </t>
+                                    </button>
+                                </form>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
