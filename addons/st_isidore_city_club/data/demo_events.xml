@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Démo : 3 événements communautaires emblématiques pour amorcer
+             la page /event. Dates fixées dans le futur — ajuster avec
+             l'année courante lors d'un déploiement réel. -->
+
+        <record id="event_fete_nationale" model="event.event">
+            <field name="name">Fête nationale du Québec — Place de l'église</field>
+            <field name="date_begin">2026-06-24 22:00:00</field>
+            <field name="date_end">2026-06-25 03:00:00</field>
+            <field name="date_tz">America/Montreal</field>
+            <field name="organizer_id" ref="base.main_partner"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="seats_limited" eval="False"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+        <record id="event_marche_noel" model="event.event">
+            <field name="name">Marché de Noël — Salle municipale</field>
+            <field name="date_begin">2026-12-13 14:00:00</field>
+            <field name="date_end">2026-12-13 21:00:00</field>
+            <field name="date_tz">America/Montreal</field>
+            <field name="organizer_id" ref="base.main_partner"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="seats_limited" eval="False"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+        <record id="event_aga_fabrique" model="event.event">
+            <field name="name">AGA Fabrique paroissiale</field>
+            <field name="date_begin">2027-02-15 19:00:00</field>
+            <field name="date_end">2027-02-15 21:30:00</field>
+            <field name="date_tz">America/Montreal</field>
+            <field name="organizer_id" ref="base.main_partner"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="seats_limited" eval="True"/>
+            <field name="seats_max">80</field>
+            <field name="is_published" eval="True"/>
+        </record>
+    </data>
+</odoo>

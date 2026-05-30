@@ -64,6 +64,7 @@ Alternative locale à Facebook pour les résidents :
     ],
     'demo': [
         'data/demo_groups.xml',
+        'data/demo_events.xml',
     ],
     'installable': True,
     'application': True,
