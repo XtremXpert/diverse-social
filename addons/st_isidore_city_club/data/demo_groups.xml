@@ -61,5 +61,150 @@
             <field name="join_type">open</field>
             <field name="creator_id" ref="base.user_admin"/>
         </record>
+
+        <!-- ─── Règles de modération par groupe ──────────────────────────────
+             Affichées sur /groups/<id> au bas du formulaire. Chaque groupe
+             garde 3 règles : 2 universelles (respect + spam) + 1 spécifique
+             à la thématique. -->
+
+        <!-- Loisirs -->
+        <record id="rule_loisirs_respect" model="social_group.rule">
+            <field name="group_id" ref="group_loisirs"/>
+            <field name="sequence">10</field>
+            <field name="name">Soyez respectueux·euse</field>
+            <field name="description">Critiquez l'idée, pas la personne. Les commentaires hostiles seront retirés.</field>
+        </record>
+        <record id="rule_loisirs_spam" model="social_group.rule">
+            <field name="group_id" ref="group_loisirs"/>
+            <field name="sequence">20</field>
+            <field name="name">Pas de promotion commerciale</field>
+            <field name="description">Le groupe est pour les activités communautaires. Petites annonces vont dans le groupe dédié.</field>
+        </record>
+        <record id="rule_loisirs_dates" model="social_group.rule">
+            <field name="group_id" ref="group_loisirs"/>
+            <field name="sequence">30</field>
+            <field name="name">Précisez les dates et lieux</field>
+            <field name="description">Date + heure + lieu (rue, salle, etc.) sur chaque annonce d'activité.</field>
+        </record>
+
+        <!-- Petites annonces -->
+        <record id="rule_pa_respect" model="social_group.rule">
+            <field name="group_id" ref="group_petites_annonces"/>
+            <field name="sequence">10</field>
+            <field name="name">Soyez respectueux·euse</field>
+            <field name="description">Les négociations restent courtoises. Pas d'insulte en commentaire.</field>
+        </record>
+        <record id="rule_pa_pro" model="social_group.rule">
+            <field name="group_id" ref="group_petites_annonces"/>
+            <field name="sequence">20</field>
+            <field name="name">Pas de commerce professionnel</field>
+            <field name="description">Annonces entre particuliers seulement. Les commerces locaux ont leur propre groupe.</field>
+        </record>
+        <record id="rule_pa_un_post" model="social_group.rule">
+            <field name="group_id" ref="group_petites_annonces"/>
+            <field name="sequence">30</field>
+            <field name="name">Un post par item</field>
+            <field name="description">Photo + prix + état + canton/rang. Repost autorisé après 7 jours si toujours disponible.</field>
+        </record>
+
+        <!-- École -->
+        <record id="rule_ecole_respect" model="social_group.rule">
+            <field name="group_id" ref="group_ecole"/>
+            <field name="sequence">10</field>
+            <field name="name">Soyez respectueux·euse</field>
+            <field name="description">Le personnel scolaire est aussi membre. Désaccords passent par le comité, pas par le groupe.</field>
+        </record>
+        <record id="rule_ecole_vie_privee" model="social_group.rule">
+            <field name="group_id" ref="group_ecole"/>
+            <field name="sequence">20</field>
+            <field name="name">Vie privée des enfants</field>
+            <field name="description">Pas de photos identifiables d'enfants sans consentement des deux parents. Pas de nom de famille.</field>
+        </record>
+        <record id="rule_ecole_pas_pub" model="social_group.rule">
+            <field name="group_id" ref="group_ecole"/>
+            <field name="sequence">30</field>
+            <field name="name">Pas de pub d'activités payantes</field>
+            <field name="description">Sauf si organisé par l'école ou un parent bénévole — vérifier avec un modérateur d'abord.</field>
+        </record>
+
+        <!-- Fabrique paroissiale -->
+        <record id="rule_fab_respect" model="social_group.rule">
+            <field name="group_id" ref="group_fabrique"/>
+            <field name="sequence">10</field>
+            <field name="name">Soyez respectueux·euse</field>
+            <field name="description">Espace ouvert à toute conviction. Discussions théologiques restent civiles.</field>
+        </record>
+        <record id="rule_fab_pas_spam" model="social_group.rule">
+            <field name="group_id" ref="group_fabrique"/>
+            <field name="sequence">20</field>
+            <field name="name">Pas de prosélytisme externe</field>
+            <field name="description">Le groupe est pour la vie paroissiale locale. Liens vers d'autres dénominations modérés.</field>
+        </record>
+        <record id="rule_fab_evenements" model="social_group.rule">
+            <field name="group_id" ref="group_fabrique"/>
+            <field name="sequence">30</field>
+            <field name="name">Annoncez les célébrations à l'avance</field>
+            <field name="description">Au moins 48 h avant pour les funérailles et baptêmes, 7 jours pour les autres événements.</field>
+        </record>
+
+        <!-- Brigade incendie -->
+        <record id="rule_pomp_lecture" model="social_group.rule">
+            <field name="group_id" ref="group_pompiers"/>
+            <field name="sequence">10</field>
+            <field name="name">Canal officiel — lecture seule</field>
+            <field name="description">Seuls les modérateurs publient. Pour signaler une urgence, composez le 9-1-1.</field>
+        </record>
+        <record id="rule_pomp_no_speculation" model="social_group.rule">
+            <field name="group_id" ref="group_pompiers"/>
+            <field name="sequence">20</field>
+            <field name="name">Pas de spéculation sur les opérations</field>
+            <field name="description">Si une intervention est en cours, attendez le bilan officiel. Les commentaires inappropriés sont retirés sans préavis.</field>
+        </record>
+        <record id="rule_pomp_respect_vie_privee" model="social_group.rule">
+            <field name="group_id" ref="group_pompiers"/>
+            <field name="sequence">30</field>
+            <field name="name">Pas de noms ni d'adresses</field>
+            <field name="description">Les bilans publics restent anonymes. Les personnes concernées sont contactées en privé.</field>
+        </record>
+
+        <!-- Club des aînés -->
+        <record id="rule_aines_respect" model="social_group.rule">
+            <field name="group_id" ref="group_aines"/>
+            <field name="sequence">10</field>
+            <field name="name">Soyez bienveillant·e</field>
+            <field name="description">Patience pour les questions techniques. Tout le monde apprend à son rythme.</field>
+        </record>
+        <record id="rule_aines_typo" model="social_group.rule">
+            <field name="group_id" ref="group_aines"/>
+            <field name="sequence">20</field>
+            <field name="name">Textes lisibles, sans abréviations</field>
+            <field name="description">Évitez les sigles et raccourcis. Caractères clairs préférés aux émojis seuls.</field>
+        </record>
+        <record id="rule_aines_rappels" model="social_group.rule">
+            <field name="group_id" ref="group_aines"/>
+            <field name="sequence">30</field>
+            <field name="name">Rappel des activités la veille</field>
+            <field name="description">Annoncez d'avance ET rappelez 24 h avant. Beaucoup ne consultent pas tous les jours.</field>
+        </record>
+
+        <!-- Conseil municipal -->
+        <record id="rule_muni_respect" model="social_group.rule">
+            <field name="group_id" ref="group_municipal"/>
+            <field name="sequence">10</field>
+            <field name="name">Critiquez l'argument, pas la personne</field>
+            <field name="description">Attaques personnelles, étiquetage politique stérile et soupçons d'intention sont retirés.</field>
+        </record>
+        <record id="rule_muni_sources" model="social_group.rule">
+            <field name="group_id" ref="group_municipal"/>
+            <field name="sequence">20</field>
+            <field name="name">Liez vos sources</field>
+            <field name="description">Procès-verbal, règlement, soumission publique. Affirmation sans source = invitation à fournir le lien.</field>
+        </record>
+        <record id="rule_muni_recours" model="social_group.rule">
+            <field name="group_id" ref="group_municipal"/>
+            <field name="sequence">30</field>
+            <field name="name">Recours formels hors-groupe</field>
+            <field name="description">Plaintes officielles passent par le bureau municipal ou la CMQ — pas par les commentaires.</field>
+        </record>
     </data>
 </odoo>
