@@ -1,3 +1,5 @@
+import unittest
+
 from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
@@ -114,6 +116,11 @@ class TestNegotiationHooks(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # Hooks live in social_notifications/models/negotiation_hooks.py but
+        # are only imported when social_negotiation is installed (bridge-module
+        # pattern). Skip the whole class when the optional integration is absent.
+        if 'social_negotiation.negotiation' not in cls.env:
+            raise unittest.SkipTest('social_negotiation not installed')
         cls.initiator = _make_social_user(cls.env, 'Initiator', 'neg_init')
         cls.partner = _make_social_user(cls.env, 'Partner', 'neg_part')
         cls.Notif = cls.env['club_social_profile.notification']
