@@ -60,11 +60,13 @@ Alternative locale à Facebook pour les résidents :
         'data/res_config_data.xml',
         'data/membership_type_data.xml',
         'data/post_categories_data.xml',
+        'data/governance_categories.xml',
         'views/menus.xml',
     ],
     'demo': [
         'data/demo_groups.xml',
         'data/demo_events.xml',
+        'data/demo_proposals.xml',
     ],
     'installable': True,
     'application': True,
