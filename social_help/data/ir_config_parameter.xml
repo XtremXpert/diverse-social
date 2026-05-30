@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="param_community_name" model="ir.config_parameter">
+            <field name="key">social_help.community_name</field>
+            <field name="value">this community</field>
+        </record>
+        <record id="param_charter_html" model="ir.config_parameter">
+            <field name="key">social_help.charter_html</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>
