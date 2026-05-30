@@ -71,9 +71,12 @@ class SocialAnonymizeWizard(models.TransientModel):
             wiz.message_count = self.env['social_messaging.message'].sudo().search_count(
                 [('author_id', '=', user.id)]
             )
-            wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
-                ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
-            )
+            if 'social_negotiation.negotiation' in self.env:
+                wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
+                    ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
+                )
+            else:
+                wiz.negotiation_count = 0
             wiz.vote_count = self.env['social_governance.vote'].sudo().search_count(
                 [('voter_id', '=', user.id)]
             )
@@ -216,6 +219,8 @@ class SocialAnonymizeWizard(models.TransientModel):
         msgs.unlink()
 
     def _anonymize_negotiations(self, user):
+        if 'social_negotiation.negotiation' not in self.env:
+            return
         Neg = self.env['social_negotiation.negotiation'].sudo()
         anonymous_id = self._anonymous_user().id
         negs = Neg.search([
@@ -283,6 +288,8 @@ class SocialAnonymizeWizard(models.TransientModel):
         stories.unlink()
 
     def _anonymize_consent_requests(self, user):
+        if 'social_consent.request' not in self.env:
+            return
         Request = self.env['social_consent.request'].sudo()
         reqs = Request.search([('requester_id', '=', user.id)])
         reqs.unlink()
