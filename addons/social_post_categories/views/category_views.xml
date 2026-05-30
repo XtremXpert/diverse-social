@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_post_category_list" model="ir.ui.view">
+        <field name="name">social_post_categories.category.list</field>
+        <field name="model">social_post_categories.category</field>
+        <field name="arch" type="xml">
+            <list string="Post categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="icon" optional="show"/>
+                <field name="color" widget="color" optional="show"/>
+                <field name="post_count" string="Posts"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_post_category_form" model="ir.ui.view">
+        <field name="name">social_post_categories.category.form</field>
+        <field name="model">social_post_categories.category</field>
+        <field name="arch" type="xml">
+            <form string="Post category">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Category name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="lowercase_code"/>
+                            <field name="icon" placeholder="fa-bullhorn or 📣"/>
+                            <field name="color" widget="color"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="post_count" string="Posts using this"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Member-facing description (translatable)..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_post_categories" model="ir.actions.act_window">
+        <field name="name">Post categories</field>
+        <field name="res_model">social_post_categories.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_post_categories"
+              name="Post categories"
+              parent="social_base.menu_social_base_root"
+              action="action_post_categories"
+              sequence="60"
+              groups="social_base.group_social_admin"/>
+
+</odoo>

@@ -36,6 +36,7 @@ Alternative locale à Facebook pour les résidents :
         'social_group',
         'social_story',
         'social_gallery',
+        'social_post_categories',
         # Communication
         'social_messaging',
         'social_notifications',
@@ -58,6 +59,7 @@ Alternative locale à Facebook pour les résidents :
     'data': [
         'data/res_config_data.xml',
         'data/membership_type_data.xml',
+        'data/post_categories_data.xml',
         'views/menus.xml',
     ],
     'demo': [

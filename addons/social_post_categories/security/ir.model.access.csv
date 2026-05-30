@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_post_category_user,social_post_categories.category user,model_social_post_categories_category,social_base.group_social_user,1,0,0,0
+access_post_category_admin,social_post_categories.category admin,model_social_post_categories_category,social_base.group_social_admin,1,1,1,1
+access_post_category_system,social_post_categories.category system,model_social_post_categories_category,base.group_system,1,1,1,1

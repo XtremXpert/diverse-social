@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Show category in the moderator post list and form. -->
+    <record id="view_social_post_list_category" model="ir.ui.view">
+        <field name="name">social_base.post.list.category</field>
+        <field name="model">social_base.post</field>
+        <field name="inherit_id" ref="social_base.view_social_base_post_list"/>
+        <field name="arch" type="xml">
+            <list position="inside">
+                <field name="category_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_social_post_form_category" model="ir.ui.view">
+        <field name="name">social_base.post.form.category</field>
+        <field name="model">social_base.post</field>
+        <field name="inherit_id" ref="social_base.view_social_base_post_form"/>
+        <field name="arch" type="xml">
+            <field name="visibility" position="after">
+                <field name="category_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>
