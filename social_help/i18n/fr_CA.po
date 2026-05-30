@@ -1,0 +1,163 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_help
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-30 00:00+0000\n"
+"PO-Revision-Date: 2026-05-30 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: social_help
+#: model:ir.module.module,name:social_help.module_meta_information
+msgid "Social Help & Community Charter"
+msgstr "Aide & charte communautaire"
+
+#. module: social_help
+#: model:ir.module.module,summary:social_help.module_meta_information
+msgid "Public /community/help page with configurable charter"
+msgstr "Page publique /community/help avec une charte configurable"
+
+#. module: social_help
+#: code:addons/social_help/controllers/portal.py:0
+#, python-format
+msgid "this community"
+msgstr "cette communauté"
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid "Community help and charter"
+msgstr "Aide communautaire et charte"
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid "Help & charter —"
+msgstr "Aide & charte —"
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Three short answers to get you publishing,\n"
+"                        moderating yourself, and contributing to a\n"
+"                        healthy community feed."
+msgstr ""
+"Trois courtes réponses pour vous aider à publier,\n"
+"                        à vous modérer vous-même et à contribuer à\n"
+"                        un fil communautaire sain."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid "How do I post?"
+msgstr "Comment publier?"
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Open the group you want to post in\n"
+"                                            (find it from\n"
+"                                            <a href=\"/groups\">/groups</a>) and\n"
+"                                            join it if you aren't a member yet."
+msgstr ""
+"Ouvrez le groupe dans lequel vous voulez publier\n"
+"                                            (depuis\n"
+"                                            <a href=\"/groups\">/groups</a>) et\n"
+"                                            rejoignez-le si vous n'en êtes pas encore membre."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Use the post form to share a short\n"
+"                                            message. Pick a category that\n"
+"                                            describes the intent so others can\n"
+"                                            filter their feed."
+msgstr ""
+"Utilisez le formulaire pour partager un court\n"
+"                                            message. Choisissez une catégorie qui\n"
+"                                            décrit votre intention pour que les autres\n"
+"                                            puissent filtrer leur fil."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Keep it concise and concrete.\n"
+"                                            Date, place and contact in plain\n"
+"                                            text always beat screenshots."
+msgstr ""
+"Restez concis et concret.\n"
+"                                            La date, le lieu et le contact en clair\n"
+"                                            valent toujours mieux qu'une capture d'écran."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Each group has its own rules\n"
+"                                            displayed at the bottom of its\n"
+"                                            page — read them once before\n"
+"                                            posting."
+msgstr ""
+"Chaque groupe a ses propres règles\n"
+"                                            affichées au bas de sa\n"
+"                                            page — lisez-les une fois avant\n"
+"                                            de publier."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid "How do I report a problematic post?"
+msgstr "Comment signaler une publication problématique?"
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"On any post you find inappropriate,\n"
+"                                            use the “Report” menu — moderators\n"
+"                                            are notified right away."
+msgstr ""
+"Sur toute publication que vous jugez inappropriée,\n"
+"                                            utilisez le menu « Signaler » — les modérateurs\n"
+"                                            sont notifiés immédiatement."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Reports stay anonymous. The author\n"
+"                                            doesn't see who reported them."
+msgstr ""
+"Les signalements restent anonymes. L'auteure ou l'auteur\n"
+"                                            ne voit pas qui a signalé."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Don't pile on in the comments —\n"
+"                                            one quiet report is more effective\n"
+"                                            than ten angry replies."
+msgstr ""
+"N'en rajoutez pas dans les commentaires —\n"
+"                                            un signalement discret est plus efficace\n"
+"                                            que dix réponses enflammées."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid ""
+"Real emergencies (fire, medical,\n"
+"                                            crime in progress) go to 9-1-1.\n"
+"                                            This network is not monitored\n"
+"                                            24/7."
+msgstr ""
+"Les vraies urgences (incendie, médicales,\n"
+"                                            crime en cours) passent par le 9-1-1.\n"
+"                                            Ce réseau n'est pas surveillé\n"
+"                                            24h/24."
+
+#. module: social_help
+#: model_terms:ir.ui.view,arch_db:social_help.community_help_page
+msgid "Community charter"
+msgstr "Charte communautaire"
