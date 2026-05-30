@@ -1,0 +1,13 @@
+variables:
+  ODOO_VERSION: 19.0
+  ALLOWED_BRANCHES: 19.0
+  COMMUNITY: true
+  # No submodules — bemade/social is the shared library, it has no deps
+  # of its own beyond what the bemade/odoo-ci base image provides.
+  # Modules here that need OCA/Bemade libraries (e.g. social_privacy
+  # uses privacy_consent) rely on the consuming leaf to provide them.
+
+include:
+  - project: 'bemade/odoo-ci'
+    ref: 'main'
+    file: 'odoo-ci-dind.yaml'
