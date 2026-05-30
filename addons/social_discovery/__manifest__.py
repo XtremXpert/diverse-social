@@ -16,6 +16,7 @@
         'security/security.xml',
         'data/values.xml',
         'data/cron.xml',
+        'data/map_config_data.xml',
         'views/criteria_views.xml',
         'views/menus.xml',
         'views/portal_members.xml',

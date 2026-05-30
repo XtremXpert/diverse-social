@@ -105,6 +105,27 @@ class TestResidency(TransactionCase):
             self.profile.action_submit_residency(postal_code='H2X 1Y4')
         self.assertEqual(self.profile.residency_state, 'none')
 
+    def test_verify_autofills_city_region_when_params_set(self):
+        """Without city/region on the profile, social_discovery can't geocode.
+        Verifying residency should pick the defaults from ir.config_parameter
+        so the new resident shows up on the members map without a second step.
+        """
+        self.Param.set_param('city_club.default_city', 'Testville')
+        self.Param.set_param('city_club.default_region', 'Test-Region')
+        self.profile.action_submit_residency(postal_code='G0S 2S0')
+        self.profile.action_verify_residency()
+        self.assertEqual(self.profile.city, 'Testville')
+        self.assertEqual(self.profile.region, 'Test-Region')
+
+    def test_verify_does_not_trample_existing_city(self):
+        """A member who already entered their own city (manual onboarding,
+        moved within the area) keeps it on verification."""
+        self.Param.set_param('city_club.default_city', 'Testville')
+        self.profile.city = 'Custom city'
+        self.profile.action_submit_residency(postal_code='G0S 2S0')
+        self.profile.action_verify_residency()
+        self.assertEqual(self.profile.city, 'Custom city')
+
     def test_submit_notifies_moderators(self):
         # Spin up a fresh moderator to receive the notif (the test class doesn't
         # ship one, which is also why the other tests don't trigger this path).

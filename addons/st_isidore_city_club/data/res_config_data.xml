@@ -24,6 +24,29 @@
             <field name="value">8</field>
         </record>
 
+        <!-- Override social_discovery map centre (45° de zoom plus serré
+             que la valeur par défaut Québec central). Reference XML IDs
+             from social_discovery so the install does UPDATE, not INSERT. -->
+        <record id="social_discovery.param_map_default_lat" model="ir.config_parameter">
+            <field name="value">46.3478</field>
+        </record>
+        <record id="social_discovery.param_map_default_lng" model="ir.config_parameter">
+            <field name="value">-70.9836</field>
+        </record>
+        <record id="social_discovery.param_map_default_zoom" model="ir.config_parameter">
+            <field name="value">13</field>
+        </record>
+
+        <!-- Default city/region appliqués à profile.{city,region} lors de
+             l'approbation de résidence — sans, social_discovery géocode
+             à vide et la carte reste déserte. -->
+        <record id="city_club.param_default_city" model="ir.config_parameter">
+            <field name="value">St-Isidore-de-Beauce</field>
+        </record>
+        <record id="city_club.param_default_region" model="ir.config_parameter">
+            <field name="value">Québec</field>
+        </record>
+
         <!-- Paramètres propres au leaf — clés non créées ailleurs, INSERT OK. -->
         <record id="param_site_name_alias" model="ir.config_parameter">
             <field name="key">st_isidore_city_club.site_name</field>

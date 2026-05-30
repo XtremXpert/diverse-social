@@ -37,12 +37,19 @@
                        t-value="_get('social_discovery.map_tile_attribution', '&amp;copy; &lt;a href=&quot;https://www.openstreetmap.org/copyright&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;OpenStreetMap&lt;/a&gt;')"/>
                     <t t-set="_tile_max_zoom"
                        t-value="_get('social_discovery.map_tile_max_zoom', '18')"/>
+                    <!-- Map centre: configurable per community via leaf module
+                         (st_isidore_city_club overrides these XML IDs). Defaults
+                         stay at Québec central (46.0/-72.0) for Diverse-style
+                         province-wide deployments. -->
+                    <t t-set="_map_lat" t-value="_get('social_discovery.map_default_lat', '46.0')"/>
+                    <t t-set="_map_lng" t-value="_get('social_discovery.map_default_lng', '-72.0')"/>
+                    <t t-set="_map_zoom" t-value="_get('social_discovery.map_default_zoom', '7')"/>
 
                     <div id="members_map"
                          data-endpoint="/members/map.json"
-                         data-default-lat="46.0"
-                         data-default-lng="-72.0"
-                         data-default-zoom="7"
+                         t-att-data-default-lat="_map_lat"
+                         t-att-data-default-lng="_map_lng"
+                         t-att-data-default-zoom="_map_zoom"
                          t-att-data-tile-url="_tile_url"
                          t-att-data-tile-attribution="_tile_attr"
                          t-att-data-tile-max-zoom="_tile_max_zoom"

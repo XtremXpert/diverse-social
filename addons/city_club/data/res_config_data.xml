@@ -27,5 +27,16 @@
             <field name="key">city_club.map_default_radius_km</field>
             <field name="value">5</field>
         </record>
+        <!-- City/region auto-applied to profile.{city,region} when a moderator
+             approves residency. Drives social_discovery geocoding without
+             asking the member to fill the same info twice. -->
+        <record id="param_default_city" model="ir.config_parameter">
+            <field name="key">city_club.default_city</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_default_region" model="ir.config_parameter">
+            <field name="key">city_club.default_region</field>
+            <field name="value"></field>
+        </record>
     </data>
 </odoo>

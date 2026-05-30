@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default map view for /members. Leaf modules (per-deployment
+             configs) override these XML IDs to centre the map on their
+             community. Keep the records here so leaves can reference
+             ``social_discovery.param_map_default_*`` and UPDATE the value
+             instead of trying to INSERT a duplicate key. -->
+        <record id="param_map_default_lat" model="ir.config_parameter">
+            <field name="key">social_discovery.map_default_lat</field>
+            <field name="value">46.0</field>
+        </record>
+        <record id="param_map_default_lng" model="ir.config_parameter">
+            <field name="key">social_discovery.map_default_lng</field>
+            <field name="value">-72.0</field>
+        </record>
+        <record id="param_map_default_zoom" model="ir.config_parameter">
+            <field name="key">social_discovery.map_default_zoom</field>
+            <field name="value">7</field>
+        </record>
+    </data>
+</odoo>

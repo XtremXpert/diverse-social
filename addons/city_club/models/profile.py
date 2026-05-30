@@ -6,6 +6,8 @@ from odoo.exceptions import UserError, ValidationError
 _PARAM_ALLOWED_POSTAL_CODES = 'city_club.allowed_postal_codes'
 _PARAM_ALLOWED_POSTAL_PREFIX = 'city_club.allowed_postal_prefix'
 _PARAM_CITY_NAME = 'city_club.city_name'
+_PARAM_DEFAULT_CITY = 'city_club.default_city'
+_PARAM_DEFAULT_REGION = 'city_club.default_region'
 
 
 def _normalize_postal(code):
@@ -122,6 +124,12 @@ class ClubSocialProfile(models.Model):
                 "No default resident membership type is configured. "
                 "Set `is_resident_default` on a club_membership.type record."
             ))
+        # Pull the city/region defaults once — they go onto the profile so
+        # social_discovery can geocode the new resident on its next cron run.
+        Param = self.env['ir.config_parameter'].sudo()
+        default_city = (Param.get_param(_PARAM_DEFAULT_CITY) or '').strip()
+        default_region = (Param.get_param(_PARAM_DEFAULT_REGION) or '').strip()
+
         now = fields.Datetime.now()
         for profile in self:
             if not profile.user_id:
@@ -139,11 +147,18 @@ class ClubSocialProfile(models.Model):
                     'start_date': fields.Date.today(),
                 })
                 membership.action_activate()
-            profile.write({
+            vals = {
                 'residency_state': 'verified',
                 'residency_verified_at': now,
                 'residency_verified_by_id': self.env.user.id,
-            })
+            }
+            # Only auto-fill when the field is empty — don't trample a member
+            # who already entered their own city (e.g. moved within the area).
+            if default_city and not profile.city:
+                vals['city'] = default_city
+            if default_region and not profile.region:
+                vals['region'] = default_region
+            profile.write(vals)
 
     def action_reject_residency(self):
         for profile in self:
