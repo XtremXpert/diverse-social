@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="community_help_page" name="Community help and charter">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            <div class="row g-4 mt-1">
+                <div class="col-md-10 offset-md-1">
+                    <h2 class="mb-3">
+                        Help &amp; charter — <span t-esc="city_name"/>
+                    </h2>
+                    <p class="text-muted">
+                        Three short answers to get you publishing,
+                        moderating yourself, and contributing to a
+                        healthy community feed.
+                    </p>
+
+                    <div class="accordion mt-4" id="community_help_acc">
+
+                        <!-- ── How to post ─────────────────────────── -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="how_post_h">
+                                <button class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#how_post"
+                                        aria-expanded="true"
+                                        aria-controls="how_post">
+                                    How do I post?
+                                </button>
+                            </h3>
+                            <div id="how_post"
+                                 class="accordion-collapse collapse show"
+                                 aria-labelledby="how_post_h"
+                                 data-bs-parent="#community_help_acc">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>
+                                            Open the group you want to post in
+                                            (find it from
+                                            <a href="/groups">/groups</a>) and
+                                            join it if you aren't a member yet.
+                                        </li>
+                                        <li>
+                                            Use the post form to share a short
+                                            message. Pick a category that
+                                            describes the intent — annonce,
+                                            alerte, entraide, question or
+                                            événement — so neighbours can
+                                            filter their feed.
+                                        </li>
+                                        <li>
+                                            Keep it concise and concrete.
+                                            Date, place and contact in plain
+                                            text always beat screenshots.
+                                        </li>
+                                        <li>
+                                            Each group has its own rules
+                                            displayed at the bottom of its
+                                            page — read them once before
+                                            posting.
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── How to report ───────────────────────── -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="how_report_h">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#how_report"
+                                        aria-expanded="false"
+                                        aria-controls="how_report">
+                                    How do I report a problematic post?
+                                </button>
+                            </h3>
+                            <div id="how_report"
+                                 class="accordion-collapse collapse"
+                                 aria-labelledby="how_report_h"
+                                 data-bs-parent="#community_help_acc">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>
+                                            On any post you find inappropriate,
+                                            use the “Report” menu — moderators
+                                            are notified right away.
+                                        </li>
+                                        <li>
+                                            Reports stay anonymous. The author
+                                            doesn't see who reported them.
+                                        </li>
+                                        <li>
+                                            Don't pile on in the comments —
+                                            one quiet report is more effective
+                                            than ten angry replies.
+                                        </li>
+                                        <li>
+                                            Real emergencies (fire, medical,
+                                            crime in progress) go to 9-1-1.
+                                            This network is not monitored
+                                            24/7.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Charter (configurable) ──────────────── -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="charter_h">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#charter"
+                                        aria-expanded="false"
+                                        aria-controls="charter">
+                                    Community charter
+                                </button>
+                            </h3>
+                            <div id="charter"
+                                 class="accordion-collapse collapse"
+                                 aria-labelledby="charter_h"
+                                 data-bs-parent="#community_help_acc">
+                                <div class="accordion-body">
+                                    <t t-out="charter_html"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

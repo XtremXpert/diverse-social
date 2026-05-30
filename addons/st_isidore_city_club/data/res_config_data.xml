@@ -33,5 +33,46 @@
             <field name="key">st_isidore_city_club.digest_from_email</field>
             <field name="value">noreply@stisidore.example</field>
         </record>
+
+        <!-- Charte communautaire affichée sur /community/help.
+             Texte HTML court, signé, modifiable depuis Settings sans
+             redéploiement (ir.config_parameter standard). -->
+        <record id="param_charter_html" model="ir.config_parameter">
+            <field name="key">city_club.charter_html</field>
+            <field name="value"><![CDATA[<p><strong>Bienvenue dans le réseau citoyen de St-Isidore-de-Beauce.</strong>
+Cette communauté en ligne est animée par des résidentes et résidents
+bénévoles. Les principes ci-dessous font partie de notre adhésion.</p>
+
+<ol>
+<li><strong>Respect inconditionnel des personnes.</strong>
+On critique des idées, des décisions, des projets — jamais des personnes.
+Insultes, étiquetage politique stérile et soupçons d'intention sont retirés
+sans préavis.</li>
+
+<li><strong>Vie privée d'abord.</strong>
+Aucune photo identifiable d'enfant sans consentement des deux parents.
+Aucune adresse ni nom de famille de tiers. Conformément à la Loi 25,
+chaque membre peut demander la suppression de ses données.</li>
+
+<li><strong>Information vérifiable.</strong>
+Affirmations sourcées (procès-verbal, règlement, site officiel).
+Si ce n'est pas sourcé, c'est une opinion — étiquetez-la comme telle.
+Pas de relais de rumeur sans vérification.</li>
+
+<li><strong>Urgences hors-plateforme.</strong>
+Le 9-1-1 reste le seul canal d'urgence. La brigade incendie publie des
+bilans, pas des alertes en temps réel — le délai d'écriture n'est pas
+compatible avec une vraie urgence.</li>
+
+<li><strong>Modération à hauteur d'humain.</strong>
+Les modérateurs sont vos voisins. Ils tranchent vite mais expliquent.
+Désaccord sur une décision ? Discussion privée d'abord, recours auprès
+du comité ensuite.</li>
+</ol>
+
+<p class="text-muted small">Charte v1 — adoptée par les modérateurs initiaux.
+Révisable par proposition de gouvernance (voir <em>Conseil municipal —
+vie démocratique</em>).</p>]]></field>
+        </record>
     </data>
 </odoo>

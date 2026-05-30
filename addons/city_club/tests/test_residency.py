@@ -127,15 +127,19 @@ class TestResidency(TransactionCase):
 
     def test_resubmit_pending_does_not_duplicate_notif(self):
         moderator_group = self.env.ref('social_base.group_social_moderator')
-        self.env['res.users'].create({
+        mod2 = self.env['res.users'].create({
             'name': 'Mod', 'login': 'mod2@stisidore.example',
             'group_ids': [(4, moderator_group.id)],
         })
         self.profile.action_submit_residency(postal_code='G0S 2S0')
         # Idempotent — second call while state=pending should not re-notify.
         self.profile.action_submit_residency(postal_code='G0S 2S0')
+        # Filter by THIS moderator only — the test DB may carry pre-existing
+        # moderators (e.g. from live testing in the same DB) and counting
+        # without a recipient filter would be brittle.
         count = self.env['club_social_profile.notification'].sudo().search_count([
             ('type', '=', 'residency_pending'),
             ('actor_id', '=', self.user.id),
+            ('user_id', '=', mod2.id),
         ])
         self.assertEqual(count, 1)

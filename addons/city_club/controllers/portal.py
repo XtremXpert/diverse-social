@@ -1,6 +1,38 @@
+from markupsafe import Markup
+
 from odoo import _, http
 from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
+
+
+_DEFAULT_CHARTER_HTML = (
+    "<p>This community has not yet published a charter. "
+    "Until it does, behave like a neighbour: respect, no-spam, on-topic.</p>"
+)
+
+
+class CommunityHelp(http.Controller):
+
+    @http.route('/community/help', auth='public', website=True, sitemap=True)
+    def community_help(self, **kw):
+        """Member-facing FAQ: how to post, how to report, community charter.
+
+        The first two sections are app-mechanical and live in the template.
+        The charter is community-specific and read from
+        ``ir.config_parameter`` key ``city_club.charter_html`` so leaf
+        modules customize without forking the template.
+
+        Public auth: a prospect resident can read the charter before
+        signup. No data is exposed beyond the configured text.
+        """
+        Param = request.env['ir.config_parameter'].sudo()
+        charter_html = Param.get_param('city_club.charter_html') or _DEFAULT_CHARTER_HTML
+        city_name = request.env['club_social_profile.profile'].sudo()._get_city_name()
+        return request.render('city_club.community_help_page', {
+            'city_name': city_name or _('this community'),
+            # Wrap in Markup so QWeb renders the HTML instead of escaping it.
+            'charter_html': Markup(charter_html),
+        })
 
 
 class ResidencyPortal(http.Controller):

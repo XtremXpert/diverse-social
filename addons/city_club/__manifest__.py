@@ -40,6 +40,7 @@ locaux).
         'views/profile_views.xml',
         'views/menus.xml',
         'views/residency_template.xml',
+        'views/community_help_template.xml',
     ],
     'installable': True,
     'application': False,
