@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <menuitem id="menu_residency_pending"
-              name="Pending residencies"
-              parent="club_social_moderation.menu_moderation_root"
-              action="action_residency_pending"
-              sequence="30"
-              groups="social_base.group_social_moderator"/>
-</odoo>

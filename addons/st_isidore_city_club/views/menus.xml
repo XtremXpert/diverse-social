@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <!-- Menu racine renommé "St-Isidore communauté" pour les modérateurs.
-         Hérite du menu social_base, donc n'ajoute pas de nouvelle entrée. -->
-    <record id="social_base.menu_social_base_root" model="ir.ui.menu">
-        <field name="name">St-Isidore communauté</field>
-    </record>
-</odoo>

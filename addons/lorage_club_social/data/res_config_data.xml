@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
-        <record id="param_site_name" model="ir.config_parameter">
-            <field name="key">lorage_club_social.site_name</field>
-            <field name="value">Club l'Orage</field>
-        </record>
-    </data>
-</odoo>
