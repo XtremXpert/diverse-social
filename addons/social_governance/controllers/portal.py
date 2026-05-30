@@ -21,6 +21,7 @@ def _state_labels():
         'voting': _('Voting'),
         'accepted': _('Accepted'),
         'rejected': _('Rejected'),
+        'inconclusive': _('Inconclusive (quorum)'),
         'withdrawn': _('Withdrawn'),
     }
 

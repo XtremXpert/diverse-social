@@ -152,6 +152,46 @@ class TestGovernance(TransactionCase):
         with self.assertRaises(UserError):
             p.action_close_voting()
 
+    # ── Quorum ────────────────────────────────────────────────────────────────
+
+    def test_close_voting_inconclusive_when_under_quorum(self):
+        """A vote that doesn't reach the category's min_quorum closes as
+        'inconclusive' — distinguishes 'not convincing' from 'not mobilized'
+        for civic transparency."""
+        self.category.min_quorum = 5
+        p = self._setup_voting_proposal()
+        # Only 1 vote — well under quorum of 5
+        p.with_user(self.alice).action_vote('yes')
+        p.action_close_voting()
+        self.assertEqual(p.state, 'inconclusive')
+
+    def test_close_voting_accepted_when_quorum_met(self):
+        """At quorum exactly, normal yes/no ratio decides."""
+        self.category.min_quorum = 3
+        p = self._setup_voting_proposal()
+        p.with_user(self.alice).action_vote('yes')
+        p.with_user(self.bob).action_vote('yes')
+        p.with_user(self.moderator).action_vote('no')
+        p.action_close_voting()
+        self.assertEqual(p.state, 'accepted')
+
+    def test_close_voting_rejected_when_quorum_met_but_majority_no(self):
+        self.category.min_quorum = 2
+        p = self._setup_voting_proposal()
+        p.with_user(self.alice).action_vote('no')
+        p.with_user(self.bob).action_vote('no')
+        p.action_close_voting()
+        self.assertEqual(p.state, 'rejected')
+
+    def test_close_voting_no_quorum_check_when_category_zero(self):
+        """min_quorum=0 means quorum check disabled — legacy behaviour."""
+        self.category.min_quorum = 0
+        p = self._setup_voting_proposal()
+        # Single yes vote → would be inconclusive with quorum, accepted without
+        p.with_user(self.alice).action_vote('yes')
+        p.action_close_voting()
+        self.assertEqual(p.state, 'accepted')
+
     # ── Withdraw ──────────────────────────────────────────────────────────────
 
     def test_author_can_withdraw(self):

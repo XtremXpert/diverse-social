@@ -23,6 +23,7 @@ class GovernanceProposal(models.Model):
         ('voting', 'Voting'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
+        ('inconclusive', 'Inconclusive (quorum)'),
         ('withdrawn', 'Withdrawn'),
     ], default='draft', required=True, tracking=True)
 
@@ -90,6 +91,14 @@ class GovernanceProposal(models.Model):
         self.ensure_one()
         if self.state != 'voting':
             raise UserError(_('Only a voting proposal can be closed.'))
+        # Quorum check first: an under-attended vote is informational, not
+        # a verdict — labelling it accepted/rejected would misrepresent the
+        # turnout. category_id.min_quorum=0 disables the check (legacy
+        # behaviour for any caller that doesn't care about quorum).
+        quorum = self.category_id.min_quorum if self.category_id else 0
+        if quorum and self.vote_count < quorum:
+            self.write({'state': 'inconclusive'})
+            return
         result = 'accepted' if self.yes_count > self.no_count else 'rejected'
         self.write({'state': result})
 
@@ -164,3 +173,10 @@ class GovernanceProposalCategory(models.Model):
     name = fields.Char(required=True, translate=True)
     sequence = fields.Integer(default=10)
     color = fields.Integer(default=0)
+    min_quorum = fields.Integer(
+        'Minimum quorum', default=0,
+        help="Minimum number of votes required for a proposal in this category "
+             "to be conclusive. If fewer voters participate, the proposal "
+             "closes as 'inconclusive' regardless of the yes/no ratio. "
+             "0 disables the quorum check.",
+    )

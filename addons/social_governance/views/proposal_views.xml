@@ -9,7 +9,7 @@
             <list string="Proposals" decoration-info="state == 'open'"
                   decoration-warning="state == 'voting'"
                   decoration-success="state == 'accepted'"
-                  decoration-muted="state in ('rejected','withdrawn')">
+                  decoration-muted="state in ('rejected','inconclusive','withdrawn')">
                 <field name="name"/>
                 <field name="category_id"/>
                 <field name="author_id"/>
@@ -42,7 +42,7 @@
                             invisible="state != 'accepted'"/>
                     <button name="action_withdraw" string="Withdraw"
                             type="object"
-                            invisible="state in ('accepted','rejected','withdrawn')"/>
+                            invisible="state in ('accepted','rejected','inconclusive','withdrawn')"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,open,voting,accepted,rejected"/>
                 </header>
@@ -62,7 +62,7 @@
                     <field name="description"/>
 
                     <notebook>
-                        <page string="Votes" invisible="state not in ('voting','accepted','rejected')">
+                        <page string="Votes" invisible="state not in ('voting','accepted','rejected','inconclusive')">
                             <group>
                                 <field name="vote_count" string="Total Votes"/>
                                 <field name="yes_count" string="Yes"/>
@@ -103,6 +103,8 @@
                 <filter name="open" string="Open" domain="[('state','=','open')]"/>
                 <filter name="voting" string="Voting" domain="[('state','=','voting')]"/>
                 <filter name="accepted" string="Accepted" domain="[('state','=','accepted')]"/>
+                <filter name="inconclusive" string="Inconclusive (quorum)"
+                        domain="[('state','=','inconclusive')]"/>
                 <separator/>
                 <filter name="my_proposals" string="My Proposals"
                         domain="[('author_id','=',uid)]"/>
@@ -131,6 +133,7 @@
             <list string="Proposal Categories" editable="top">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
+                <field name="min_quorum" string="Quorum"/>
                 <field name="color" widget="color_picker"/>
             </list>
         </field>
