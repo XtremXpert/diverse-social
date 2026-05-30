@@ -13,16 +13,18 @@ class TestCategories(TransactionCase):
         super().setUpClass()
         cls.Category = cls.env['social_post_categories.category']
         cls.Post = cls.env['social_base.post']
+        # Test-only codes, prefixed to avoid colliding with leaf-provided
+        # demo categories (e.g. st_isidore_city_club ships an 'alerte' record).
         cls.alerte = cls.Category.create({
-            'name': 'Alerte',
-            'code': 'alerte',
+            'name': 'Test Alerte',
+            'code': 'test_alerte',
             'color': '#dc3545',
             'icon': 'fa-bell',
             'sequence': 10,
         })
         cls.annonce = cls.Category.create({
-            'name': 'Annonce',
-            'code': 'annonce',
+            'name': 'Test Annonce',
+            'code': 'test_annonce',
             'color': '#0d6efd',
             'sequence': 20,
         })
@@ -36,7 +38,7 @@ class TestCategories(TransactionCase):
     def test_code_must_be_unique(self):
         with self.assertRaises(IntegrityError), tools.mute_logger('odoo.sql_db'):
             with self.env.cr.savepoint():
-                self.Category.create({'name': 'Alerte 2', 'code': 'alerte'})
+                self.Category.create({'name': 'Alerte 2', 'code': 'test_alerte'})
 
     def test_code_shape_lowercase_alnum(self):
         with self.assertRaises(ValidationError):
