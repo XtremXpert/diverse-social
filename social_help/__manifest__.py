@@ -6,7 +6,8 @@
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
-        'club_social_profile',
+        'portal',
+        'website',
     ],
     'data': [
         'data/ir_config_parameter.xml',
