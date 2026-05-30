@@ -188,6 +188,11 @@ class SocialAnalyticsDashboard(models.TransientModel):
 
     @api.model
     def _negotiation_stats(self):
+        # social_negotiation is optional — return zeros when the module isn't
+        # in the registry so the dashboard renders cleanly in deployments
+        # that don't ship it.
+        if 'social_negotiation.negotiation' not in self.env:
+            return {'negotiations_active': 0, 'negotiations_pending_signature': 0}
         Neg = self.env['social_negotiation.negotiation'].sudo()
         return {
             'negotiations_active': Neg.search_count([('state', '=', 'active')]),

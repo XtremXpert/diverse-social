@@ -323,6 +323,8 @@ class TestSocialAnalytics(TransactionCase):
     # ── Négociations ──────────────────────────────────────────────────────────
 
     def test_negotiation_stats_active(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
         before = self.Dashboard._negotiation_stats()['negotiations_active']
         self.env['social_negotiation.negotiation'].sudo().create({
             'initiator_id': self.moderator.id,
@@ -333,6 +335,8 @@ class TestSocialAnalytics(TransactionCase):
         self.assertEqual(after, before + 1)
 
     def test_negotiation_stats_pending_signature(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
         before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
         self.env['social_negotiation.negotiation'].sudo().create({
             'initiator_id': self.moderator.id,
@@ -343,6 +347,8 @@ class TestSocialAnalytics(TransactionCase):
         self.assertEqual(after, before + 1)
 
     def test_negotiation_archived_not_in_pending(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
         before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
         self.env['social_negotiation.negotiation'].sudo().create({
             'initiator_id': self.moderator.id,
@@ -424,6 +430,8 @@ class TestSocialAnalytics(TransactionCase):
         self.assertEqual(after, before + 1)
 
     def test_negotiation_reviewing_in_pending_signature(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
         before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
         self.env['social_negotiation.negotiation'].sudo().create({
             'initiator_id': self.moderator.id,
