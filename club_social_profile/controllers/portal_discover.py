@@ -73,9 +73,18 @@ class DiscoverPortal(CustomerPortal):
         excluded_user_ids = (blocked_ids | panic_excluded_ids) - {user.id}
 
         # ── Base domain ───────────────────────────────────────────────────
+        # Listing membres : restreint aux users qui sont *effectivement*
+        # membres du réseau (i.e. ont group_social_user). Un user système
+        # ou un modérateur qui se trouve à avoir un profile (créé par
+        # `get_or_create_for_user` lors d'une visite admin) ne doit PAS
+        # apparaître dans /discover — sa présence dans le listing donne
+        # l'illusion qu'il fait partie de la communauté alors qu'il n'est
+        # ni parrainé ni assujetti aux mêmes règles.
+        social_group_id = request.env.ref('social_base.group_social_user').id
         domain = [
             ('user_id', '!=', user.id),
             ('visibility', '=', 'members'),
+            ('user_id.all_group_ids', 'in', [social_group_id]),
         ]
         if excluded_user_ids:
             domain.append(('user_id', 'not in', list(excluded_user_ids)))
