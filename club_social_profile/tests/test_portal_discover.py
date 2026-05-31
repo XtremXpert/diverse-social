@@ -125,6 +125,31 @@ class TestPortalDiscoverData(TransactionCase):
             lambda p: p.id in [self.p_montreal.id, self.p_quebec.id]
         ))
 
+    # ── Filtrage des non-membres (sans group_social_user) ─────────────────
+
+    def test_user_without_social_group_excluded(self):
+        """A user with a profile but no group_social_user (e.g. admin who
+        visited /my/profile/edit) must NOT appear in /discover listings.
+
+        Reproduces the production scenario where admin.id=2 was showing
+        up as a member card on diverse-cite.com."""
+        sponsorless = self.env['res.users'].create({
+            'name': 'NoSponsor', 'login': 'no_sponsor_data',
+            'email': 'no_sponsor_data@disc.test', 'password': 'Test1234!',
+            'group_ids': [(4, self.env.ref('base.group_user').id)],
+        })
+        sponsorless_profile = self.Profile.sudo().get_or_create_for_user(sponsorless)
+        sponsorless_profile.sudo().write({'visibility': 'members'})
+        social_group_id = self.env.ref('social_base.group_social_user').id
+        domain = [
+            ('user_id', '!=', self.searcher.id),
+            ('visibility', '=', 'members'),
+            ('user_id.all_group_ids', 'in', [social_group_id]),
+        ]
+        results = self.Profile.sudo().search(domain)
+        self.assertNotIn(sponsorless_profile, results)
+        self.assertIn(self.p_montreal, results)
+
     # ── Blocage ───────────────────────────────────────────────────────────
 
     def test_blocked_user_excluded(self):
@@ -251,3 +276,20 @@ class TestPortalDiscoverHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?gender=invalid_value')
         self.assertEqual(resp.status_code, 200)
+
+    def test_discover_excludes_sponsorless_user(self):
+        """A user with a profile but no group_social_user (typical of an
+        admin who happened to visit /my/profile/edit) does not appear in
+        /discover."""
+        group_user = self.env.ref('base.group_user')
+        sponsorless = self.env['res.users'].create({
+            'name': 'NoSponsorHTTP', 'login': 'no_sponsor_http',
+            'email': 'no_sponsor_http@disc.test', 'password': 'Test1234!',
+            'group_ids': [(4, group_user.id)],
+        })
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(sponsorless)
+        profile.sudo().write({'visibility': 'members', 'city': 'Laval'})
+        self.authenticate('admin', 'admin')
+        resp = self.url_open('/discover')
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(b'NoSponsorHTTP', resp.content)
