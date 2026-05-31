@@ -11,7 +11,10 @@ class TestClubMembership(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.group_user = cls.env.ref('base.group_user')
+        cls.group_portal = cls.env.ref('base.group_portal')
         cls.group_social = cls.env.ref('social_base.group_social_user')
+        cls.group_system = cls.env.ref('base.group_system')
+        cls.group_moderator = cls.env.ref('social_base.group_social_moderator')
 
         cls.partner_alice = cls.env['res.partner'].create({
             'name': 'Alice Membre', 'email': 'alice@member.test',
@@ -113,6 +116,49 @@ class TestClubMembership(TransactionCase):
         m.action_activate()
         m.action_cancel()
         self.assertNotIn(self.group_social, self.user_bob.sudo().all_group_ids)
+
+    # ── Internal → Portal downgrade on activation ────────────────────────────
+
+    def test_activate_downgrades_internal_user_to_portal(self):
+        """A plain internal user (default new res.users) becomes portal
+        when their first membership activates — no Enterprise seat needed."""
+        self.assertIn(self.group_user, self.user_bob.all_group_ids)
+        self.assertNotIn(self.group_portal, self.user_bob.all_group_ids)
+        m = self._make_membership(self.partner_bob)
+        m.action_activate()
+        self.assertNotIn(self.group_user, self.user_bob.sudo().all_group_ids)
+        self.assertIn(self.group_portal, self.user_bob.sudo().all_group_ids)
+        self.assertIn(self.group_social, self.user_bob.sudo().all_group_ids)
+
+    def test_activate_keeps_admin_internal(self):
+        """A user with group_system (admin) must NOT be downgraded — they
+        need backend access for moderation/configuration."""
+        self.user_alice.sudo().write({'group_ids': [(4, self.group_system.id)]})
+        m = self._make_membership(self.partner_alice)
+        m.action_activate()
+        self.assertIn(self.group_user, self.user_alice.sudo().all_group_ids)
+        self.assertNotIn(self.group_portal, self.user_alice.sudo().all_group_ids)
+
+    def test_activate_keeps_moderator_internal(self):
+        """social_moderator implies group_user — moderators stay internal."""
+        self.user_alice.sudo().write({'group_ids': [(4, self.group_moderator.id)]})
+        m = self._make_membership(self.partner_alice)
+        m.action_activate()
+        self.assertIn(self.group_user, self.user_alice.sudo().all_group_ids)
+        self.assertNotIn(self.group_portal, self.user_alice.sudo().all_group_ids)
+
+    def test_activate_noop_when_already_portal(self):
+        """User already portal stays portal (no swap thrash)."""
+        self.user_alice.sudo().write({
+            'group_ids': [(3, self.group_user.id), (4, self.group_portal.id)],
+        })
+        m = self._make_membership(self.partner_alice)
+        m.action_activate()
+        self.assertIn(self.group_portal, self.user_alice.sudo().all_group_ids)
+        self.assertNotIn(self.group_user, self.user_alice.sudo().all_group_ids)
+        self.assertIn(self.group_social, self.user_alice.sudo().all_group_ids)
+
+    # ── Multi-membership behaviour ────────────────────────────────────────────
 
     def test_two_active_memberships_keep_access_on_cancel_one(self):
         m1 = self._make_membership(self.partner_alice)
