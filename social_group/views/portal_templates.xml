@@ -198,6 +198,54 @@
                             </div>
                         </t>
 
+                        <!-- Invite a member (group admins) -->
+                        <t t-if="is_group_admin">
+                            <hr/>
+                            <h5>Invite a member</h5>
+                            <form t-attf-action="/groups/#{group.id}/invite" method="post" class="mb-3">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="mb-2">
+                                    <select name="invitee_id" class="form-select form-select-sm" required="required">
+                                        <option value="">— Select a member —</option>
+                                        <t t-foreach="invitable_users" t-as="u">
+                                            <option t-att-value="u.id">
+                                                <t t-esc="u.name"/>
+                                                <t t-if="u.login != u.name"> (<t t-esc="u.login"/>)</t>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <textarea name="message" class="form-control form-control-sm" rows="2"
+                                              placeholder="Optional personal message"/>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Send invitation</button>
+                            </form>
+                        </t>
+
+                        <!-- Pending invitations sent (group admins) -->
+                        <t t-if="is_group_admin and pending_invitations">
+                            <h6>Pending invitations sent (<t t-esc="len(pending_invitations)"/>)</h6>
+                            <div class="list-group mb-3">
+                                <t t-foreach="pending_invitations" t-as="inv">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                        <span>
+                                            <strong t-esc="inv.invitee_user_id.name"/>
+                                            <small class="text-muted ms-2">
+                                                invited by <t t-esc="inv.inviter_user_id.name"/>,
+                                                <span t-field="inv.create_date" t-options='{"widget":"date"}'/>
+                                            </small>
+                                        </span>
+                                        <form t-attf-action="/groups/#{group.id}/invitations/#{inv.id}/revoke"
+                                              method="post" class="d-inline">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Revoke</button>
+                                        </form>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
                         <t t-if="is_member and posts">
                             <hr/>
                             <h5>Recent posts</h5>
@@ -282,6 +330,39 @@
                 <t t-set="title">My groups</t>
             </t>
             <div class="container mt-3">
+                <!-- Pending invitations received -->
+                <t t-if="pending_invitations">
+                    <div class="alert alert-info">
+                        <h5>Group invitations (<t t-esc="len(pending_invitations)"/>)</h5>
+                        <div class="list-group">
+                            <t t-foreach="pending_invitations" t-as="inv">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a t-attf-href="/groups/#{inv.group_id.id}" t-esc="inv.group_id.name" class="fw-bold"/>
+                                        <small class="text-muted ms-2">
+                                            invited by <t t-esc="inv.inviter_user_id.name"/>,
+                                            <span t-field="inv.create_date" t-options='{"widget":"date"}'/>
+                                        </small>
+                                        <div t-if="inv.message" class="small mt-1">
+                                            <em t-esc="inv.message"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <form t-attf-action="/groups/invitations/#{inv.id}/accept" method="post" class="d-inline">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                        </form>
+                                        <form t-attf-action="/groups/invitations/#{inv.id}/decline" method="post" class="d-inline">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Decline</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
                 <t t-if="groups">
                     <div class="row">
                         <t t-foreach="groups" t-as="group">
