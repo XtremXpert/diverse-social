@@ -109,8 +109,50 @@ class ClubMembership(models.Model):
 
     # ── Social network access ────────────────────────────────────────────────
 
+    # Groups that mark a user as deliberately "internal" (admin or
+    # moderator). Members in these groups must stay internal — never
+    # downgrade them to portal on activation.
+    _BACKEND_ROLE_XML_IDS = (
+        'base.group_system',
+        'base.group_erp_manager',
+        'social_base.group_social_moderator',
+        'social_base.group_social_admin',
+    )
+
+    def _convert_to_portal_if_eligible(self, user):
+        """Downgrade `user` from internal to portal when nothing else
+        requires backend access.
+
+        The default `res.users.create()` adds `base.group_user` (internal,
+        backend-enabled). For social-network members that costs an
+        Enterprise license seat and exposes /odoo unnecessarily. Once a
+        membership becomes active, swap that for `base.group_portal`
+        unless the user holds a role that *needs* the backend.
+
+        Idempotent: skips when the user is already portal or never was
+        internal.
+        """
+        if not user:
+            return
+        for xml_id in self._BACKEND_ROLE_XML_IDS:
+            if user.has_group(xml_id):
+                return
+        internal = self.env.ref('base.group_user', raise_if_not_found=False)
+        portal = self.env.ref('base.group_portal', raise_if_not_found=False)
+        if not (internal and portal):
+            return
+        if portal in user.group_ids:
+            return  # déjà portal, rien à faire
+        if internal not in user.group_ids:
+            return  # ni internal ni portal (public ?) — on ne touche pas
+        user.sudo().write({'group_ids': [(3, internal.id), (4, portal.id)]})
+
     def _sync_social_access(self, grant):
-        """Grant or revoke group_social_user based on the membership state."""
+        """Grant or revoke group_social_user based on the membership state.
+
+        On grant, also downgrade the user from internal to portal when
+        eligible (see `_convert_to_portal_if_eligible`).
+        """
         group = self.env.ref('social_base.group_social_user')
         for rec in self:
             user = rec.user_id
@@ -118,6 +160,7 @@ class ClubMembership(models.Model):
                 continue
             if grant:
                 user.sudo().write({'group_ids': [(4, group.id)]})
+                rec._convert_to_portal_if_eligible(user)
             else:
                 # Only revoke if no other active membership exists
                 other_active = self.search([
