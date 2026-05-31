@@ -80,12 +80,31 @@ class GroupPortal(CustomerPortal):
             ('group_id', '=', group.id),
             ('state', '=', 'published'),
         ], limit=20, order='id desc') if is_member else request.env['social_base.post']
+        is_group_admin = group.is_admin(user)
+        pending_invitations = request.env['social_group.invitation'].sudo().search([
+            ('group_id', '=', group.id),
+            ('state', '=', 'pending'),
+        ]) if is_group_admin else request.env['social_group.invitation']
+        # Candidates: social users that are neither members nor already invited
+        invitable_users = request.env['res.users']
+        if is_group_admin:
+            already_invited_ids = pending_invitations.mapped('invitee_user_id.id')
+            invitable_users = request.env['res.users'].sudo().search([
+                ('all_group_ids', 'in', [
+                    request.env.ref('social_base.group_social_user').id,
+                ]),
+                ('id', 'not in', group.member_ids.ids + already_invited_ids),
+                ('active', '=', True),
+            ], order='name', limit=200)
         return request.render('social_group.portal_group_detail', {
             'group': group,
             'is_member': is_member,
             'is_mod': is_mod,
+            'is_group_admin': is_group_admin,
             'pending_request': pending_request,
             'pending_requests': pending_requests,
+            'pending_invitations': pending_invitations,
+            'invitable_users': invitable_users,
             'posts': posts,
             'page_name': 'groups',
             'error': kw.get('error'),
@@ -169,7 +188,84 @@ class GroupPortal(CustomerPortal):
         groups = request.env['social_group.group'].search([
             ('member_ids', 'in', request.env.user.id),
         ], order='name')
+        pending_invitations = request.env['social_group.invitation'].sudo().search([
+            ('invitee_user_id', '=', request.env.user.id),
+            ('state', '=', 'pending'),
+        ])
         return request.render('social_group.portal_my_groups', {
             'groups': groups,
+            'pending_invitations': pending_invitations,
             'page_name': 'groups',
         })
+
+    # ── Invitations ──────────────────────────────────────────────────────
+
+    @route('/groups/<int:group_id>/invite', auth='user', methods=['POST'],
+           website=True, csrf=True)
+    def group_invite(self, group_id, invitee_id=None, message='', **kw):
+        """Group admin sends an invitation to a specific user."""
+        group = request.env['social_group.group'].sudo().browse(group_id).exists()
+        if not group:
+            raise NotFound()
+        if not group.is_admin(request.env.user):
+            raise Forbidden()
+        try:
+            invitee_id = int(invitee_id or 0)
+        except (TypeError, ValueError):
+            return request.redirect(f'/groups/{group_id}?error=invitee_required')
+        if not invitee_id:
+            return request.redirect(f'/groups/{group_id}?error=invitee_required')
+        invitee = request.env['res.users'].sudo().browse(invitee_id).exists()
+        if not invitee or not invitee.has_group('social_base.group_social_user'):
+            return request.redirect(f'/groups/{group_id}?error=invitee_not_found')
+        # savepoint: ValidationError ("already member" / "self-invite") rolls back cleanly
+        try:
+            with request.env.cr.savepoint():
+                request.env['social_group.invitation'].sudo().create({
+                    'group_id': group_id,
+                    'invitee_user_id': invitee_id,
+                    'inviter_user_id': request.env.user.id,
+                    'message': (message or '').strip() or False,
+                })
+        except Exception:
+            return request.redirect(f'/groups/{group_id}?error=invite_failed')
+        return request.redirect(f'/groups/{group_id}?invited=1')
+
+    @route('/groups/invitations/<int:inv_id>/accept', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def invitation_accept(self, inv_id, **kw):
+        inv = request.env['social_group.invitation'].sudo().browse(inv_id).exists()
+        if not inv or inv.invitee_user_id != request.env.user:
+            raise Forbidden()
+        try:
+            inv.with_user(request.env.user).action_accept()
+        except Exception:
+            return request.redirect('/my/groups?error=accept_failed')
+        return request.redirect(f'/groups/{inv.group_id.id}?joined=1')
+
+    @route('/groups/invitations/<int:inv_id>/decline', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def invitation_decline(self, inv_id, **kw):
+        inv = request.env['social_group.invitation'].sudo().browse(inv_id).exists()
+        if not inv or inv.invitee_user_id != request.env.user:
+            raise Forbidden()
+        try:
+            inv.with_user(request.env.user).action_decline()
+        except Exception:
+            return request.redirect('/my/groups?error=decline_failed')
+        return request.redirect('/my/groups?declined=1')
+
+    @route('/groups/<int:group_id>/invitations/<int:inv_id>/revoke', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def invitation_revoke(self, group_id, inv_id, **kw):
+        group = request.env['social_group.group'].sudo().browse(group_id).exists()
+        if not group or not group.is_admin(request.env.user):
+            raise Forbidden()
+        inv = request.env['social_group.invitation'].sudo().browse(inv_id).exists()
+        if not inv or inv.group_id.id != group_id:
+            raise NotFound()
+        try:
+            inv.with_user(request.env.user).action_revoke()
+        except Exception:
+            pass
+        return request.redirect(f'/groups/{group_id}?revoked=1')
