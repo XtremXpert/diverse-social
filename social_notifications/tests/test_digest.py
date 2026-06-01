@@ -242,6 +242,7 @@ class TestDigestPreview(HttpCase):
 
     def test_preview_requires_auth(self):
         """Anonymous requests are redirected to login."""
-        resp = self.url_open('/my/profile/digest_preview', allow_redirects=False)
-        self.assertIn(resp.status_code, (302, 303))
-        self.assertIn('/web/login', resp.headers.get('Location', ''))
+        # Suit la chaîne de redirection (préfixe de langue éventuel en site
+        # multilingue) jusqu'à la page de login.
+        resp = self.url_open('/my/profile/digest_preview')
+        self.assertIn('/web/login', resp.url)
