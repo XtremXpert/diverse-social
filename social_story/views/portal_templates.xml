@@ -3,12 +3,10 @@
 
     <template id="portal_my_home_stories" name="Portal My Home: Stories" inherit_id="portal.portal_my_home" priority="40">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-if="my_stories_count is not None">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">Mes stories actives</t>
-                    <t t-set="url">/my/stories</t>
-                    <t t-set="count" t-value="my_stories_count"/>
-                </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Stories</t>
+                <t t-set="url">/my/stories</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>

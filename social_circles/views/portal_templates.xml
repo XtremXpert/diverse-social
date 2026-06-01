@@ -5,12 +5,10 @@
     <template id="portal_my_home_circles" name="Portal My Home: Circles"
               inherit_id="portal.portal_my_home" priority="45">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-if="my_circles_count is not None">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">My circles de confiance</t>
-                    <t t-set="url">/my/circles</t>
-                    <t t-set="count" t-value="my_circles_count"/>
-                </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Cercles</t>
+                <t t-set="url">/my/circles</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>

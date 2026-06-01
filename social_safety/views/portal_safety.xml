@@ -234,9 +234,9 @@
               name="Portal — Safety">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Safety and privacy</t>
+                <t t-set="title">Sécurité</t>
                 <t t-set="url">/safety</t>
-                <t t-set="placeholder_count">0</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>

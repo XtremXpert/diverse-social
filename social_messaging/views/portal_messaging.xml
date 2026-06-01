@@ -25,7 +25,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Messages</t>
                 <t t-set="url">/my/messages</t>
-                <t t-set="placeholder_count">0</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>
