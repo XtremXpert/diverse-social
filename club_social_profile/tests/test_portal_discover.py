@@ -270,7 +270,8 @@ class TestPortalDiscoverHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'action="/discover"', resp.content)
+        # Tolère un préfixe de langue (/en, /fr) ajouté en site multilingue.
+        self.assertRegex(resp.content, rb'action="[^"]*/discover"')
 
     def test_discover_invalid_filter_ignored(self):
         self.authenticate('admin', 'admin')
