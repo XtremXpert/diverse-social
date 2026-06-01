@@ -317,9 +317,9 @@
               name="Portal — Edit my profile">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">My profile</t>
+                <t t-set="title">Mon profil</t>
                 <t t-set="url">/my/profile/edit</t>
-                <t t-set="placeholder_count">0</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>

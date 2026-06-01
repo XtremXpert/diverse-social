@@ -5,9 +5,10 @@
     <template id="portal_my_home_membership" name="Portal: memberships" inherit_id="portal.portal_my_home" priority="30">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">My memberships</t>
+                <t t-set="title">Adhésion</t>
                 <t t-set="url">/my/membership</t>
                 <t t-set="placeholder_count">membership_count</t>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
     </template>

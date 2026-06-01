@@ -41,19 +41,4 @@
         <field name="sequence">10</field>
     </record>
 
-    <!-- ════════ My Account (profile & settings) ════════ -->
-    <record id="menu_my_account_root" model="website.menu">
-        <field name="name">My Account</field>
-        <field name="url">/my/profile/edit</field>
-        <field name="parent_id" ref="website.main_menu"/>
-        <field name="sequence">40</field>
-    </record>
-
-    <record id="menu_social_profile" model="website.menu">
-        <field name="name">My Profile</field>
-        <field name="url">/my/profile/edit</field>
-        <field name="parent_id" ref="menu_my_account_root"/>
-        <field name="sequence">10</field>
-    </record>
-
 </odoo>
