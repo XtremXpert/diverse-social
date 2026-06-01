@@ -70,14 +70,15 @@ class TestBlogRestricted(common.HttpCase):
     # ── Blog membres — visiteur anonyme ───────────────────────────────────
 
     def test_blog_members_anonyme_redirige(self):
-        resp = self.url_open(self.url_members, allow_redirects=False)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn('/web/login', resp.headers.get('Location', ''))
+        # Suit la chaîne de redirection (préfixe de langue éventuel en site
+        # multilingue) jusqu'à la page de login.
+        resp = self.url_open(self.url_members)
+        self.assertIn('/web/login', resp.url)
 
     def test_post_members_anonyme_redirige(self):
-        resp = self.url_open(self.url_post_members, allow_redirects=False)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn('/web/login', resp.headers.get('Location', ''))
+        # Idem : tolère le préfixe de langue avant la redirection vers le login.
+        resp = self.url_open(self.url_post_members)
+        self.assertIn('/web/login', resp.url)
 
     # ── Blog membres — utilisateur portal (non-membre) ────────────────────
 
