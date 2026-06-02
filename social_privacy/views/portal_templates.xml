@@ -69,6 +69,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Confidentialité</t>
                 <t t-set="url">/my/privacy</t>
+                <t t-set="icon" t-value="'/social_privacy/static/src/img/privacy.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

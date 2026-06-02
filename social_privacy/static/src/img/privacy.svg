@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Confidentialité">
+  <path d="M32 5 53 13.5 V30 C53 44 44 54 32 59 20 54 11 44 11 30 V13.5 Z" fill="#e94560"/>
+  <path d="M27 32 h10 a2 2 0 0 1 2 2 v8 a2 2 0 0 1 -2 2 H27 a2 2 0 0 1 -2 -2 v-8 a2 2 0 0 1 2 -2 z" fill="#ffffff"/>
+  <path d="M28.5 32 v-3.5 a3.5 3.5 0 0 1 7 0 V32" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+  <circle cx="32" cy="37" r="1.8" fill="#e94560"/>
+</svg>
