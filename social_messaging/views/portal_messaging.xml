@@ -25,6 +25,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Messages</t>
                 <t t-set="url">/my/messages</t>
+                <t t-set="icon" t-value="'/social_messaging/static/src/img/messages.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

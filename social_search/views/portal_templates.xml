@@ -7,6 +7,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Recherche</t>
                 <t t-set="url">/search</t>
+                <t t-set="icon" t-value="'/social_search/static/src/img/search.svg'"/>
                 <t t-set="placeholder_count" t-value="0"/>
             </t>
         </xpath>

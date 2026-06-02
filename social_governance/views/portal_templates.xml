@@ -9,6 +9,7 @@
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="title">Proposals open for voting</t>
                     <t t-set="url">/governance</t>
+                    <t t-set="icon" t-value="'/social_governance/static/src/img/governance.svg'"/>
                     <t t-set="count" t-value="proposals_voting_count"/>
                 </t>
             </t>

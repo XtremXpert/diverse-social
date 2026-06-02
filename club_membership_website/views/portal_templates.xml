@@ -7,6 +7,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Adhésion</t>
                 <t t-set="url">/my/membership</t>
+                <t t-set="icon" t-value="'/club_membership_website/static/src/img/membership.svg'"/>
                 <t t-set="placeholder_count">membership_count</t>
                 <t t-set="config_card" t-value="True"/>
             </t>

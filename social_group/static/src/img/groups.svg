@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Groupes">
+  <circle cx="32" cy="22" r="8" fill="#e94560"/>
+  <circle cx="15" cy="27" r="6" fill="#e94560"/>
+  <circle cx="49" cy="27" r="6" fill="#e94560"/>
+  <path d="M18 50 C18 40 24 36 32 36 C40 36 46 40 46 50 Z" fill="#e94560"/>
+  <path d="M5 50 C5 43 8 39 15 38 C12 41 11 45 11 50 Z" fill="#e94560"/>
+  <path d="M59 50 C59 43 56 39 49 38 C52 41 53 45 53 50 Z" fill="#e94560"/>
+</svg>

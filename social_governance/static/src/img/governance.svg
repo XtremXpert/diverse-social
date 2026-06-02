@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Gouvernance">
+  <path d="M28 12 L46 16 L42 33 L24 29 Z" fill="#e94560"/>
+  <path d="M31 19 L34 22 L40 16" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="11" y="30" width="42" height="24" rx="3" fill="#e94560"/>
+  <rect x="24" y="34" width="16" height="4" rx="2" fill="#ffffff"/>
+</svg>

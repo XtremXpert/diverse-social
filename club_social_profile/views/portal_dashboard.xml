@@ -8,6 +8,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tableau de bord</t>
                 <t t-set="url">/my/dashboard</t>
+                <t t-set="icon" t-value="'/club_social_profile/static/src/img/dashboard.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

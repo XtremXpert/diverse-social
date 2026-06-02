@@ -142,6 +142,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Notifications</t>
                 <t t-set="url">/social/notifications</t>
+                <t t-set="icon" t-value="'/social_notifications/static/src/img/notifications.svg'"/>
                 <t t-set="placeholder_count">0</t>
             </t>
         </xpath>

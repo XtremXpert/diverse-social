@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Explore members">
+  <path d="M40 40 L54 54" stroke="#e94560" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="27" cy="27" r="18" fill="#e94560"/>
+  <circle cx="22" cy="24" r="4" fill="#ffffff"/>
+  <circle cx="32" cy="24" r="4" fill="#ffffff"/>
+  <path d="M15 38 C15 32 19 30 22 30 C25 30 26 31 27 33 C28 31 29 30 32 30 C35 30 39 32 39 38 Z" fill="#ffffff"/>
+</svg>

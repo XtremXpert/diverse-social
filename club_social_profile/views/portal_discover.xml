@@ -8,6 +8,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Découvrir</t>
                 <t t-set="url">/discover</t>
+                <t t-set="icon" t-value="'/club_social_profile/static/src/img/discover.svg'"/>
                 <t t-set="placeholder_count">discover_count</t>
                 <t t-set="config_card" t-value="True"/>
             </t>

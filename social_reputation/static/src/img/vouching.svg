@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Parrainages">
+  <path d="M24 38 L19 58 L32 50 L45 58 L40 38 Z" fill="#e94560"/>
+  <circle cx="32" cy="26" r="17" fill="#e94560"/>
+  <path d="M32 17 l3.2 6.5 7.2 1 -5.2 5.1 1.2 7.1 -6.4 -3.4 -6.4 3.4 1.2 -7.1 -5.2 -5.1 7.2 -1 Z" fill="#ffffff"/>
+</svg>

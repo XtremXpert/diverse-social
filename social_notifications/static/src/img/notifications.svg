@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Notifications">
+  <circle cx="32" cy="10" r="3.5" fill="#e94560"/>
+  <path d="M32 11 C25 11 21 15 21 22 L21 31 C21 37 17 41 15 43 L49 43 C47 41 43 37 43 31 L43 22 C43 15 39 11 32 11 Z" fill="#e94560"/>
+  <path d="M26 47 C26 50 29 53 32 53 C35 53 38 50 38 47 Z" fill="#e94560"/>
+</svg>

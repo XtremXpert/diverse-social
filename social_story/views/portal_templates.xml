@@ -6,6 +6,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Stories</t>
                 <t t-set="url">/my/stories</t>
+                <t t-set="icon" t-value="'/social_story/static/src/img/stories.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>
