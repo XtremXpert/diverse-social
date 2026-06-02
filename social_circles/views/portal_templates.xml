@@ -8,6 +8,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Cercles</t>
                 <t t-set="url">/my/circles</t>
+                <t t-set="icon" t-value="'/social_circles/static/src/img/circles.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

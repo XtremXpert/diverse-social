@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Messages">
+  <path d="M12 14 H52 C54 14 56 16 56 18 V40 C56 42 54 44 52 44 H28 L18 53 V44 H12 C10 44 8 42 8 40 V18 C8 16 10 14 12 14 Z" fill="#e94560"/>
+  <circle cx="24" cy="29" r="3" fill="#ffffff"/>
+  <circle cx="32" cy="29" r="3" fill="#ffffff"/>
+  <circle cx="40" cy="29" r="3" fill="#ffffff"/>
+</svg>

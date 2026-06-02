@@ -286,6 +286,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Explore members</t>
                 <t t-set="url">/members</t>
+                <t t-set="icon" t-value="'/social_discovery/static/src/img/members.svg'"/>
                 <t t-set="placeholder_count">0</t>
             </t>
         </xpath>

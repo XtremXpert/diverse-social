@@ -6,6 +6,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Groupes</t>
                 <t t-set="url">/my/groups</t>
+                <t t-set="icon" t-value="'/social_group/static/src/img/groups.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

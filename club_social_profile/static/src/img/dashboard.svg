@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Tableau de bord">
+  <rect x="10" y="10" width="20" height="20" rx="3" fill="#e94560"/>
+  <rect x="34" y="10" width="20" height="13" rx="3" fill="#e94560"/>
+  <rect x="34" y="27" width="20" height="27" rx="3" fill="#e94560"/>
+  <rect x="10" y="34" width="20" height="20" rx="3" fill="#e94560"/>
+</svg>

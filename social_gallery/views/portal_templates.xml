@@ -16,6 +16,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Galerie</t>
                 <t t-set="url">/my/gallery</t>
+                <t t-set="icon" t-value="'/social_gallery/static/src/img/gallery.svg'"/>
                 <t t-set="placeholder_count">gallery_pending_count</t>
                 <t t-set="config_card" t-value="True"/>
             </t>

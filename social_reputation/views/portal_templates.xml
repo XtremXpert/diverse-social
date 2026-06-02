@@ -8,6 +8,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Parrainages</t>
                 <t t-set="url">/my/vouching</t>
+                <t t-set="icon" t-value="'/social_reputation/static/src/img/vouching.svg'"/>
                 <t t-set="placeholder_count">vouching_count</t>
                 <t t-set="config_card" t-value="True"/>
             </t>

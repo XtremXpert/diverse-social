@@ -319,6 +319,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Mon profil</t>
                 <t t-set="url">/my/profile/edit</t>
+                <t t-set="icon" t-value="'/club_social_profile/static/src/img/profile.svg'"/>
                 <t t-set="config_card" t-value="True"/>
             </t>
         </xpath>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Adhésion">
+  <rect x="8" y="14" width="48" height="36" rx="5" fill="#e94560"/>
+  <circle cx="22" cy="28" r="6" fill="#ffffff"/>
+  <path d="M14 45 C14 39 18 36 22 36 C26 36 30 39 30 45 Z" fill="#ffffff"/>
+  <rect x="36" y="24" width="14" height="3.2" rx="1.6" fill="#ffffff"/>
+  <rect x="36" y="31" width="14" height="3.2" rx="1.6" fill="#ffffff"/>
+  <rect x="36" y="38" width="10" height="3.2" rx="1.6" fill="#ffffff"/>
+</svg>
