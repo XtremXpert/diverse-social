@@ -4,7 +4,12 @@
     <!-- ══ Portal home menu entry ════════════════════════════════════════ -->
     <template id="portal_my_home_dashboard" name="Social dashboard"
               inherit_id="portal.portal_my_home" priority="20">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+        <!-- Carte config (config_card) → la placer dans portal_common_category,
+             avec Adresses / Connexion & Sécurité. La mettre comme sœur de
+             .o_portal_docs la sortait de la grille Bootstrap (col-md-6 hors .row).
+             On insère avant la carte Adresses pour la garder en tête des cartes
+             de config (qui sont order:0, donc affichées en premier). -->
+        <xpath expr="//div[@id='portal_common_category']/t[@t-call='portal.portal_docs_entry'][t[@t-set='url' and @t-value=&quot;'/my/addresses'&quot;]]" position="before">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tableau de bord</t>
                 <t t-set="url">/my/dashboard</t>

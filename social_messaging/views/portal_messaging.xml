@@ -21,7 +21,11 @@
     <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
     <template id="portal_my_home_messages" name="Private Messages"
               inherit_id="portal.portal_my_home" priority="30">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+        <!-- Carte config → dans portal_common_category, avant Adresses (priorité 30 :
+             s'insère juste après Tableau de bord, ce qui donne l'ordre
+             Tableau de bord → Messages → Adresses → Connexion). Cf. note dans
+             club_social_profile/portal_dashboard.xml. -->
+        <xpath expr="//div[@id='portal_common_category']/t[@t-call='portal.portal_docs_entry'][t[@t-set='url' and @t-value=&quot;'/my/addresses'&quot;]]" position="before">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Messages</t>
                 <t t-set="url">/my/messages</t>
