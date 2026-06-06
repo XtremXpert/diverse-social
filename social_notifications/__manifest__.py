@@ -13,7 +13,6 @@
         'social_governance',
         'social_group',
         'social_messaging',
-        'social_negotiation',
         'social_reputation',
         'social_story',
         'portal',

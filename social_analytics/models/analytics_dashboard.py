@@ -41,9 +41,9 @@ class SocialAnalyticsDashboard(models.TransientModel):
     vouchings_active = fields.Integer("Parrainages actifs", readonly=True)
     vouchings_month = fields.Integer("Nouveaux parrainages (30 j)", readonly=True)
 
-    # ── Négociations ──────────────────────────────────────────────────────────
-    negotiations_active = fields.Integer("Négociations actives", readonly=True)
-    negotiations_pending_signature = fields.Integer("En attente de signature", readonly=True)
+    # ── Négociations (disabled, module social_negotiation not included)
+    # negotiations_active = fields.Integer("Négociations actives", readonly=True)
+    # negotiations_pending_signature = fields.Integer("En attente de signature", readonly=True)
 
     @api.model
     def get_dashboard_data(self):
@@ -62,7 +62,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'activity': self._activity_stats(week_ago),
             'gallery': self._gallery_stats(month_ago),
             'reputation': self._reputation_stats(month_ago),
-            'negotiation': self._negotiation_stats(),
+            # 'negotiation': self._negotiation_stats(),  # disabled: social_negotiation not included
             'generated_at': now.isoformat(),
         }
 
@@ -186,15 +186,16 @@ class SocialAnalyticsDashboard(models.TransientModel):
             ]),
         }
 
-    @api.model
-    def _negotiation_stats(self):
-        Neg = self.env['social_negotiation.negotiation'].sudo()
-        return {
-            'negotiations_active': Neg.search_count([('state', '=', 'active')]),
-            'negotiations_pending_signature': Neg.search_count([
-                ('state', 'in', ['shared', 'reviewing']),
-            ]),
-        }
+    # Disabled: social_negotiation module not included
+    # @api.model
+    # def _negotiation_stats(self):
+    #     Neg = self.env['social_negotiation.negotiation'].sudo()
+    #     return {
+    #         'negotiations_active': Neg.search_count([('state', '=', 'active')]),
+    #         'negotiations_pending_signature': Neg.search_count([
+    #             ('state', 'in', ['shared', 'reviewing']),
+    #         ]),
+    #     }
 
     @api.model
     def open_dashboard(self):
@@ -219,7 +220,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
         act = data['activity']
         gal = data['gallery']
         rep = data['reputation']
-        neg = data['negotiation']
+        # neg = data['negotiation']  # disabled
         self.write({
             'members_active': m['active'],
             'members_new_month': m['new_month'],
@@ -241,8 +242,8 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'galleries_total': gal['galleries_total'],
             'vouchings_active': rep['vouchings_active'],
             'vouchings_month': rep['vouchings_month'],
-            'negotiations_active': neg['negotiations_active'],
-            'negotiations_pending_signature': neg['negotiations_pending_signature'],
+            # 'negotiations_active': neg['negotiations_active'],
+            # 'negotiations_pending_signature': neg['negotiations_pending_signature'],
         })
 
     def action_refresh(self):

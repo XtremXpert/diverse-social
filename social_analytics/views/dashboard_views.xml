@@ -107,7 +107,8 @@
                         </group>
                     </group>
 
-                    <!-- Négociations -->
+                    <!-- Négociations - DÉSACTIVÉ (module social_negotiation exclu) -->
+                    <!--
                     <group string="Négociations">
                         <group>
                             <field name="negotiations_active"/>
@@ -116,6 +117,7 @@
                             <field name="negotiations_pending_signature"/>
                         </group>
                     </group>
+                    -->
 
                     <!-- Actions rapides -->
                     <group string="Actions rapides">

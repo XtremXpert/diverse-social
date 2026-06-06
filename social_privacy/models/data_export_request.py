@@ -144,21 +144,22 @@ class DataExportRequest(models.Model):
             'read_by_ids': list(m.read_by_ids.ids) if m.read_by_ids else [],
         } for m in msgs]
 
-        # Negotiations
-        Neg = self.env['social_negotiation.negotiation'].sudo()
-        negs = Neg.search([
-            '|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)
-        ])
-        res['negotiations'] = [{
-            'id': n.id,
-            'role': 'initiator' if n.initiator_id == user else 'partner',
-            'state': n.state,
-            'version': n.version,
-            'item_count': n.item_count,
-            'agreement_score': n.agreement_score,
-            'is_fully_signed': n.is_fully_signed,
-            'create_date': str(n.create_date),
-        } for n in negs]
+        # Negotiations (disabled: social_negotiation not included)
+        res['negotiations'] = []
+        # Neg = self.env['social_negotiation.negotiation'].sudo()
+        # negs = Neg.search([
+        #     '|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)
+        # ])
+        # res['negotiations'] = [{
+        #     'id': n.id,
+        #     'role': 'initiator' if n.initiator_id == user else 'partner',
+        #     'state': n.state,
+        #     'version': n.version,
+        #     'item_count': n.item_count,
+        #     'agreement_score': n.agreement_score,
+        #     'is_fully_signed': n.is_fully_signed,
+        #     'create_date': str(n.create_date),
+        # } for n in negs]
 
         # Votes
         Vote = self.env['social_governance.vote'].sudo()

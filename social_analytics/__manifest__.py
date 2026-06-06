@@ -11,7 +11,6 @@
         'club_social_moderation',
         'social_gallery',
         'social_governance',
-        'social_negotiation',
         'social_reputation',
         'club_membership',
         'social_story',

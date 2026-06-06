@@ -13,10 +13,12 @@
         <field name="name">Social Profile Data</field>
         <field name="description">Processing of member profile information including identity, preferences, and visibility settings.</field>
     </record>
+    <!-- disabled: social_negotiation module not included
     <record id="privacy_activity_social_negotiations" model="privacy.activity">
         <field name="name">Negotiation Documents</field>
         <field name="description">Processing of co-authored negotiation documents and consent records.</field>
     </record>
+    -->
     <record id="privacy_activity_social_governance" model="privacy.activity">
         <field name="name">Community Governance</field>
         <field name="description">Processing of proposals, votes, and decision logs for community governance.</field>

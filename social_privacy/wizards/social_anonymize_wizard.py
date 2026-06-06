@@ -71,9 +71,10 @@ class SocialAnonymizeWizard(models.TransientModel):
             wiz.message_count = self.env['social_messaging.message'].sudo().search_count(
                 [('author_id', '=', user.id)]
             )
-            wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
-                ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
-            )
+            wiz.negotiation_count = 0  # disabled: social_negotiation not included
+            # wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
+            #     ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
+            # )
             wiz.vote_count = self.env['social_governance.vote'].sudo().search_count(
                 [('voter_id', '=', user.id)]
             )
@@ -121,7 +122,7 @@ class SocialAnonymizeWizard(models.TransientModel):
         self._anonymize_posts(user)
         self._anonymize_comments(user)
         self._anonymize_messages(user)
-        self._anonymize_negotiations(user)
+        # self._anonymize_negotiations(user)  # disabled: social_negotiation not included
         self._anonymize_votes(user)
         self._anonymize_vouchings(user)
         self._anonymize_profile_visits(user)
@@ -215,20 +216,21 @@ class SocialAnonymizeWizard(models.TransientModel):
         # Private messages are fully deleted (most sensitive)
         msgs.unlink()
 
-    def _anonymize_negotiations(self, user):
-        Neg = self.env['social_negotiation.negotiation'].sudo()
-        anonymous_id = self._anonymous_user().id
-        negs = Neg.search([
-            '|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)
-        ])
-        for neg in negs:
-            neg.action_archive()
-            vals = {}
-            if neg.initiator_id == user:
-                vals['initiator_id'] = anonymous_id
-            if neg.partner_id == user:
-                vals['partner_id'] = anonymous_id
-            neg.write(vals)
+    # disabled: social_negotiation module not included
+    # def _anonymize_negotiations(self, user):
+    #     Neg = self.env['social_negotiation.negotiation'].sudo()
+    #     anonymous_id = self._anonymous_user().id
+    #     negs = Neg.search([
+    #         '|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)
+    #     ])
+    #     for neg in negs:
+    #         neg.action_archive()
+    #         vals = {}
+    #         if neg.initiator_id == user:
+    #             vals['initiator_id'] = anonymous_id
+    #         if neg.partner_id == user:
+    #             vals['partner_id'] = anonymous_id
+    #         neg.write(vals)
 
     def _anonymize_votes(self, user):
         Vote = self.env['social_governance.vote'].sudo()
@@ -281,11 +283,11 @@ class SocialAnonymizeWizard(models.TransientModel):
         Story = self.env['social_story.story'].sudo()
         stories = Story.search([('author_id', '=', user.id)])
         stories.unlink()
-
     def _anonymize_consent_requests(self, user):
-        Request = self.env['social_consent.request'].sudo()
-        reqs = Request.search([('requester_id', '=', user.id)])
-        reqs.unlink()
+        pass  # disabled: social_consent module not included
+        # Request = self.env['social_consent.request'].sudo()
+        # reqs = Request.search([('requester_id', '=', user.id)])
+        # reqs.unlink()
 
     def _anonymize_group_memberships(self, user):
         # Remove user from all groups (unlink from m2m)
