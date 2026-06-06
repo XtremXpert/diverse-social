@@ -215,6 +215,26 @@ class SocialAnonymizeWizard(models.TransientModel):
         # Private messages are fully deleted (most sensitive)
         msgs.unlink()
 
+        # Messages Discuss (chat 1:1) — la messagerie a migré vers discuss.channel.
+        # Mêmes garanties Loi 25 : suppression complète + journalisation.
+        chat_ids = self.env['discuss.channel'].sudo().search(
+            [('channel_type', '=', 'chat')]).ids
+        if chat_ids:
+            dmsgs = self.env['mail.message'].sudo().search([
+                ('model', '=', 'discuss.channel'),
+                ('res_id', 'in', chat_ids),
+                ('author_id', '=', user.partner_id.id),
+            ])
+            if dmsgs:
+                self.env['social_privacy.access_log'].sudo().create({
+                    'target_user_id': user.id,
+                    'model_name': 'discuss.channel',
+                    'record_id': 0,
+                    'action': 'delete',
+                    'reason': 'Discuss messages deleted (anonymization, %d msg)' % len(dmsgs),
+                })
+                dmsgs.unlink()
+
     def _anonymize_negotiations(self, user):
         Neg = self.env['social_negotiation.negotiation'].sudo()
         anonymous_id = self._anonymous_user().id

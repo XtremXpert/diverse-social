@@ -5,6 +5,7 @@ from . import gallery_hooks
 from . import governance_hooks
 from . import group_hooks
 from . import messaging_hooks
+from . import discuss_hooks
 from . import negotiation_hooks
 from . import reputation_hooks
 from . import story_hooks

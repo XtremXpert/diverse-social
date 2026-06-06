@@ -144,6 +144,21 @@ class DataExportRequest(models.Model):
             'read_by_ids': list(m.read_by_ids.ids) if m.read_by_ids else [],
         } for m in msgs]
 
+        # Messages Discuss (chat 1:1) — la messagerie a migré vers discuss.channel.
+        DiscussChannel = self.env['discuss.channel'].sudo()
+        chat_ids = DiscussChannel.search([('channel_type', '=', 'chat')]).ids
+        dmsgs = self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'),
+            ('res_id', 'in', chat_ids),
+            ('author_id', '=', user.partner_id.id),
+        ]) if chat_ids else self.env['mail.message'].browse()
+        res['discuss_messages'] = [{
+            'id': m.id,
+            'channel_id': m.res_id,
+            'body': m.body or None,
+            'date': str(m.date),
+        } for m in dmsgs]
+
         # Negotiations
         Neg = self.env['social_negotiation.negotiation'].sudo()
         negs = Neg.search([

@@ -18,22 +18,8 @@
         <field name="path">/social_messaging/static/src/css/portal_chat.css</field>
     </record>
 
-    <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
-    <template id="portal_my_home_messages" name="Private Messages"
-              inherit_id="portal.portal_my_home" priority="30">
-        <!-- Carte config → dans portal_common_category, avant Adresses (priorité 30 :
-             s'insère juste après Tableau de bord, ce qui donne l'ordre
-             Tableau de bord → Messages → Adresses → Connexion). Cf. note dans
-             club_social_profile/portal_dashboard.xml. -->
-        <xpath expr="//div[@id='portal_common_category']/t[@t-call='portal.portal_docs_entry'][t[@t-set='url' and @t-value=&quot;'/my/addresses'&quot;]]" position="before">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Messages</t>
-                <t t-set="url">/my/messages</t>
-                <t t-set="icon" t-value="'/social_messaging/static/src/img/messages.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
+    <!-- Carte « Messages » du portal home : migrée vers social_messaging_discuss
+         (/my/chats). Retirée ici (mise en sourdine). -->
 
     <!-- ══ Conversations list ════════════════════════════════════════════ -->
     <template id="portal_messages_list" name="My Messages">
@@ -152,17 +138,8 @@
         </t>
     </template>
 
-    <!-- ══ "Message" button on profile page ══════════════════════════════ -->
-    <template id="portal_profile_message_start_form"
-              inherit_id="club_social_profile.portal_profile_public">
-        <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">
-            <form t-attf-action="/my/messages/start/#{target_user.id}" method="post">
-                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                    💬 Message
-                </button>
-            </form>
-        </xpath>
-    </template>
+    <!-- Bouton « Message » du profil : repris par social_messaging_discuss
+         (remplace le lien natif action=mail.action_discuss → /discuss-message).
+         Retiré ici (mise en sourdine). -->
 
 </odoo>

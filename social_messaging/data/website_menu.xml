@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Messages menu under My Network -->
-    <record id="menu_social_messages" model="website.menu">
-        <field name="name">Messages</field>
-        <field name="url">/my/messages</field>
-        <field name="parent_id" ref="club_social_profile.menu_my_network_root"/>
-        <field name="sequence">20</field>
-    </record>
+    <!-- Messagerie migrée vers Discuss (social_messaging_discuss) : l'entrée de
+         menu top « Messages » est désormais fournie par ce module et pointe vers
+         /my/chats. L'ancienne entrée /my/messages est retirée (mise en sourdine).
+         social_messaging reste installé comme archive (accessible par URL directe)
+         jusqu'à sa désinstallation. -->
 </odoo>
