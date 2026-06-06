@@ -138,8 +138,19 @@
         </t>
     </template>
 
-    <!-- Bouton « Message » du profil : repris par social_messaging_discuss
-         (remplace le lien natif action=mail.action_discuss → /discuss-message).
-         Retiré ici (mise en sourdine). -->
+    <!-- Bouton « Message » du profil. social_messaging reste l'unique propriétaire
+         de ce nœud (remplacement du lien natif action=mail.action_discuss) pour
+         éviter un conflit de double-replace lors des upgrades. Repointé vers la
+         messagerie Discuss (/discuss-message). À la désinstallation future de
+         social_messaging, transférer ce remplacement à social_messaging_discuss. -->
+    <template id="portal_profile_message_start_form"
+              inherit_id="club_social_profile.portal_profile_public">
+        <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">
+            <a t-attf-href="/discuss-message/#{target_user.id}"
+               class="btn btn-outline-secondary btn-sm" title="Envoyer un message">
+                💬 Message
+            </a>
+        </xpath>
+    </template>
 
 </odoo>
