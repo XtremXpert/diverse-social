@@ -24,7 +24,7 @@ class SocialGallery(models.Model):
 
     cover_photo_id = fields.Many2one(
         'social_gallery.photo', 'Cover Photo',
-        domain="[('gallery_id', '=', id), ('state', '=', 'approved')]",
+        domain="[('gallery_id', '=', id), ('state', '=', 'approved'), ('media_type', '=', 'image')]",
         ondelete='set null',
     )
 
@@ -57,8 +57,20 @@ class SocialGalleryPhoto(models.Model):
     name = fields.Char('Title')
     description = fields.Text('Description')
     sequence = fields.Integer(default=10)
+
+    media_type = fields.Selection([
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ], default='image', required=True, index=True)
+
     image_1920 = fields.Image('Photo', max_width=1920, max_height=1920)
     image_512 = fields.Image('Thumbnail', related='image_1920', max_width=512, max_height=512, store=True)
+
+    # Vidéo stockée dans le filestore (attachment=True) → adapté aux gros fichiers
+    # (jusqu'à 25 Mo) sans gonfler la base. Servie via /web/content (l'ir.rule de
+    # la photo régit l'accès en lecture).
+    video_file = fields.Binary('Video', attachment=True)
+    video_filename = fields.Char('Video Filename')
 
     state = fields.Selection([
         ('pending', 'Pending'),

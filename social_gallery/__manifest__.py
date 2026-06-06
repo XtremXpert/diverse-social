@@ -1,6 +1,6 @@
 {
     'name': 'Social Gallery',
-    'version': '19.0.2.1.0',
+    'version': '19.0.2.2.0',
     'category': 'Social',
     'summary': 'Photo and video galleries for social networks',
     'author': 'Bemade, Odoo Community Association (OCA)',
