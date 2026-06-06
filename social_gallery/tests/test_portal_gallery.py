@@ -10,6 +10,10 @@ _TINY_PNG = (
 )
 _PNG_B64 = base64.b64encode(_TINY_PNG).decode('ascii')
 
+# Octets factices pour un "fichier vidéo" (le controller ne valide pas le contenu,
+# seulement le type/extension et la taille).
+_TINY_MP4 = b'\x00\x00\x00\x18ftypmp42' + b'\x00' * 32
+
 
 def _make_social_user(env, name, login):
     group_user = env.ref('base.group_user')
@@ -378,19 +382,90 @@ class TestPortalGalleryHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_submit_to_non_shared_gallery_forbidden(self):
-        """POST /gallery/<id>/submit sur une galerie non partagée retourne 403."""
+        """POST /gallery/<id>/submit par un NON-propriétaire sur une galerie non
+        partagée retourne 403 (le propriétaire, lui, a le droit — cf. test dédié)."""
+        owner = _make_social_user(self.env, 'GalOwnerX', 'gal_owner_x')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Private Submit Gallery',
+            'owner_id': owner.id,
+            'visibility': 'members',
+            'is_shared': False,
+        })
+        # On soumet en tant qu'admin (qui n'est PAS le propriétaire).
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
+        resp = self.url_open(
+            f'/gallery/{gallery.id}/submit',
+            data={'csrf_token': _csrf},
+            files={'media': ('test.png', _TINY_PNG, 'image/png')},
+            allow_redirects=False,
+        )
+        self.assertIn(resp.status_code, (403, 302, 303))
+        if resp.status_code in (302, 303):
+            self.assertNotIn('success=1', resp.headers.get('Location', ''))
+
+    def test_owner_upload_image_approved(self):
+        """Le propriétaire ajoute une image à sa propre galerie → publiée direct."""
         self.authenticate('admin', 'admin')
         _csrf = Request.csrf_token(self)
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
-            'name': 'Private Submit Gallery',
-            'owner_id': admin.id,
-            'visibility': 'members',
-            'is_shared': False,
+            'name': 'Owner Image Gallery', 'owner_id': admin.id,
+            'visibility': 'members', 'is_shared': False,
         })
         resp = self.url_open(
             f'/gallery/{gallery.id}/submit',
-            data={'csrf_token': _csrf, },
+            data={'csrf_token': _csrf, 'name': 'OwnerPic'},
+            files={'media': ('p.png', _TINY_PNG, 'image/png')},
+        )
+        self.assertEqual(resp.status_code, 200)
+        photo = self.env['social_gallery.photo'].sudo().search(
+            [('gallery_id', '=', gallery.id), ('name', '=', 'OwnerPic')], limit=1)
+        self.assertTrue(photo)
+        self.assertEqual(photo.state, 'approved')
+        self.assertEqual(photo.media_type, 'image')
+
+    def test_owner_upload_video(self):
+        """Le propriétaire ajoute une vidéo → media_type=video, video_file rempli."""
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Owner Video Gallery', 'owner_id': admin.id,
+            'visibility': 'members', 'is_shared': False,
+        })
+        resp = self.url_open(
+            f'/gallery/{gallery.id}/submit',
+            data={'csrf_token': _csrf, 'name': 'OwnerClip'},
+            files={'media': ('clip.mp4', _TINY_MP4, 'video/mp4')},
+        )
+        self.assertEqual(resp.status_code, 200)
+        photo = self.env['social_gallery.photo'].sudo().search(
+            [('gallery_id', '=', gallery.id), ('name', '=', 'OwnerClip')], limit=1)
+        self.assertTrue(photo)
+        self.assertEqual(photo.media_type, 'video')
+        self.assertTrue(photo.video_file)
+        self.assertEqual(photo.state, 'approved')
+
+    def test_submit_bad_type_rejected(self):
+        """Un type non supporté (ex: .txt) est rejeté, aucune photo créée."""
+        self.authenticate('admin', 'admin')
+        _csrf = Request.csrf_token(self)
+        admin = self.env.ref('base.user_admin')
+        gallery = self.env['social_gallery.gallery'].sudo().create({
+            'name': 'Bad Type Gallery', 'owner_id': admin.id,
+            'visibility': 'members', 'is_shared': False,
+        })
+        before = self.env['social_gallery.photo'].sudo().search_count(
+            [('gallery_id', '=', gallery.id)])
+        resp = self.url_open(
+            f'/gallery/{gallery.id}/submit',
+            data={'csrf_token': _csrf},
+            files={'media': ('evil.txt', b'hello world', 'text/plain')},
             allow_redirects=False,
         )
-        self.assertIn(resp.status_code, (403, 302, 303))
+        self.assertIn(resp.status_code, (302, 303))
+        self.assertIn('error=bad_type', resp.headers.get('Location', ''))
+        after = self.env['social_gallery.photo'].sudo().search_count(
+            [('gallery_id', '=', gallery.id)])
+        self.assertEqual(before, after)
