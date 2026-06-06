@@ -103,21 +103,32 @@
                 </div>
 
                 <!-- Alertes -->
+                <t t-set="is_owner" t-value="gallery.owner_id.id == request.env.user.id"/>
                 <t t-if="request.params.get('success')">
-                    <div class="alert alert-success">Votre photo a été soumise et est en attente de modération.</div>
+                    <div class="alert alert-success">
+                        <t t-if="is_owner">Votre média a été ajouté à la galerie.</t>
+                        <t t-else="">Votre média a été soumis et est en attente de modération.</t>
+                    </div>
                 </t>
-                <t t-if="request.params.get('error') == 'image_required'">
-                    <div class="alert alert-danger">Veuillez sélectionner une image.</div>
+                <t t-if="request.params.get('error') == 'media_required'">
+                    <div class="alert alert-danger">Veuillez sélectionner un fichier (image ou vidéo).</div>
+                </t>
+                <t t-if="request.params.get('error') == 'too_large'">
+                    <div class="alert alert-danger">Fichier trop volumineux (maximum 25 Mo).</div>
+                </t>
+                <t t-if="request.params.get('error') == 'bad_type'">
+                    <div class="alert alert-danger">Type de fichier non supporté (images et vidéos uniquement).</div>
                 </t>
                 <t t-if="request.params.get('deleted')">
-                    <div class="alert alert-info">Photo supprimée.</div>
+                    <div class="alert alert-info">Média supprimé.</div>
                 </t>
 
-                <!-- Formulaire de soumission (galeries partagées) -->
-                <t t-if="gallery.is_shared">
+                <!-- Formulaire d'ajout : propriétaire (sur sa galerie) OU galerie participative -->
+                <t t-if="gallery.is_shared or is_owner">
                     <div class="card mb-4">
                         <div class="card-header fw-bold" style="background:#1a1a2e;color:white;">
-                            📷 Soumettre une photo
+                            <t t-if="is_owner">📷 Ajouter une photo ou une vidéo</t>
+                            <t t-else="">📷 Soumettre une photo ou une vidéo</t>
                         </div>
                         <div class="card-body">
                             <form t-attf-action="/gallery/#{gallery.id}/submit" method="post"
@@ -125,8 +136,8 @@
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <div class="row g-3">
                                     <div class="col-md-7">
-                                        <label class="form-label">Image</label>
-                                        <input type="file" name="image" class="form-control" accept="image/*" required="required"/>
+                                        <label class="form-label">Image ou vidéo <small class="text-muted">(max 25 Mo)</small></label>
+                                        <input type="file" name="media" class="form-control" accept="image/*,video/*" required="required"/>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="form-label">Titre (facultatif)</label>
@@ -135,7 +146,8 @@
                                 </div>
                                 <button type="submit" class="btn btn-sm mt-3"
                                         style="background:#e94560;color:white;">
-                                    Soumettre
+                                    <t t-if="is_owner">Ajouter</t>
+                                    <t t-else="">Soumettre</t>
                                 </button>
                             </form>
                         </div>
@@ -152,23 +164,41 @@
                 <div id="sn_gallery_grid" class="row g-2">
                     <t t-foreach="photos" t-as="photo">
                         <div class="col-6 col-md-4 col-lg-3">
-                            <a href="#"
-                               t-att-data-lightbox="photo.id"
-                               t-attf-data-src="/web/image/social_gallery.photo/#{photo.id}/image_1920"
-                               t-attf-data-thumb="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                               t-att-data-caption="photo.name or ''"
-                               class="d-block position-relative overflow-hidden rounded"
-                               style="height:160px;">
-                                <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                     class="w-100 h-100" style="object-fit:cover; transition:transform .2s;"
-                                     t-att-alt="photo.name or gallery.name"/>
-                                <t t-if="photo.name">
-                                    <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
-                                         style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;">
-                                        <t t-esc="photo.name"/>
-                                    </div>
-                                </t>
-                            </a>
+                            <!-- Vidéo : lecteur inline (pas de lightbox) -->
+                            <t t-if="photo.media_type == 'video'">
+                                <div class="position-relative overflow-hidden rounded" style="height:160px;background:#000;">
+                                    <video controls="controls" preload="metadata"
+                                           class="w-100 h-100" style="object-fit:contain;background:#000;"
+                                           t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
+                                    </video>
+                                    <t t-if="photo.name">
+                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
+                                             style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;pointer-events:none;">
+                                            <t t-esc="photo.name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <!-- Image : vignette + lightbox -->
+                            <t t-else="">
+                                <a href="#"
+                                   t-att-data-lightbox="photo.id"
+                                   t-attf-data-src="/web/image/social_gallery.photo/#{photo.id}/image_1920"
+                                   t-attf-data-thumb="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                                   t-att-data-caption="photo.name or ''"
+                                   class="d-block position-relative overflow-hidden rounded"
+                                   style="height:160px;">
+                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                                         class="w-100 h-100" style="object-fit:cover; transition:transform .2s;"
+                                         t-att-alt="photo.name or gallery.name"/>
+                                    <t t-if="photo.name">
+                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
+                                             style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;">
+                                            <t t-esc="photo.name"/>
+                                        </div>
+                                    </t>
+                                </a>
+                            </t>
                         </div>
                     </t>
                 </div>
@@ -307,10 +337,19 @@
                     <t t-foreach="photos" t-as="photo">
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="position-relative">
-                                <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                     class="img-fluid rounded shadow-sm"
-                                     style="height:160px;width:100%;object-fit:cover;"
-                                     t-att-alt="photo.name or ''"/>
+                                <t t-if="photo.media_type == 'video'">
+                                    <video controls="controls" preload="metadata"
+                                           class="rounded shadow-sm"
+                                           style="height:160px;width:100%;object-fit:contain;background:#000;"
+                                           t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
+                                    </video>
+                                </t>
+                                <t t-else="">
+                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
+                                         class="img-fluid rounded shadow-sm"
+                                         style="height:160px;width:100%;object-fit:cover;"
+                                         t-att-alt="photo.name or ''"/>
+                                </t>
                                 <span t-att-class="'badge position-absolute top-0 end-0 m-1 ' + {'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')"
                                       t-esc="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
                                 <!-- Bouton supprimer (pending ou rejected seulement) -->

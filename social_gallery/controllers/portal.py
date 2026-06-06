@@ -6,6 +6,9 @@ from odoo.http import request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 
 _GALLERY_STEP = 24
+_MAX_MEDIA_BYTES = 25 * 1024 * 1024  # 25 Mo
+_VIDEO_MIMETYPES = ('video/mp4', 'video/webm', 'video/ogg', 'video/quicktime')
+_VIDEO_EXTS = ('.mp4', '.webm', '.ogg', '.ogv', '.mov')
 
 
 class GalleryPortal(CustomerPortal):
@@ -116,18 +119,53 @@ class GalleryPortal(CustomerPortal):
         return request.redirect('/my/gallery?deleted=1')
 
     @route('/gallery/<int:gallery_id>/submit', auth='user', methods=['POST'], website=True, csrf=True)
-    def gallery_submit_photo(self, gallery_id, name='', image=None, **kw):
+    def gallery_submit_photo(self, gallery_id, name='', media=None, image=None, **kw):
         gallery = request.env['social_gallery.gallery'].browse(gallery_id).exists()
-        if not gallery or not gallery.is_shared:
+        if not gallery:
+            raise NotFound()
+        user = request.env.user
+        is_owner = gallery.owner_id.id == user.id
+        # Le propriétaire ajoute à sa propre galerie ; les autres ne peuvent
+        # soumettre que sur une galerie participative (modérée).
+        if not (is_owner or gallery.is_shared):
             raise Forbidden()
-        if not image or not getattr(image, 'filename', None):
-            return request.redirect('/gallery/%d?error=image_required' % gallery_id)
-        image_data = base64.b64encode(image.read()).decode('ascii')
-        request.env['social_gallery.photo'].create({
+
+        # `image` accepté pour rétro-compat ; `media` est le champ courant.
+        upload = media or image
+        if not upload or not getattr(upload, 'filename', None):
+            return request.redirect('/gallery/%d?error=media_required' % gallery_id)
+
+        filename = upload.filename
+        content_type = (getattr(upload, 'content_type', '') or '').lower()
+        ext = filename.lower().rsplit('.', 1)[-1] if '.' in filename else ''
+        is_video = content_type in _VIDEO_MIMETYPES or ('.' + ext) in _VIDEO_EXTS
+        is_image = content_type.startswith('image/') or (not is_video and ('.' + ext) in (
+            '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.heic', '.heif'))
+        if not (is_video or is_image):
+            return request.redirect('/gallery/%d?error=bad_type' % gallery_id)
+
+        data = upload.read()
+        if len(data) > _MAX_MEDIA_BYTES:
+            return request.redirect('/gallery/%d?error=too_large' % gallery_id)
+        encoded = base64.b64encode(data).decode('ascii')
+
+        vals = {
             'gallery_id': gallery.id,
-            'name': (name or '').strip() or image.filename,
-            'image_1920': image_data,
-            'submitted_by_id': request.env.user.id,
-            'state': 'pending',
-        })
+            'name': (name or '').strip() or filename,
+            'submitted_by_id': user.id,
+            # Sa propre galerie → publié direct ; soumission tierce → modération.
+            'state': 'approved' if is_owner else 'pending',
+        }
+        if is_video:
+            vals.update({
+                'media_type': 'video',
+                'video_file': encoded,
+                'video_filename': filename,
+            })
+        else:
+            vals.update({
+                'media_type': 'image',
+                'image_1920': encoded,
+            })
+        request.env['social_gallery.photo'].create(vals)
         return request.redirect('/gallery/%d?success=1' % gallery_id)
