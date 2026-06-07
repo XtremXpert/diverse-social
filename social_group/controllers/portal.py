@@ -110,6 +110,18 @@ class GroupPortal(CustomerPortal):
             'error': kw.get('error'),
         })
 
+    @route('/groups/<int:group_id>/discussion', auth='user', website=True)
+    def group_discussion(self, group_id, **kw):
+        """Ouvre le canal Discuss du groupe (l'espace de discussion). Réservé
+        aux membres. Crée le canal à la volée s'il manque (anciens groupes)."""
+        group = request.env['social_group.group'].sudo().browse(group_id).exists()
+        if not group:
+            raise NotFound()
+        if not group.is_member(request.env.user):
+            return request.redirect('/groups/%d' % group_id)
+        channel = group._get_or_create_discuss_channel()
+        return request.redirect('/discuss/channel/%s' % channel.id)
+
     @route('/groups/<int:group_id>/edit', auth='user', methods=['POST'], website=True, csrf=True)
     def group_edit(self, group_id, name='', description='', privacy='private', join_type='approval', **kw):
         group = request.env['social_group.group'].sudo().browse(group_id).exists()

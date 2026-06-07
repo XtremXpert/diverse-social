@@ -245,19 +245,28 @@
                             </div>
                         </t>
 
-                        <t t-if="is_member and posts">
-                            <hr/>
-                            <h5>Recent posts</h5>
-                            <t t-foreach="posts" t-as="post">
-                                <div class="border rounded p-3 mb-2">
-                                    <strong t-esc="post.author_id.name"/> ·
-                                    <small class="text-muted" t-esc="post.create_date"/>
-                                    <div t-raw="post.content" class="mt-1"/>
+                        <!-- Discussion du groupe : le canal Discuss EST l'espace
+                             d'échange du groupe (remplace l'ancien fil de posts). -->
+                        <hr/>
+                        <t t-if="is_member">
+                            <div class="card">
+                                <div class="card-body text-center py-4">
+                                    <div style="font-size:2rem;">💬</div>
+                                    <h5 class="mt-2">Discussion du groupe</h5>
+                                    <p class="text-muted mb-3" style="font-size:.9rem;">
+                                        Échangez avec les membres dans le canal du groupe.
+                                    </p>
+                                    <a t-attf-href="/groups/#{group.id}/discussion"
+                                       class="btn" style="background:#e94560;color:white;">
+                                        Ouvrir la discussion
+                                    </a>
                                 </div>
-                            </t>
+                            </div>
                         </t>
-                        <t t-elif="is_member">
-                            <p class="text-muted mt-3">No posts in this group yet.</p>
+                        <t t-else="">
+                            <div class="alert alert-light border mt-2 text-muted">
+                                💬 Rejoignez le groupe pour accéder à sa discussion.
+                            </div>
                         </t>
                     </div>
                     <div class="col-lg-4">

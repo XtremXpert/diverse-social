@@ -22,6 +22,11 @@ class SocialGroup(models.Model):
     admin_ids = fields.Many2many('res.users', 'social_group_admin_rel', 'group_id', 'user_id', string='Administrators')
     moderated_by = fields.Many2many('res.users', 'social_group_moderator_rel', 'group_id', 'user_id', string='Moderators')
 
+    # Canal Discuss du groupe : l'espace de discussion du groupe (privé aux
+    # membres). Créé à la création du groupe, membres synchronisés avec member_ids.
+    discuss_channel_id = fields.Many2one(
+        'discuss.channel', string='Group Channel', ondelete='set null', copy=False)
+
     privacy = fields.Selection([
         ('public', 'Public'),
         ('private', 'Private'),
@@ -42,6 +47,60 @@ class SocialGroup(models.Model):
 
     rule_ids = fields.One2many('social_group.rule', 'group_id', 'Rules')
     join_request_ids = fields.One2many('social_group.join_request', 'group_id', 'Join Requests')
+
+    # ── Canal Discuss du groupe ──────────────────────────────────────────────
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        groups = super().create(vals_list)
+        for group in groups:
+            group._get_or_create_discuss_channel()
+        return groups
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'member_ids' in vals:
+            for group in self:
+                group._sync_channel_members()
+        if 'name' in vals:
+            for group in self:
+                if group.discuss_channel_id:
+                    group.discuss_channel_id.sudo().name = group.name
+        return res
+
+    def _get_or_create_discuss_channel(self):
+        """Canal Discuss de groupe (privé aux membres). sudo : les utilisateurs
+        portail ne peuvent pas créer de discuss.channel ; sudo garde env.user."""
+        self.ensure_one()
+        if self.discuss_channel_id:
+            return self.discuss_channel_id
+        Channel = self.env['discuss.channel'].sudo()
+        channel = Channel.create({
+            'name': self.name or _('Group'),
+            'channel_type': 'group',
+        })
+        partners = self.member_ids.partner_id
+        if partners:
+            channel._add_members(partners=partners)
+        self.sudo().discuss_channel_id = channel
+        return channel
+
+    def _sync_channel_members(self):
+        """Aligne les membres du canal sur member_ids (ajout/retrait)."""
+        self.ensure_one()
+        channel = self.discuss_channel_id.sudo()
+        if not channel:
+            channel = self._get_or_create_discuss_channel()
+            return
+        desired = self.member_ids.partner_id
+        current = channel.channel_member_ids.partner_id
+        to_add = desired - current
+        to_remove = current - desired
+        if to_add:
+            channel._add_members(partners=to_add)
+        if to_remove:
+            channel.channel_member_ids.filtered(
+                lambda m: m.partner_id in to_remove).unlink()
 
     @api.depends('member_ids')
     def _compute_member_count(self):
