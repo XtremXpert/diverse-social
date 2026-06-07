@@ -34,21 +34,6 @@ class SocialBasePost(models.Model):
         return super().unlink()
 
 
-class SocialMessagingMessage(models.Model):
-    _inherit = 'social_messaging.message'
-
-    def unlink(self):
-        for msg in self:
-            self.env['social_privacy.access_log'].sudo().create({
-                'target_user_id': msg.author_id.id,
-                'model_name': self._name,
-                'record_id': msg.id,
-                'action': 'delete',
-                'reason': 'Message deleted',
-            })
-        return super().unlink()
-
-
 class SocialNegotiation(models.Model):
     _inherit = 'social_negotiation.negotiation'
 

@@ -150,31 +150,7 @@ class TestSocialNotifications(TransactionCase):
         req.with_user(self.alice).action_approve()
         self.assertEqual(len(self._notifs_for(self.bob, 'group_join_approved')), before + 1)
 
-    # ── Messaging ─────────────────────────────────────────────────────────────
-
-    def test_message_notifies_recipient(self):
-        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
-            [self.alice.id, self.bob.id]
-        )
-        before = len(self._notifs_for(self.bob, 'new_message'))
-        self.env['social_messaging.message'].sudo().create({
-            'thread_id': thread.id,
-            'author_id': self.alice.id,
-            'content': 'Salut Bob',
-        })
-        self.assertEqual(len(self._notifs_for(self.bob, 'new_message')), before + 1)
-
-    def test_message_author_not_notified(self):
-        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
-            [self.alice.id, self.bob.id]
-        )
-        before = len(self._notifs_for(self.alice, 'new_message'))
-        self.env['social_messaging.message'].sudo().create({
-            'thread_id': thread.id,
-            'author_id': self.alice.id,
-            'content': 'Mon propre message',
-        })
-        self.assertEqual(len(self._notifs_for(self.alice, 'new_message')), before)
+    # ── Messaging : migré vers Discuss (voir test_discuss_hooks.py) ─────────────
 
     # ── Story hooks ───────────────────────────────────────────────────────────
 

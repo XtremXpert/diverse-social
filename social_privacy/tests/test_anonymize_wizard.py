@@ -29,15 +29,11 @@ class TestAnonymizeWizard(TransactionCase):
             'author_id': cls.test_user.id,
             'content': 'Hello world',
         })
-        # Create a message
-        cls.thread = cls.env['social_messaging.thread'].sudo().create({
-            'participant_ids': [(6, 0, [cls.test_user.id, cls.other_user.id])],
-        })
-        cls.msg = cls.env['social_messaging.message'].sudo().create({
-            'thread_id': cls.thread.id,
-            'author_id': cls.test_user.id,
-            'content': 'Test message',
-        })
+        # Create a Discuss chat message (messagerie migrée vers discuss.channel)
+        cls.channel = cls.env['discuss.channel'].with_user(cls.test_user).sudo() \
+            ._get_or_create_chat([cls.other_user.partner_id.id])
+        cls.msg = cls.channel.with_user(cls.test_user).sudo().message_post(
+            body='Test message', message_type='comment')
 
     def test_anonymize_wizard_counts(self):
         wizard = self.env['social_privacy.anonymize_wizard'].create({
@@ -78,10 +74,14 @@ class TestAnonymizeWizard(TransactionCase):
         self.assertFalse(self.user_profile.bio)
         self.assertFalse(self.user_profile.city)
 
-        # Messages deleted (most sensitive)
-        msgs_after = self.env['social_messaging.message'].sudo().search_count([
-            ('author_id', '=', self.test_user.id)
-        ])
+        # Messages Discuss deleted (most sensitive)
+        chat_ids = self.env['discuss.channel'].sudo().search(
+            [('channel_type', '=', 'chat')]).ids
+        msgs_after = self.env['mail.message'].sudo().search_count([
+            ('model', '=', 'discuss.channel'),
+            ('res_id', 'in', chat_ids),
+            ('author_id', '=', self.test_user.partner_id.id),
+        ]) if chat_ids else 0
         self.assertEqual(msgs_after, 0)
 
         # Anonymization log created

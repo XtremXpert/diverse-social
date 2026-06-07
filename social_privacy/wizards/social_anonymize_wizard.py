@@ -68,9 +68,14 @@ class SocialAnonymizeWizard(models.TransientModel):
             wiz.comment_count = self.env['social_base.comment'].sudo().search_count(
                 [('author_id', '=', user.id)]
             )
-            wiz.message_count = self.env['social_messaging.message'].sudo().search_count(
-                [('author_id', '=', user.id)]
-            )
+            # Messagerie migrée vers Discuss : on compte les messages Discuss (chat).
+            chat_ids = self.env['discuss.channel'].sudo().search(
+                [('channel_type', '=', 'chat')]).ids
+            wiz.message_count = self.env['mail.message'].sudo().search_count([
+                ('model', '=', 'discuss.channel'),
+                ('res_id', 'in', chat_ids),
+                ('author_id', '=', user.partner_id.id),
+            ]) if chat_ids else 0
             wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
                 ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
             )
@@ -210,12 +215,8 @@ class SocialAnonymizeWizard(models.TransientModel):
             })
 
     def _anonymize_messages(self, user):
-        Message = self.env['social_messaging.message'].sudo()
-        msgs = Message.search([('author_id', '=', user.id)])
-        # Private messages are fully deleted (most sensitive)
-        msgs.unlink()
-
-        # Messages Discuss (chat 1:1) — la messagerie a migré vers discuss.channel.
+        # Messagerie migrée vers Discuss. Messages Discuss (chat 1:1) :
+        # la messagerie a migré vers discuss.channel.
         # Mêmes garanties Loi 25 : suppression complète + journalisation.
         chat_ids = self.env['discuss.channel'].sudo().search(
             [('channel_type', '=', 'chat')]).ids
