@@ -16,6 +16,15 @@ class ClubSocialProfile(models.Model):
         'Saved Visibility (panic)', default='members',
     )
 
+    # ── Safety kit opt-in ─────────────────────────────────────────────────────
+    safety_kit_enabled = fields.Boolean(
+        'Safety kit enabled',
+        default=False,
+        help="Opt-in. When on: the floating quick-exit button (double-Esc + "
+             "title/favicon camouflage) and the stealth-mode toggle are available. "
+             "Off by default.",
+    )
+
     def action_panic(self):
         """Go dark: hide from discovery, block new contact requests."""
         self.ensure_one()

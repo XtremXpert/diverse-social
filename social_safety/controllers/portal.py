@@ -51,6 +51,15 @@ class SafetyPortal(CustomerPortal):
             profile.sudo().action_panic_lift()
         return request.redirect('/safety')
 
+    # ── Safety kit opt-in ──────────────────────────────────────────────────────
+
+    @route('/safety/kit/toggle', auth='user', methods=['POST'], website=True, csrf=True)
+    def safety_kit_toggle(self, **kw):
+        profile = self._get_own_profile()
+        if profile:
+            profile.sudo().write({'safety_kit_enabled': bool(kw.get('enabled'))})
+        return request.redirect('/safety')
+
     # ── Unblock from the portal ───────────────────────────────────────────────
 
     @route('/safety/block/<int:block_id>/remove', auth='user', methods=['POST'],

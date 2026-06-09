@@ -26,25 +26,25 @@
 
     // ── 1. Quick exit ───────────────────────────────────────────────────────
 
-    var EXIT_URL = getData('exitUrl', 'https://www.meteomedia.com/');
-
     function exit() {
-        window.location.replace(EXIT_URL);
+        window.location.replace(getData('exitUrl', 'https://www.meteomedia.com/'));
     }
 
     var escCount = 0;
     var escTimer = null;
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            escCount++;
-            clearTimeout(escTimer);
-            if (escCount >= 2) {
-                exit();
+    function wireEscKey() {
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                escCount++;
+                clearTimeout(escTimer);
+                if (escCount >= 2) {
+                    exit();
+                }
+                escTimer = setTimeout(function () { escCount = 0; }, 500);
             }
-            escTimer = setTimeout(function () { escCount = 0; }, 500);
-        }
-    });
+        });
+    }
 
     // ── 2. Camouflage visuel ────────────────────────────────────────────────
     //
@@ -111,22 +111,24 @@
 
     // ── Wiring ──────────────────────────────────────────────────────────────
 
-    function wireButton() {
+    function init() {
+        // Gate the whole safety kit on the presence of the quick-exit button.
+        // The server only renders #social_quick_exit when the user opted in
+        // (profile.safety_kit_enabled). No button → no click handler, no
+        // double-Esc exit, no camouflage, no share-meta stripping.
         var el = btn();
-        if (el) {
-            el.addEventListener('click', exit);
+        if (!el) {
+            return;
         }
+        el.addEventListener('click', exit);
+        wireEscKey();
+        applyCamouflage();
+        stripShareMeta();
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-            wireButton();
-            applyCamouflage();
-            stripShareMeta();
-        });
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        wireButton();
-        applyCamouflage();
-        stripShareMeta();
+        init();
     }
 })();

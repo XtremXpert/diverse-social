@@ -11,7 +11,8 @@
     <template id="portal_quick_exit_button" inherit_id="web.frontend_layout"
               name="Quick exit">
         <xpath expr="//header" position="inside">
-            <t t-if="request.env.user and not request.env.user._is_public()">
+            <t t-set="_sp" t-value="request.env['club_social_profile.profile'].sudo().search([('user_id','=',request.env.user.id)],limit=1)"/>
+            <t t-if="request.env.user and not request.env.user._is_public() and _sp.safety_kit_enabled">
                 <t t-set="_get_param" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
                 <t t-set="_exit_url" t-value="_get_param('social_safety.quick_exit_url', 'https://www.meteomedia.com/')"/>
                 <t t-set="_camouflage_title" t-value="_get_param('social_safety.camouflage_title', 'MétéoMédia — Prévisions Québec')"/>
@@ -19,7 +20,7 @@
                 <style>
                     #social_quick_exit {
                         position: fixed;
-                        top: 12px;
+                        bottom: 16px;
                         left: 16px;
                         z-index: 1050;
                         background: #555;
@@ -63,6 +64,41 @@
                 <div class="container py-4" style="max-width:720px;">
 
                     <h2 class="mb-4" style="color:#1a1a2e;">🔐 Safety and privacy</h2>
+
+                    <!-- ── Safety kit opt-in ── -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            🧰 Safety kit
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">
+                                The safety kit adds a discreet quick-exit button (bottom-left, also
+                                triggered by pressing Esc twice), camouflages the tab title/favicon
+                                on sensitive pages, and enables the stealth-mode toggle on your
+                                profile. Off by default — enable it only if you want it.
+                            </p>
+                            <t t-if="profile and profile.safety_kit_enabled">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span class="badge bg-success">Enabled</span>
+                                </div>
+                                <form action="/safety/kit/toggle" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        Disable safety kit
+                                    </button>
+                                </form>
+                            </t>
+                            <t t-else="">
+                                <form action="/safety/kit/toggle" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="enabled" value="1"/>
+                                    <button type="submit" class="btn" style="background:#1a1a2e; color:white;">
+                                        🧰 Enable safety kit
+                                    </button>
+                                </form>
+                            </t>
+                        </div>
+                    </div>
 
                     <!-- ── Stealth mode ── -->
                     <div class="card mb-4">
@@ -210,16 +246,16 @@
               inherit_id="club_social_profile.portal_profile_public"
               name="Profile — Stealth mode button">
         <xpath expr="//a[@href='/my/profile/edit']" position="after">
-            <t t-if="is_own and profile.panic_mode">
-                <form action="/safety/panic/lift" method="post" class="d-inline ms-2">
+            <t t-if="is_own and profile.safety_kit_enabled and profile.panic_mode">
+                <form action="/safety/panic/lift" method="post" class="d-block d-sm-inline-block mt-2 mt-sm-0 ms-sm-2">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <button type="submit" class="btn btn-warning btn-sm">
                         🕵️ Stealth mode on — Disable
                     </button>
                 </form>
             </t>
-            <t t-elif="is_own">
-                <form action="/safety/panic/activate" method="post" class="d-inline ms-2">
+            <t t-elif="is_own and profile.safety_kit_enabled">
+                <form action="/safety/panic/activate" method="post" class="d-block d-sm-inline-block mt-2 mt-sm-0 ms-sm-2">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <button type="submit" class="btn btn-outline-secondary btn-sm">
                         🕵️ Stealth mode
