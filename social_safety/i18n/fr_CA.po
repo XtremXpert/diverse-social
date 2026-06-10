@@ -275,14 +275,8 @@ msgstr "Social Safety : expiration des silences temporaires"
 
 #. module: social_safety
 #: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
-msgid ""
-"The <strong>⏻</strong> button in the top-left corner of every page sends you\n"
-"                                instantly to a neutral site without leaving traces in history.\n"
-"                                You can also press <strong>Esc twice</strong>."
-msgstr ""
-"Le bouton <strong>⏻</strong> dans le coin supérieur gauche de chaque page vous envoie\n"
-"                                instantanément vers un site neutre sans laisser de traces dans l'historique.\n"
-"                                Vous pouvez aussi appuyer sur <strong>Échap deux fois</strong>."
+msgid "The <strong>⏻</strong> button in the bottom-left corner of every page sends you instantly to a neutral site without leaving traces in history. You can also press <strong>Esc twice</strong>."
+msgstr "Le bouton <strong>⏻</strong> dans le coin inférieur gauche de chaque page vous envoie instantanément vers un site neutre sans laisser de traces dans l'historique. Vous pouvez aussi appuyer sur <strong>Échap deux fois</strong>."
 
 #. module: social_safety
 #: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
@@ -415,3 +409,28 @@ msgstr "🕵️ Mode discret activé — Désactiver"
 #: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
 msgid "🚫 Blocked users"
 msgstr "🚫 Utilisateurs bloqués"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🧰 Safety kit"
+msgstr "🧰 Kit de sécurité"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "🧰 Enable safety kit"
+msgstr "🧰 Activer le kit de sécurité"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "Disable safety kit"
+msgstr "Désactiver le kit de sécurité"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "<span class=\"badge bg-success\">Enabled</span>"
+msgstr "<span class=\"badge bg-success\">Activé</span>"
+
+#. module: social_safety
+#: model_terms:ir.ui.view,arch_db:social_safety.portal_safety_page
+msgid "The safety kit adds a discreet quick-exit button (bottom-left, also triggered by pressing Esc twice), camouflages the tab title/favicon on sensitive pages, and enables the stealth-mode toggle on your profile. Off by default — enable it only if you want it."
+msgstr "Le kit de sécurité ajoute un bouton de sortie rapide discret (en bas à gauche, aussi déclenché en appuyant deux fois sur Échap), camoufle le titre et le favicon de l'onglet sur les pages sensibles, et active le bouton mode discret sur votre profil. Désactivé par défaut — activez-le seulement si vous le souhaitez."

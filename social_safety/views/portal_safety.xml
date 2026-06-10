@@ -71,12 +71,7 @@
                             🧰 Safety kit
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">
-                                The safety kit adds a discreet quick-exit button (bottom-left, also
-                                triggered by pressing Esc twice), camouflages the tab title/favicon
-                                on sensitive pages, and enables the stealth-mode toggle on your
-                                profile. Off by default — enable it only if you want it.
-                            </p>
+                            <p class="text-muted mb-3">The safety kit adds a discreet quick-exit button (bottom-left, also triggered by pressing Esc twice), camouflages the tab title/favicon on sensitive pages, and enables the stealth-mode toggle on your profile. Off by default — enable it only if you want it.</p>
                             <t t-if="profile and profile.safety_kit_enabled">
                                 <div class="d-flex align-items-center gap-2 mb-3">
                                     <span class="badge bg-success">Enabled</span>
@@ -143,11 +138,7 @@
                             ⏻ Quick exit
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-2">
-                                The <strong>⏻</strong> button in the top-left corner of every page sends you
-                                instantly to a neutral site without leaving traces in history.
-                                You can also press <strong>Esc twice</strong>.
-                            </p>
+                            <p class="text-muted mb-2">The <strong>⏻</strong> button in the bottom-left corner of every page sends you instantly to a neutral site without leaving traces in history. You can also press <strong>Esc twice</strong>.</p>
                             <p class="mb-0 text-muted" style="font-size:0.85rem;">
                                 Destination site:
                                 <strong t-out="exit_url"/>
