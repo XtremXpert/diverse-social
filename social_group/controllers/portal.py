@@ -14,7 +14,7 @@ class GroupPortal(CustomerPortal):
             ])
         return values
 
-    @route('/groups', auth='user', website=True, sitemap=True)
+    @route(['/groups', '/groups/page/<int:page>'], auth='user', website=True, sitemap=True)
     def group_list(self, page=1, **kw):
         # sudo: ir.rule hides secret groups; show public+private for browsing
         Group = request.env['social_group.group'].sudo()

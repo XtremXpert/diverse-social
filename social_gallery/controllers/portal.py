@@ -29,7 +29,7 @@ class GalleryPortal(CustomerPortal):
             'page_name': 'gallery',
         })
 
-    @route('/gallery/<int:gallery_id>', auth='user', website=True)
+    @route(['/gallery/<int:gallery_id>', '/gallery/<int:gallery_id>/page/<int:page>'], auth='user', website=True)
     def gallery_detail(self, gallery_id, page=1, **kw):
         gallery = request.env['social_gallery.gallery'].browse(gallery_id).exists()
         if not gallery:
@@ -59,7 +59,7 @@ class GalleryPortal(CustomerPortal):
             'page_name': 'gallery',
         })
 
-    @route('/my/gallery', auth='user', website=True)
+    @route(['/my/gallery', '/my/gallery/page/<int:page>'], auth='user', website=True)
     def my_gallery(self, page=1, state='all', **kw):
         user = request.env.user
         domain = [('submitted_by_id', '=', user.id)]

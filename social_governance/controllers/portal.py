@@ -38,7 +38,7 @@ class GovernancePortal(CustomerPortal):
 
     # ── Liste ──────────────────────────────────────────────────────────────────
 
-    @route('/governance', auth='user', website=True, sitemap=True)
+    @route(['/governance', '/governance/page/<int:page>'], auth='user', website=True, sitemap=True)
     def governance_list(self, page=1, state='voting', **kw):
         Proposal = request.env['social_governance.proposal'].sudo()
         valid_states = list(_state_labels().keys())
@@ -211,7 +211,7 @@ class GovernancePortal(CustomerPortal):
 
     # ── Decisions log ──────────────────────────────────────────────────────────
 
-    @route('/governance/log', auth='user', website=True, sitemap=True)
+    @route(['/governance/log', '/governance/log/page/<int:page>'], auth='user', website=True, sitemap=True)
     def governance_log(self, page=1, **kw):
         Log = request.env['social_governance.decision_log'].sudo()
         domain = [('is_public', '=', True)]

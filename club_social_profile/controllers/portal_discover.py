@@ -43,7 +43,7 @@ def _bdsm_role_labels():
 
 class DiscoverPortal(CustomerPortal):
 
-    @route('/discover', auth='user', website=True)
+    @route(['/discover', '/discover/page/<int:page>'], auth='user', website=True)
     def discover(self, page=1, city='', gender='', orientation='',
                  availability='', bdsm_role='', **kw):
         user = request.env.user

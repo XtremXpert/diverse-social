@@ -23,7 +23,7 @@ _COMPAT_SORT = 'compat'
 
 class MembersPortal(CustomerPortal):
 
-    @route('/members', auth='user', website=True, sitemap=False)
+    @route(['/members', '/members/page/<int:page>'], auth='user', website=True, sitemap=False)
     def members(self, page=1, sort=None, q='', **kw):
         user = request.env.user
         if not user.has_group('social_base.group_social_user'):
