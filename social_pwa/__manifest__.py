@@ -1,6 +1,6 @@
 {
     'name': 'Social PWA',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Social',
     'summary': 'Progressive Web App: installable home screen icon, offline shell, generic-payload push',
     'description': """
@@ -21,6 +21,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
+        'data/ir_cron.xml',
         'views/pwa_meta.xml',
         'views/pwa_install_button.xml',
         'views/pwa_offline.xml',

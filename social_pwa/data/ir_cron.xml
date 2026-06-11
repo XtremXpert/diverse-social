@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Dispatch the decoupled web-push outbox. Runs every minute as a
+             baseline; notification.create() also calls _trigger() so a push
+             goes out within seconds of the in-app notification (near real-time)
+             without blocking the originating request. -->
+        <record id="cron_push_dispatch" model="ir.cron">
+            <field name="name">Social PWA: dispatch web-push outbox</field>
+            <field name="model_id" ref="model_social_pwa_push_outbox"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_dispatch()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

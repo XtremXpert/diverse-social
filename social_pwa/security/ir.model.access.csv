@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_pwa_subscription_user,social_pwa.subscription user,model_social_pwa_subscription,base.group_user,1,1,1,1
 access_pwa_subscription_portal,social_pwa.subscription portal,model_social_pwa_subscription,base.group_portal,1,1,1,1
 access_pwa_subscription_system,social_pwa.subscription system,model_social_pwa_subscription,base.group_system,1,1,1,1
+access_pwa_push_outbox_system,social_pwa.push_outbox system,model_social_pwa_push_outbox,base.group_system,1,1,1,1
