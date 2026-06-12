@@ -41,7 +41,13 @@ class NtfyPushService(models.AbstractModel):
         and is dropped — retrying a client error never helps.
         """
         get = self.env['ir.config_parameter'].sudo().get_param
-        server = (get('social_ntfy.server_url', '') or '').rstrip('/')
+        # publish_url lets the server POST to an internal address (e.g. the
+        # in-cluster service http://ntfy.ntfy.svc.cluster.local) while members
+        # still see/subscribe to the public server_url — avoids hairpin-NAT
+        # failures reaching the cluster's own external IP from a pod. Falls
+        # back to server_url when unset.
+        server = (get('social_ntfy.publish_url', '')
+                  or get('social_ntfy.server_url', '') or '').rstrip('/')
         if not server:
             _logger.info('social_ntfy: server_url not configured, push skipped')
             return 0

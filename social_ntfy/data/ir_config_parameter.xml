@@ -15,6 +15,15 @@
             <field name="value"></field>
         </record>
 
+        <!-- Internal URL the server POSTs to (e.g. the in-cluster service
+             http://ntfy.ntfy.svc.cluster.local). Empty → falls back to
+             server_url. Set this in clustered deployments to avoid hairpin-NAT
+             when reaching the cluster's own external IP from a pod. -->
+        <record id="param_publish_url" model="ir.config_parameter">
+            <field name="key">social_ntfy.publish_url</field>
+            <field name="value"></field>
+        </record>
+
         <!-- Prefix for generated per-user topics: dc_&lt;uuid&gt;. -->
         <record id="param_topic_prefix" model="ir.config_parameter">
             <field name="key">social_ntfy.topic_prefix</field>
