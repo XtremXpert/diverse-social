@@ -62,14 +62,13 @@
                         overflow: hidden;
                         font-family: Arial, sans-serif;
                     }
-                    /* En mobile, la cloche en haut-droite recouvrait le bouton
-                       hamburger de navigation (même coin) → impossible d'ouvrir
-                       le menu. On la descend en bas-droite (le quick-exit est en
-                       bas-gauche, pas de collision) et le dropdown s'ouvre vers
-                       le haut. */
+                    /* En mobile, la cloche flottante (haut-droite) recouvrait le
+                       bouton hamburger de navigation, et la barre Safari/safe-area
+                       la cachait en bas → on la masque simplement en mobile. Les
+                       notifications restent accessibles via l'entrée « Notifications »
+                       du menu + les push. Desktop inchangé (pas de hamburger). */
                     @media (max-width: 991.98px) {
-                        #social_notif_bell { top: auto; bottom: 16px; right: 16px; }
-                        #sn_dropdown { top: auto; bottom: 52px; right: 0; max-width: 90vw; }
+                        #social_notif_bell { display: none !important; }
                     }
                     .sn-header {
                         background: #1a1a2e;

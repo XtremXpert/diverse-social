@@ -1,6 +1,6 @@
 {
     'name': 'Social Notifications',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.0.2',
     'category': 'Social',
     'summary': 'Real-time notifications for all social activities + reactivation digest',
     'author': 'Bemade',
