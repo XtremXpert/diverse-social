@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Self-hosted ntfy server base URL (no trailing slash needed). -->
+        <record id="param_server_url" model="ir.config_parameter">
+            <field name="key">social_ntfy.server_url</field>
+            <field name="value">https://ntfy.diverse-cite.com</field>
+        </record>
+
+        <!-- Publish token (ntfy access token for the 'odoo' publisher account).
+             Empty by default — fill in after the ntfy server is up. -->
+        <record id="param_publish_token" model="ir.config_parameter">
+            <field name="key">social_ntfy.publish_token</field>
+            <field name="value"></field>
+        </record>
+
+        <!-- Prefix for generated per-user topics: dc_&lt;uuid&gt;. -->
+        <record id="param_topic_prefix" model="ir.config_parameter">
+            <field name="key">social_ntfy.topic_prefix</field>
+            <field name="value">dc</field>
+        </record>
+
+        <!-- Generic push payload, identical for every notification (privacy). -->
+        <record id="param_push_title" model="ir.config_parameter">
+            <field name="key">social_ntfy.push_title</field>
+            <field name="value">Diverse-Cité</field>
+        </record>
+
+        <record id="param_push_body" model="ir.config_parameter">
+            <field name="key">social_ntfy.push_body</field>
+            <field name="value">Nouvelle notification — ouvrez le site pour voir.</field>
+        </record>
+
+    </data>
+</odoo>

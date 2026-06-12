@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Abonnement push iPhone/Android via ntfy, dans la carte Notifications
+         de /my/profile/edit. Le topic est généré paresseusement par le
+         controller (NtfyProfilePortal.edit) avant le rendu. -->
+    <template id="portal_profile_edit_ntfy"
+              inherit_id="club_social_profile.portal_profile_edit">
+        <xpath expr="//div[@id='card_notifications']//div[hasclass('card-body')]" position="inside">
+            <t t-set="ntfy_server"
+               t-value="request.env['ir.config_parameter'].sudo().get_param('social_ntfy.server_url', 'https://ntfy.diverse-cite.com').rstrip('/')"/>
+            <t t-set="ntfy_url" t-value="ntfy_server + '/' + (profile.ntfy_topic or '')"/>
+
+            <div class="mt-3 pt-3 border-top" t-if="profile.ntfy_topic">
+                <div class="fw-bold mb-1">📱 Push iPhone / Android (ntfy)</div>
+                <p class="text-muted small mb-2">
+                    Reçois une notification sur ton téléphone, sans aperçu du contenu.
+                    Installe l'app <strong>ntfy</strong> (App Store / Play Store), puis
+                    abonne-toi à ton canal personnel ci-dessous.
+                </p>
+
+                <div class="d-flex align-items-start gap-3 flex-wrap">
+                    <img t-attf-src="/report/barcode/?barcode_type=QR&amp;value=#{ntfy_url}&amp;width=180&amp;height=180"
+                         alt="QR ntfy" style="width:140px;height:140px;border:1px solid var(--dc-border,#ccc);border-radius:6px;background:#fff;padding:4px;"/>
+                    <div class="small">
+                        <div class="mb-1"><strong>1.</strong> Ouvre l'app ntfy → <strong>+</strong> (s'abonner).</div>
+                        <div class="mb-1"><strong>2.</strong> Serveur : <code t-esc="ntfy_server"/></div>
+                        <div class="mb-1"><strong>3.</strong> Topic : <code t-esc="profile.ntfy_topic"/></div>
+                        <div class="text-muted">Ou scanne le QR depuis un autre appareil.</div>
+
+                        <form action="/my/ntfy/regenerate" method="post" class="mt-2"
+                              onsubmit="return confirm('Régénérer ton canal ? Tu devras te réabonner sur ton téléphone.');">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                🔄 Régénérer le canal
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <p class="text-muted small mt-2 mb-0">
+                    Ton canal est secret : ne le partage pas. Le contenu détaillé reste sur le site
+                    (connexion requise) ; la notification ne montre qu'un avis générique.
+                </p>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
