@@ -56,6 +56,17 @@
         return out;
     }
 
+    function sameApplicationServerKey(sub, appKey) {
+        const current = sub.options && sub.options.applicationServerKey;
+        if (!current) return false;
+        const bytes = new Uint8Array(current);
+        if (bytes.length !== appKey.length) return false;
+        for (let i = 0; i < bytes.length; ++i) {
+            if (bytes[i] !== appKey[i]) return false;
+        }
+        return true;
+    }
+
     async function fetchVapidKey() {
         try {
             const r = await fetch('/pwa/vapid_public_key', { credentials: 'same-origin' });
@@ -88,11 +99,20 @@
         const perm = await Notification.requestPermission();
         if (perm !== 'granted') return;
         const reg = await navigator.serviceWorker.ready;
-        const existing = await reg.pushManager.getSubscription();
-        const sub = existing || await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapid),
-        });
+        const appKey = urlBase64ToUint8Array(vapid);
+        let sub = await reg.pushManager.getSubscription();
+        if (sub && !sameApplicationServerKey(sub, appKey)) {
+            // The server rotated its VAPID keys — the old subscription is
+            // bound to the old key and would be rejected with a 403.
+            try { await sub.unsubscribe(); } catch (_) {}
+            sub = null;
+        }
+        if (!sub) {
+            sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: appKey,
+            });
+        }
         const j = sub.toJSON();
         await jsonRpc('/pwa/subscribe', {
             endpoint: j.endpoint,
