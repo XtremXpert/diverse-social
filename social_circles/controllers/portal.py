@@ -26,7 +26,11 @@ class CirclesPortal(CustomerPortal):
     def my_circles(self, **kw):
         user = request.env.user
         profile = request.env['club_social_profile.profile'].get_or_create_for_user(user)
-        circles = request.env['social_circles.circle'].search([
+        # sudo : la page est scopée aux cercles de l'utilisateur (profile_id =
+        # son profil). Sans sudo, le rendu des membres (circle.member_ids, des
+        # res.users) bute sur la record-rule res.users qui interdit à un portail
+        # de lire les autres utilisateurs → AccessError 403.
+        circles = request.env['social_circles.circle'].sudo().search([
             ('profile_id', '=', profile.id),
         ], order='sequence, id')
 
@@ -38,7 +42,7 @@ class CirclesPortal(CustomerPortal):
             circles_with_addable.append((circle, addable))
 
         # Circles from other users where I am a member (read allowed via rule_circle_member_read)
-        others_circles = request.env['social_circles.circle'].search([
+        others_circles = request.env['social_circles.circle'].sudo().search([
             ('member_ids', 'in', user.id),
             ('profile_id.user_id', '!=', user.id),
         ], order='profile_id, sequence, id')

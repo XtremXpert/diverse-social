@@ -1,6 +1,6 @@
 {
     'name': 'Social Circles',
-    'version': '19.0.4.0.0',
+    'version': '19.0.4.0.1',
     'category': 'Social',
     'summary': 'Trust circles and relationship types: organise connections into named tiers and define relationship dynamics',
     'author': 'Bemade',
