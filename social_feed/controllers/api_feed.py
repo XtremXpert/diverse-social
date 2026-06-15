@@ -48,7 +48,7 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
 
     # ── Read state ───────────────────────────────────────────────────────────
 
-    @http.route('/social/api/feed/mark_read', type='json', auth='user',
+    @http.route('/social/api/feed/mark_read', type='jsonrpc', auth='user',
                 methods=['POST'], csrf=False)
     def mark_read(self, item_type=None, item_id=None, **kw):
         try:
@@ -64,7 +64,7 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
         request.env['social_feed.read_marker'].sudo().mark_read(user.id, item_type, iid)
         return {'success': True}
 
-    @http.route('/social/api/feed/mark_unread', type='json', auth='user',
+    @http.route('/social/api/feed/mark_unread', type='jsonrpc', auth='user',
                 methods=['POST'], csrf=False)
     def mark_unread(self, item_type=None, item_id=None, **kw):
         try:
@@ -82,12 +82,12 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
 
     # ── Preferences ──────────────────────────────────────────────────────────
 
-    @http.route('/social/api/feed/preferences', type='json', auth='user',
+    @http.route('/social/api/feed/preferences', type='jsonrpc', auth='user',
                 methods=['POST'], csrf=False)
     def get_preferences(self, **kw):
         """Returns current boosts + the available types + the allowed range.
 
-        type='json' forces POST in Odoo, so the read endpoint is also a
+        type='jsonrpc' forces POST in Odoo, so the read endpoint is also a
         POST with an empty body. The write endpoint sits on a distinct
         URL (/set) to avoid the ambiguity.
         """
@@ -105,7 +105,7 @@ class SocialFeedAPI(SocialBaseMixin, http.Controller):
             },
         }
 
-    @http.route('/social/api/feed/preferences/set', type='json', auth='user',
+    @http.route('/social/api/feed/preferences/set', type='jsonrpc', auth='user',
                 methods=['POST'], csrf=False)
     def set_preference(self, item_type=None, boost_factor=None, **kw):
         try:
