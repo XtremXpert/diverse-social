@@ -49,16 +49,8 @@ class SocialMessagingMessage(models.Model):
         return super().unlink()
 
 
-class SocialNegotiation(models.Model):
-    _inherit = 'social_negotiation.negotiation'
-
-    def unlink(self):
-        for neg in self:
-            self.env['social_privacy.access_log'].sudo().create({
-                'target_user_id': neg.initiator_id.id,
-                'model_name': self._name,
-                'record_id': neg.id,
-                'action': 'delete',
-                'reason': 'Negotiation deleted',
-            })
-        return super().unlink()
+# SocialNegotiation hook removed: _inherit on social_negotiation.negotiation
+# fails registry resolution when the optional social_negotiation module is
+# absent. Re-introduce inside a bridge module (social_privacy_negotiation,
+# auto_install on both modules) when negotiation tracking is needed for
+# Loi 25 compliance in a deployment that ships social_negotiation.

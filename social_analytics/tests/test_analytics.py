@@ -320,53 +320,59 @@ class TestSocialAnalytics(TransactionCase):
         after = self.Dashboard._reputation_stats(month_ago)['vouchings_active']
         self.assertEqual(after, before)
 
-    # ── Négociations (disabled: social_negotiation module not included) ───
+    # ── Négociations ──────────────────────────────────────────────────────────
 
-    # def test_negotiation_stats_active(self):
-    #     before = self.Dashboard._negotiation_stats()['negotiations_active']
-    #     self.env['social_negotiation.negotiation'].sudo().create({
-    #         'initiator_id': self.moderator.id,
-    #         'partner_id': self.user.id,
-    #         'state': 'active',
-    #     })
-    #     after = self.Dashboard._negotiation_stats()['negotiations_active']
-    #     self.assertEqual(after, before + 1)
+    def test_negotiation_stats_active(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
+        before = self.Dashboard._negotiation_stats()['negotiations_active']
+        self.env['social_negotiation.negotiation'].sudo().create({
+            'initiator_id': self.moderator.id,
+            'partner_id': self.user.id,
+            'state': 'active',
+        })
+        after = self.Dashboard._negotiation_stats()['negotiations_active']
+        self.assertEqual(after, before + 1)
 
-    # def test_negotiation_stats_pending_signature(self):
-    #     before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
-    #     self.env['social_negotiation.negotiation'].sudo().create({
-    #         'initiator_id': self.moderator.id,
-    #         'partner_id': self.user.id,
-    #         'state': 'shared',
-    #     })
-    #     after = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
-    #     self.assertEqual(after, before + 1)
+    def test_negotiation_stats_pending_signature(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
+        before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.env['social_negotiation.negotiation'].sudo().create({
+            'initiator_id': self.moderator.id,
+            'partner_id': self.user.id,
+            'state': 'shared',
+        })
+        after = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.assertEqual(after, before + 1)
 
-    # def test_negotiation_archived_not_in_pending(self):
-    #     before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
-    #     self.env['social_negotiation.negotiation'].sudo().create({
-    #         'initiator_id': self.moderator.id,
-    #         'partner_id': self.user.id,
-    #         'state': 'archived',
-    #     })
-    #     after = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
-    #     self.assertEqual(after, before)
+    def test_negotiation_archived_not_in_pending(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
+        before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.env['social_negotiation.negotiation'].sudo().create({
+            'initiator_id': self.moderator.id,
+            'partner_id': self.user.id,
+            'state': 'archived',
+        })
+        after = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
+        self.assertEqual(after, before)
 
     def test_get_dashboard_data_includes_new_sections(self):
         data = self.Dashboard.get_dashboard_data()
         self.assertIn('gallery', data)
         self.assertIn('reputation', data)
-        # self.assertIn('negotiation', data)  # disabled
+        self.assertIn('negotiation', data)
         self.assertIn('photos_pending_moderation', data['gallery'])
         self.assertIn('vouchings_active', data['reputation'])
-        # self.assertIn('negotiations_active', data['negotiation'])
+        self.assertIn('negotiations_active', data['negotiation'])
 
     def test_populate_includes_new_fields(self):
         record = self.Dashboard.sudo().create({})
         record._populate()
         self.assertGreaterEqual(record.galleries_total, 0)
         self.assertGreaterEqual(record.vouchings_active, 0)
-        # self.assertGreaterEqual(record.negotiations_active, 0)
+        self.assertGreaterEqual(record.negotiations_active, 0)
         self.assertGreaterEqual(record.photos_pending_moderation, 0)
 
     def test_action_view_pending_photos(self):
@@ -424,6 +430,8 @@ class TestSocialAnalytics(TransactionCase):
         self.assertEqual(after, before + 1)
 
     def test_negotiation_reviewing_in_pending_signature(self):
+        if 'social_negotiation.negotiation' not in self.env:
+            self.skipTest('social_negotiation not installed')
         before = self.Dashboard._negotiation_stats()['negotiations_pending_signature']
         self.env['social_negotiation.negotiation'].sudo().create({
             'initiator_id': self.moderator.id,

@@ -6,7 +6,7 @@ _PAGE_SIZE = 30
 
 class NotificationsPortal(CustomerPortal):
 
-    @route('/social/notifications', auth='user', website=True, sitemap=False)
+    @route(['/social/notifications', '/social/notifications/page/<int:page>'], auth='user', website=True, sitemap=False)
     def notifications_page(self, page=1, filter='all', **kw):
         user = request.env.user
         page = max(1, int(page))

@@ -1,5 +1,4 @@
 import json
-from unittest.mock import patch
 
 from odoo.tests import HttpCase, TransactionCase, tagged
 
@@ -70,7 +69,7 @@ class TestPwaSubscribe(HttpCase):
             'group_ids': [(4, self.env.ref('base.group_user').id)],
         })
 
-    def test_subscribe_creates_subscription_for_current_user(self):
+    def test_subscribe_creates_device_for_current_user(self):
         self.authenticate('pwa_user', 'Test1234!')
         payload = {
             'jsonrpc': '2.0',
@@ -88,13 +87,13 @@ class TestPwaSubscribe(HttpCase):
         body = resp.json()
         self.assertTrue(body['result']['success'])
 
-        sub = self.env['social_pwa.subscription'].sudo().search([
+        device = self.env['mail.push.device'].sudo().search([
             ('endpoint', '=', 'https://push.example.com/abc'),
         ], limit=1)
-        self.assertTrue(sub)
-        self.assertEqual(sub.user_id, self.user)
-        self.assertEqual(sub.p256dh, 'p_xxx')
-        self.assertEqual(sub.auth, 'a_xxx')
+        self.assertTrue(device)
+        self.assertEqual(device.partner_id, self.user.partner_id)
+        self.assertEqual(json.loads(device.keys),
+                         {'p256dh': 'p_xxx', 'auth': 'a_xxx'})
 
     def test_subscribe_rejects_missing_keys(self):
         self.authenticate('pwa_user', 'Test1234!')
@@ -119,10 +118,12 @@ class TestPushService(TransactionCase):
         })
         self.Service = self.env['social_pwa.push_service']
 
-    def test_send_is_noop_when_vapid_not_configured(self):
-        # No private key set → service must return 0 without raising.
-        sent = self.Service.send_to_user(self.user.id)
-        self.assertEqual(sent, 0)
+    def _device(self, user, endpoint):
+        return self.env['mail.push.device'].sudo().create({
+            'partner_id': user.partner_id.id,
+            'endpoint': endpoint,
+            'keys': json.dumps({'p256dh': 'p', 'auth': 'a'}),
+        })
 
     def test_payload_is_generic_constant(self):
         payload = self.Service._generic_payload()
@@ -131,78 +132,41 @@ class TestPushService(TransactionCase):
         self.assertEqual(payload['title'], 'MétéoMédia')
         self.assertIn('Nouvelle activité', payload['body'])
 
-    def test_send_skips_when_no_subscriptions(self):
-        self.env['ir.config_parameter'].sudo().set_param(
-            'social_pwa.vapid_private_key', 'dummy-key',
-        )
-        self.env['ir.config_parameter'].sudo().set_param(
-            'social_pwa.vapid_sub', 'mailto:admin@test.test',
-        )
-        sent = self.Service.send_to_user(self.user.id)
+    def test_enqueue_skips_when_no_devices(self):
+        sent = self.Service.enqueue_for_users([self.user.id])
         self.assertEqual(sent, 0)
+        self.assertFalse(self.env['mail.push'].sudo().search([]))
 
-    def test_send_invokes_webpusher_for_each_subscription(self):
-        """With pywebpush available and VAPID configured, send_to_user
-        calls WebPusher.send() once per subscription with the generic
-        payload — and nothing else."""
-        ICP = self.env['ir.config_parameter'].sudo()
-        ICP.set_param('social_pwa.vapid_private_key', 'dummy-key')
-        ICP.set_param('social_pwa.vapid_sub', 'mailto:admin@test.test')
+    def test_enqueue_queues_one_push_per_device(self):
+        self._device(self.user, 'https://push.example.com/a')
+        self._device(self.user, 'https://push.example.com/b')
 
-        self.env['social_pwa.subscription'].create([
-            {'user_id': self.user.id, 'endpoint': 'https://push.example.com/a',
-             'p256dh': 'p1', 'auth': 'a1'},
-            {'user_id': self.user.id, 'endpoint': 'https://push.example.com/b',
-             'p256dh': 'p2', 'auth': 'a2'},
-        ])
-
-        calls = []
-
-        class _StubPusher:
-            def __init__(self, info):
-                calls.append(('init', info))
-
-            def send(self, data, vapid_private_key, vapid_claims, ttl):
-                calls.append(('send', data))
-                return type('R', (), {'status_code': 201})()
-
-        with patch('odoo.addons.social_pwa.models.push_service.WebPusher', _StubPusher), \
-             patch('odoo.addons.social_pwa.models.push_service.PYWEBPUSH_AVAILABLE', True):
-            sent = self.Service.send_to_user(self.user.id)
+        sent = self.Service.enqueue_for_users([self.user.id])
 
         self.assertEqual(sent, 2)
-        send_calls = [c for c in calls if c[0] == 'send']
-        self.assertEqual(len(send_calls), 2)
-        # Every push carries the exact same generic payload.
-        for _, data in send_calls:
-            parsed = json.loads(data)
+        pushes = self.env['mail.push'].sudo().search([])
+        self.assertEqual(len(pushes), 2)
+        # Every push carries the exact same generic payload — no actor,
+        # no notification type, no message preview.
+        for push in pushes:
+            parsed = json.loads(push.payload)
             self.assertEqual(parsed['title'], 'MétéoMédia')
+            self.assertIn('Nouvelle activité', parsed['body'])
 
-    def test_dead_subscription_removed_on_410(self):
-        ICP = self.env['ir.config_parameter'].sudo()
-        ICP.set_param('social_pwa.vapid_private_key', 'dummy-key')
-        ICP.set_param('social_pwa.vapid_sub', 'mailto:admin@test.test')
-
-        sub = self.env['social_pwa.subscription'].create({
-            'user_id': self.user.id, 'endpoint': 'https://push.example.com/gone',
-            'p256dh': 'p', 'auth': 'a',
+    def test_notification_create_enqueues_push(self):
+        self._device(self.user, 'https://push.example.com/hook')
+        actor = self.env['res.users'].create({
+            'name': 'Actor', 'login': 'push_actor',
+            'email': 'push_actor@push.test',
         })
 
-        from odoo.addons.social_pwa.models import push_service as ps
+        self.env['club_social_profile.notification']._notify(
+            self.user.id, actor.id, 'connection_request', 'Hello',
+        )
 
-        class _GoneException(ps.WebPushException):
-            def __init__(self):
-                self.response = type('R', (), {'status_code': 410})()
-
-        class _StubPusher:
-            def __init__(self, info):
-                pass
-
-            def send(self, **kw):
-                raise _GoneException()
-
-        with patch.object(ps, 'WebPusher', _StubPusher), \
-             patch.object(ps, 'PYWEBPUSH_AVAILABLE', True):
-            self.Service.send_to_user(self.user.id)
-
-        self.assertFalse(sub.exists(), 'sub deleted after HTTP 410')
+        pushes = self.env['mail.push'].sudo().search([])
+        self.assertEqual(len(pushes), 1)
+        parsed = json.loads(pushes.payload)
+        self.assertEqual(parsed['title'], 'MétéoMédia')
+        self.assertNotIn('Hello', pushes.payload)
+        self.assertNotIn('Actor', pushes.payload)

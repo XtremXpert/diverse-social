@@ -1,25 +1,25 @@
 {
     'name': 'Social PWA',
-    'version': '19.0.1.1.0',
+    'version': '19.0.2.0.0',
     'category': 'Social',
     'summary': 'Progressive Web App: installable home screen icon, offline shell, generic-payload push',
     'description': """
-        Push notifications require pywebpush to actually deliver — the
-        push service in models/push_service.py soft-imports it and
-        silently no-ops if missing, so the rest of the module (manifest,
-        service worker, install button) still works without the pip
-        package. Production deployments that want push need to install
-        pywebpush separately.
+        Push delivery rides on the standard mail.push queue + cron
+        (devices in mail.push.device, VAPID keys auto-generated) — no
+        pywebpush dependency. The payload stays a constant camouflaged
+        title/body: never route our notifications through the
+        mail.message web-push path, which would put message content on
+        the lock screen.
     """,
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
         'web',
         'portal',
+        'mail',
         'club_social_profile',
     ],
     'data': [
-        'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
         'views/pwa_meta.xml',
         'views/pwa_install_button.xml',

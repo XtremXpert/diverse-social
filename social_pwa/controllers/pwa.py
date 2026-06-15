@@ -101,21 +101,23 @@ class PwaController(Controller):
     def vapid_public_key(self):
         """Front-end fetches this once before subscribing.
 
-        Returns empty string if push isn't configured yet — the client side
-        treats that as "push disabled" and silently skips the prompt.
+        Delegates to the standard mail.push.device helper, which generates
+        the VAPID key pair on first use. Wrapped in a controller because the
+        model's ACL is system-only — portal users can't call it over RPC.
         """
-        key = request.env['ir.config_parameter'].sudo().get_param(
-            'social_pwa.vapid_public_key', '',
-        )
-        return request.make_response(key, headers=[('Content-Type', 'text/plain')])
+        key = request.env['mail.push.device'].sudo().get_web_push_vapid_public_key()
+        return request.make_response(key or '', headers=[('Content-Type', 'text/plain')])
 
     # ── Push subscription endpoint ───────────────────────────────────────────
-    @route('/pwa/subscribe', auth='user', type='json', methods=['POST'], csrf=False)
+    @route('/pwa/subscribe', auth='user', type='jsonrpc', methods=['POST'], csrf=False)
     def subscribe(self, endpoint=None, keys=None, **kw):
         """Register a PushSubscription for the current user.
 
         Payload mirrors the JS PushSubscription.toJSON() shape:
             {endpoint: "...", keys: {p256dh: "...", auth: "..."}}
+
+        Stored in the standard mail.push.device table; delivery is handled
+        by the standard mail.push queue + cron.
         """
         if not endpoint or not isinstance(keys, dict):
             return {'success': False, 'error': 'bad_payload'}
@@ -124,30 +126,29 @@ class PwaController(Controller):
         if not (p256dh and auth):
             return {'success': False, 'error': 'missing_keys'}
 
-        user = request.env.user
-        ua = (request.httprequest.headers.get('User-Agent') or '')[:200]
-
-        Sub = request.env['social_pwa.subscription'].sudo()
-        existing = Sub.search([('endpoint', '=', endpoint)], limit=1)
+        partner = request.env.user.partner_id
+        vals = {
+            'partner_id': partner.id,
+            'endpoint': endpoint,
+            'keys': json.dumps({'p256dh': p256dh, 'auth': auth}),
+        }
+        Device = request.env['mail.push.device'].sudo()
+        existing = Device.search([('endpoint', '=', endpoint)], limit=1)
         if existing:
             # Re-up the keys + reassign to current user (devices switch owners).
-            existing.write({
-                'user_id': user.id, 'p256dh': p256dh, 'auth': auth,
-                'user_agent': ua,
-            })
+            existing.write(vals)
             return {'success': True, 'id': existing.id, 'updated': True}
 
-        sub = Sub.create({
-            'user_id': user.id, 'endpoint': endpoint,
-            'p256dh': p256dh, 'auth': auth, 'user_agent': ua,
-        })
-        return {'success': True, 'id': sub.id, 'updated': False}
+        device = Device.create(vals)
+        return {'success': True, 'id': device.id, 'updated': False}
 
-    @route('/pwa/unsubscribe', auth='user', type='json', methods=['POST'], csrf=False)
+    @route('/pwa/unsubscribe', auth='user', type='jsonrpc', methods=['POST'], csrf=False)
     def unsubscribe(self, endpoint=None, **kw):
         if not endpoint:
             return {'success': False, 'error': 'bad_payload'}
-        Sub = request.env['social_pwa.subscription'].sudo()
-        Sub.search([('endpoint', '=', endpoint),
-                    ('user_id', '=', request.env.user.id)]).unlink()
+        Device = request.env['mail.push.device'].sudo()
+        Device.search([
+            ('endpoint', '=', endpoint),
+            ('partner_id', '=', request.env.user.partner_id.id),
+        ]).unlink()
         return {'success': True}
