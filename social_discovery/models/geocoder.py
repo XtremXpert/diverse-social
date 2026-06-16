@@ -31,10 +31,10 @@ class SocialDiscoveryGeoCache(models.Model):
     lng = fields.Float(digits=(10, 7))
     last_fetched = fields.Datetime(default=fields.Datetime.now)
 
-    _sql_constraints = [
-        ('address_key_unique', 'unique(address_key)',
-         'A cache entry already exists for this address.'),
-    ]
+    _address_key_unique = models.Constraint(
+        'unique(address_key)',
+        'A cache entry already exists for this address.',
+    )
 
     @api.model
     def _normalize(self, address):

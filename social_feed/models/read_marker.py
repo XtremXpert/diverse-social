@@ -30,10 +30,10 @@ class FeedReadMarker(models.Model):
     item_id = fields.Integer(required=True)
     read_at = fields.Datetime(default=fields.Datetime.now, required=True)
 
-    _sql_constraints = [
-        ('user_item_unique', 'unique(user_id, item_type, item_id)',
-         'Already marked as read.'),
-    ]
+    _user_item_unique = models.Constraint(
+        'unique(user_id, item_type, item_id)',
+        'Already marked as read.',
+    )
 
     # ── Bulk helpers ─────────────────────────────────────────────────────────
 

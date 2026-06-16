@@ -33,10 +33,10 @@ class FeedUserPreference(models.Model):
     boost_factor = fields.Float(default=1.0, required=True,
                                 help='1.0 = unchanged. Range %s–%s.' % (BOOST_MIN, BOOST_MAX))
 
-    _sql_constraints = [
-        ('user_type_unique', 'unique(user_id, item_type)',
-         'Only one preference per (user, type).'),
-    ]
+    _user_type_unique = models.Constraint(
+        'unique(user_id, item_type)',
+        'Only one preference per (user, type).',
+    )
 
     @api.constrains('boost_factor')
     def _check_boost_range(self):
