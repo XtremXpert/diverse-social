@@ -27,3 +27,57 @@ class SocialBaseMixin:
             return json.loads(data) if data else {}
         except (ValueError, TypeError):
             return {}
+
+    def _visibility_params(self, user):
+        """Gather params for social_base.post._visibility_domain defensively.
+
+        social_base does not depend on social_safety / club_social_profile /
+        social_group, so those models may be absent. When present we use them
+        to compute the user's real connections, groups and blocks; otherwise
+        we fall back to empty lists (safe and more restrictive)."""
+        env = request.env
+        params = {
+            'connection_user_ids': [],
+            'member_group_ids': [],
+            'blocked_user_ids': [],
+        }
+        if 'club_social_profile.connection' in env:
+            params['connection_user_ids'] = env['club_social_profile.connection'].sudo().search([
+                ('user_id', '=', user.id),
+                ('state', '=', 'accepted'),
+            ]).mapped('connected_user_id.id')
+        if 'social_group.group' in env:
+            params['member_group_ids'] = env['social_group.group'].sudo().search(
+                [('member_ids', 'in', [user.id])]
+            ).ids
+        if 'social_safety.block' in env:
+            params['blocked_user_ids'] = env['social_safety.block'].sudo().get_blocked_ids_for(user)
+        return params
+
+    def _get_visible_post(self, post_id, user):
+        """Return the post if visible to `user`, else an empty recordset.
+
+        Visibility is enforced through social_base.post._visibility_domain (the
+        single source of truth). The author always retains access to their own
+        post, regardless of state, so drafts/moderation remain reachable."""
+        Post = request.env['social_base.post'].sudo()
+        domain = [('id', '=', post_id)] + Post._visibility_domain(
+            user, **self._visibility_params(user)
+        )
+        post = Post.search(domain, limit=1)
+        if post:
+            return post
+        own = Post.browse(post_id)
+        if own.exists() and own.author_id.id == user.id:
+            return own
+        return Post.browse()
+
+    def _get_visible_comment(self, comment_id, user):
+        """Return the comment if its parent post is visible to `user`."""
+        Comment = request.env['social_base.comment'].sudo()
+        comment = Comment.browse(comment_id)
+        if not comment.exists():
+            return Comment.browse()
+        if not self._get_visible_post(comment.post_id.id, user):
+            return Comment.browse()
+        return comment

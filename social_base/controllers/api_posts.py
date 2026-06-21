@@ -73,8 +73,8 @@ class SocialPostAPI(SocialBaseMixin, http.Controller):
     def api_get_post(self, post_id, **kwargs):
         try:
             user = self._validate_auth()
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
 
             post.increment_view_count()
@@ -140,9 +140,9 @@ class SocialPostAPI(SocialBaseMixin, http.Controller):
     @http.route('/social/api/posts/<int:post_id>/share', type='http', auth='user', methods=['POST'], csrf=False)
     def api_share_post(self, post_id, **kwargs):
         try:
-            self._validate_auth()
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            user = self._validate_auth()
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
             post.increment_share_count()
             return self._success_response({'id': post.id, 'share_count': post.share_count})

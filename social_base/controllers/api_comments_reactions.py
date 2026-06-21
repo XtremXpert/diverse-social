@@ -22,8 +22,8 @@ class SocialCommentsAPI(SocialBaseMixin, http.Controller):
             if not content:
                 return self._error_response('Content required', 'INVALID_INPUT')
 
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
 
             vals = {'content': content, 'author_id': user.id, 'post_id': post_id}
@@ -42,9 +42,9 @@ class SocialCommentsAPI(SocialBaseMixin, http.Controller):
     @http.route('/social/api/posts/<int:post_id>/comments', type='http', auth='user', methods=['GET'], csrf=False)
     def api_list_comments(self, post_id, **kwargs):
         try:
-            self._validate_auth()
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            user = self._validate_auth()
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
 
             comments = request.env['social_base.comment'].sudo().search([
@@ -67,9 +67,9 @@ class SocialCommentsAPI(SocialBaseMixin, http.Controller):
     @http.route('/social/api/comments/<int:comment_id>/replies', type='http', auth='user', methods=['GET'], csrf=False)
     def api_list_replies(self, comment_id, **kwargs):
         try:
-            self._validate_auth()
-            comment = request.env['social_base.comment'].sudo().browse(comment_id)
-            if not comment.exists():
+            user = self._validate_auth()
+            comment = self._get_visible_comment(comment_id, user)
+            if not comment:
                 return self._error_response('Comment not found', 'NOT_FOUND', 404)
 
             replies = request.env['social_base.comment'].sudo().search([
@@ -127,8 +127,8 @@ class SocialReactionsAPI(SocialBaseMixin, http.Controller):
             if not reaction_type:
                 return self._error_response('Reaction type required', 'INVALID_INPUT')
 
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
 
             existing = post.reaction_ids.filtered(lambda r: r.user_id == user)
@@ -159,8 +159,8 @@ class SocialReactionsAPI(SocialBaseMixin, http.Controller):
             if not reaction_type:
                 return self._error_response('Reaction type required', 'INVALID_INPUT')
 
-            comment = request.env['social_base.comment'].sudo().browse(comment_id)
-            if not comment.exists():
+            comment = self._get_visible_comment(comment_id, user)
+            if not comment:
                 return self._error_response('Comment not found', 'NOT_FOUND', 404)
 
             existing = comment.reaction_ids.filtered(lambda r: r.user_id == user)
@@ -185,9 +185,9 @@ class SocialReactionsAPI(SocialBaseMixin, http.Controller):
     @http.route('/social/api/posts/<int:post_id>/reactions', type='http', auth='user', methods=['GET'], csrf=False)
     def api_list_post_reactions(self, post_id, **kwargs):
         try:
-            self._validate_auth()
-            post = request.env['social_base.post'].sudo().browse(post_id)
-            if not post.exists():
+            user = self._validate_auth()
+            post = self._get_visible_post(post_id, user)
+            if not post:
                 return self._error_response('Post not found', 'NOT_FOUND', 404)
 
             by_type = {}
