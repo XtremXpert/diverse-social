@@ -179,6 +179,8 @@ class TestSocialNotifications(TransactionCase):
         notif = self._notifs_for(self.bob, 'new_message').sorted('id')[-1]
         self.assertIn('Sugar', notif.body)
         self.assertNotIn(self.alice.name, notif.body)
+        # La byline (champ calculé) doit aussi montrer le pseudonyme.
+        self.assertEqual(notif.actor_display_name, 'Sugar')
 
     def test_message_author_not_notified(self):
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(

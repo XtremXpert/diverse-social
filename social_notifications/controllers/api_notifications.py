@@ -77,6 +77,6 @@ class SocialNotificationsAPI(SocialBaseMixin, http.Controller):
             'ref_id': notif.ref_id or None,
             'actor': {
                 'id': notif.actor_id.id,
-                'name': notif.actor_id.name,
+                'name': notif.actor_display_name,
             } if notif.actor_id else None,
         }

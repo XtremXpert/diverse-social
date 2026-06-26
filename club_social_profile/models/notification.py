@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class ClubSocialNotification(models.Model):
@@ -25,6 +25,17 @@ class ClubSocialNotification(models.Model):
     ref_id = fields.Integer()
     url = fields.Char()
     body = fields.Char()
+    actor_display_name = fields.Char(
+        compute='_compute_actor_display_name', compute_sudo=True,
+        string='Actor display name',
+        help='Privacy-preserving name of the actor (stealth pseudonym if set).',
+    )
+
+    @api.depends('actor_id')
+    def _compute_actor_display_name(self):
+        Profile = self.env['club_social_profile.profile']
+        for n in self:
+            n.actor_display_name = Profile._display_name_for_user(n.actor_id) if n.actor_id else _('Someone')
 
     @api.model
     def _notify(self, user_id, actor_id, notif_type, body, url=False, ref_model=False, ref_id=False):

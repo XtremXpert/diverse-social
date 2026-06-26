@@ -88,7 +88,7 @@
                                         </div>
                                         <div class="text-muted mt-1" style="font-size:0.8rem;">
                                             <t t-if="notif.actor_id">
-                                                <t t-out="notif.actor_id.name"/> ·
+                                                <t t-out="notif.actor_display_name"/> ·
                                             </t>
                                             <t t-out="notif.create_date.strftime('%d/%m/%Y at %H:%M') if notif.create_date else ''"/>
                                         </div>
