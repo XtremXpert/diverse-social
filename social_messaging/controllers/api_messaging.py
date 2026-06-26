@@ -116,18 +116,20 @@ class SocialMessagingAPI(SocialBaseMixin, http.Controller):
 
     def _thread_to_dict(self, thread, user):
         other = thread.other_participant(user)
+        Profile = request.env['club_social_profile.profile'].sudo()
         return {
             'id': thread.id,
-            'other_participant': {'id': other.id, 'name': other.name} if other else None,
+            'other_participant': {'id': other.id, 'name': Profile._display_name_for_user(other)} if other else None,
             'last_message_date': thread.last_message_date.isoformat() if thread.last_message_date else None,
             'last_message_preview': thread.last_message_preview,
             'unread_count': thread.unread_count_for(user),
         }
 
     def _message_to_dict(self, msg):
+        Profile = request.env['club_social_profile.profile'].sudo()
         return {
             'id': msg.id,
-            'author': {'id': msg.author_id.id, 'name': msg.author_id.name},
+            'author': {'id': msg.author_id.id, 'name': Profile._display_name_for_user(msg.author_id)},
             'content': msg.content,
             'create_date': msg.create_date.isoformat() if msg.create_date else None,
             'read_by_ids': msg.read_by_ids.ids,

@@ -164,6 +164,22 @@ class TestSocialNotifications(TransactionCase):
         })
         self.assertEqual(len(self._notifs_for(self.bob, 'new_message')), before + 1)
 
+    def test_message_notification_uses_stealth_name(self):
+        """Le corps de la notif doit montrer le pseudonyme, jamais le vrai nom."""
+        profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.alice)
+        profile.stealth_name = 'Sugar'
+        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
+            [self.alice.id, self.bob.id]
+        )
+        self.env['social_messaging.message'].sudo().create({
+            'thread_id': thread.id,
+            'author_id': self.alice.id,
+            'content': 'Salut Bob',
+        })
+        notif = self._notifs_for(self.bob, 'new_message').sorted('id')[-1]
+        self.assertIn('Sugar', notif.body)
+        self.assertNotIn(self.alice.name, notif.body)
+
     def test_message_author_not_notified(self):
         thread = self.env['social_messaging.thread'].sudo()._get_or_create(
             [self.alice.id, self.bob.id]

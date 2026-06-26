@@ -243,7 +243,7 @@ class MessagingPortal(CustomerPortal):
         return {
             'id': msg.id,
             'author_id': msg.author_id.id,
-            'author_name': msg.author_id.name,
+            'author_name': request.env['club_social_profile.profile'].sudo()._display_name_for_user(msg.author_id),
             'content': msg.content or '',
             'is_mine': msg.author_id.id == user.id,
             'create_date': msg.create_date.strftime('%d/%m/%Y %H:%M') if msg.create_date else '',

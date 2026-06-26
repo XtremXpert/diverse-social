@@ -13,7 +13,7 @@ class SocialNegotiationNotification(models.Model):
                 actor_id=neg.initiator_id.id,
                 notif_type='negotiation_shared',
                 body=_('%(name)s shared a negotiation document with you.',
-                        name=neg.initiator_id.name),
+                        name=self.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)),
                 ref_model='social_negotiation.negotiation',
                 ref_id=neg.id,
             )
@@ -49,7 +49,7 @@ class SocialNegotiationNotification(models.Model):
                     actor_id=self.env.user.id,
                     notif_type='negotiation_signed',
                     body=_('%(name)s signed the negotiation document.',
-                            name=self.env.user.name),
+                            name=self.env['club_social_profile.profile']._display_name_for_user(self.env.user)),
                     ref_model='social_negotiation.negotiation',
                     ref_id=neg.id,
                 )

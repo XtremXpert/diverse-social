@@ -180,9 +180,7 @@ class NotificationDigestService(models.AbstractModel):
                 g['actor_ids_seen'].add(actor.id)
                 # Privacy-preserving display: stealth_name on the actor's
                 # profile takes precedence over their real name.
-                actor_profile = Profile.search([('user_id', '=', actor.id)], limit=1)
-                display = (actor_profile.stealth_name or actor.name or _('Someone'))
-                g['actor_names'].append(display)
+                g['actor_names'].append(Profile._display_name_for_user(actor))
 
         out = []
         for g in groups.values():

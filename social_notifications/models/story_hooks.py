@@ -21,13 +21,15 @@ class SocialStory(models.Model):
     def create(self, vals_list):
         records = super().create(vals_list)
         Notif = self.env['club_social_profile.notification']
+        Profile = self.env['club_social_profile.profile']
         for story in records:
+            author_name = Profile._display_name_for_user(story.author_id)
             for user in story._notification_recipients():
                 Notif._notify(
                     user_id=user.id,
                     actor_id=story.author_id.id,
                     notif_type='story_new',
-                    body=_('%s published a new story.', story.author_id.name),
+                    body=_('%s published a new story.', author_name),
                     ref_model='social_story.story',
                     ref_id=story.id,
                 )

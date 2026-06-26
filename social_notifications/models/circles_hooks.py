@@ -13,5 +13,6 @@ class SocialCircleNotification(models.Model):
                 actor_id=self.profile_id.user_id.id,
                 notif_type='circle_added',
                 body=_('%(name)s added you to their circle "%(circle)s".',
-                        name=self.profile_id.user_id.name, circle=self.name),
+                        name=self.env['club_social_profile.profile']._display_name_for_user(self.profile_id.user_id),
+                        circle=self.name),
             )

@@ -107,3 +107,17 @@ class ClubSocialProfile(models.Model):
         if not profile:
             profile = self.create({'user_id': user.id})
         return profile
+
+    @api.model
+    def _display_name_for_user(self, user):
+        """Privacy-preserving display name shown to other members.
+
+        Returns the stealth pseudonym when set, otherwise the user's real
+        name. Used everywhere a member's name is exposed to another member
+        (notifications, digest, public pages) so the real identity is never
+        leaked when a pseudonym exists.
+        """
+        if not user:
+            return _('Someone')
+        profile = self.sudo().search([('user_id', '=', user.id)], limit=1)
+        return profile.stealth_name or user.name or _('Someone')
