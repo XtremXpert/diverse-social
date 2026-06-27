@@ -5,10 +5,12 @@
         <field name="name">Social Posts and Comments</field>
         <field name="description">Processing of user-generated content (posts, comments, reactions) within the social network.</field>
     </record>
+    <!-- disabled: social_messaging retiré au profit de Discuss
     <record id="privacy_activity_social_messaging" model="privacy.activity">
         <field name="name">Private Messaging</field>
         <field name="description">Processing of direct messages between users.</field>
     </record>
+    -->
     <record id="privacy_activity_social_profiles" model="privacy.activity">
         <field name="name">Social Profile Data</field>
         <field name="description">Processing of member profile information including identity, preferences, and visibility settings.</field>

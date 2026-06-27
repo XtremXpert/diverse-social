@@ -21,11 +21,12 @@ class ClubMembershipType(models.Model):
     membership_count = fields.Integer(compute='_compute_membership_count')
 
     def _compute_membership_count(self):
-        data = self.env['club_membership.membership'].read_group(
+        # Odoo 19 : read_group → _read_group (groupby/aggregates, tuples).
+        data = self.env['club_membership.membership']._read_group(
             [('membership_type_id', 'in', self.ids)],
-            ['membership_type_id'],
-            ['membership_type_id'],
+            groupby=['membership_type_id'],
+            aggregates=['__count'],
         )
-        counts = {d['membership_type_id'][0]: d['membership_type_id_count'] for d in data}
+        counts = {mtype.id: count for mtype, count in data}
         for rec in self:
             rec.membership_count = counts.get(rec.id, 0)

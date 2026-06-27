@@ -68,9 +68,12 @@ class SocialAnonymizeWizard(models.TransientModel):
             wiz.comment_count = self.env['social_base.comment'].sudo().search_count(
                 [('author_id', '=', user.id)]
             )
-            wiz.message_count = self.env['social_messaging.message'].sudo().search_count(
-                [('author_id', '=', user.id)]
-            )
+            if 'social_messaging.message' in self.env:
+                wiz.message_count = self.env['social_messaging.message'].sudo().search_count(
+                    [('author_id', '=', user.id)]
+                )
+            else:
+                wiz.message_count = 0
             if 'social_negotiation.negotiation' in self.env:
                 wiz.negotiation_count = self.env['social_negotiation.negotiation'].sudo().search_count(
                     ['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]
@@ -213,6 +216,10 @@ class SocialAnonymizeWizard(models.TransientModel):
             })
 
     def _anonymize_messages(self, user):
+        # social_messaging retiré au profit de Discuss : rien à anonymiser ici
+        # quand le module est absent.
+        if 'social_messaging.message' not in self.env:
+            return
         Message = self.env['social_messaging.message'].sudo()
         msgs = Message.search([('author_id', '=', user.id)])
         # Private messages are fully deleted (most sensitive)

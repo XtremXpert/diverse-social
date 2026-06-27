@@ -45,11 +45,13 @@ class SocialPostCategory(models.Model):
                 ) % rec.code)
 
     def _compute_post_count(self):
-        data = self.env['social_base.post'].read_group(
+        # Odoo 19 : read_group remplacé par _read_group (groupby/aggregates,
+        # retour en tuples (record_groupby, *valeurs_agrégées)).
+        data = self.env['social_base.post']._read_group(
             [('category_id', 'in', self.ids)],
-            ['category_id'],
-            ['category_id'],
+            groupby=['category_id'],
+            aggregates=['__count'],
         )
-        counts = {d['category_id'][0]: d['category_id_count'] for d in data}
+        counts = {category.id: count for category, count in data}
         for rec in self:
             rec.post_count = counts.get(rec.id, 0)

@@ -34,19 +34,10 @@ class SocialBasePost(models.Model):
         return super().unlink()
 
 
-class SocialMessagingMessage(models.Model):
-    _inherit = 'social_messaging.message'
-
-    def unlink(self):
-        for msg in self:
-            self.env['social_privacy.access_log'].sudo().create({
-                'target_user_id': msg.author_id.id,
-                'model_name': self._name,
-                'record_id': msg.id,
-                'action': 'delete',
-                'reason': 'Message deleted',
-            })
-        return super().unlink()
+# SocialMessagingMessage hook removed: _inherit on social_messaging.message
+# fails registry resolution when social_messaging is absent. social_messaging
+# a été retiré au profit de Discuss (social_messaging_discuss). Réintroduire via
+# un bridge module si un suivi Loi 25 des messages Discuss devient nécessaire.
 
 
 # SocialNegotiation hook removed: _inherit on social_negotiation.negotiation

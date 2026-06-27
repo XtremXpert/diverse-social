@@ -150,49 +150,21 @@ class TestSocialNotifications(TransactionCase):
         req.with_user(self.alice).action_approve()
         self.assertEqual(len(self._notifs_for(self.bob, 'group_join_approved')), before + 1)
 
-    # ── Messaging ─────────────────────────────────────────────────────────────
+    # ── Confidentialité : pseudonyme (stealth_name) ───────────────────────────
+    # NB : les tests de notif « new_message » ont été retirés — social_messaging
+    # est retiré au profit de Discuss. La byline reste couverte ci-dessous.
 
-    def test_message_notifies_recipient(self):
-        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
-            [self.alice.id, self.bob.id]
-        )
-        before = len(self._notifs_for(self.bob, 'new_message'))
-        self.env['social_messaging.message'].sudo().create({
-            'thread_id': thread.id,
-            'author_id': self.alice.id,
-            'content': 'Salut Bob',
-        })
-        self.assertEqual(len(self._notifs_for(self.bob, 'new_message')), before + 1)
-
-    def test_message_notification_uses_stealth_name(self):
-        """Le corps de la notif doit montrer le pseudonyme, jamais le vrai nom."""
+    def test_notification_actor_display_name_uses_stealth(self):
+        """La byline (actor_display_name) doit montrer le pseudonyme, jamais le vrai nom."""
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(self.alice)
         profile.stealth_name = 'Sugar'
-        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
-            [self.alice.id, self.bob.id]
+        self.Notif._notify(
+            user_id=self.bob.id, actor_id=self.alice.id,
+            notif_type='connection_request', body='test',
         )
-        self.env['social_messaging.message'].sudo().create({
-            'thread_id': thread.id,
-            'author_id': self.alice.id,
-            'content': 'Salut Bob',
-        })
-        notif = self._notifs_for(self.bob, 'new_message').sorted('id')[-1]
-        self.assertIn('Sugar', notif.body)
-        self.assertNotIn(self.alice.name, notif.body)
-        # La byline (champ calculé) doit aussi montrer le pseudonyme.
+        notif = self._notifs_for(self.bob, 'connection_request').sorted('id')[-1]
         self.assertEqual(notif.actor_display_name, 'Sugar')
-
-    def test_message_author_not_notified(self):
-        thread = self.env['social_messaging.thread'].sudo()._get_or_create(
-            [self.alice.id, self.bob.id]
-        )
-        before = len(self._notifs_for(self.alice, 'new_message'))
-        self.env['social_messaging.message'].sudo().create({
-            'thread_id': thread.id,
-            'author_id': self.alice.id,
-            'content': 'Mon propre message',
-        })
-        self.assertEqual(len(self._notifs_for(self.alice, 'new_message')), before)
+        self.assertNotEqual(notif.actor_display_name, self.alice.name)
 
     # ── Story hooks ───────────────────────────────────────────────────────────
 

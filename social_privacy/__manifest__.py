@@ -12,7 +12,6 @@
         # --- All social modules ---
         'club_social_profile',
         'social_base',
-        'social_messaging',
         'social_reputation',
         'social_governance',
         'social_safety',

@@ -133,16 +133,17 @@ class DataExportRequest(models.Model):
             'create_date': str(r.create_date),
         } for r in reactions]
 
-        # Messages
-        Message = self.env['social_messaging.message'].sudo()
-        msgs = Message.search([('author_id', '=', user.id)])
-        res['messages'] = [{
-            'id': m.id,
-            'thread_id': m.thread_id.id,
-            'content': m.content or None,
-            'create_date': str(m.create_date),
-            'read_by_ids': list(m.read_by_ids.ids) if m.read_by_ids else [],
-        } for m in msgs]
+        # Messages (optional — social_messaging retiré au profit de Discuss)
+        if 'social_messaging.message' in self.env:
+            Message = self.env['social_messaging.message'].sudo()
+            msgs = Message.search([('author_id', '=', user.id)])
+            res['messages'] = [{
+                'id': m.id,
+                'thread_id': m.thread_id.id,
+                'content': m.content or None,
+                'create_date': str(m.create_date),
+                'read_by_ids': list(m.read_by_ids.ids) if m.read_by_ids else [],
+            } for m in msgs]
 
         # Negotiations (optional — social_negotiation may not be installed)
         if 'social_negotiation.negotiation' in self.env:

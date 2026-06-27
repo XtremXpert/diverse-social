@@ -29,15 +29,8 @@ class TestAnonymizeWizard(TransactionCase):
             'author_id': cls.test_user.id,
             'content': 'Hello world',
         })
-        # Create a message
-        cls.thread = cls.env['social_messaging.thread'].sudo().create({
-            'participant_ids': [(6, 0, [cls.test_user.id, cls.other_user.id])],
-        })
-        cls.msg = cls.env['social_messaging.message'].sudo().create({
-            'thread_id': cls.thread.id,
-            'author_id': cls.test_user.id,
-            'content': 'Test message',
-        })
+        # NB : social_messaging retiré au profit de Discuss — plus de message
+        # custom à créer/anonymiser ici.
 
     def test_anonymize_wizard_counts(self):
         wizard = self.env['social_privacy.anonymize_wizard'].create({
@@ -45,7 +38,7 @@ class TestAnonymizeWizard(TransactionCase):
         })
         self.assertEqual(wizard.user_id, self.test_user)
         self.assertEqual(wizard.post_count, 1)
-        self.assertEqual(wizard.message_count, 1)
+        self.assertEqual(wizard.message_count, 0)
 
     def test_anonymize_wizard_requires_confirm(self):
         wizard = self.env['social_privacy.anonymize_wizard'].create({
@@ -77,12 +70,6 @@ class TestAnonymizeWizard(TransactionCase):
         self.user_profile.invalidate_recordset()
         self.assertFalse(self.user_profile.bio)
         self.assertFalse(self.user_profile.city)
-
-        # Messages deleted (most sensitive)
-        msgs_after = self.env['social_messaging.message'].sudo().search_count([
-            ('author_id', '=', self.test_user.id)
-        ])
-        self.assertEqual(msgs_after, 0)
 
         # Anonymization log created
         log = self.env['social_privacy.access_log'].sudo().search([
