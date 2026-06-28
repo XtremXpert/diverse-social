@@ -434,4 +434,28 @@
         </xpath>
     </template>
 
+    <!-- ══ Encart « Parrainer par courriel » sur le tableau de bord ═══════ -->
+    <template id="portal_dashboard_invite"
+              inherit_id="club_social_profile.portal_dashboard">
+        <xpath expr="//div[@id='dashboard_sidebar']/t[1]" position="before">
+            <div class="card mb-4">
+                <div class="card-header fw-bold"
+                     style="background:#1a1a2e; color:white;">
+                    🤝 Parrainer
+                </div>
+                <div class="card-body text-center p-3">
+                    <p class="text-muted mb-3" style="font-size:0.85rem;">
+                        Invitez quelqu'un à rejoindre la communauté par courriel.
+                    </p>
+                    <a href="/my/vouching/invite" class="btn btn-sm"
+                       style="background:#e94560; color:white;">
+                        ✉️ Inviter par courriel
+                    </a>
+                    <a href="/my/vouching" class="d-block mt-2 text-muted"
+                       style="font-size:0.78rem;">Mes parrainages →</a>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
 </odoo>
