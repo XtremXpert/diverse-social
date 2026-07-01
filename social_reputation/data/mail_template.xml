@@ -6,9 +6,11 @@
         <field name="model_id" ref="model_social_reputation_vouching"/>
         <field name="subject">{{ object.sponsor_id.name }} t'invite à rejoindre Diverse Cité</field>
         <!-- Expéditeur TOUJOURS @diverse-cite.com (le serveur Mailcow a un
-             from_filter sur ce domaine) : sinon l'envoi est rejeté. Le nom du
-             parrain reste affiché, et reply_to pointe vers lui. -->
-        <field name="email_from">{{ '"%s via Diverse-Cité" &lt;%s&gt;' % ((object.sponsor_id.name or 'Un membre'), (user.company_id.email or 'odoo@diverse-cite.com')) }}</field>
+             from_filter sur ce domaine) : sinon l'envoi est rejeté. L'adresse
+             est codée en dur pour ne pas dépendre de company_id.email, qui
+             pourrait un jour pointer hors du domaine. Le nom du parrain reste
+             affiché, et reply_to pointe vers lui. -->
+        <field name="email_from">{{ '"%s via Diverse-Cité" &lt;noreply@diverse-cite.com&gt;' % (object.sponsor_id.name or 'Un membre') }}</field>
         <field name="reply_to">{{ object.sponsor_id.email_formatted or '' }}</field>
         <field name="email_to">{{ object.invite_email }}</field>
         <field name="auto_delete" eval="False"/>
