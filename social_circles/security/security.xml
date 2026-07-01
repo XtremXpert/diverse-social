@@ -26,5 +26,17 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
+        <!-- Social users can read all platform user profiles (needed for circle member display) -->
+        <record id="rule_res_users_social_read" model="ir.rule">
+            <field name="name">Social User: read all platform users</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_user')), (4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
     </data>
 </odoo>

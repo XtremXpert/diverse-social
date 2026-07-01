@@ -33,7 +33,7 @@ class CirclesPortal(CustomerPortal):
         connections = _get_user_connections(user)
         circles_with_addable = []
         for circle in circles:
-            in_circle = circle.member_ids
+            in_circle = circle.sudo().member_ids
             addable = connections.filtered(lambda u: u not in in_circle)
             circles_with_addable.append((circle, addable))
 
@@ -42,6 +42,17 @@ class CirclesPortal(CustomerPortal):
             ('member_ids', 'in', user.id),
             ('profile_id.user_id', '!=', user.id),
         ], order='profile_id, sequence, id')
+
+        # Pre-fetch member names with sudo() to avoid res.users record rules
+        all_member_ids = set()
+        for circle in circles:
+            all_member_ids.update(circle.sudo().member_ids.ids)
+        for oc in others_circles:
+            all_member_ids.update(oc.sudo().member_ids.ids)
+        member_name_map = {}
+        if all_member_ids:
+            for mu in request.env['res.users'].sudo().browse(list(all_member_ids)):
+                member_name_map[mu.id] = mu.name
 
         # Circle types already used by this profile (to hide from the "add" list)
         used_type_ids = circles.mapped('type_id').ids
@@ -58,6 +69,7 @@ class CirclesPortal(CustomerPortal):
             'profile': profile,
             'page_name': 'circles',
             'error': kw.get('error'),
+            'member_name_map': member_name_map,
         })
 
     # ── Create ─────────────────────────────────────────────────────────────

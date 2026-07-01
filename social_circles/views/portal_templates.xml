@@ -230,18 +230,18 @@
                         </t>
 
                         <!-- Members actuels -->
-                        <t t-if="circle.member_ids">
+                        <t t-if="circle.sudo().member_ids">
                             <ul class="list-group list-group-flush">
-                                <t t-foreach="circle.member_ids" t-as="member">
+                                <t t-foreach="circle.sudo().member_ids" t-as="member">
                                     <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
                                         <div class="d-flex align-items-center gap-2">
                                             <div style="width:28px;height:28px;border-radius:50%;overflow:hidden;background:#e94560;flex-shrink:0;">
                                                 <div class="d-flex align-items-center justify-content-center h-100"
                                                      style="color:white;font-size:11px;">
-                                                    <t t-out="(member.name or '?')[0].upper()"/>
+                                                    <t t-out="(member_name_map.get(member.id, '?'))[:1].upper() or '?'"/>
                                                 </div>
                                             </div>
-                                            <span style="font-size:.9rem;" t-esc="member.name"/>
+                                            <span style="font-size:.9rem;" t-esc="member_name_map.get(member.id) or '?"/>
                                         </div>
                                         <form t-attf-action="/my/circles/#{circle.id}/remove_member" method="post">
                                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -276,7 +276,7 @@
                                     <span style="font-size:.9rem;" class="text-muted">🔵</span>
                                     <span class="fw-semibold" style="font-size:.9rem;" t-esc="oc.name"/>
                                     <span class="text-muted" style="font-size:.8rem;">
-                                        — <t t-esc="oc.profile_id.user_id.name"/>
+                                        — <t t-esc="member_name_map.get(oc.profile_id.user_id.id) or oc.profile_id.user_id.name or '?'"/>
                                     </span>
                                 </div>
                                 <t t-if="oc.description">
