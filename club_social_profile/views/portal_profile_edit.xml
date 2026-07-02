@@ -281,6 +281,29 @@
                                 </div>
                             </t>
 
+                            <!-- Interface / email language (res.users.lang) -->
+                            <div class="card mb-4" id="card_ui_lang">
+                                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                                    🌐 Site language
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <t t-foreach="ui_langs" t-as="ul">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="ui_lang"
+                                                       t-att-value="ul.code" t-attf-id="ulang_#{ul.id}"
+                                                       t-att-checked="ul.code == request.env.user.lang and 'checked' or None"/>
+                                                <label class="form-check-label" t-attf-for="ulang_#{ul.id}"
+                                                       t-out="ul.name"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="form-text">
+                                        Applies to the website and to the emails you receive (digest, notifications).
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Notifications -->
                             <div class="card mb-4" id="card_notifications">
                                 <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">

@@ -38,17 +38,21 @@ class ProfileEditPortal(CustomerPortal):
             'section': section,
             'looking_for_opts': looking_for_opts,
             'language_opts': language_opts,
+            'ui_langs': request.env['res.lang'].sudo().search([]),
             'page_name': 'profile_edit',
         }
 
     # ── Affichage ─────────────────────────────────────────────────────────────
 
     @route('/my/profile/edit', auth='user', website=True, sitemap=False)
-    def edit(self, section='identity', **kw):
+    def edit(self, section='identity', saved='', **kw):
         profile = self._get_own_profile()
+        # saved=1 : retour de redirection post-sauvegarde (ex. changement de
+        # langue d'interface → l'URL localisée change, on garde le feedback).
+        success = _("Preferences saved.") if saved else None
         return request.render(
             'club_social_profile.portal_profile_edit',
-            self._edit_context(profile, section=section),
+            self._edit_context(profile, section=section, success=success),
         )
 
     # ── Identity ──────────────────────────────────────────────────────────────
@@ -102,7 +106,7 @@ class ProfileEditPortal(CustomerPortal):
 
     @route('/my/profile/edit/preferences', auth='user', methods=['GET', 'POST'], website=True, csrf=True)
     def save_profile_preferences(self, visibility='members', availability='non_specifie',
-                                 digest_email_enabled=False, stealth_name='', **kw):
+                                 digest_email_enabled=False, stealth_name='', ui_lang='', **kw):
         if request.httprequest.method == 'GET':
             return request.redirect('/my/profile/edit?section=preferences')
         profile = self._get_own_profile()
@@ -121,6 +125,26 @@ class ProfileEditPortal(CustomerPortal):
             'looking_for_ids':      [(6, 0, valid_lf)],
             'language_ids':         [(6, 0, valid_lng)],
         })
+
+        # Langue de l'interface et des courriels (res.users.lang — champ
+        # auto-modifiable par l'usager, cf. SELF_WRITEABLE_FIELDS). Le
+        # sélecteur fr/en du site ne change que le cookie de session ; ici on
+        # change la langue de PROFIL : courriels (digest, notifications) et
+        # langue par défaut à la connexion.
+        user = request.env.user
+        if ui_lang and ui_lang != user.lang:
+            lang = request.env['res.lang'].sudo().search([('code', '=', ui_lang)], limit=1)
+            if lang:
+                user.write({'lang': lang.code})
+                # Redirige vers l'URL localisée pour que l'interface bascule
+                # immédiatement (le rendu suit l'URL, pas user.lang).
+                default = request.website.default_lang_id
+                prefix = '' if lang == default else '/' + lang.url_code
+                resp = request.redirect(
+                    '%s/my/profile/edit?section=preferences&saved=1' % prefix)
+                resp.set_cookie('frontend_lang', lang.code)
+                return resp
+
         return request.render(
             'club_social_profile.portal_profile_edit',
             self._edit_context(profile, section='preferences', success=_("Preferences saved.")),

@@ -1290,3 +1290,13 @@ msgid ""
 "🤝 New connections<br/><span style=\"font-size:0.7rem;\">(last 7 days)</span>"
 msgstr ""
 "🤝 Nouvelles connexions<br/><span style=\"font-size:0.7rem;\">(7 derniers jours)</span>"
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "🌐 Site language"
+msgstr "🌐 Langue du site"
+
+#. module: club_social_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile.portal_profile_edit
+msgid "Applies to the website and to the emails you receive (digest, notifications)."
+msgstr "S'applique au site et aux courriels que vous recevez (digest, notifications)."
