@@ -156,6 +156,17 @@ class TestDashboardData(TransactionCase):
 @tagged('club_social_profile', 'dashboard_portal', 'post_install', '-at_install')
 class TestDashboardHttp(HttpCase):
 
+    def _skip_if_dashboard_overridden(self):
+        # city_club_theme_modern overrides /my/dashboard with its own
+        # template — the strings asserted below belong to this module's
+        # template only.
+        theme = self.env['ir.module.module'].sudo().search([
+            ('name', '=', 'city_club_theme_modern'),
+            ('state', '=', 'installed'),
+        ], limit=1)
+        if theme:
+            self.skipTest('/my/dashboard overridden by city_club_theme_modern')
+
     def test_dashboard_unauthenticated_redirects(self):
         resp = self.url_open('/my/dashboard', allow_redirects=False)
         self.assertIn(resp.status_code, (302, 303))
@@ -166,6 +177,7 @@ class TestDashboardHttp(HttpCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_dashboard_contains_stats(self):
+        self._skip_if_dashboard_overridden()
         self.authenticate('admin', 'admin')
         resp = self.url_open('/my/dashboard')
         self.assertEqual(resp.status_code, 200)
@@ -173,6 +185,7 @@ class TestDashboardHttp(HttpCase):
         self.assertIn(b'New connections', resp.content)
 
     def test_dashboard_contains_profile_card(self):
+        self._skip_if_dashboard_overridden()
         admin = self.env.ref('base.user_admin')
         self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin)
         self.authenticate('admin', 'admin')
