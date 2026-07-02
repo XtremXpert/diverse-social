@@ -189,6 +189,8 @@ class DiscoveryCriteria(models.Model):
 
     def _is_reachable(self, target_profile, searcher_user):
         """True if target has no active gate, or searcher's request is approved."""
+        if 'social_consent.gate' not in self.env:
+            return True
         gate = self.env['social_consent.gate'].search([
             ('profile_id', '=', target_profile.id),
             ('is_active', '=', True),
