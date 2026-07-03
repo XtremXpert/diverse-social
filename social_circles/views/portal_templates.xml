@@ -241,7 +241,7 @@
                                                     <t t-out="(member_name_map.get(member.id, '?'))[:1].upper() or '?'"/>
                                                 </div>
                                             </div>
-                                            <span style="font-size:.9rem;" t-esc="member_name_map.get(member.id) or '?"/>
+                                            <span style="font-size:.9rem;" t-esc="member_name_map.get(member.id) or '?'"/>
                                         </div>
                                         <form t-attf-action="/my/circles/#{circle.id}/remove_member" method="post">
                                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
