@@ -91,7 +91,7 @@
                                        t-esc="owner_profile.stealth_name or gallery.owner_id.name"/>
                                 </t>
                                 <t t-else="">
-                                    <span t-esc="gallery.owner_id.name"/>
+                                    <span t-esc="request.env['club_social_profile.profile']._display_name_for_user(gallery.owner_id)"/>
                                 </t>
                             </small>
                         </t>

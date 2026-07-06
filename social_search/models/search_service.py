@@ -51,10 +51,13 @@ class SocialSearchService(models.AbstractModel):
         ]).mapped('connected_user_id.id')
 
         q = (query or '').strip()
+        # Ne jamais matcher sur le login (courriel) ni sur le vrai nom quand un
+        # pseudonyme existe : on ne doit pas pouvoir retrouver un membre par
+        # son identité réelle.
         text_domain = (
             ['|', '|', '|',
-             ('login', 'ilike', q),
-             ('user_id.name', 'ilike', q),
+             ('stealth_name', 'ilike', q),
+             '&', ('stealth_name', '=', False), ('user_id.name', 'ilike', q),
              ('bio', 'ilike', q),
              ('city', 'ilike', q)]
             if q else []
@@ -75,12 +78,12 @@ class SocialSearchService(models.AbstractModel):
         return [self._profile_to_dict(p) for p in profiles]
 
     def _profile_to_dict(self, p):
+        # Pseudonyme uniquement — jamais le vrai nom ni le login (courriel).
         return {
             'type': 'profile',
             'id': p.id,
             'user_id': p.user_id.id,
-            'name': p.user_id.name,
-            'login': p.login,
+            'name': p.stealth_name or p.user_id.name,
             'city': p.city or None,
             'bio': (p.bio or '')[:120] or None,
             'url': '/profile/%d' % p.user_id.id,
@@ -150,7 +153,7 @@ class SocialSearchService(models.AbstractModel):
             'date_begin': e.date_begin.isoformat() if e.date_begin else None,
             'date_end': e.date_end.isoformat() if e.date_end else None,
             'social_visibility': e.social_visibility or None,
-            'organizer': e.organizer_user_id.name if e.organizer_user_id else None,
+            'organizer': self.env['club_social_profile.profile']._display_name_for_user(e.organizer_user_id) if e.organizer_user_id else None,
             'url': '/event/%d' % e.id,
         }
 
@@ -186,7 +189,7 @@ class SocialSearchService(models.AbstractModel):
             'id': p.id,
             'name': p.name or None,
             'excerpt': plain or None,
-            'author': p.author_id.name if p.author_id else None,
+            'author': self.env['club_social_profile.profile']._display_name_for_user(p.author_id) if p.author_id else None,
             'create_date': p.create_date.isoformat() if p.create_date else None,
             'visibility': p.visibility,
         }

@@ -118,7 +118,7 @@
                                                     <div class="fw-semibold" style="font-size:0.95rem;"
                                                          t-out="prop.name"/>
                                                     <div class="text-muted" style="font-size:0.8rem;">
-                                                        by <t t-out="prop.author_id.name"/>
+                                                        by <t t-out="request.env['club_social_profile.profile']._display_name_for_user(prop.author_id)"/>
                                                     </div>
                                                 </div>
                                                 <t t-if="prop.voting_closes_at">

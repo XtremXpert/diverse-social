@@ -94,7 +94,7 @@
                                         <t t-esc="proposal.name"/>
                                     </div>
                                     <small class="text-muted">
-                                        By <t t-esc="proposal.author_id.name"/> ·
+                                        By <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
                                         <t t-esc="proposal.category_id.name"/>
                                     </small>
                                     <!-- Barre de vote si en cours -->
@@ -236,7 +236,7 @@
                             </div>
                         </div>
                         <p class="text-muted mb-0" style="font-size:.85rem;">
-                            By <strong t-esc="proposal.author_id.name"/> ·
+                            By <strong t-esc="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
                             <t t-esc="proposal.category_id.name"/> ·
                             <span t-field="proposal.create_date" t-options='{"widget":"date"}'/>
                         </p>

@@ -28,6 +28,17 @@ class SocialBaseMixin:
         except (ValueError, TypeError):
             return {}
 
+    def _member_display_name(self, user):
+        """Nom affichable d'un membre : pseudonyme (stealth_name) si le module
+        de profils est installé, jamais le vrai nom. social_base ne dépend pas
+        de club_social_profile, d'où le garde `in env` (un recordset vide est
+        falsy — ne pas utiliser env.get())."""
+        if not user:
+            return None
+        if 'club_social_profile.profile' in request.env:
+            return request.env['club_social_profile.profile']._display_name_for_user(user)
+        return user.name
+
     def _visibility_params(self, user):
         """Gather params for social_base.post._visibility_domain defensively.
 

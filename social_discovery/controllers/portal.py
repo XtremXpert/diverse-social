@@ -219,8 +219,12 @@ def _build_domain(user, q, genders, orientations, availabilities,
         domain.append(('user_id', 'not in', blocked_ids))
 
     if q:
-        domain += ['|', '|',
-                   ('user_id.name', 'ilike', q),
+        # Pseudonyme d'abord ; le vrai nom n'est cherchable que s'il n'y a
+        # pas de stealth_name (on ne doit pas retrouver un membre par son
+        # identité réelle).
+        domain += ['|', '|', '|',
+                   ('stealth_name', 'ilike', q),
+                   '&', ('stealth_name', '=', False), ('user_id.name', 'ilike', q),
                    ('bio', 'ilike', q),
                    ('city', 'ilike', q)]
 

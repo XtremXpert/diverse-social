@@ -21,7 +21,7 @@
                             <t t-foreach="pending_received" t-as="conn">
                                 <a t-attf-href="/profile/#{conn.user_id.id}"
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <span t-out="conn.user_id.name"/>
+                                    <span t-out="request.env['club_social_profile.profile']._display_name_for_user(conn.user_id)"/>
                                     <span class="badge bg-warning text-dark">Pending</span>
                                 </a>
                             </t>
@@ -39,7 +39,7 @@
                             <t t-foreach="accepted" t-as="conn">
                                 <a t-attf-href="/profile/#{conn.connected_user_id.id}"
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <span t-out="conn.connected_user_id.name"/>
+                                    <span t-out="request.env['club_social_profile.profile']._display_name_for_user(conn.connected_user_id)"/>
                                     <small class="text-muted" t-out="conn.create_date and conn.create_date.strftime('%Y-%m-%d') or ''"/>
                                 </a>
                             </t>
@@ -64,7 +64,7 @@
                             <t t-foreach="pending_sent" t-as="conn">
                                 <a t-attf-href="/profile/#{conn.connected_user_id.id}"
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <span t-out="conn.connected_user_id.name"/>
+                                    <span t-out="request.env['club_social_profile.profile']._display_name_for_user(conn.connected_user_id)"/>
                                     <span class="badge bg-secondary">Waiting</span>
                                 </a>
                             </t>

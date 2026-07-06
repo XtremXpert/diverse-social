@@ -88,7 +88,7 @@ class SocialVouching(models.Model):
                 raise ValidationError(_(
                     '%(newcomer)s has already vouched for you. '
                     'Circular vouching is not allowed.',
-                    newcomer=rec.newcomer_id.name,
+                    newcomer=self.env['club_social_profile.profile']._display_name_for_user(rec.newcomer_id),
                 ))
 
     def action_withdraw(self, reason=None):
@@ -120,12 +120,12 @@ class SocialVouching(models.Model):
             ('newcomer_id', '=', newcomer_user.id),
         ], limit=1)
         if existing and existing.state == 'active':
-            raise UserError(_('You have already vouched for %(name)s.', name=newcomer_user.name))
+            raise UserError(_('You have already vouched for %(name)s.', name=self.env['club_social_profile.profile']._display_name_for_user(newcomer_user)))
         if existing and existing.state == 'withdrawn':
             raise UserError(_(
                 'You previously withdrew your vouching for %(name)s. '
                 'Contact a moderator to reinstate it.',
-                name=newcomer_user.name,
+                name=self.env['club_social_profile.profile']._display_name_for_user(newcomer_user),
             ))
         return self.create({
             'sponsor_id': self.env.user.id,

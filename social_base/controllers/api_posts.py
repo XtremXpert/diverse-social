@@ -158,7 +158,7 @@ class SocialPostAPI(SocialBaseMixin, http.Controller):
         return {
             'id': post.id,
             'content': post.content,
-            'author': {'id': post.author_id.id, 'name': post.author_id.name},
+            'author': {'id': post.author_id.id, 'name': self._member_display_name(post.author_id)},
             'create_date': post.create_date.isoformat() if post.create_date else None,
             'like_count': post.like_count,
             'comment_count': post.comment_count,

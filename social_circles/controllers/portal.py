@@ -51,8 +51,10 @@ class CirclesPortal(CustomerPortal):
             all_member_ids.update(oc.sudo().member_ids.ids)
         member_name_map = {}
         if all_member_ids:
+            Profile = request.env['club_social_profile.profile']
             for mu in request.env['res.users'].sudo().browse(list(all_member_ids)):
-                member_name_map[mu.id] = mu.name
+                # Pseudonyme (stealth_name) — jamais le vrai nom d'un membre.
+                member_name_map[mu.id] = Profile._display_name_for_user(mu)
 
         # Circle types already used by this profile (to hide from the "add" list)
         used_type_ids = circles.mapped('type_id').ids

@@ -32,6 +32,11 @@ class SocialFeedService(models.AbstractModel):
     _description = 'Social Feed Service'
 
     @api.model
+    def _display_name(self, user):
+        """Nom affichable d'un membre (pseudonyme, jamais le vrai nom)."""
+        return self.env['club_social_profile.profile']._display_name_for_user(user)
+
+    @api.model
     def _get_feed_types(self):
         """Retourne l'ensemble des types de feed valides. Extensible par héritage."""
         return set(VALID_TYPES)
@@ -241,7 +246,7 @@ class SocialFeedService(models.AbstractModel):
             'id': p.id,
             'timestamp': p.create_date.isoformat() if p.create_date else '',
             'author_id': p.author_id.id,
-            'author_name': p.author_id.name,
+            'author_name': self._display_name(p.author_id),
             'content_excerpt': plain or None,
             'visibility': p.visibility,
             'like_count': p.like_count,
@@ -276,7 +281,7 @@ class SocialFeedService(models.AbstractModel):
             'id': s.id,
             'timestamp': s.create_date.isoformat() if s.create_date else '',
             'author_id': s.author_id.id,
-            'author_name': s.author_id.name,
+            'author_name': self._display_name(s.author_id),
             'name': s.name,
             'expires_at': s.expires_at.isoformat() if s.expires_at else None,
             'view_count': s.view_count,
@@ -316,13 +321,16 @@ class SocialFeedService(models.AbstractModel):
         connection_user_ids = ctx['connection_user_ids']
         conn_names_by_event = defaultdict(list)
         if connection_user_ids:
-            conn_partners = set(
-                self.env['res.users'].browse(connection_user_ids).mapped('partner_id.id')
-            )
+            conn_users_by_partner = {
+                u.partner_id.id: u
+                for u in self.env['res.users'].browse(connection_user_ids)
+            }
             for reg in all_regs:
-                if (reg.partner_id.id in conn_partners
+                if (reg.partner_id.id in conn_users_by_partner
                         and len(conn_names_by_event[reg.event_id.id]) < 3):
-                    conn_names_by_event[reg.event_id.id].append(reg.partner_id.name)
+                    conn_names_by_event[reg.event_id.id].append(
+                        self._display_name(conn_users_by_partner[reg.partner_id.id])
+                    )
 
         return [
             self._event_item(e, attendee_counts, conn_names_by_event)
@@ -337,7 +345,7 @@ class SocialFeedService(models.AbstractModel):
             'name': e.name,
             'date_begin': e.date_begin.isoformat() if e.date_begin else None,
             'date_end': e.date_end.isoformat() if e.date_end else None,
-            'organizer_name': e.organizer_user_id.name if e.organizer_user_id else None,
+            'organizer_name': self._display_name(e.organizer_user_id) if e.organizer_user_id else None,
             'social_visibility': e.social_visibility or None,
             'attendee_count': (attendee_counts or {}).get(e.id, 0),
             'connection_attendee_names': list((conn_names_by_event or {}).get(e.id, [])),
@@ -386,7 +394,9 @@ class SocialFeedService(models.AbstractModel):
             'timestamp': reg.create_date.isoformat() if reg.create_date else '',
             # author_id = user_id du membre inscrit (pour scoring connexion)
             'author_id': (partner_to_user or {}).get(reg.partner_id.id),
-            'registrant_name': reg.partner_id.name,
+            'registrant_name': self._display_name(
+                self.env['res.users'].browse((partner_to_user or {}).get(reg.partner_id.id))
+            ) if (partner_to_user or {}).get(reg.partner_id.id) else reg.partner_id.name,
             'registrant_partner_id': reg.partner_id.id,
             'event_id': reg.event_id.id,
             'event_name': reg.event_id.name,
@@ -409,7 +419,7 @@ class SocialFeedService(models.AbstractModel):
             'id': p.id,
             'timestamp': (p.voting_opens_at or p.create_date or datetime.min).isoformat(),
             'title': p.name,
-            'author_name': p.author_id.name if p.author_id else None,
+            'author_name': self._display_name(p.author_id) if p.author_id else None,
             'voting_closes_at': p.voting_closes_at.isoformat() if p.voting_closes_at else None,
             'vote_count': p.vote_count,
         }

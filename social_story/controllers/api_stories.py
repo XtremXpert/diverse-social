@@ -80,7 +80,7 @@ class SocialStoriesAPI(SocialBaseMixin, http.Controller):
         return {
             'id': story.id,
             'name': story.name,
-            'author': {'id': story.author_id.id, 'name': story.author_id.name},
+            'author': {'id': story.author_id.id, 'name': request.env['club_social_profile.profile']._display_name_for_user(story.author_id)},
             'media_type': story.media_type,
             'create_date': story.create_date.isoformat() if story.create_date else None,
             'expires_at': story.expires_at.isoformat() if story.expires_at else None,

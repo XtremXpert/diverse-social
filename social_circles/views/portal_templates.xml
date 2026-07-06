@@ -218,7 +218,7 @@
                                     <select name="user_id" class="form-select form-select-sm" style="max-width:220px;">
                                         <option value="">— Ajouter une connexion —</option>
                                         <t t-foreach="addable" t-as="u">
-                                            <option t-att-value="u.id" t-esc="u.name"/>
+                                            <option t-att-value="u.id" t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                         </t>
                                     </select>
                                     <button type="submit" class="btn btn-sm"
@@ -276,7 +276,7 @@
                                     <span style="font-size:.9rem;" class="text-muted">🔵</span>
                                     <span class="fw-semibold" style="font-size:.9rem;" t-esc="oc.name"/>
                                     <span class="text-muted" style="font-size:.8rem;">
-                                        — <t t-esc="member_name_map.get(oc.profile_id.user_id.id) or oc.profile_id.user_id.name or '?'"/>
+                                        — <t t-esc="member_name_map.get(oc.profile_id.user_id.id) or '?'"/>
                                     </span>
                                 </div>
                                 <t t-if="oc.description">

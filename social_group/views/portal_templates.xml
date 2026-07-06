@@ -175,7 +175,7 @@
                                 <t t-foreach="pending_requests" t-as="req">
                                     <div class="list-group-item d-flex justify-content-between align-items-center py-2">
                                         <span>
-                                            <strong t-esc="req.user_id.name"/>
+                                            <strong t-esc="request.env['club_social_profile.profile']._display_name_for_user(req.user_id)"/>
                                             <small class="text-muted ms-2">
                                                 <span t-field="req.create_date" t-options='{"widget":"date"}'/>
                                             </small>
@@ -208,8 +208,7 @@
                                         <option value="">— Select a member —</option>
                                         <t t-foreach="invitable_users" t-as="u">
                                             <option t-att-value="u.id">
-                                                <t t-esc="u.name"/>
-                                                <t t-if="u.login != u.name"> (<t t-esc="u.login"/>)</t>
+                                                <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                             </option>
                                         </t>
                                     </select>
@@ -229,9 +228,9 @@
                                 <t t-foreach="pending_invitations" t-as="inv">
                                     <div class="list-group-item d-flex justify-content-between align-items-center py-2">
                                         <span>
-                                            <strong t-esc="inv.invitee_user_id.name"/>
+                                            <strong t-esc="request.env['club_social_profile.profile']._display_name_for_user(inv.invitee_user_id)"/>
                                             <small class="text-muted ms-2">
-                                                invited by <t t-esc="inv.inviter_user_id.name"/>,
+                                                invited by <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(inv.inviter_user_id)"/>,
                                                 <span t-field="inv.create_date" t-options='{"widget":"date"}'/>
                                             </small>
                                         </span>
@@ -250,7 +249,7 @@
                             <h5>Recent posts</h5>
                             <t t-foreach="posts" t-as="post">
                                 <div class="border rounded p-3 mb-2">
-                                    <strong t-esc="post.author_id.name"/> ·
+                                    <strong t-esc="request.env['club_social_profile.profile']._display_name_for_user(post.author_id)"/> ·
                                     <small class="text-muted" t-esc="post.create_date"/>
                                     <div t-raw="post.content" class="mt-1"/>
                                 </div>
@@ -339,7 +338,7 @@
                                     <div>
                                         <a t-attf-href="/groups/#{inv.group_id.id}" t-esc="inv.group_id.name" class="fw-bold"/>
                                         <small class="text-muted ms-2">
-                                            invited by <t t-esc="inv.inviter_user_id.name"/>,
+                                            invited by <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(inv.inviter_user_id)"/>,
                                             <span t-field="inv.create_date" t-options='{"widget":"date"}'/>
                                         </small>
                                         <div t-if="inv.message" class="small mt-1">

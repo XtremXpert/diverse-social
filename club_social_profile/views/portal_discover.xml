@@ -114,7 +114,7 @@
                                     </t>
                                     <t t-else="">
                                         <div style="width:72px;height:72px;border-radius:50%;background:#1a1a2e;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:28px;border:2px solid #e94560;">
-                                            <t t-out="((profile.stealth_name or profile.login or '?')[0]).upper()"/>
+                                            <t t-out="((profile.stealth_name or profile.user_id.name or '?')[0]).upper()"/>
                                         </div>
                                     </t>
                                 </div>
@@ -122,7 +122,7 @@
                                 <div class="card-body pt-1 pb-2 text-center">
                                     <!-- Name -->
                                     <div class="fw-semibold text-truncate" style="color:#1a1a2e; font-size:.95rem;">
-                                        <t t-esc="profile.stealth_name or profile.login"/>
+                                        <t t-esc="profile.stealth_name or profile.user_id.name"/>
                                     </div>
 
                                     <!-- City -->

@@ -21,7 +21,9 @@ class EventRegistration(models.Model):
                 actor_id=actor_id,
                 notif_type='event_registration',
                 body=_('%s registered for your event "%s".',
-                       reg.partner_id.name, reg.event_id.name),
+                       self.env['club_social_profile.profile']._display_name_for_user(registrant_user)
+                       if registrant_user else reg.partner_id.name,
+                       reg.event_id.name),
                 ref_model='event.event',
                 ref_id=reg.event_id.id,
             )

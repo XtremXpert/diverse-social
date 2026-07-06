@@ -108,7 +108,7 @@ class SocialCommentsAPI(SocialBaseMixin, http.Controller):
         return {
             'id': comment.id,
             'content': comment.content,
-            'author': {'id': comment.author_id.id, 'name': comment.author_id.name},
+            'author': {'id': comment.author_id.id, 'name': self._member_display_name(comment.author_id)},
             'create_date': comment.create_date.isoformat() if comment.create_date else None,
             'like_count': comment.like_count,
             'parent_id': comment.parent_id.id if comment.parent_id else None,
@@ -192,7 +192,7 @@ class SocialReactionsAPI(SocialBaseMixin, http.Controller):
 
             by_type = {}
             for r in post.reaction_ids:
-                by_type.setdefault(r.type, []).append({'user_id': r.user_id.id, 'user_name': r.user_id.name})
+                by_type.setdefault(r.type, []).append({'user_id': r.user_id.id, 'user_name': self._member_display_name(r.user_id)})
 
             return self._success_response({
                 'reactions': [{'type': t, 'count': len(u), 'users': u[:5]} for t, u in by_type.items()],

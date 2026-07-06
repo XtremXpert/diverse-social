@@ -86,7 +86,6 @@
                                             <div class="fw-semibold">
                                                 <a t-att-href="item.get('url', '#')" t-esc="item['name']"/>
                                             </div>
-                                            <div class="text-muted small" t-esc="item.get('login', '')"/>
                                             <t t-if="item.get('city')">
                                                 <div class="text-muted small">📍 <t t-esc="item['city']"/></div>
                                             </t>

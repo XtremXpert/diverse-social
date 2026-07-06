@@ -51,7 +51,7 @@ class SocialGroupInvitation(models.Model):
             if rec.invitee_user_id in rec.group_id.member_ids:
                 raise ValidationError(_(
                     "%(name)s is already a member of this group.",
-                    name=rec.invitee_user_id.name,
+                    name=self.env['club_social_profile.profile']._display_name_for_user(rec.invitee_user_id),
                 ))
 
     @api.constrains('inviter_user_id', 'invitee_user_id')
@@ -86,7 +86,7 @@ class SocialGroupInvitation(models.Model):
             notif_type='group_invitation',
             body=_(
                 '%(actor)s invited you to the group "%(group)s".',
-                actor=self.inviter_user_id.name,
+                actor=self.env['club_social_profile.profile']._display_name_for_user(self.inviter_user_id),
                 group=self.group_id.name,
             ),
             url='/my/groups',

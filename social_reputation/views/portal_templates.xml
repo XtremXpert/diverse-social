@@ -167,7 +167,7 @@
                                         <select name="newcomer_id" class="form-select form-select-sm" required="required">
                                             <option value="">— choisir —</option>
                                             <t t-foreach="vouchable" t-as="u">
-                                                <option t-att-value="u.id" t-esc="u.name"/>
+                                                <option t-att-value="u.id" t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                             </t>
                                         </select>
                                     </div>
@@ -213,7 +213,7 @@
                                             <a t-attf-href="/profile/#{u.id}"
                                                class="badge rounded-pill"
                                                style="background:#e94560;color:white;text-decoration:none;font-size:.8rem;">
-                                                <t t-esc="u.name"/>
+                                                <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                             </a>
                                         </t>
                                     </div>
@@ -239,13 +239,13 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <div style="width:36px;height:36px;border-radius:50%;background:#e94560;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">
-                                        <t t-out="(v.sponsor_id.name or '?')[0].upper()"/>
+                                        <t t-out="(request.env['club_social_profile.profile']._display_name_for_user(v.sponsor_id) or '?')[0].upper()"/>
                                     </div>
                                     <div>
                                         <a t-attf-href="/profile/#{v.sponsor_id.id}"
                                            class="fw-semibold text-decoration-none"
                                            style="color:#1a1a2e;"
-                                           t-esc="v.sponsor_id.name"/>
+                                           t-esc="request.env['club_social_profile.profile']._display_name_for_user(v.sponsor_id)"/>
                                         <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
                                               t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
                                     </div>
@@ -282,13 +282,13 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <div style="width:36px;height:36px;border-radius:50%;background:#1a1a2e;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">
-                                        <t t-out="(v.newcomer_id.name or '?')[0].upper()"/>
+                                        <t t-out="(request.env['club_social_profile.profile']._display_name_for_user(v.newcomer_id) or '?')[0].upper()"/>
                                     </div>
                                     <div>
                                         <a t-attf-href="/profile/#{v.newcomer_id.id}"
                                            class="fw-semibold text-decoration-none"
                                            style="color:#1a1a2e;"
-                                           t-esc="v.newcomer_id.name"/>
+                                           t-esc="request.env['club_social_profile.profile']._display_name_for_user(v.newcomer_id)"/>
                                         <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
                                               t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
                                     </div>
