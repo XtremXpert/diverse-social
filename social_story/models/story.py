@@ -60,7 +60,9 @@ class SocialStory(models.Model):
 
     def _visibility_owner_partner(self):
         self.ensure_one()
-        return self.author_id.partner_id
+        # sudo : un utilisateur portail n'a pas le droit de lire le res.users
+        # d'un autre membre (ir.rule) — même correctif que social_gallery.
+        return self.author_id.sudo().partner_id
 
     def is_accessible_by(self, user):
         """Helper accepting res.users or res.partner."""

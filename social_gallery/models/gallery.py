@@ -37,7 +37,10 @@ class SocialGallery(models.Model):
 
     def _visibility_owner_partner(self):
         self.ensure_one()
-        return self.owner_id.partner_id
+        # sudo : un utilisateur portail n'a pas le droit de lire le res.users
+        # d'un autre membre (ir.rule), ce qui rendait toute galerie tierce
+        # inaccessible (AccessError → 403 sur /gallery).
+        return self.owner_id.sudo().partner_id
 
     def is_accessible_by(self, user):
         """Helper accepting res.users or res.partner."""
