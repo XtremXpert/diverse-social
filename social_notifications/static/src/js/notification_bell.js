@@ -179,10 +179,18 @@
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
+    // Le bundle web.assets_frontend est chargé en lazy : il s'exécute souvent
+    // après l'émission de DOMContentLoaded, donc on initialise immédiatement
+    // si le DOM est déjà prêt.
+    function init() {
         const container = document.getElementById('social_notif_bell');
         if (!container) return;
         const bell = new NotificationBell(container);
         tryConnectBus(bell);
-    });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
