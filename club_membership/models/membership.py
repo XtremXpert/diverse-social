@@ -214,7 +214,9 @@ class ClubMembership(models.Model):
 
     def _get_state_label(self):
         self.ensure_one()
-        return dict(self._fields['state'].selection).get(self.state, self.state)
+        # _description_selection : libellé traduit selon la langue courante
+        # (le fr_CA.po fournit « Actif », « En attente », etc.).
+        return dict(self._fields['state']._description_selection(self.env)).get(self.state, self.state)
 
     @api.model
     def get_active_for_partner(self, partner_id):

@@ -136,7 +136,7 @@ class SocialGroupInvitation(models.Model):
         })
 
     def _get_state_label(self):
-        return dict(self._fields['state'].selection).get(self.state, self.state)
+        return dict(self._fields['state']._description_selection(self.env)).get(self.state, self.state)
 
     # ── Cron: expire stale invitations ──────────────────────────────────
 

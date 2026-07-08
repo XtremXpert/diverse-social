@@ -95,7 +95,7 @@
 
                 <!-- ── Count ─────────────────────────────────────────── -->
                 <p class="text-muted mb-3" style="font-size:.85rem;">
-                    <t t-esc="total"/> member<t t-if="total > 1">s</t> found
+                    <t t-esc="total"/> membre<t t-if="total > 1">s</t> trouvé<t t-if="total > 1">s</t>
                 </p>
 
                 <!-- ── Profile grid ───────────────────────────────────── -->

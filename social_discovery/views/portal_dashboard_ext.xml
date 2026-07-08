@@ -15,9 +15,9 @@
                 <div class="card mb-4">
                     <div class="card-header fw-bold d-flex justify-content-between align-items-center"
                          style="background:#1a1a2e; color:white;">
-                        <span>✨ You might like</span>
+                        <span>✨ Vous pourriez aimer</span>
                         <a href="/members" class="text-white" style="font-size:0.8rem;">
-                            Browse all →
+                            Tout parcourir →
                         </a>
                     </div>
                     <ul class="list-group list-group-flush">
@@ -49,7 +49,7 @@
                                 <t t-if="sug['score'] >= 50">
                                     <span class="badge bg-success-subtle text-success-emphasis ms-auto"
                                           style="font-size:0.7rem;"
-                                          t-attf-title="Match score: #{sug['score']}">
+                                          t-attf-title="Score de compatibilité : #{sug['score']}">
                                         <t t-out="sug['score']"/>%
                                     </span>
                                 </t>

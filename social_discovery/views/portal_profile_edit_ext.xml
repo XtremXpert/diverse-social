@@ -11,10 +11,10 @@
                        name="show_on_map" id="show_on_map" value="1"
                        t-att-checked="profile.show_on_map and 'checked' or None"/>
                 <label class="form-check-label" for="show_on_map">
-                    <strong>Show me on the members map</strong><br/>
+                    <strong>M'afficher sur la carte des membres</strong><br/>
                     <small class="text-muted">
-                        Your position will be obfuscated within a ~2–3 km radius.
-                        Only members who have also opted in (or moderators) can see the map.
+                        Votre position sera floutée dans un rayon d'environ 2 à 3 km.
+                        Seuls les membres qui ont aussi accepté (ou les modérateurs) peuvent voir la carte.
                     </small>
                 </label>
             </div>
@@ -28,11 +28,12 @@
                        name="show_in_suggestions" id="show_in_suggestions" value="1"
                        t-att-checked="profile.show_in_suggestions and 'checked' or None"/>
                 <label class="form-check-label" for="show_in_suggestions">
-                    <strong>Include me in member suggestions</strong><br/>
+                    <strong>M'inclure dans les suggestions de membres</strong><br/>
                     <small class="text-muted">
-                        When on, your profile may appear in the "You might like"
-                        section on other members' dashboards. Off keeps you
-                        searchable in /members but never algorithmically pushed.
+                        Lorsque cette option est activée, votre profil peut apparaître
+                        dans la section « Vous pourriez aimer » du tableau de bord des
+                        autres membres. Désactivée, vous restez repérable dans /members,
+                        mais vous n'êtes jamais mis en avant par l'algorithme.
                     </small>
                 </label>
             </div>

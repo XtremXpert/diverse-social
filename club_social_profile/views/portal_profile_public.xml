@@ -119,10 +119,10 @@
                                     </t>
                                 </t>
                                 <t t-if="profile.gender and profile.gender != 'non_specifie'">
-                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['gender'].selection).get(profile.gender, '')"/>
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['gender']._description_selection(profile.env)).get(profile.gender, '')"/>
                                 </t>
                                 <t t-if="profile.orientation and profile.orientation != 'non_specifie'">
-                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['orientation'].selection).get(profile.orientation, '')"/>
+                                    <span class="badge rounded-pill bg-light text-dark border" t-out="dict(profile._fields['orientation']._description_selection(profile.env)).get(profile.orientation, '')"/>
                                 </t>
                                 <t t-foreach="profile.language_ids" t-as="spoken_lang">
                                     <span class="badge rounded-pill bg-light text-dark border" t-out="spoken_lang.name"/>

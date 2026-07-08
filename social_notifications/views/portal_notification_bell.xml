@@ -139,13 +139,13 @@
                     <div id="sn_dropdown">
                         <div class="sn-header">
                             <span>Notifications</span>
-                            <button id="sn_read_all">Mark all read</button>
+                            <button id="sn_read_all">Tout marquer comme lu</button>
                         </div>
                         <ul id="sn_list">
-                            <li class="sn-empty">Loading…</li>
+                            <li class="sn-empty">Chargement…</li>
                         </ul>
                         <div class="sn-footer">
-                            <a href="/social/notifications">View all notifications →</a>
+                            <a href="/social/notifications">Voir toutes les notifications →</a>
                         </div>
                     </div>
                 </div>

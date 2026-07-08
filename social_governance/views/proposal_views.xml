@@ -6,7 +6,7 @@
         <field name="name">social_governance.proposal.list</field>
         <field name="model">social_governance.proposal</field>
         <field name="arch" type="xml">
-            <list string="Proposals" decoration-info="state == 'open'"
+            <list string="Propositions" decoration-info="state == 'open'"
                   decoration-warning="state == 'voting'"
                   decoration-success="state == 'accepted'"
                   decoration-muted="state in ('rejected','inconclusive','withdrawn')">
@@ -16,7 +16,7 @@
                 <field name="state"/>
                 <field name="voting_closes_at" optional="show"/>
                 <field name="vote_count" optional="show"/>
-                <field name="approval_pct" optional="show" string="Approval %"/>
+                <field name="approval_pct" optional="show" string="Approbation %"/>
             </list>
         </field>
     </record>
@@ -26,21 +26,21 @@
         <field name="name">social_governance.proposal.form</field>
         <field name="model">social_governance.proposal</field>
         <field name="arch" type="xml">
-            <form string="Proposal">
+            <form string="Proposition">
                 <header>
-                    <button name="action_open" string="Open for Comments"
+                    <button name="action_open" string="Ouvrir aux commentaires"
                             type="object" class="oe_highlight"
                             invisible="state != 'draft'"/>
-                    <button name="action_start_voting" string="Start Voting"
+                    <button name="action_start_voting" string="Démarrer le vote"
                             type="object" class="oe_highlight"
                             invisible="state not in ('draft','open')"/>
-                    <button name="action_close_voting" string="Close Vote"
+                    <button name="action_close_voting" string="Clore le vote"
                             type="object" class="oe_highlight"
                             invisible="state != 'voting'"/>
-                    <button name="action_implement" string="Mark Implemented"
+                    <button name="action_implement" string="Marquer comme implémentée"
                             type="object"
                             invisible="state != 'accepted'"/>
-                    <button name="action_withdraw" string="Withdraw"
+                    <button name="action_withdraw" string="Retirer"
                             type="object"
                             invisible="state in ('accepted','rejected','inconclusive','withdrawn')"/>
                     <field name="state" widget="statusbar"
@@ -64,22 +64,22 @@
                     <notebook>
                         <page string="Votes" invisible="state not in ('voting','accepted','rejected','inconclusive')">
                             <group>
-                                <field name="vote_count" string="Total Votes"/>
-                                <field name="yes_count" string="Yes"/>
-                                <field name="no_count" string="No"/>
-                                <field name="abstain_count" string="Abstain"/>
-                                <field name="approval_pct" string="Approval %"/>
-                                <field name="my_vote" string="My Vote"/>
+                                <field name="vote_count" string="Total des votes"/>
+                                <field name="yes_count" string="Oui"/>
+                                <field name="no_count" string="Non"/>
+                                <field name="abstain_count" string="Abstention"/>
+                                <field name="approval_pct" string="Approbation %"/>
+                                <field name="my_vote" string="Mon vote"/>
                             </group>
-                            <group string="Cast your vote" invisible="state != 'voting'">
-                                <button name="action_vote" string="Vote Yes"
+                            <group string="Exprimez votre vote" invisible="state != 'voting'">
+                                <button name="action_vote" string="Voter Oui"
                                         type="object" class="btn-success"
                                         context="{'default_choice': 'yes'}"
                                         args="['yes']"/>
-                                <button name="action_vote" string="Vote No"
+                                <button name="action_vote" string="Voter Non"
                                         type="object" class="btn-danger"
                                         args="['no']"/>
-                                <button name="action_vote" string="Abstain"
+                                <button name="action_vote" string="S'abstenir"
                                         type="object"
                                         args="['abstain']"/>
                             </group>
@@ -100,17 +100,17 @@
                 <field name="name"/>
                 <field name="author_id"/>
                 <field name="category_id"/>
-                <filter name="open" string="Open" domain="[('state','=','open')]"/>
-                <filter name="voting" string="Voting" domain="[('state','=','voting')]"/>
-                <filter name="accepted" string="Accepted" domain="[('state','=','accepted')]"/>
-                <filter name="inconclusive" string="Inconclusive (quorum)"
+                <filter name="open" string="Ouverte" domain="[('state','=','open')]"/>
+                <filter name="voting" string="Au vote" domain="[('state','=','voting')]"/>
+                <filter name="accepted" string="Acceptée" domain="[('state','=','accepted')]"/>
+                <filter name="inconclusive" string="Non concluante (quorum)"
                         domain="[('state','=','inconclusive')]"/>
                 <separator/>
-                <filter name="my_proposals" string="My Proposals"
+                <filter name="my_proposals" string="Mes propositions"
                         domain="[('author_id','=',uid)]"/>
-                <filter name="by_category" string="Category"
+                <filter name="by_category" string="Catégorie"
                         context="{'group_by': 'category_id'}"/>
-                <filter name="by_state" string="State"
+                <filter name="by_state" string="État"
                         context="{'group_by': 'state'}"/>
             </search>
         </field>
@@ -118,7 +118,7 @@
 
     <!-- ── Action ── -->
     <record id="action_proposals" model="ir.actions.act_window">
-        <field name="name">Proposals</field>
+        <field name="name">Propositions</field>
         <field name="res_model">social_governance.proposal</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_proposal_search"/>
@@ -130,7 +130,7 @@
         <field name="name">social_governance.proposal_category.list</field>
         <field name="model">social_governance.proposal_category</field>
         <field name="arch" type="xml">
-            <list string="Proposal Categories" editable="top">
+            <list string="Catégories de propositions" editable="top">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="min_quorum" string="Quorum"/>
@@ -140,7 +140,7 @@
     </record>
 
     <record id="action_categories" model="ir.actions.act_window">
-        <field name="name">Proposal Categories</field>
+        <field name="name">Catégories de propositions</field>
         <field name="res_model">social_governance.proposal_category</field>
         <field name="view_mode">list</field>
     </record>

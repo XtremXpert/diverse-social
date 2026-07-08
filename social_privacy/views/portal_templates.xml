@@ -3,15 +3,15 @@
     <template id="portal_privacy_dashboard" name="My Privacy Dashboard">
         <t t-call="portal.portal_layout">
             <div class="container py-5">
-                <h1 class="mb-4">My Privacy</h1>
+                <h1 class="mb-4">Ma confidentialité</h1>
                 <div class="row g-4">
                     <!-- Data Export Card -->
                     <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h5 class="card-title">Export My Data</h5>
-                                <p class="card-text">Download all your personal data in a structured JSON format.</p>
-                                <a href="/my/privacy/export" class="btn btn-primary">Request Export</a>
+                                <h5 class="card-title">Exporter mes données</h5>
+                                <p class="card-text">Téléchargez tous vos renseignements personnels dans un format JSON structuré.</p>
+                                <a href="/my/privacy/export" class="btn btn-primary">Demander l'export</a>
                             </div>
                         </div>
                     </div>
@@ -19,40 +19,40 @@
                     <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h5 class="card-title">Delete My Account</h5>
-                                <p class="card-text">Permanently anonymize or delete all your personal data.</p>
-                                <a href="/my/privacy/delete" class="btn btn-danger">Delete Account</a>
+                                <h5 class="card-title">Supprimer mon compte</h5>
+                                <p class="card-text">Anonymisez ou supprimez définitivement tous vos renseignements personnels.</p>
+                                <a href="/my/privacy/delete" class="btn btn-danger">Supprimer le compte</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="mt-5">
-                    <h3>Privacy Policy &amp; Consent</h3>
+                    <h3>Politique de confidentialité et consentement</h3>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Privacy Policy</h6>
-                                    <p class="card-text small">Read the current privacy policy.</p>
-                                    <a href="/my/privacy/policy" class="btn btn-sm btn-outline-secondary">Read</a>
+                                    <h6 class="card-title">Politique de confidentialité</h6>
+                                    <p class="card-text small">Consultez la politique de confidentialité en vigueur.</p>
+                                    <a href="/my/privacy/policy" class="btn btn-sm btn-outline-secondary">Lire</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Manage Consent</h6>
-                                    <p class="card-text small">Withdraw your consent at any time.</p>
-                                    <a href="/my/privacy/withdraw" class="btn btn-sm btn-outline-warning">Withdraw</a>
+                                    <h6 class="card-title">Gérer le consentement</h6>
+                                    <p class="card-text small">Retirez votre consentement à tout moment.</p>
+                                    <a href="/my/privacy/withdraw" class="btn btn-sm btn-outline-warning">Retirer</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Processing Restriction</h6>
-                                    <p class="card-text small">Request a limitation of processing.</p>
-                                    <a href="/my/privacy" class="btn btn-sm btn-outline-info">Request</a>
+                                    <h6 class="card-title">Restriction du traitement</h6>
+                                    <p class="card-text small">Demandez une limitation du traitement.</p>
+                                    <a href="/my/privacy" class="btn btn-sm btn-outline-info">Demander</a>
                                 </div>
                             </div>
                         </div>
