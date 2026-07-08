@@ -250,8 +250,11 @@ class TestSocialSearch(TransactionCase):
     def test_profile_to_dict_keys(self):
         results = self.Search.with_user(self.alice)._search_profiles('Bob Recherche', 20, 0)
         item = next(r for r in results if r['id'] == self.bob_profile.id)
-        for key in ('type', 'id', 'user_id', 'name', 'login', 'city', 'bio', 'url'):
+        for key in ('type', 'id', 'user_id', 'name', 'city', 'bio', 'url'):
             self.assertIn(key, item)
+        # stealth_name partout : le login (courriel) ne doit JAMAIS sortir
+        # du service de recherche (contrat du commit 9499496).
+        self.assertNotIn('login', item)
         self.assertEqual(item['type'], 'profile')
         self.assertTrue(item['url'].startswith('/profile/'))
 
