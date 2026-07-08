@@ -225,31 +225,39 @@ class TestPortalDiscoverHttp(HttpCase):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'disc_http1_class', resp.content)
+        # stealth : le login (courriel) n'apparaît plus — le nom affiché, oui.
+        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertNotIn(b'disc_http1_class@', resp.content)
 
     def test_discover_filter_by_city(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?city=Laval')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'disc_http1_class', resp.content)
+        # stealth : le login (courriel) n'apparaît plus — le nom affiché, oui.
+        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertNotIn(b'disc_http1_class@', resp.content)
 
     def test_discover_filter_city_no_match(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?city=ZZZVilleInexistante')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'0 member', resp.content)
+        self.assertIn(b'0 membre', resp.content)
 
     def test_discover_filter_gender(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?gender=homme')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'disc_http1_class', resp.content)
+        # stealth : le login (courriel) n'apparaît plus — le nom affiché, oui.
+        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertNotIn(b'disc_http1_class@', resp.content)
 
     def test_discover_filter_availability(self):
         self.authenticate('admin', 'admin')
         resp = self.url_open('/discover?availability=disponible')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'disc_http1_class', resp.content)
+        # stealth : le login (courriel) n'apparaît plus — le nom affiché, oui.
+        self.assertIn(b'DiscHTTP1', resp.content)
+        self.assertNotIn(b'disc_http1_class@', resp.content)
 
     def test_discover_connections_only_not_shown(self):
         group_user = self.env.ref('base.group_user')
