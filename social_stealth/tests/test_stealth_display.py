@@ -68,25 +68,31 @@ class TestStealthDisplayName(TransactionCase, StealthCommon):
         self.assertEqual(
             self._name(self.bob, self.bob.partner_id), 'Bob Vrainom')
 
-    def test_internal_sees_real_name(self):
+    # Pour les spectateurs privilégiés, social_stealth S'EFFACE : la
+    # plateforme décide (club_base, s'il est installé, affiche le LOGIN des
+    # partners purement portail pour l'identification backoffice). Le
+    # contrat de ce module est seulement : jamais le pseudonyme.
+    def test_internal_sees_real_identity(self):
         admin = self.env.ref('base.user_admin')
-        self.assertEqual(
-            self._name(admin, self.bob.partner_id), 'Bob Vrainom')
+        name = self._name(admin, self.bob.partner_id)
+        self.assertIn(name, ('Bob Vrainom', 'bob_stealth@test.local'))
+        self.assertNotEqual(name, 'Renard Masqué')
 
-    def test_moderator_sees_real_name(self):
-        self.assertEqual(
-            self._name(self.moderator, self.bob.partner_id), 'Bob Vrainom')
+    def test_moderator_sees_real_identity(self):
+        name = self._name(self.moderator, self.bob.partner_id)
+        self.assertIn(name, ('Bob Vrainom', 'bob_stealth@test.local'))
+        self.assertNotEqual(name, 'Renard Masqué')
 
     def test_public_sees_alias(self):
         public = self.env.ref('base.public_user')
         self.assertEqual(
             self._name(public, self.bob.partner_id), 'Renard Masqué')
 
-    def test_context_forces_real_name(self):
-        self.assertEqual(
-            self._name(self.alice, self.bob.partner_id,
-                       stealth_display=False),
-            'Bob Vrainom')
+    def test_context_forces_real_identity(self):
+        name = self._name(self.alice, self.bob.partner_id,
+                          stealth_display=False)
+        self.assertIn(name, ('Bob Vrainom', 'bob_stealth@test.local'))
+        self.assertNotEqual(name, 'Renard Masqué')
 
     def test_context_forces_alias_for_internal(self):
         admin = self.env.ref('base.user_admin')
