@@ -27,23 +27,32 @@ class ResPartner(models.Model):
         if not self._stealth_viewer_active():
             return super()._compute_display_name()
 
-        # Une seule requête groupée : pseudonymes des partners du batch.
-        # Le membre se voit toujours lui-même sous son vrai nom.
+        # Une seule requête groupée : TOUS les profils membres du batch.
+        # Pour un spectateur membre, on prend la main complète sur les
+        # partners membres : pseudonyme s'il existe (sauf soi-même), sinon
+        # le vrai nom — JAMAIS le login. (club_base remplace display_name
+        # par le login des partners purement portail pour l'identification
+        # backoffice ; laisser passer son super() ré-exposerait le courriel
+        # aux membres.) Les partners sans profil gardent le comportement
+        # standard, club_base inclus.
         profiles = self.env['club_social_profile.profile'].sudo().search([
             ('user_id.partner_id', 'in', self.ids),
-            ('stealth_name', '!=', False),
         ])
         me_pid = self.env.user.partner_id.id
-        alias = {
-            p.user_id.partner_id.id: p.stealth_name
-            for p in profiles
-            if p.user_id.partner_id and p.user_id.partner_id.id != me_pid
-        }
-        plain = self.filtered(lambda r: r.id not in alias)
-        if plain:
-            super(ResPartner, plain)._compute_display_name()
-        for rec in self - plain:
-            rec.display_name = alias[rec.id]
+        member = {}
+        for p in profiles:
+            partner = p.user_id.partner_id
+            if not partner:
+                continue
+            if p.stealth_name and partner.id != me_pid:
+                member[partner.id] = p.stealth_name
+            else:
+                member[partner.id] = p.user_id.sudo().name
+        rest = self.filtered(lambda r: r.id not in member)
+        if rest:
+            super(ResPartner, rest)._compute_display_name()
+        for rec in self - rest:
+            rec.display_name = member[rec.id]
 
 
 class ResUsers(models.Model):
@@ -59,15 +68,16 @@ class ResUsers(models.Model):
             return super()._compute_display_name()
         profiles = self.env['club_social_profile.profile'].sudo().search([
             ('user_id', 'in', self.ids),
-            ('stealth_name', '!=', False),
         ])
         me = self.env.user.id
-        alias = {
-            p.user_id.id: p.stealth_name
-            for p in profiles if p.user_id.id != me
-        }
-        plain = self.filtered(lambda r: r.id not in alias)
-        if plain:
-            super(ResUsers, plain)._compute_display_name()
-        for rec in self - plain:
-            rec.display_name = alias[rec.id]
+        member = {}
+        for p in profiles:
+            if p.stealth_name and p.user_id.id != me:
+                member[p.user_id.id] = p.stealth_name
+            else:
+                member[p.user_id.id] = p.user_id.sudo().name
+        rest = self.filtered(lambda r: r.id not in member)
+        if rest:
+            super(ResUsers, rest)._compute_display_name()
+        for rec in self - rest:
+            rec.display_name = member[rec.id]
