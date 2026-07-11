@@ -51,7 +51,7 @@
     // Patterns de paths à camoufler. On garde large pour ne pas oublier de
     // nouvelles routes portail. Les pages publiques (/, /web/login,
     // /membership pour l'opt-in) gardent leur branding normal.
-    var CAMOUFLAGE_PATHS = /^\/(my|profile|safety|discover|members|groups|governance|gallery|stories|onboarding|messaging|calls|circles|consent|negotiation|vouching|reputation)(\/|$)/;
+    var CAMOUFLAGE_PATHS = /^(?:\/(?:en|fr))?(\/(my|profile|safety|discover|members|groups|governance|gallery|stories|onboarding|messaging|calls|circles|consent|negotiation|vouching|reputation))(\/|$)/;
 
     function shouldCamouflage() {
         return CAMOUFLAGE_PATHS.test(window.location.pathname);

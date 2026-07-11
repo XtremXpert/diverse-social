@@ -1,6 +1,6 @@
 {
     'name': 'Social Safety',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Social',
     'summary': 'Block, mute, panic mode, camouflage + share-lockdown on sensitive paths',
     'author': 'Bemade',
