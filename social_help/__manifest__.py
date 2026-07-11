@@ -1,6 +1,6 @@
 {
     'name': 'Social Help & Community Charter',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Social',
     'summary': 'Public /community/help page with configurable charter',
     'author': 'Bemade',
