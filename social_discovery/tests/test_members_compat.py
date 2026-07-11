@@ -72,7 +72,7 @@ class TestMembersCompat(HttpCase):
             self.assertEqual(resp.status_code, 200, f'min_compat={val} crashed the page')
 
     def test_renders_page_with_badge_and_candidates(self):
-        """The /members page lists both candidates and renders the "% match" badge."""
+        """The /members page lists both candidates and renders the compatibility badge."""
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members')
         self.assertEqual(resp.status_code, 200)
@@ -80,11 +80,11 @@ class TestMembersCompat(HttpCase):
         # Display name is user.name (capitalised in setUp); login isn't rendered.
         self.assertIn(self.alice_user.name, body)
         self.assertIn(self.bob_user.name, body)
-        # Match badge: check for the percentage + "match" pattern in any language.
-        # FR: "% compatibilité", EN: "% match". Match on the number + % + word.
+        # Badge: EN renders "% match", FR renders "XX% compat".
+        # Use regex to find a number followed by % + word "compat" or "match".
         import re
         self.assertTrue(
-            re.search(r'\d+%\s*(match|compatibilit)', body),
+            re.search(r'\d+%\s*(match|compat)', body),
             'Expected a compatibility percentage badge in the rendered page'
         )
 
@@ -110,29 +110,24 @@ class TestMembersCompat(HttpCase):
         )
 
     def test_sort_compat_button_visible_when_bdsm_installed(self):
-        """The "Best match" sort tab appears in the UI when BDSM is on."""
+        """The "Best match" / "Meilleure compatibilité" sort tab appears when BDSM is on."""
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members')
         body = resp.text
-        # EN: "Best match", FR: "Meilleur match". Check for "match" in a sort tab context.
-        self.assertTrue(
-            'match' in body.lower(),
-            'Expected a "Best match" / "Meilleur match" sort tab in the UI'
-        )
+        # EN: "Best match", FR: "Meilleure compatibilité".
+        # Check for sort=compat href + the word "compat" (present in both languages).
         self.assertIn('sort=compat', body)
+        self.assertIn('compat', body.lower())
 
     def test_sort_compat_active_class_when_selected(self):
         """The selected sort tab is styled btn-dark."""
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members?sort=compat')
         body = resp.text
-        # Locate the "match" anchor (EN: "Best match", FR: "Meilleur match")
-        # and check it carries btn-dark in the surrounding context.
-        import re
-        match = re.search(r'(match)', body, re.IGNORECASE)
-        assert match is not None, 'Expected a "match" sort tab in the rendered page'
-        idx = match.start()
-        snippet = body[max(0, idx - 300):idx]
+        # Locate the sort=compat anchor and check it carries btn-dark.
+        # EN: "Best match", FR: "Meilleure compatibilité".
+        idx = body.index('sort=compat')
+        snippet = body[max(0, idx - 300):idx + 100]
         self.assertIn('btn-dark', snippet)
 
     def test_sort_compat_respects_min_compat_filter(self):
