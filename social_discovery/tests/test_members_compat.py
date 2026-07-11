@@ -124,11 +124,20 @@ class TestMembersCompat(HttpCase):
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members?sort=compat')
         body = resp.text
-        # Locate the sort=compat anchor and check it carries btn-dark.
-        # EN: "Best match", FR: "Meilleure compatibilité".
-        idx = body.index('sort=compat')
-        snippet = body[max(0, idx - 300):idx + 100]
-        self.assertIn('btn-dark', snippet)
+        # Locate the compat sort anchor (not the language selector which
+        # also carries sort=compat in its href). The compat button contains
+        # 'compatibilité' (FR) or 'compat' (EN) as visible text.
+        # Find 'sort=compat' that is preceded by 'btn' class (the sort button).
+        idx = body.find('sort=compat')
+        snippet = ''
+        while idx != -1:
+            # Look backwards for btn-dark in the surrounding 300 chars
+            snippet = body[max(0, idx - 300):idx + 100]
+            if 'btn-dark' in snippet:
+                break
+            idx = body.find('sort=compat', idx + 1)
+        self.assertIn('btn-dark', snippet,
+                      'Expected btn-dark on the active compat sort button')
 
     def test_sort_compat_respects_min_compat_filter(self):
         """sort=compat applies min_compat — low-scoring profiles drop out."""
