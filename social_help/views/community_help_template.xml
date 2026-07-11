@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="community_help_page" name="Community help and charter">
-        <t t-set="head_title" t-value="_('Aide &amp; charte')"/>
+    <template id="community_help_page" name="Aide &amp; charte">
+        <t t-set="head_title" t-value="'Aide &amp; charte'"/>
         <t t-call="portal.portal_layout">
             <t t-set="no_breadcrumbs" t-value="True"/>
             <div class="row g-4 mt-1">
