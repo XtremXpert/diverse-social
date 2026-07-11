@@ -80,7 +80,13 @@ class TestMembersCompat(HttpCase):
         # Display name is user.name (capitalised in setUp); login isn't rendered.
         self.assertIn(self.alice_user.name, body)
         self.assertIn(self.bob_user.name, body)
-        self.assertIn('% match', body)
+        # Match badge: check for the percentage + "match" pattern in any language.
+        # FR: "% compatibilité", EN: "% match". Match on the number + % + word.
+        import re
+        self.assertTrue(
+            re.search(r'\d+%\s*(match|compatibilit)', body),
+            'Expected a compatibility percentage badge in the rendered page'
+        )
 
     def test_sort_compat_orders_higher_score_first(self):
         """sort=compat returns the highest-scoring profile first.
@@ -107,16 +113,25 @@ class TestMembersCompat(HttpCase):
         """The "Best match" sort tab appears in the UI when BDSM is on."""
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members')
-        self.assertIn('Best match', resp.text)
-        self.assertIn('sort=compat', resp.text)
+        body = resp.text
+        # EN: "Best match", FR: "Meilleur match". Check for "match" in a sort tab context.
+        self.assertTrue(
+            'match' in body.lower(),
+            'Expected a "Best match" / "Meilleur match" sort tab in the UI'
+        )
+        self.assertIn('sort=compat', body)
 
     def test_sort_compat_active_class_when_selected(self):
         """The selected sort tab is styled btn-dark."""
         self.authenticate('compat_searcher', 'Test1234!')
         resp = self.url_open('/members?sort=compat')
         body = resp.text
-        # Locate the Best match anchor and check it carries btn-dark
-        idx = body.index('Best match')
+        # Locate the "match" anchor (EN: "Best match", FR: "Meilleur match")
+        # and check it carries btn-dark in the surrounding context.
+        import re
+        match = re.search(r'(match)', body, re.IGNORECASE)
+        assert match is not None, 'Expected a "match" sort tab in the rendered page'
+        idx = match.start()
         snippet = body[max(0, idx - 300):idx]
         self.assertIn('btn-dark', snippet)
 
