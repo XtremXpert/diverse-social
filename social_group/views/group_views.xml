@@ -33,6 +33,7 @@
                                 <field name="name"/>
                                 <field name="privacy"/>
                                 <field name="join_type"/>
+                                <field name="who_can_invite"/>
                                 <field name="require_moderation"/>
                             </group>
                             <group>

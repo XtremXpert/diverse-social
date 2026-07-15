@@ -111,7 +111,8 @@ class GroupPortal(CustomerPortal):
         })
 
     @route('/groups/<int:group_id>/edit', auth='user', methods=['POST'], website=True, csrf=True)
-    def group_edit(self, group_id, name='', description='', privacy='private', join_type='approval', **kw):
+    def group_edit(self, group_id, name='', description='', privacy='private',
+                   join_type='approval', who_can_invite=None, **kw):
         group = request.env['social_group.group'].sudo().browse(group_id).exists()
         if not group:
             raise NotFound()
@@ -125,12 +126,15 @@ class GroupPortal(CustomerPortal):
             privacy = group.privacy
         if join_type not in ('open', 'approval', 'invite'):
             join_type = group.join_type
-        group.sudo().write({
+        vals = {
             'name': name,
             'description': (description or '').strip() or False,
             'privacy': privacy,
             'join_type': join_type,
-        })
+        }
+        if who_can_invite in ('admins', 'members'):
+            vals['who_can_invite'] = who_can_invite
+        group.sudo().write(vals)
         return request.redirect(f'/groups/{group_id}?edited=1')
 
     @route('/groups/<int:group_id>/requests/<int:req_id>/approve', auth='user',
@@ -207,7 +211,7 @@ class GroupPortal(CustomerPortal):
         group = request.env['social_group.group'].sudo().browse(group_id).exists()
         if not group:
             raise NotFound()
-        if not group.is_admin(request.env.user):
+        if not group.can_invite(request.env.user):
             raise Forbidden()
         try:
             invitee_id = int(invitee_id or 0)

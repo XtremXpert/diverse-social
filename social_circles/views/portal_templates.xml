@@ -43,6 +43,43 @@
                 <t t-if="request.params.get('error') == 'duplicate_name'">
                     <div class="alert alert-danger">A circle with this name already exists.</div>
                 </t>
+                <t t-if="request.params.get('invited')">
+                    <div class="alert alert-success alert-dismissible">Invitation envoyée.</div>
+                </t>
+                <t t-if="request.params.get('joined')">
+                    <div class="alert alert-success alert-dismissible">Invitation acceptée.</div>
+                </t>
+
+                <!-- ── Invitations reçues ────────────────────────────── -->
+                <t t-if="pending_invitations">
+                    <div class="card mb-4 border-primary">
+                        <div class="card-header fw-semibold" style="background:#1a1a2e;color:white;">
+                            📨 Invitations à un cercle
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <t t-foreach="pending_invitations" t-as="inv">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <span>
+                                        <t t-out="request.env['club_social_profile.profile']._display_name_for_user(inv.inviter_user_id)"/>
+                                        t'invite à un cercle de confiance.
+                                    </span>
+                                    <span class="d-flex gap-2">
+                                        <form t-attf-action="/my/circles/invitations/#{inv.id}/accept"
+                                              method="post" class="m-0">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-success">Accepter</button>
+                                        </form>
+                                        <form t-attf-action="/my/circles/invitations/#{inv.id}/decline"
+                                              method="post" class="m-0">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Refuser</button>
+                                        </form>
+                                    </span>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                </t>
 
                 <!-- ── Detailed visibility ───────────────────────────── -->
                 <div class="card mb-4">
@@ -209,21 +246,22 @@
                             </div>
                         </t>
 
-                        <!-- Ajouter un membre -->
+                        <!-- Inviter une connexion (avec son accord) -->
                         <t t-if="addable">
                             <div class="card-body py-2 border-bottom d-flex align-items-center gap-2">
                                 <form t-attf-action="/my/circles/#{circle.id}/add_member" method="post"
                                       class="d-flex gap-2 align-items-center flex-wrap">
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                     <select name="user_id" class="form-select form-select-sm" style="max-width:220px;">
-                                        <option value="">— Ajouter une connexion —</option>
+                                        <option value="">— Inviter une connexion —</option>
                                         <t t-foreach="addable" t-as="u">
                                             <option t-att-value="u.id" t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                         </t>
                                     </select>
                                     <button type="submit" class="btn btn-sm"
-                                            style="background:#1a1a2e;color:white;">
-                                        Ajouter
+                                            style="background:#1a1a2e;color:white;"
+                                            title="La personne recevra une invitation à accepter.">
+                                        Inviter
                                     </button>
                                 </form>
                             </div>

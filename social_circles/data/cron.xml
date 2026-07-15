@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_expire_circle_invitations" model="ir.cron">
+            <field name="name">Social Circles: expirer les invitations</field>
+            <field name="model_id" ref="model_social_circles_invitation"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_expire_invitations()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

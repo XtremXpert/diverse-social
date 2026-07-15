@@ -37,6 +37,12 @@ class SocialGroup(models.Model):
 
     require_moderation = fields.Boolean('Require Post Moderation', default=False)
 
+    who_can_invite = fields.Selection([
+        ('admins', 'Administrators only'),
+        ('members', 'Any member'),
+    ], default='admins', required=True, string='Who can invite',
+        help="Admins only (default) or any member can invite people to the group.")
+
     post_ids = fields.One2many('social_base.post', 'group_id', 'Posts')
     post_count = fields.Integer('Posts', compute='_compute_post_count', store=True)
 
@@ -89,6 +95,14 @@ class SocialGroup(models.Model):
     def is_admin(self, user):
         self.ensure_one()
         return user in self.admin_ids
+
+    def can_invite(self, user):
+        """True si `user` a le droit d'inviter dans ce groupe : toujours les
+        admins ; les membres aussi si le groupe l'autorise (who_can_invite)."""
+        self.ensure_one()
+        if self.is_admin(user):
+            return True
+        return self.who_can_invite == 'members' and self.is_member(user)
 
     def is_moderator(self, user):
         self.ensure_one()

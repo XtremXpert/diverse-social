@@ -63,6 +63,12 @@ class CirclesPortal(CustomerPortal):
             ('id', 'not in', used_type_ids),
         ], order='sequence, id')
 
+        # Invitations de cercle reçues (en attente de ma réponse).
+        pending_invitations = request.env['social_circles.invitation'].sudo().search([
+            ('invitee_user_id', '=', user.id),
+            ('state', '=', 'pending'),
+        ])
+
         return request.render('social_circles.portal_my_circles', {
             'circles': circles,
             'circles_with_addable': circles_with_addable,
@@ -72,6 +78,7 @@ class CirclesPortal(CustomerPortal):
             'page_name': 'circles',
             'error': kw.get('error'),
             'member_name_map': member_name_map,
+            'pending_invitations': pending_invitations,
         })
 
     # ── Create ─────────────────────────────────────────────────────────────
@@ -132,13 +139,48 @@ class CirclesPortal(CustomerPortal):
 
     @route('/my/circles/<int:circle_id>/add_member', auth='user', methods=['POST'], website=True, csrf=True)
     def circle_add_member(self, circle_id, user_id=None, **kw):
+        """Invite une connexion à rejoindre le cercle (avec son accord — décision
+        produit : ranger quelqu'un dans un cercle passe toujours par une
+        invitation, même entre connexions)."""
         circle = _own_circle(circle_id)
         if user_id:
             connections = _get_user_connections(request.env.user)
             member = request.env['res.users'].sudo().browse(int(user_id)).exists()
-            if member and member in connections:
-                circle.add_member(member)
-        return request.redirect('/my/circles')
+            if member and member in connections and member not in circle.sudo().member_ids:
+                try:
+                    with request.env.cr.savepoint():
+                        request.env['social_circles.invitation'].sudo().create({
+                            'circle_id': circle.id,
+                            'inviter_user_id': request.env.user.id,
+                            'invitee_user_id': member.id,
+                        })
+                except Exception:
+                    return request.redirect('/my/circles?error=invite_failed')
+        return request.redirect('/my/circles?invited=1')
+
+    @route('/my/circles/invitations/<int:inv_id>/accept', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def circle_invitation_accept(self, inv_id, **kw):
+        inv = request.env['social_circles.invitation'].sudo().browse(inv_id).exists()
+        if not inv or inv.invitee_user_id != request.env.user:
+            raise Forbidden()
+        try:
+            inv.with_user(request.env.user).action_accept()
+        except Exception:
+            return request.redirect('/my/circles?error=accept_failed')
+        return request.redirect('/my/circles?joined=1')
+
+    @route('/my/circles/invitations/<int:inv_id>/decline', auth='user',
+           methods=['POST'], website=True, csrf=True)
+    def circle_invitation_decline(self, inv_id, **kw):
+        inv = request.env['social_circles.invitation'].sudo().browse(inv_id).exists()
+        if not inv or inv.invitee_user_id != request.env.user:
+            raise Forbidden()
+        try:
+            inv.with_user(request.env.user).action_decline()
+        except Exception:
+            pass
+        return request.redirect('/my/circles?declined=1')
 
     # ── Retirer un membre ─────────────────────────────────────────────────
 
