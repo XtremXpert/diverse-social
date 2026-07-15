@@ -118,10 +118,10 @@ class TestSafetyPortalHttp(HttpCase):
         _csrf = Request.csrf_token(self)
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
-        # Structural markers: the page renders the panic and quick-exit
-        # form endpoints regardless of UI language.
+        # Structural markers: the page renders the panic form endpoints
+        # regardless of UI language. (La carte « Quick exit » est testée
+        # dans social_safety_quick_exit, module optionnel.)
         self.assertIn(b'/safety/panic/', resp.content)
-        self.assertIn(b'Quick exit', resp.content)
         self.assertIn(b'social_safety.portal_safety_page', resp.content)
 
     def test_panic_activate_redirects(self):
@@ -143,13 +143,6 @@ class TestSafetyPortalHttp(HttpCase):
             allow_redirects=False,
         )
         self.assertIn(resp.status_code, (302, 303))
-
-    def test_safety_page_has_quick_exit_info(self):
-        self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
-        resp = self.url_open('/safety')
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn('Esc'.encode(), resp.content)
 
     def test_panic_activate_changes_db_state(self):
         group_user = self.env.ref('base.group_user')

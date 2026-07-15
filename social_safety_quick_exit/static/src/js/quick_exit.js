@@ -1,8 +1,8 @@
 /**
  * Sortie rapide + camouflage visuel.
  *
- * 1. Quick exit : redirige vers un site neutre sans laisser de trace
- *    dans l'historique du navigateur (window.location.replace).
+ * 1. Quick exit : redirige vers un site neutre (MétéoMédia par défaut) sans
+ *    laisser de trace dans l'historique du navigateur (location.replace).
  *    Déclencheurs :
  *      - Clic sur le bouton #social_quick_exit
  *      - Double-appui sur la touche Échap (< 500 ms)
@@ -11,6 +11,10 @@
  *    swap document.title et le favicon pour qu'un coup d'œil de loin sur
  *    l'onglet ne révèle pas la nature du site. Configurable via
  *    ir.config_parameter (social_safety.camouflage_title / .favicon).
+ *
+ * NB : le « share lockdown » (strip des tags OG/Twitter sur les mêmes
+ * chemins) vit désormais dans social_safety/share_lockdown.js — il ne
+ * dépend plus de la présence du bouton.
  */
 (function () {
     'use strict';
@@ -81,34 +85,6 @@
         }
     }
 
-    // ── Share lockdown ──────────────────────────────────────────────────────
-    //
-    // Strip Open Graph + Twitter card meta tags on sensitive paths so that
-    // a member who accidentally pastes the URL in Slack/Discord/Signal
-    // doesn't surface a "Member discovery | Diverse Cité" preview card.
-    //
-    // The server already emits a `<meta name="robots" content="noindex">`
-    // on these paths (see views/portal_share_lockdown.xml) which covers
-    // search engines. This handles the link-unfurling case for chat apps.
-    function stripShareMeta() {
-        if (!shouldCamouflage()) {
-            return;
-        }
-        var selectors = [
-            'meta[property^="og:"]',
-            'meta[property^="article:"]',
-            'meta[name^="twitter:"]',
-            'meta[name="description"]',
-            'link[rel="canonical"]',
-        ];
-        for (var i = 0; i < selectors.length; i++) {
-            var nodes = document.querySelectorAll(selectors[i]);
-            for (var j = 0; j < nodes.length; j++) {
-                nodes[j].parentNode.removeChild(nodes[j]);
-            }
-        }
-    }
-
     // ── Wiring ──────────────────────────────────────────────────────────────
 
     function wireButton() {
@@ -122,11 +98,9 @@
         document.addEventListener('DOMContentLoaded', function () {
             wireButton();
             applyCamouflage();
-            stripShareMeta();
         });
     } else {
         wireButton();
         applyCamouflage();
-        stripShareMeta();
     }
 })();

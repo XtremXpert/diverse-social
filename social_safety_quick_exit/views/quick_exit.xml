@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Asset JS ═════════════════════════════════════════════════════════ -->
+    <record id="assets_quick_exit" model="ir.asset">
+        <field name="name">Social Safety Quick Exit JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_safety_quick_exit/static/src/js/quick_exit.js</field>
+    </record>
+
+    <!-- ══ Bouton de sortie rapide (toutes les pages portail) ═══════════════ -->
+    <template id="portal_quick_exit_button" inherit_id="web.frontend_layout"
+              name="Quick exit">
+        <xpath expr="//header" position="inside">
+            <t t-if="request.env.user and not request.env.user._is_public()">
+                <t t-set="_get_param" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
+                <t t-set="_exit_url" t-value="_get_param('social_safety.quick_exit_url', 'https://www.meteomedia.com/')"/>
+                <t t-set="_camouflage_title" t-value="_get_param('social_safety.camouflage_title', 'MétéoMédia — Prévisions Québec')"/>
+                <t t-set="_camouflage_favicon" t-value="_get_param('social_safety.camouflage_favicon', 'data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;text y=&quot;14&quot; font-size=&quot;14&quot;&gt;⛅&lt;/text&gt;&lt;/svg&gt;')"/>
+                <style>
+                    #social_quick_exit {
+                        position: fixed;
+                        top: 12px;
+                        left: 16px;
+                        z-index: 1050;
+                        background: #555;
+                        border: none;
+                        border-radius: 6px;
+                        width: 42px;
+                        height: 42px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 18px;
+                        color: white;
+                        box-shadow: 0 2px 8px rgba(0,0,0,.3);
+                        opacity: 0.55;
+                        transition: opacity .15s, background .15s;
+                        text-decoration: none;
+                    }
+                    #social_quick_exit:hover {
+                        opacity: 1;
+                        background: #e94560;
+                    }
+                    #social_quick_exit title { display: none; }
+                </style>
+                <button id="social_quick_exit"
+                        t-att-data-exit-url="_exit_url"
+                        t-att-data-camouflage-title="_camouflage_title"
+                        t-att-data-camouflage-favicon="_camouflage_favicon"
+                        title="Quick exit (also: press Esc twice)">
+                    ⏻
+                </button>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══ Carte « Quick exit » sur la page /safety ═════════════════════════ -->
+    <template id="portal_safety_quick_exit_card"
+              inherit_id="social_safety.portal_safety_page"
+              name="Safety — Quick exit info card">
+        <xpath expr="//div[hasclass('card')][1]" position="after">
+            <div class="card mb-4">
+                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                    ⏻ Quick exit
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        The <strong>⏻</strong> button in the top-left corner of every page sends you
+                        instantly to a neutral site without leaving traces in history.
+                        You can also press <strong>Esc twice</strong>.
+                    </p>
+                    <p class="mb-0 text-muted" style="font-size:0.85rem;">
+                        Destination site:
+                        <strong t-out="exit_url"/>
+                    </p>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

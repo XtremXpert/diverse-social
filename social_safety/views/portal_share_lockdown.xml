@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Couche JS best-effort : strip des tags OG/Twitter sur les chemins
+         sensibles (unfurling Slack/Discord). Extrait de quick_exit.js le
+         2026-07-15 pour rester indépendant du bouton de sortie rapide. -->
+    <record id="assets_share_lockdown" model="ir.asset">
+        <field name="name">Social Safety Share Lockdown JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_safety/static/src/js/share_lockdown.js</field>
+    </record>
+
     <!-- Inject `<meta name="robots" content="noindex, nofollow, noarchive">`
          into the <head> of sensitive frontend pages (same set as the
          camouflage paths). Public pages (/, /shop, /event, /membership)

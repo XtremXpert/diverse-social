@@ -1,8 +1,9 @@
 {
     'name': 'Social Safety',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.1.0',
     'category': 'Social',
-    'summary': 'Block, mute, panic mode, camouflage + share-lockdown on sensitive paths',
+    'summary': 'Block, mute, panic mode + share-lockdown on sensitive paths '
+               '(quick-exit/camouflage extrait dans social_safety_quick_exit)',
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
