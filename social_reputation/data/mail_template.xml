@@ -13,6 +13,7 @@
         <field name="email_from">{{ '"%s via Diverse-Cité" &lt;noreply@diverse-cite.com&gt;' % (object.sponsor_id.name or 'Un membre') }}</field>
         <field name="reply_to">{{ object.sponsor_id.email_formatted or '' }}</field>
         <field name="email_to">{{ object.invite_email }}</field>
+        <field name="use_default_to" eval="False"/>
         <field name="auto_delete" eval="False"/>
         <field name="body_html" type="html">
 <div style="margin:0px; padding:0px; font-family:Arial, sans-serif;">
