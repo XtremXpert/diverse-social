@@ -49,12 +49,42 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- Moderators see everything -->
+        <!-- Connections/notifications : accès complet modérateurs + admins
+             Réglages (même logique que profile_moderator_rule ci-dessous —
+             sans règle globale, même un modérateur est limité à ses propres
+             enregistrements). -->
+        <record id="connection_moderator_rule" model="ir.rule">
+            <field name="name">Club Social Connection: Moderator Access</field>
+            <field name="model_id" ref="model_club_social_profile_connection"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator')), (4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="notification_moderator_rule" model="ir.rule">
+            <field name="name">Club Social Notification: Moderator Access</field>
+            <field name="model_id" ref="model_club_social_profile_notification"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator')), (4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Moderators (and Settings admins) see everything. base.group_system
+             est inclus car les ir.rules ne sont contournées que par le
+             superuser : sans lui, un admin Réglages ne peut ni créer ni
+             modifier le profil d'un autre membre (backend, scripts XML-RPC,
+             fixtures e2e). -->
         <record id="profile_moderator_rule" model="ir.rule">
             <field name="name">Club Social Profile: Moderator Access</field>
             <field name="model_id" ref="model_club_social_profile_profile"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
+            <field name="groups" eval="[(4, ref('social_base.group_social_moderator')), (4, ref('base.group_system'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
