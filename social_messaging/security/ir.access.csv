@@ -1,0 +1,10 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_messaging_thread_admin,social_messaging.thread admin,social_messaging.thread,social_base.group_social_admin,crud,
+access_social_messaging_message_admin,social_messaging.message admin,social_messaging.message,social_base.group_social_admin,crud,
+access_social_messaging_reaction_user,social_messaging.reaction user,social_messaging.reaction,social_base.group_social_user,crud,
+access_social_messaging_reaction_admin,social_messaging.reaction admin,social_messaging.reaction,social_base.group_social_admin,crud,
+access_social_messaging_reaction_system,social_messaging.reaction system,social_messaging.reaction,base.group_system,crud,
+social_messaging_thread_user_rule,Social Messaging Thread: Participants only,social_messaging.thread,social_base.group_social_user,cru,"[('participant_ids', 'in', [user.id])]"
+social_messaging_message_user_rule,Social Messaging Message: Thread participants only,social_messaging.message,social_base.group_social_user,cru,"[('thread_id.participant_ids', 'in', [user.id])]"
+social_messaging_thread_admin_rule,Social Messaging Thread: Admin Access,social_messaging.thread,base.group_system,crud,"[(1, '=', 1)]"
+social_messaging_message_admin_rule,Social Messaging Message: Admin Access,social_messaging.message,base.group_system,crud,"[(1, '=', 1)]"

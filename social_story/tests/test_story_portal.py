@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -114,19 +113,19 @@ class TestStoryPortalHttp(HttpCase):
 
     def test_my_stories_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/stories')
         self.assertEqual(resp.status_code, 200)
 
     def test_my_stories_filter_active(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/stories?filter=active')
         self.assertEqual(resp.status_code, 200)
 
     def test_my_stories_filter_expired(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/stories?filter=expired')
         self.assertEqual(resp.status_code, 200)
 
@@ -142,7 +141,7 @@ class TestStoryPortalHttp(HttpCase):
             'group_ids': [(4, self.env.ref('base.group_portal').id)],
         })
         self.authenticate('http_other_story', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/my/stories/{story.id}/archive',
             data={'csrf_token': _csrf, },
@@ -163,7 +162,7 @@ class TestStoryPortalHttp(HttpCase):
             'name': 'My Own Story HTTP', 'author_id': owner.id,
         })
         self.authenticate('story_owner_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/my/stories/{story.id}/archive',
             data={'csrf_token': _csrf, },
@@ -183,7 +182,7 @@ class TestStoryPortalHttp(HttpCase):
             'group_ids': [(4, group_user.id), (4, group_social.id)],
         })
         self.authenticate('api_story_user', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/stories')
         self.assertEqual(resp.status_code, 200)
         data = json.loads(resp.content)['data']
@@ -196,7 +195,7 @@ class TestStoryPortalHttp(HttpCase):
 
     def test_api_view_story_nonexistent_404(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/stories/999999999/view', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 404)
 
@@ -215,7 +214,7 @@ class TestStoryPortalHttp(HttpCase):
             'name': 'API View Story', 'author_id': admin.id,
         })
         self.authenticate('api_viewer_story', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/social/api/stories/{story.id}/view', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 200)
         data = json.loads(resp.content)['data']

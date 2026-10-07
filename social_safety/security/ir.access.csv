@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+access_safety_block_moderator,social_safety.block moderator,social_safety.block,social_base.group_social_moderator,crud,
+access_safety_mute_moderator,social_safety.mute moderator,social_safety.mute,social_base.group_social_moderator,crud,
+access_social_safety_block_system,social_safety.block system,social_safety.block,base.group_system,crud,
+access_social_safety_mute_system,social_safety.mute system,social_safety.mute,base.group_system,crud,
+rule_block_own,Social Block: own only,social_safety.block,social_base.group_social_user,crud,"[('blocker_id', '=', user.id)]"
+rule_mute_own,Social Mute: own only,social_safety.mute,social_base.group_social_user,crud,"[('muter_id', '=', user.id)]"

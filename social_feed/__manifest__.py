@@ -1,6 +1,6 @@
 {
     'name': 'Social Feed',
-    'version': '19.0.2.0.0',
+    'version': '20.0.2.0.0',
     'category': 'Social',
     'summary': "Fil d'actualité agrégé : posts, stories, événements, propositions, préférences + read state",
     'author': 'Bemade',
@@ -17,7 +17,7 @@
         'social_gallery',
     ],
     'data': [
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/cron.xml',
         'views/portal_transparency_templates.xml',
         'views/portal_feed.xml',

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <template id="portal_privacy_dashboard" name="My Privacy Dashboard">
         <t t-call="portal.portal_layout">
@@ -63,15 +63,4 @@
     </template>
 
     <!-- ── Portal home: Privacy entry ───────────────────────────────────── -->
-    <template id="portal_my_home_privacy" name="Portal — Privacy"
-              inherit_id="portal.portal_my_home" priority="35">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Confidentialité</t>
-                <t t-set="url">/my/privacy</t>
-                <t t-set="icon" t-value="'/social_privacy/static/src/img/privacy.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-</odoo>
+    </odoo>

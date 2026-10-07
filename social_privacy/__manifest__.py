@@ -1,6 +1,6 @@
 {
     'name': 'Social Privacy & Loi 25 Compliance',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social / Privacy',
     'summary': 'Bridge data-protection OCA with social modules for Loi 25 compliance',
     'author': 'Bemade',
@@ -27,7 +27,7 @@
     ],
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/anonymous_user.xml',
         'data/ir_sequence.xml',
         'data/privacy_activities.xml',
@@ -49,6 +49,7 @@
         'data/mail_template_breach.xml',
         'data/ir_cron_retention.xml',
         'wizards/social_anonymize_wizard_views.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

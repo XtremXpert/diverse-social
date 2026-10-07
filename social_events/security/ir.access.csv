@@ -1,0 +1,18 @@
+id,name,model_id,group_id/id,operation,domain
+access_event_social_admin,event.event social admin,event.event,social_base.group_social_admin,crud,
+access_registration_social_user,event.registration social user,event.registration,social_base.group_social_user,cru,
+access_registration_social_admin,event.registration social admin,event.registration,social_base.group_social_admin,crud,
+access_event_stage_social,event.stage social,event.stage,social_base.group_social_user,r,
+access_event_tag_social,event.tag social,event.tag,social_base.group_social_user,r,
+access_event_tag_category_social,event.tag.category social,event.tag.category,social_base.group_social_user,r,
+access_event_ticket_social,event.event.ticket social,event.event.ticket,social_base.group_social_user,r,
+access_event_type_social,event.type social,event.type,social_base.group_social_user,r,
+access_event.event_event_system,event.event social system,event.event,base.group_system,r,
+access_event.event_registration_system,event.registration social system,event.registration,base.group_system,cru,
+access_event.event_stage_system,event.stage social,event.stage,base.group_system,r,
+access_event.event_tag_system,event.tag social,event.tag,base.group_system,r,
+access_event.event_tag_category_system,event.tag.category social,event.tag.category,base.group_system,r,
+access_event.event_event_ticket_system,event.event.ticket social,event.event.ticket,base.group_system,r,
+access_event.event_type_system,event.type social,event.type,base.group_system,r,
+rule_event_social_visibility,Event: social visibility filter,event.event,social_base.group_social_user,r,"['|', ('social_visibility', '=', False), '|', ('social_visibility', '=', 'members'), ('allowed_circle_ids.member_ids', 'in', [user.id])]"
+rule_event_organizer_write,Event: organizer can edit,event.event,social_base.group_social_moderator,cru,"[('organizer_user_id', '=', user.id)]"

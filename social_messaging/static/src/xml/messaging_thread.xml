@@ -7,7 +7,7 @@
         <div class="o-sn-thread-error alert alert-danger m-2"
              t-if="state.error"
              role="alert">
-            <t t-esc="state.error"/>
+            <t t-out="state.error"/>
         </div>
 
         <div class="o-sn-thread-scroll" t-ref="scroll">
@@ -36,7 +36,7 @@
         <!-- Text bubble (if content) -->
         <div class="o-sn-bubble"
              t-if="props.message.content"
-             t-esc="props.message.content"/>
+             t-out="props.message.content"/>
 
         <!-- Image gallery -->
         <div class="o-sn-bubble-images" t-if="imageAttachments.length">
@@ -56,7 +56,7 @@
                    class="o-sn-file"
                    t-att-title="att.name">
                     <span class="o-sn-file-icon">📎</span>
-                    <span class="o-sn-file-name" t-esc="att.name"/>
+                    <span class="o-sn-file-name" t-out="att.name"/>
                 </a>
             </t>
         </div>
@@ -67,15 +67,15 @@
                 <button type="button"
                         t-attf-class="o-sn-reaction-chip #{hasMyReaction(r) ? 'o-sn-mine-reaction' : ''}"
                         t-on-click="() => onPick(r.emoji)">
-                    <span class="o-sn-reaction-emoji" t-esc="r.emoji"/>
-                    <span class="o-sn-reaction-count" t-esc="r.count"/>
+                    <span class="o-sn-reaction-emoji" t-out="r.emoji"/>
+                    <span class="o-sn-reaction-count" t-out="r.count"/>
                 </button>
             </t>
         </div>
 
         <!-- Meta + +emoji button -->
         <div class="o-sn-bubble-meta">
-            <span class="o-sn-bubble-time" t-esc="props.message.create_date"/>
+            <span class="o-sn-bubble-time" t-out="props.message.create_date"/>
             <span class="o-sn-react-wrap">
                 <button type="button"
                         class="o-sn-react-btn"
@@ -89,7 +89,7 @@
                         <button type="button"
                                 class="o-sn-picker-btn"
                                 t-on-click="() => onPick(e)"
-                                t-esc="e"/>
+                                t-out="e"/>
                     </t>
                 </div>
             </span>
@@ -106,7 +106,7 @@
                 <div class="o-sn-composer-file">
                     <img t-if="entry.isImage" t-att-src="entry.previewUrl" alt=""/>
                     <span t-else="" class="o-sn-composer-file-icon">📎</span>
-                    <span class="o-sn-composer-file-name" t-esc="entry.name"/>
+                    <span class="o-sn-composer-file-name" t-out="entry.name"/>
                     <button type="button"
                             class="o-sn-composer-file-remove"
                             t-on-click="() => removeFile(entry_index)">×</button>

@@ -131,6 +131,7 @@ class ClubSocialProfile(models.Model):
             'name': 'My Searches',
             'res_model': 'social_discovery.criteria',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('profile_id', '=', self.id)],
             'context': {'default_profile_id': self.id},
         }

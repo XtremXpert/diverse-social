@@ -19,7 +19,7 @@ class PwaController(Controller):
         the URL pattern does. Cached aggressively by browsers, so changes
         require either a bump in app_name or a cache flush.
         """
-        get = request.env['ir.config_parameter'].sudo().get_param
+        get = request.env['ir.config_parameter'].sudo().get_str
         payload = {
             'name': get('social_pwa.app_name', 'MétéoMédia'),
             'short_name': get('social_pwa.app_short_name', 'Météo'),

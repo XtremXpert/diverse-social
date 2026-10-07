@@ -1,6 +1,6 @@
 {
     'name': 'Social Notifications',
-    'version': '19.0.2.0.0',
+    'version': '20.0.2.0.0',
     'category': 'Social',
     'summary': 'Real-time notifications for all social activities + reactivation digest',
     'author': 'Bemade',
@@ -17,7 +17,6 @@
         'portal',
     ],
     'data': [
-        'security/ir.model.access.csv',
         'data/website_menu.xml',
         'data/digest_cron.xml',
         'views/notification_views.xml',
@@ -25,6 +24,7 @@
         'views/portal_notifications_page.xml',
         'views/email_digest.xml',
         'views/portal_profile_edit_ext.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

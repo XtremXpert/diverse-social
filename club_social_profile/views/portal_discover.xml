@@ -1,20 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
-    <template id="portal_my_home_discover" name="Portal My Home: Discover"
-              inherit_id="portal.portal_my_home" customize_show="False" priority="20">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Découvrir</t>
-                <t t-set="url">/discover</t>
-                <t t-set="icon" t-value="'/club_social_profile/static/src/img/discover.svg'"/>
-                <t t-set="placeholder_count">discover_count</t>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-
     <!-- ══ Discover page ═════════════════════════════════════════════════ -->
     <template id="portal_discover" name="Discover members">
         <t t-call="portal.portal_layout">
@@ -28,17 +15,14 @@
                     <div class="row g-2 align-items-end">
                         <div class="col-md-2">
                             <label class="form-label form-label-sm text-muted mb-1">City</label>
-                            <input type="text" name="city" class="form-control form-control-sm"
-                                   placeholder="Montréal…" t-att-value="city"/>
+                            <input type="text" name="city" class="form-control form-control-sm" placeholder="Montréal…" t-att-value="city"/>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label form-label-sm text-muted mb-1">Gender</label>
                             <select name="gender" class="form-select form-select-sm">
                                 <option value="">— All —</option>
                                 <t t-foreach="gender_labels.items()" t-as="item">
-                                    <option t-att-value="item[0]"
-                                            t-att-selected="item[0] == gender and 'selected' or None"
-                                            t-esc="item[1]"/>
+                                    <option t-att-value="item[0]" t-att-selected="item[0] == gender and 'selected' or None" t-out="item[1]"/>
                                 </t>
                             </select>
                         </div>
@@ -47,9 +31,7 @@
                             <select name="orientation" class="form-select form-select-sm">
                                 <option value="">— All —</option>
                                 <t t-foreach="orientation_labels.items()" t-as="item">
-                                    <option t-att-value="item[0]"
-                                            t-att-selected="item[0] == orientation and 'selected' or None"
-                                            t-esc="item[1]"/>
+                                    <option t-att-value="item[0]" t-att-selected="item[0] == orientation and 'selected' or None" t-out="item[1]"/>
                                 </t>
                             </select>
                         </div>
@@ -58,9 +40,7 @@
                             <select name="availability" class="form-select form-select-sm">
                                 <option value="">— All —</option>
                                 <t t-foreach="availability_labels.items()" t-as="item">
-                                    <option t-att-value="item[0]"
-                                            t-att-selected="item[0] == availability and 'selected' or None"
-                                            t-esc="item[1]"/>
+                                    <option t-att-value="item[0]" t-att-selected="item[0] == availability and 'selected' or None" t-out="item[1]"/>
                                 </t>
                             </select>
                         </div>
@@ -70,16 +50,13 @@
                                 <select name="bdsm_role" class="form-select form-select-sm">
                                     <option value="">— All —</option>
                                     <t t-foreach="bdsm_role_labels.items()" t-as="item">
-                                        <option t-att-value="item[0]"
-                                                t-att-selected="item[0] == bdsm_role and 'selected' or None"
-                                                t-esc="item[1]"/>
+                                        <option t-att-value="item[0]" t-att-selected="item[0] == bdsm_role and 'selected' or None" t-out="item[1]"/>
                                     </t>
                                 </select>
                             </div>
                         </t>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-sm w-100"
-                                    style="background:#e94560;color:white;">
+                            <button type="submit" class="btn btn-sm w-100" style="background:#e94560;color:white;">
                                 Filter
                             </button>
                         </div>
@@ -95,22 +72,18 @@
 
                 <!-- ── Count ─────────────────────────────────────────── -->
                 <p class="text-muted mb-3" style="font-size:.85rem;">
-                    <t t-esc="total"/> membre<t t-if="total > 1">s</t> trouvé<t t-if="total > 1">s</t>
+                    <t t-out="total"/> membre<t t-if="total &gt; 1">s</t> trouvé<t t-if="total &gt; 1">s</t>
                 </p>
 
                 <!-- ── Profile grid ───────────────────────────────────── -->
                 <div class="row g-3 mb-4">
                     <t t-foreach="profiles" t-as="profile">
                         <div class="col-sm-6 col-md-4 col-lg-3">
-                            <a t-attf-href="/profile/#{profile.user_id.id}"
-                               class="card h-100 text-decoration-none"
-                               style="border-top:3px solid #1a1a2e; transition:.15s;">
+                            <a t-attf-href="/profile/#{profile.user_id.id}" class="card h-100 text-decoration-none" style="border-top:3px solid #1a1a2e; transition:.15s;">
                                 <!-- Avatar -->
                                 <div class="text-center pt-3 pb-1">
                                     <t t-if="profile.profile_image">
-                                        <img t-att-src="'/web/image/club_social_profile.profile/' + str(profile.id) + '/profile_image/80x80'"
-                                             class="rounded-circle"
-                                             style="width:72px;height:72px;object-fit:cover;border:2px solid #e94560;"/>
+                                        <img t-att-src="'/web/image/club_social_profile.profile/' + str(profile.id) + '/profile_image/80x80'" class="rounded-circle" style="width:72px;height:72px;object-fit:cover;border:2px solid #e94560;"/>
                                     </t>
                                     <t t-else="">
                                         <div style="width:72px;height:72px;border-radius:50%;background:#1a1a2e;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:28px;border:2px solid #e94560;">
@@ -122,22 +95,21 @@
                                 <div class="card-body pt-1 pb-2 text-center">
                                     <!-- Name -->
                                     <div class="fw-semibold text-truncate" style="color:#1a1a2e; font-size:.95rem;">
-                                        <t t-esc="profile.stealth_name or profile.user_id.name"/>
+                                        <t t-out="profile.stealth_name or profile.user_id.name"/>
                                     </div>
 
                                     <!-- City -->
                                     <t t-if="profile.city">
                                         <div class="text-muted" style="font-size:.78rem;">
-                                            📍 <t t-esc="profile.city"/>
+                                            📍 <t t-out="profile.city"/>
                                         </div>
                                     </t>
 
                                     <!-- Availability -->
                                     <t t-if="profile.availability and profile.availability != 'non_specifie'">
                                         <div class="mt-1">
-                                            <span t-attf-class="badge #{profile.availability == 'disponible' and 'bg-success' or profile.availability == 'couple_ouvert' and 'bg-info text-dark' or 'bg-secondary'}"
-                                                  style="font-size:.7rem;">
-                                                <t t-esc="availability_labels.get(profile.availability, '')"/>
+                                            <span t-attf-class="badge #{profile.availability == 'disponible' and 'bg-success' or profile.availability == 'couple_ouvert' and 'bg-info text-dark' or 'bg-secondary'}" style="font-size:.7rem;">
+                                                <t t-out="availability_labels.get(profile.availability, '')"/>
                                             </span>
                                         </div>
                                     </t>
@@ -146,7 +118,7 @@
                                     <t t-if="has_bdsm and profile.bdsm_role">
                                         <div class="mt-1">
                                             <span class="badge" style="background:#e94560;color:white;font-size:.7rem;">
-                                                <t t-esc="bdsm_role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
+                                                <t t-out="bdsm_role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
                                             </span>
                                         </div>
                                     </t>
@@ -165,13 +137,10 @@
                                         <t t-set="_compat" t-value="compat_map[profile.id]"/>
                                         <div class="mt-2">
                                             <div class="progress" style="height:5px; border-radius:3px;">
-                                                <div class="progress-bar"
-                                                     role="progressbar"
-                                                     style="background:#e94560;"
-                                                     t-attf-style="width:#{_compat.get('score', 0)}%; background:#e94560;"/>
+                                                <div class="progress-bar" role="progressbar" style="background:#e94560;" t-attf-style="width:#{_compat.get('score', 0)}%; background:#e94560;"/>
                                             </div>
                                             <div style="font-size:.7rem; color:#e94560; margin-top:2px;">
-                                                Compatibility <t t-esc="_compat.get('score', 0)"/>%
+                                                Compatibility <t t-out="_compat.get('score', 0)"/>%
                                             </div>
                                         </div>
                                     </t>

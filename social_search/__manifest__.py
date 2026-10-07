@@ -1,6 +1,6 @@
 {
     'name': 'Social Search',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': 'Recherche unifiée membres/groupes/événements/posts avec respect de la visibilité',
     'author': 'Bemade',
@@ -15,9 +15,9 @@
         'portal',
     ],
     'data': [
-        'security/ir.model.access.csv',
         'data/website_menu.xml',
         'views/portal_templates.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

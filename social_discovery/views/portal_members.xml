@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <template id="portal_members" name="Member discovery">
         <t t-call="portal.portal_layout">
@@ -14,7 +14,7 @@
                             </small>
                         </h2>
                         <a href="/members/map" class="btn btn-sm btn-outline-secondary">
-                            <i class="fa fa-map-o"/>
+                            <i class="oi" data-icon="map"/>
                             <span class="ms-1">Vue carte</span>
                         </a>
                     </div>
@@ -27,17 +27,13 @@
 
                                 <!-- Text search -->
                                 <div class="mb-3">
-                                    <input type="text" name="q" class="form-control"
-                                           placeholder="Nom, bio, ville…"
-                                           t-att-value="q"/>
+                                    <input type="text" name="q" class="form-control" placeholder="Nom, bio, ville…" t-att-value="q"/>
                                 </div>
 
                                 <!-- City -->
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Ville</label>
-                                    <input type="text" name="city" class="form-control"
-                                           placeholder="Montréal…"
-                                           t-att-value="active_city"/>
+                                    <input type="text" name="city" class="form-control" placeholder="Montréal…" t-att-value="active_city"/>
                                 </div>
 
                                 <!-- Availability -->
@@ -45,12 +41,8 @@
                                     <label class="form-label fw-bold">Disponibilité</label>
                                     <t t-foreach="avail_opts" t-as="av">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                   name="availability" t-att-value="av.value"
-                                                   t-att-checked="av.value in active_availabilities or None"
-                                                   t-attf-id="av_#{av.value}"/>
-                                            <label class="form-check-label" t-attf-for="av_#{av.value}"
-                                                   t-out="av.name"/>
+                                            <input class="form-check-input" type="checkbox" name="availability" t-att-value="av.value" t-att-checked="av.value in active_availabilities or None" t-attf-id="av_#{av.value}"/>
+                                            <label class="form-check-label" t-attf-for="av_#{av.value}" t-out="av.name"/>
                                         </div>
                                     </t>
                                 </div>
@@ -60,12 +52,8 @@
                                     <label class="form-label fw-bold">Genre</label>
                                     <t t-foreach="genders_opts" t-as="g">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                   name="gender" t-att-value="g.value"
-                                                   t-att-checked="g.value in active_genders or None"
-                                                   t-attf-id="g_#{g.value}"/>
-                                            <label class="form-check-label" t-attf-for="g_#{g.value}"
-                                                   t-out="g.name"/>
+                                            <input class="form-check-input" type="checkbox" name="gender" t-att-value="g.value" t-att-checked="g.value in active_genders or None" t-attf-id="g_#{g.value}"/>
+                                            <label class="form-check-label" t-attf-for="g_#{g.value}" t-out="g.name"/>
                                         </div>
                                     </t>
                                 </div>
@@ -75,12 +63,8 @@
                                     <label class="form-label fw-bold">Orientation</label>
                                     <t t-foreach="orientations_opts" t-as="o">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                   name="orientation" t-att-value="o.value"
-                                                   t-att-checked="o.value in active_orientations or None"
-                                                   t-attf-id="o_#{o.value}"/>
-                                            <label class="form-check-label" t-attf-for="o_#{o.value}"
-                                                   t-out="o.name"/>
+                                            <input class="form-check-input" type="checkbox" name="orientation" t-att-value="o.value" t-att-checked="o.value in active_orientations or None" t-attf-id="o_#{o.value}"/>
+                                            <label class="form-check-label" t-attf-for="o_#{o.value}" t-out="o.name"/>
                                         </div>
                                     </t>
                                 </div>
@@ -91,12 +75,8 @@
                                         <label class="form-label fw-bold">⛓️ Rôle BDSM</label>
                                         <t t-foreach="role_labels.items()" t-as="rl">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                       name="bdsm_role" t-att-value="rl[0]"
-                                                       t-att-checked="rl[0] in active_bdsm_roles or None"
-                                                       t-attf-id="role_#{rl[0]}"/>
-                                                <label class="form-check-label" t-attf-for="role_#{rl[0]}"
-                                                       t-out="rl[1]"/>
+                                                <input class="form-check-input" type="checkbox" name="bdsm_role" t-att-value="rl[0]" t-att-checked="rl[0] in active_bdsm_roles or None" t-attf-id="role_#{rl[0]}"/>
+                                                <label class="form-check-label" t-attf-for="role_#{rl[0]}" t-out="rl[1]"/>
                                             </div>
                                         </t>
                                     </div>
@@ -105,12 +85,8 @@
                                         <label class="form-label fw-bold">Expérience</label>
                                         <t t-foreach="exp_labels.items()" t-as="el">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                       name="experience" t-att-value="el[0]"
-                                                       t-att-checked="el[0] in active_experiences or None"
-                                                       t-attf-id="exp_#{el[0]}"/>
-                                                <label class="form-check-label" t-attf-for="exp_#{el[0]}"
-                                                       t-out="el[1]"/>
+                                                <input class="form-check-input" type="checkbox" name="experience" t-att-value="el[0]" t-att-checked="el[0] in active_experiences or None" t-attf-id="exp_#{el[0]}"/>
+                                                <label class="form-check-label" t-attf-for="exp_#{el[0]}" t-out="el[1]"/>
                                             </div>
                                         </t>
                                     </div>
@@ -120,22 +96,16 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Âge</label>
                                     <div class="d-flex gap-2 align-items-center">
-                                        <input type="number" name="min_age" class="form-control form-control-sm"
-                                               min="18" max="99" placeholder="Min"
-                                               t-att-value="active_min_age if active_min_age and active_min_age != 18 else ''"/>
+                                        <input type="number" name="min_age" class="form-control form-control-sm" min="18" max="99" placeholder="Min" t-att-value="active_min_age if active_min_age and active_min_age != 18 else ''"/>
                                         <span>–</span>
-                                        <input type="number" name="max_age" class="form-control form-control-sm"
-                                               min="18" max="99" placeholder="Max"
-                                               t-att-value="active_max_age if active_max_age else ''"/>
+                                        <input type="number" name="max_age" class="form-control form-control-sm" min="18" max="99" placeholder="Max" t-att-value="active_max_age if active_max_age else ''"/>
                                     </div>
                                 </div>
 
                                 <!-- Has photo -->
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                               name="has_photo" value="1" id="has_photo"
-                                               t-att-checked="active_has_photo or None"/>
+                                        <input class="form-check-input" type="checkbox" name="has_photo" value="1" id="has_photo" t-att-checked="active_has_photo or None"/>
                                         <label class="form-check-label" for="has_photo">
                                             Avec photo de profil
                                         </label>
@@ -149,10 +119,7 @@
                                             Compatibilité ≥
                                         </label>
                                         <div class="d-flex gap-2 align-items-center">
-                                            <input type="number" name="min_compat" id="min_compat"
-                                                   class="form-control form-control-sm"
-                                                   min="0" max="100" step="5" placeholder="0"
-                                                   t-att-value="active_min_compat if active_min_compat else ''"/>
+                                            <input type="number" name="min_compat" id="min_compat" class="form-control form-control-sm" min="0" max="100" step="5" placeholder="0" t-att-value="active_min_compat if active_min_compat else ''"/>
                                             <span>%</span>
                                         </div>
                                         <div class="form-text" style="font-size:0.75rem;">
@@ -161,8 +128,7 @@
                                     </div>
                                 </t>
 
-                                <button type="submit" class="btn w-100"
-                                        style="background:#e94560; color:white;">
+                                <button type="submit" class="btn w-100" style="background:#e94560; color:white;">
                                     Filtrer
                                 </button>
                                 <a href="/members" class="btn btn-outline-secondary w-100 mt-2">
@@ -178,16 +144,13 @@
                             <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
                                 <span class="text-muted" style="font-size:0.85rem;">Trier par :</span>
                                 <t t-foreach="[('recent','Récemment actifs'),('new','Nouveaux membres'),('alpha','A–Z')]" t-as="s">
-                                    <a t-attf-href="/members?sort=#{s[0]}&amp;q=#{q}"
-                                       t-attf-class="btn btn-sm #{s[0] == sort and 'btn-dark' or 'btn-outline-secondary'}">
+                                    <a t-attf-href="/members?sort=#{s[0]}&amp;q=#{q}" t-attf-class="btn btn-sm #{s[0] == sort and 'btn-dark' or 'btn-outline-secondary'}">
                                         <t t-out="s[1]"/>
                                     </a>
                                 </t>
                                 <!-- "Best match" only makes sense when BDSM scoring is available. -->
                                 <t t-if="has_bdsm">
-                                    <a t-attf-href="/members?sort=compat&amp;q=#{q}"
-                                       t-attf-class="btn btn-sm #{sort == 'compat' and 'btn-dark' or 'btn-outline-secondary'}"
-                                       title="Trier selon la compatibilité globale avec votre profil">
+                                    <a t-attf-href="/members?sort=compat&amp;q=#{q}" t-attf-class="btn btn-sm #{sort == 'compat' and 'btn-dark' or 'btn-outline-secondary'}" title="Trier selon la compatibilité globale avec votre profil">
                                         ⛓️ Meilleure compatibilité
                                     </a>
                                 </t>
@@ -198,56 +161,44 @@
                                 <div class="row row-cols-2 row-cols-md-3 g-3">
                                     <t t-foreach="profiles" t-as="profile">
                                         <div class="col">
-                                            <a t-attf-href="/profile/#{profile.user_id.id}"
-                                               class="card h-100 text-decoration-none text-dark"
-                                               style="border-radius:10px; overflow:hidden; transition:box-shadow .15s;"
-                                               onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'"
-                                               onmouseleave="this.style.boxShadow='none'">
+                                            <a t-attf-href="/profile/#{profile.user_id.id}" class="card h-100 text-decoration-none text-dark" style="border-radius:10px; overflow:hidden; transition:box-shadow .15s;" onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseleave="this.style.boxShadow='none'">
 
                                                 <!-- Photo -->
                                                 <div style="height:140px; background:#1a1a2e; position:relative;">
                                                     <t t-if="profile.profile_image">
-                                                        <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
-                                                             class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                                        <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
                                                     </t>
                                                     <t t-else="">
-                                                        <div class="d-flex align-items-center justify-content-center h-100"
-                                                             style="font-size:48px; color:#e94560;">
+                                                        <div class="d-flex align-items-center justify-content-center h-100" style="font-size:48px; color:#e94560;">
                                                             <t t-out="(profile.stealth_name or profile.user_id.name or '?')[0].upper()"/>
                                                         </div>
                                                     </t>
                                                     <!-- Availability badge -->
                                                     <t t-if="profile.availability == 'disponible'">
-                                                        <span class="position-absolute top-0 end-0 m-1 badge"
-                                                              style="background:#28a745; font-size:0.7rem;">
+                                                        <span class="position-absolute top-0 end-0 m-1 badge" style="background:#28a745; font-size:0.7rem;">
                                                             🟢 Disponible
                                                         </span>
                                                     </t>
                                                     <!-- Compatibility badge -->
-                                                    <t t-if="has_bdsm and compat_scores.get(profile.id, 0) > 0">
-                                                        <span class="position-absolute bottom-0 start-0 m-1 badge"
-                                                              style="background:rgba(0,0,0,.65); color:#fff; font-size:0.7rem;"
-                                                              t-attf-title="Score de compatibilité : #{compat_scores[profile.id]}">
+                                                    <t t-if="has_bdsm and compat_scores.get(profile.id, 0) &gt; 0">
+                                                        <span class="position-absolute bottom-0 start-0 m-1 badge" style="background:rgba(0,0,0,.65); color:#fff; font-size:0.7rem;" t-attf-title="Score de compatibilité : #{compat_scores[profile.id]}">
                                                             <t t-out="compat_scores[profile.id]"/>% compat
                                                         </span>
                                                     </t>
                                                 </div>
 
                                                 <div class="card-body py-2 px-3">
-                                                    <div class="fw-bold text-truncate" style="font-size:0.95rem;"
-                                                         t-out="profile.stealth_name or profile.user_id.name"/>
+                                                    <div class="fw-bold text-truncate" style="font-size:0.95rem;" t-out="profile.stealth_name or profile.user_id.name"/>
                                                     <div class="text-muted" style="font-size:0.78rem;">
                                                         <t t-if="profile.city">
                                                             📍 <t t-out="profile.city"/>
                                                         </t>
-                                                        <t t-if="profile.age and profile.age >= 18">
+                                                        <t t-if="profile.age and profile.age &gt;= 18">
                                                             · <t t-out="profile.age"/> ans
                                                         </t>
                                                     </div>
                                                     <t t-if="has_bdsm and profile.bdsm_role">
-                                                        <span class="badge rounded-pill mt-1"
-                                                              style="background:#e94560; color:white; font-size:0.7rem;"
-                                                              t-out="role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
+                                                        <span class="badge rounded-pill mt-1" style="background:#e94560; color:white; font-size:0.7rem;" t-out="role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
                                                     </t>
                                                 </div>
                                             </a>
@@ -256,8 +207,8 @@
                                 </div>
 
                                 <!-- Pagination -->
-                                <div class="mt-4" t-if="pager['page_count'] > 1">
-                                    <t t-call="web.pager">
+                                <div class="mt-4" t-if="pager['page_count'] &gt; 1">
+                                    <t t-call="portal.pager">
                                         <t t-set="pager" t-value="pager"/>
                                     </t>
                                 </div>
@@ -281,14 +232,4 @@
     </template>
 
     <!-- Portal navigation link -->
-    <template id="portal_my_home_members" inherit_id="portal.portal_my_home" name="Portal — Members">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Explorer les membres</t>
-                <t t-set="url">/members</t>
-                <t t-set="icon" t-value="'/social_discovery/static/src/img/members.svg'"/>
-                <t t-set="placeholder_count">0</t>
-            </t>
-        </xpath>
-    </template>
-</odoo>
+    </odoo>

@@ -55,7 +55,7 @@ class NotificationDigestService(models.AbstractModel):
     # ── Configuration helpers ────────────────────────────────────────────────
     @api.model
     def _param(self, key, default):
-        return self.env['ir.config_parameter'].sudo().get_param(key, default)
+        return self.env['ir.config_parameter'].sudo().get_str(key, default)
 
     @api.model
     def _int_param(self, key, default):
@@ -202,7 +202,7 @@ class NotificationDigestService(models.AbstractModel):
     # ── HMAC token for unsubscribe ───────────────────────────────────────────
     @api.model
     def _digest_secret(self):
-        secret = self.env['ir.config_parameter'].sudo().get_param('database.secret', '')
+        secret = self.env['ir.config_parameter'].sudo().get_str('database.secret', '')
         return (secret or 'social_notifications-fallback').encode('utf-8')
 
     @api.model
@@ -239,11 +239,11 @@ class NotificationDigestService(models.AbstractModel):
 
         from_email = self._param('social_notifications.digest_from', '')
         if not from_email:
-            from_email = self.env['ir.config_parameter'].sudo().get_param(
+            from_email = self.env['ir.config_parameter'].sudo().get_str(
                 'mail.default.from', 'noreply@example.com',
             )
 
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', '')
+        base_url = self.env['ir.config_parameter'].sudo().get_str('web.base.url', '')
         unsub_token = self._unsubscribe_token(user.id)
         unsubscribe_url = f'{base_url}/notifications/digest/unsubscribe/{user.id}/{unsub_token}'
 

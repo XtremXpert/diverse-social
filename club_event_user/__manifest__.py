@@ -1,6 +1,6 @@
 {
     'name': "Club — Inscription événement par membre",
-    'version': '19.0.2.0.0',
+    'version': '20.0.2.0.0',
     'category': 'Club',
     'summary': "Restreint les inscriptions aux res.users et affiche le login partout",
     'author': 'Bemade',

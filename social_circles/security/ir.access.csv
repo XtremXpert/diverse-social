@@ -1,0 +1,16 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_circles_circle_moderator,social_circles.circle moderator,social_circles.circle,social_base.group_social_moderator,crud,
+access_social_circles_circle_admin,social_circles.circle admin,social_circles.circle,social_base.group_social_admin,crud,
+access_social_circles_circle_system,social_circles.circle system,social_circles.circle,base.group_system,crud,
+access_social_circles_circle_type_user,social_circles.circle_type user,social_circles.circle_type,social_base.group_social_user,r,
+access_social_circles_circle_type_moderator,social_circles.circle_type moderator,social_circles.circle_type,social_base.group_social_moderator,crud,
+access_social_circles_circle_type_admin,social_circles.circle_type admin,social_circles.circle_type,social_base.group_social_admin,crud,
+access_social_circles_circle_type_system,social_circles.circle_type system,social_circles.circle_type,base.group_system,crud,
+access_social_circles_invitation_moderator,social_circles.invitation moderator,social_circles.invitation,social_base.group_social_moderator,crud,
+access_social_circles_invitation_admin,social_circles.invitation admin,social_circles.invitation,social_base.group_social_admin,crud,
+access_social_circles_invitation_system,social_circles.invitation system,social_circles.invitation,base.group_system,crud,
+rule_circle_owner,Social Circle: owner access,social_circles.circle,social_base.group_social_user,crud,"[('profile_id.user_id', '=', user.id)]"
+rule_circle_invitation_own,Circle Invitation: own,social_circles.invitation,social_base.group_social_user,cru,"['|', ('inviter_user_id', '=', user.id), ('invitee_user_id', '=', user.id)]"
+rule_circle_member_read,Social Circle: member read,social_circles.circle,social_base.group_social_user,r,"[('member_ids', 'in', [user.id])]"
+rule_res_users_social_read,Social User: read all platform users,res.users,social_base.group_social_user,r,"[(1, '=', 1)]"
+rule_res_users_social_read_1,Social User: read all platform users,res.users,base.group_portal,r,"[(1, '=', 1)]"

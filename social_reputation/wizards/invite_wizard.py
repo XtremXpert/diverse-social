@@ -39,5 +39,6 @@ class VouchingInviteWizard(models.TransientModel):
             'res_model': 'social_reputation.vouching',
             'res_id': vouching.id,
             'view_mode': 'form',
+            'views': [(False, 'form')],  # requis par Odoo 20
             'target': 'current',
         }

@@ -13,14 +13,13 @@ _VIDEO_EXTS = ('.mp4', '.webm', '.ogg', '.ogv', '.mov')
 
 class GalleryPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'gallery_pending_count' in counters:
-            values['gallery_pending_count'] = request.env['social_gallery.photo'].search_count([
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'gallery_pending_count':
+            return 'social_gallery.photo', [
                 ('submitted_by_id', '=', request.env.user.id),
                 ('state', '=', 'pending'),
-            ])
-        return values
+            ], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     @route('/gallery', auth='user', website=True, sitemap=True)
     def gallery_list(self, **kw):

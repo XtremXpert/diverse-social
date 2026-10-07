@@ -1,7 +1,7 @@
 {
     'name': 'Club — Base',
     'summary': 'Socle commun des modules Club : identité portail (login comme nom affiché)',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Club',
     'depends': ['base'],
     'author': 'Bemade',

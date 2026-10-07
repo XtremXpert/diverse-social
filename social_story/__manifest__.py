@@ -1,6 +1,6 @@
 {
     'name': 'Social Stories',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': 'Ephemeral 24-hour stories for social networks',
     'author': 'Bemade, Odoo Community Association (OCA)',
@@ -12,12 +12,12 @@
         'portal',
     ],
     'data': [
-        'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/ir_cron.xml',
         'data/website_menu.xml',
         'views/story_views.xml',
         'views/portal_templates.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

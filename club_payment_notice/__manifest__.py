@@ -1,6 +1,6 @@
 {
     'name': "Club — Avis de paiement à l'arrivée",
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Club',
     'summary': "Affiche un avis de paiement en argent à l'arrivée sur les pages de paiement",
     'author': 'Bemade',

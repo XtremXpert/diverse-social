@@ -1,6 +1,6 @@
 {
     'name': 'Social Groups',
-    'version': '19.0.3.0.0',
+    'version': '20.0.3.0.0',
     'category': 'Social',
     'summary': 'Groups and communities for social networks',
     'author': 'Bemade, Odoo Community Association (OCA)',
@@ -12,12 +12,12 @@
         'portal',
     ],
     'data': [
-        'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/ir_cron.xml',
         'data/website_menu.xml',
         'views/group_views.xml',
         'views/portal_templates.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

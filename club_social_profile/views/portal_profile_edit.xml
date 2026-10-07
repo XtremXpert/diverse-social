@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <template id="portal_profile_edit" name="Edit my profile">
         <t t-call="portal.portal_layout">
@@ -8,8 +8,7 @@
 
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h2 class="mb-0" style="color:#1a1a2e;">✏️ Edit my profile</h2>
-                        <a t-attf-href="/profile/#{profile.user_id.id}"
-                           class="btn btn-outline-secondary btn-sm">
+                        <a t-attf-href="/profile/#{profile.user_id.id}" class="btn btn-outline-secondary btn-sm">
                             ← View my profile
                         </a>
                     </div>
@@ -17,14 +16,12 @@
                     <!-- Tabs -->
                     <ul class="nav nav-tabs mb-4">
                         <li class="nav-item">
-                            <a t-attf-class="nav-link #{'active' if section == 'identity' else ''}"
-                               href="/my/profile/edit?section=identity">
+                            <a t-attf-class="nav-link #{'active' if section == 'identity' else ''}" href="/my/profile/edit?section=identity">
                                 Identity
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a t-attf-class="nav-link #{'active' if section == 'preferences' else ''}"
-                               href="/my/profile/edit?section=preferences">
+                            <a t-attf-class="nav-link #{'active' if section == 'preferences' else ''}" href="/my/profile/edit?section=preferences">
                                 Preferences
                             </a>
                         </li>
@@ -45,8 +42,7 @@
 
                     <!-- ══ Identity tab ══════════════════════════════════════ -->
                     <t t-if="section == 'identity'">
-                        <form action="/my/profile/edit/identity" method="post"
-                              enctype="multipart/form-data">
+                        <form action="/my/profile/edit/identity" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                             <!-- Photos -->
@@ -60,12 +56,10 @@
                                             <div class="mb-2 fw-semibold">Profile picture</div>
                                             <div id="profile_image_preview" style="width:100px; height:100px; border-radius:50%; overflow:hidden; background:#e94560; margin:0 auto 12px;">
                                                 <t t-if="profile.profile_image">
-                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
-                                                         class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
                                                 </t>
                                                 <t t-else="">
-                                                    <div class="d-flex align-items-center justify-content-center h-100"
-                                                         style="font-size:2.5rem; color:white;">
+                                                    <div class="d-flex align-items-center justify-content-center h-100" style="font-size:2.5rem; color:white;">
                                                         <t t-out="(profile.user_id.name or '?')[0].upper()"/>
                                                     </div>
                                                 </t>
@@ -73,24 +67,19 @@
                                             <label class="btn btn-outline-secondary btn-sm" for="profile_image">
                                                 Change
                                             </label>
-                                            <input type="file" name="profile_image" id="profile_image"
-                                                   accept="image/*" class="d-none"
-                                                   data-preview-target="#profile_image_preview"/>
+                                            <input type="file" name="profile_image" id="profile_image" accept="image/*" class="d-none" data-preview-target="#profile_image_preview"/>
                                         </div>
                                         <div class="col-sm-6 text-center">
                                             <div class="mb-2 fw-semibold">Cover picture</div>
                                             <div id="cover_image_preview" style="height:80px; border-radius:8px; overflow:hidden; background:#1a1a2e; margin-bottom:12px;">
                                                 <t t-if="profile.cover_image">
-                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/cover_image"
-                                                         class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/cover_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
                                                 </t>
                                             </div>
                                             <label class="btn btn-outline-secondary btn-sm" for="cover_image">
                                                 Change
                                             </label>
-                                            <input type="file" name="cover_image" id="cover_image"
-                                                   accept="image/*" class="d-none"
-                                                   data-preview-target="#cover_image_preview"/>
+                                            <input type="file" name="cover_image" id="cover_image" accept="image/*" class="d-none" data-preview-target="#cover_image_preview"/>
                                         </div>
                                     </div>
                                 </div>
@@ -104,39 +93,28 @@
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <label class="form-label" for="pronouns">Pronouns</label>
-                                        <input type="text" class="form-control" name="pronouns" id="pronouns"
-                                               placeholder="he/him, she/her, they/them…"
-                                               t-att-value="profile.pronouns or ''"/>
+                                        <input type="text" class="form-control" name="pronouns" id="pronouns" placeholder="he/him, she/her, they/them…" t-att-value="profile.pronouns or ''"/>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="bio">Bio</label>
-                                        <textarea class="form-control" name="bio" id="bio" rows="4"
-                                                  placeholder="Introduce yourself…"><t t-out="profile.bio or ''"/></textarea>
+                                        <textarea class="form-control" name="bio" id="bio" rows="4" placeholder="Introduce yourself…"><t t-out="profile.bio or ''"/></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="quote">Tagline <small class="text-muted">(200 chars max)</small></label>
-                                        <input type="text" class="form-control" name="quote" id="quote"
-                                               maxlength="200" placeholder="A quote, an intention…"
-                                               t-att-value="profile.quote or ''"/>
+                                        <input type="text" class="form-control" name="quote" id="quote" maxlength="200" placeholder="A quote, an intention…" t-att-value="profile.quote or ''"/>
                                     </div>
                                     <div class="row g-3 mb-3">
                                         <div class="col-sm-4">
                                             <label class="form-label" for="birth_year">Birth year</label>
-                                            <input type="number" class="form-control" name="birth_year"
-                                                   id="birth_year" min="1900" max="2010" placeholder="1990"
-                                                   t-att-value="profile.birth_year or ''"/>
+                                            <input type="number" class="form-control" name="birth_year" id="birth_year" min="1900" max="2010" placeholder="1990" t-att-value="profile.birth_year or ''"/>
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="form-label" for="city">City</label>
-                                            <input type="text" class="form-control" name="city" id="city"
-                                                   placeholder="Montréal…"
-                                                   t-att-value="profile.city or ''"/>
+                                            <input type="text" class="form-control" name="city" id="city" placeholder="Montréal…" t-att-value="profile.city or ''"/>
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="form-label" for="region">Province</label>
-                                            <input type="text" class="form-control" name="region" id="region"
-                                                   placeholder="Québec…"
-                                                   t-att-value="profile.region or ''"/>
+                                            <input type="text" class="form-control" name="region" id="region" placeholder="Québec…" t-att-value="profile.region or ''"/>
                                         </div>
                                     </div>
                                     <div class="row g-3">
@@ -144,25 +122,25 @@
                                             <label class="form-label" for="gender">Gender</label>
                                             <select class="form-select" name="gender" id="gender">
                                                 <option value="non_specifie" t-att-selected="(profile.gender or 'non_specifie') == 'non_specifie' or None">Prefer not to say</option>
-                                                <option value="homme"        t-att-selected="profile.gender == 'homme' or None">Man</option>
-                                                <option value="femme"        t-att-selected="profile.gender == 'femme' or None">Woman</option>
-                                                <option value="trans_homme"  t-att-selected="profile.gender == 'trans_homme' or None">Trans man</option>
-                                                <option value="trans_femme"  t-att-selected="profile.gender == 'trans_femme' or None">Trans woman</option>
-                                                <option value="non_binaire"  t-att-selected="profile.gender == 'non_binaire' or None">Non-binary</option>
-                                                <option value="autre"        t-att-selected="profile.gender == 'autre' or None">Other</option>
+                                                <option value="homme" t-att-selected="profile.gender == 'homme' or None">Man</option>
+                                                <option value="femme" t-att-selected="profile.gender == 'femme' or None">Woman</option>
+                                                <option value="trans_homme" t-att-selected="profile.gender == 'trans_homme' or None">Trans man</option>
+                                                <option value="trans_femme" t-att-selected="profile.gender == 'trans_femme' or None">Trans woman</option>
+                                                <option value="non_binaire" t-att-selected="profile.gender == 'non_binaire' or None">Non-binary</option>
+                                                <option value="autre" t-att-selected="profile.gender == 'autre' or None">Other</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-6">
                                             <label class="form-label" for="orientation">Orientation</label>
                                             <select class="form-select" name="orientation" id="orientation">
                                                 <option value="non_specifie" t-att-selected="(profile.orientation or 'non_specifie') == 'non_specifie' or None">Prefer not to say</option>
-                                                <option value="hetero"       t-att-selected="profile.orientation == 'hetero' or None">Heterosexual</option>
-                                                <option value="gay"          t-att-selected="profile.orientation == 'gay' or None">Gay / Lesbian</option>
-                                                <option value="bi"           t-att-selected="profile.orientation == 'bi' or None">Bisexual</option>
-                                                <option value="pan"          t-att-selected="profile.orientation == 'pan' or None">Pansexual</option>
-                                                <option value="asexuel"      t-att-selected="profile.orientation == 'asexuel' or None">Asexual</option>
-                                                <option value="queer"        t-att-selected="profile.orientation == 'queer' or None">Queer</option>
-                                                <option value="autre"        t-att-selected="profile.orientation == 'autre' or None">Other</option>
+                                                <option value="hetero" t-att-selected="profile.orientation == 'hetero' or None">Heterosexual</option>
+                                                <option value="gay" t-att-selected="profile.orientation == 'gay' or None">Gay / Lesbian</option>
+                                                <option value="bi" t-att-selected="profile.orientation == 'bi' or None">Bisexual</option>
+                                                <option value="pan" t-att-selected="profile.orientation == 'pan' or None">Pansexual</option>
+                                                <option value="asexuel" t-att-selected="profile.orientation == 'asexuel' or None">Asexual</option>
+                                                <option value="queer" t-att-selected="profile.orientation == 'queer' or None">Queer</option>
+                                                <option value="autre" t-att-selected="profile.orientation == 'autre' or None">Other</option>
                                             </select>
                                         </div>
                                     </div>
@@ -170,8 +148,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn"
-                                        style="background:#e94560; color:white; min-width:140px;">
+                                <button type="submit" class="btn" style="background:#e94560; color:white; min-width:140px;">
                                     Save
                                 </button>
                             </div>
@@ -193,18 +170,14 @@
                                         <label class="form-label fw-semibold">Profile visibility</label>
                                         <div class="d-flex gap-3 flex-wrap">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="visibility"
-                                                       id="vis_members" value="members"
-                                                       t-att-checked="profile.visibility == 'members' and 'checked' or None"/>
+                                                <input class="form-check-input" type="radio" name="visibility" id="vis_members" value="members" t-att-checked="profile.visibility == 'members' and 'checked' or None"/>
                                                 <label class="form-check-label" for="vis_members">
                                                     <strong>Club members</strong><br/>
                                                     <small class="text-muted">Visible to all active members</small>
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="visibility"
-                                                       id="vis_connections" value="connections"
-                                                       t-att-checked="profile.visibility == 'connections' and 'checked' or None"/>
+                                                <input class="form-check-input" type="radio" name="visibility" id="vis_connections" value="connections" t-att-checked="profile.visibility == 'connections' and 'checked' or None"/>
                                                 <label class="form-check-label" for="vis_connections">
                                                     <strong>Connections only</strong><br/>
                                                     <small class="text-muted">Visible to your connections only</small>
@@ -215,19 +188,16 @@
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold" for="availability">Availability</label>
                                         <select class="form-select" name="availability" id="availability">
-                                            <option value="non_specifie"  t-att-selected="profile.availability == 'non_specifie' and 'selected' or None">Unspecified</option>
-                                            <option value="disponible"    t-att-selected="profile.availability == 'disponible' and 'selected' or None">Available / Looking</option>
+                                            <option value="non_specifie" t-att-selected="profile.availability == 'non_specifie' and 'selected' or None">Unspecified</option>
+                                            <option value="disponible" t-att-selected="profile.availability == 'disponible' and 'selected' or None">Available / Looking</option>
                                             <option value="couple_ouvert" t-att-selected="profile.availability == 'couple_ouvert' and 'selected' or None">Open couple</option>
-                                            <option value="couple_ferme"  t-att-selected="profile.availability == 'couple_ferme' and 'selected' or None">Closed couple</option>
+                                            <option value="couple_ferme" t-att-selected="profile.availability == 'couple_ferme' and 'selected' or None">Closed couple</option>
                                             <option value="pas_disponible" t-att-selected="profile.availability == 'pas_disponible' and 'selected' or None">Not available</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold" for="stealth_name">Alternate display name</label>
-                                        <input type="text" class="form-control" name="stealth_name"
-                                               id="stealth_name" maxlength="80"
-                                               placeholder="Alias shown to other members (optional)"
-                                               t-att-value="profile.stealth_name or ''"/>
+                                        <input type="text" class="form-control" name="stealth_name" id="stealth_name" maxlength="80" placeholder="Alias shown to other members (optional)" t-att-value="profile.stealth_name or ''"/>
                                         <div class="form-text">
                                             If set, this name replaces your real name on your public profile.
                                         </div>
@@ -245,12 +215,8 @@
                                         <div class="d-flex flex-wrap gap-3">
                                             <t t-foreach="looking_for_opts" t-as="lf">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           name="looking_for_ids" t-att-value="lf.id"
-                                                           t-attf-id="lf_#{lf.id}"
-                                                           t-att-checked="lf.id in profile.looking_for_ids.ids and 'checked' or None"/>
-                                                    <label class="form-check-label" t-attf-for="lf_#{lf.id}"
-                                                           t-out="lf.name"/>
+                                                    <input class="form-check-input" type="checkbox" name="looking_for_ids" t-att-value="lf.id" t-attf-id="lf_#{lf.id}" t-att-checked="lf.id in profile.looking_for_ids.ids and 'checked' or None"/>
+                                                    <label class="form-check-label" t-attf-for="lf_#{lf.id}" t-out="lf.name"/>
                                                 </div>
                                             </t>
                                         </div>
@@ -268,12 +234,8 @@
                                         <div class="d-flex flex-wrap gap-3">
                                             <t t-foreach="language_opts" t-as="lng">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           name="language_ids" t-att-value="lng.id"
-                                                           t-attf-id="lng_#{lng.id}"
-                                                           t-att-checked="lng.id in profile.language_ids.ids and 'checked' or None"/>
-                                                    <label class="form-check-label" t-attf-for="lng_#{lng.id}"
-                                                           t-out="lng.name"/>
+                                                    <input class="form-check-input" type="checkbox" name="language_ids" t-att-value="lng.id" t-attf-id="lng_#{lng.id}" t-att-checked="lng.id in profile.language_ids.ids and 'checked' or None"/>
+                                                    <label class="form-check-label" t-attf-for="lng_#{lng.id}" t-out="lng.name"/>
                                                 </div>
                                             </t>
                                         </div>
@@ -290,11 +252,8 @@
                                     <div class="d-flex flex-wrap gap-3">
                                         <t t-foreach="ui_langs" t-as="ul">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="ui_lang"
-                                                       t-att-value="ul.code" t-attf-id="ulang_#{ul.id}"
-                                                       t-att-checked="ul.code == request.env.user.lang and 'checked' or None"/>
-                                                <label class="form-check-label" t-attf-for="ulang_#{ul.id}"
-                                                       t-out="ul.name"/>
+                                                <input class="form-check-input" type="radio" name="ui_lang" t-att-value="ul.code" t-attf-id="ulang_#{ul.id}" t-att-checked="ul.code == request.env.user.lang and 'checked' or None"/>
+                                                <label class="form-check-label" t-attf-for="ulang_#{ul.id}" t-out="ul.name"/>
                                             </div>
                                         </t>
                                     </div>
@@ -311,9 +270,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                               name="digest_email_enabled" id="digest_email"
-                                               t-att-checked="profile.digest_email_enabled and 'checked' or None"/>
+                                        <input class="form-check-input" type="checkbox" role="switch" name="digest_email_enabled" id="digest_email" t-att-checked="profile.digest_email_enabled and 'checked' or None"/>
                                         <label class="form-check-label" for="digest_email">
                                             Receive the weekly digest by email
                                         </label>
@@ -322,8 +279,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn"
-                                        style="background:#e94560; color:white; min-width:140px;">
+                                <button type="submit" class="btn" style="background:#e94560; color:white; min-width:140px;">
                                     Save
                                 </button>
                             </div>
@@ -336,15 +292,4 @@
     </template>
 
     <!-- Portal navigation entry -->
-    <template id="portal_my_home_profile_edit" inherit_id="portal.portal_my_home"
-              name="Portal — Edit my profile">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Mon profil</t>
-                <t t-set="url">/my/profile/edit</t>
-                <t t-set="icon" t-value="'/club_social_profile/static/src/img/profile.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-</odoo>
+    </odoo>

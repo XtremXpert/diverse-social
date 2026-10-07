@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -110,13 +109,13 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_groups_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/groups')
         self.assertEqual(resp.status_code, 200)
 
     def test_group_detail_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         group = self.env['social_group.group'].sudo().search([], limit=1)
         if not group:
             group = self.env['social_group.group'].sudo().create({
@@ -128,13 +127,13 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_my_groups_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/groups')
         self.assertEqual(resp.status_code, 200)
 
     def test_group_join_post_redirects(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         group = self.env['social_group.group'].sudo().create({
             'name': 'HTTP Join Group', 'privacy': 'public',
             'join_type': 'open',
@@ -151,7 +150,7 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_create_group_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/groups/create',
             data={'csrf_token': _csrf, 
@@ -167,7 +166,7 @@ class TestGroupPortalHttp(HttpCase):
 
     def test_create_group_missing_name_redirects_with_error(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/groups/create',
             data={'csrf_token': _csrf, 'name': ''},
@@ -185,7 +184,7 @@ class TestGroupPortalHttp(HttpCase):
             'admin_ids': [(4, admin.id)],
         })
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/groups/{group.id}/edit',
             data={'csrf_token': _csrf, 
@@ -214,7 +213,7 @@ class TestGroupPortalHttp(HttpCase):
             'admin_ids': [(4, admin.id)],
         })
         self.authenticate('non_admin_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/groups/{group.id}/edit',
             data={'csrf_token': _csrf, 'name': 'Hacked Name'},
@@ -245,7 +244,7 @@ class TestGroupPortalHttp(HttpCase):
         })
         req = self._make_join_request(group, requester)
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/approve',
             data={'csrf_token': _csrf, },
@@ -270,7 +269,7 @@ class TestGroupPortalHttp(HttpCase):
         })
         req = self._make_join_request(group, requester2)
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/reject',
             data={'csrf_token': _csrf, },
@@ -300,7 +299,7 @@ class TestGroupPortalHttp(HttpCase):
         # Authenticate as admin who is NOT creator/admin of this group
         # (admin has group_social_moderator by default - let's use a plain member)
         self.authenticate('requester3_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/groups/{group.id}/requests/{req.id}/approve',
             data={'csrf_token': _csrf, },
@@ -326,7 +325,7 @@ class TestGroupPortalHttp(HttpCase):
         })
         req_b = self._make_join_request(group_b, other_user)
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         # Try to approve group_b's request via group_a's URL
         resp = self.url_open(
             f'/groups/{group_a.id}/requests/{req_b.id}/approve',

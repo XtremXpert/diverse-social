@@ -17,7 +17,7 @@ class PwaPushService(models.AbstractModel):
 
     @api.model
     def _generic_payload(self):
-        get = self.env['ir.config_parameter'].sudo().get_param
+        get = self.env['ir.config_parameter'].sudo().get_str
         return {
             'title': get('social_pwa.push_title', 'MétéoMédia'),
             'body': get('social_pwa.push_body', 'Nouvelle activité — ouvrez l\'app pour voir.'),

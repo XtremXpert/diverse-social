@@ -1,20 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
-    <template id="portal_my_home_vouching" name="Portal My Home : Parrainages"
-              inherit_id="portal.portal_my_home" customize_show="False" priority="45">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Parrainages</t>
-                <t t-set="url">/my/vouching</t>
-                <t t-set="icon" t-value="'/social_reputation/static/src/img/vouching.svg'"/>
-                <t t-set="placeholder_count">vouching_count</t>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-
     <!-- ══ Page parrainages ════════════════════════════════════════════════ -->
     <template id="portal_my_vouching" name="Mes parrainages">
         <t t-call="portal.portal_layout">
@@ -40,7 +27,7 @@
                     <div class="alert alert-info">Invitation annulée.</div>
                 </t>
                 <t t-if="error or request.params.get('error')">
-                    <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
+                    <div class="alert alert-danger" t-out="error or request.params.get('error')"/>
                 </t>
 
                 <!-- ── Stats ──────────────────────────────────────────── -->
@@ -49,7 +36,7 @@
                         <div class="card text-center" style="border-top:3px solid #1a1a2e;">
                             <div class="card-body py-3">
                                 <div style="font-size:1.8rem; font-weight:700; color:#1a1a2e;">
-                                    <t t-esc="len(received.filtered(lambda v: v.state == 'active'))"/>
+                                    <t t-out="len(received.filtered(lambda v: v.state == 'active'))"/>
                                 </div>
                                 <div class="text-muted" style="font-size:.8rem;">Parrains actifs</div>
                             </div>
@@ -59,7 +46,7 @@
                         <div class="card text-center" style="border-top:3px solid #e94560;">
                             <div class="card-body py-3">
                                 <div style="font-size:1.8rem; font-weight:700; color:#e94560;">
-                                    <t t-esc="len(given.filtered(lambda v: v.state == 'active'))"/>
+                                    <t t-out="len(given.filtered(lambda v: v.state == 'active'))"/>
                                 </div>
                                 <div class="text-muted" style="font-size:.8rem;">Personnes parrainées</div>
                             </div>
@@ -69,7 +56,7 @@
                         <div class="card text-center" style="border-top:3px solid #27ae60;">
                             <div class="card-body py-3">
                                 <div style="font-size:1.8rem; font-weight:700; color:#27ae60;">
-                                    <t t-esc="len(chain)"/>
+                                    <t t-out="len(chain)"/>
                                 </div>
                                 <div class="text-muted" style="font-size:.8rem;">Niveaux de chaîne</div>
                             </div>
@@ -87,8 +74,7 @@
                                 automatiquement parrainée par toi à l'inscription.
                             </div>
                         </div>
-                        <a href="/my/vouching/invite" class="btn btn-sm"
-                           style="background:#e94560;color:white;">
+                        <a href="/my/vouching/invite" class="btn btn-sm" style="background:#e94560;color:white;">
                             ✉ Inviter par email
                         </a>
                     </div>
@@ -99,7 +85,7 @@
                     <h5 class="mb-3" style="color:#1a1a2e;">
                         Invitations envoyées
                         <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
-                            <t t-esc="len(invitations)"/>
+                            <t t-out="len(invitations)"/>
                         </span>
                     </h5>
                     <div class="list-group shadow-sm mb-4">
@@ -107,12 +93,11 @@
                             <div t-attf-class="list-group-item py-3 #{'opacity-50' if inv.state == 'expired' else ''}">
                                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                     <div>
-                                        <div class="fw-semibold" style="color:#1a1a2e;"
-                                             t-esc="inv.invite_email or inv.newcomer_id.email"/>
+                                        <div class="fw-semibold" style="color:#1a1a2e;" t-out="inv.invite_email or inv.newcomer_id.email"/>
                                         <small class="text-muted">
-                                            Envoyée le <span t-field="inv.invited_at" t-options='{"widget":"date"}'/>
+                                            Envoyée le <span t-field="inv.invited_at" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                                             <t t-if="inv.state == 'invited'">
-                                                · Expire le <span t-field="inv.expires_at" t-options='{"widget":"date"}'/>
+                                                · Expire le <span t-field="inv.expires_at" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                                             </t>
                                         </small>
                                     </div>
@@ -121,14 +106,11 @@
                                             <span class="badge bg-warning text-dark">En attente</span>
                                             <form t-attf-action="/my/vouching/invite/#{inv.id}/resend" method="post" class="d-inline">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0"
-                                                        style="font-size:.75rem;">Renvoyer</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0" style="font-size:.75rem;">Renvoyer</button>
                                             </form>
-                                            <form t-attf-action="/my/vouching/invite/#{inv.id}/cancel" method="post" class="d-inline"
-                                                  onsubmit="return confirm('Annuler cette invitation ?');">
+                                            <form t-attf-action="/my/vouching/invite/#{inv.id}/cancel" method="post" class="d-inline" onsubmit="return confirm('Annuler cette invitation ?');">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                                <button type="submit" class="btn btn-sm btn-outline-danger py-0"
-                                                        style="font-size:.75rem;">Annuler</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger py-0" style="font-size:.75rem;">Annuler</button>
                                             </form>
                                         </t>
                                         <t t-elif="inv.state == 'pending_payment'">
@@ -141,7 +123,7 @@
                                 </div>
                                 <t t-if="inv.statement">
                                     <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.85rem;">
-                                        « <t t-esc="inv.statement"/> »
+                                        « <t t-out="inv.statement"/> »
                                     </p>
                                 </t>
                             </div>
@@ -153,8 +135,7 @@
                 <t t-if="vouchable">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="mb-0" style="color:#1a1a2e;">Parrainer une connexion</h5>
-                        <button class="btn btn-sm" style="background:#e94560;color:white;"
-                                data-bs-toggle="collapse" data-bs-target="#sn_vouch_form">
+                        <button class="btn btn-sm" style="background:#e94560;color:white;" data-bs-toggle="collapse" data-bs-target="#sn_vouch_form">
                             + Parrainer
                         </button>
                     </div>
@@ -167,17 +148,15 @@
                                         <select name="newcomer_id" class="form-select form-select-sm" required="required">
                                             <option value="">— choisir —</option>
                                             <t t-foreach="vouchable" t-as="u">
-                                                <option t-att-value="u.id" t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
+                                                <option t-att-value="u.id" t-out="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                             </t>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" name="statement" class="form-control form-control-sm"
-                                               placeholder="Déclaration (recommandé)" maxlength="500"/>
+                                        <input type="text" name="statement" class="form-control form-control-sm" placeholder="Déclaration (recommandé)" maxlength="500"/>
                                     </div>
                                     <div class="col-md-2">
-                                        <button type="submit" class="btn btn-sm w-100"
-                                                style="background:#1a1a2e;color:white;">
+                                        <button type="submit" class="btn btn-sm w-100" style="background:#1a1a2e;color:white;">
                                             Valider
                                         </button>
                                     </div>
@@ -204,16 +183,13 @@
                         <div class="card-body py-2">
                             <t t-foreach="chain" t-as="level">
                                 <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="badge rounded-pill bg-light text-dark border"
-                                          style="font-size:.7rem; min-width:24px;">
-                                        N<t t-esc="level_index + 1"/>
+                                    <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem; min-width:24px;">
+                                        N<t t-out="level_index + 1"/>
                                     </span>
                                     <div class="d-flex flex-wrap gap-1">
                                         <t t-foreach="level" t-as="u">
-                                            <a t-attf-href="/profile/#{u.id}"
-                                               class="badge rounded-pill"
-                                               style="background:#e94560;color:white;text-decoration:none;font-size:.8rem;">
-                                                <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
+                                            <a t-attf-href="/profile/#{u.id}" class="badge rounded-pill" style="background:#e94560;color:white;text-decoration:none;font-size:.8rem;">
+                                                <t t-out="request.env['club_social_profile.profile']._display_name_for_user(u)"/>
                                             </a>
                                         </t>
                                     </div>
@@ -227,7 +203,7 @@
                 <h5 class="mb-3" style="color:#1a1a2e;">
                     Parrainages reçus
                     <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
-                        <t t-esc="len(received)"/>
+                        <t t-out="len(received)"/>
                     </span>
                 </h5>
                 <t t-if="not received">
@@ -242,24 +218,20 @@
                                         <t t-out="(request.env['club_social_profile.profile']._display_name_for_user(v.sponsor_id) or '?')[0].upper()"/>
                                     </div>
                                     <div>
-                                        <a t-attf-href="/profile/#{v.sponsor_id.id}"
-                                           class="fw-semibold text-decoration-none"
-                                           style="color:#1a1a2e;"
-                                           t-esc="request.env['club_social_profile.profile']._display_name_for_user(v.sponsor_id)"/>
-                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
-                                              t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                        <a t-attf-href="/profile/#{v.sponsor_id.id}" class="fw-semibold text-decoration-none" style="color:#1a1a2e;" t-out="request.env['club_social_profile.profile']._display_name_for_user(v.sponsor_id)"/>
+                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}" t-out="'Actif' if v.state == 'active' else 'Retiré'"/>
                                     </div>
                                 </div>
-                                <small class="text-muted" t-field="v.create_date" t-options='{"widget":"date"}'/>
+                                <small class="text-muted" t-field="v.create_date" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                             </div>
                             <t t-if="v.statement">
                                 <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.88rem;">
-                                    « <t t-esc="v.statement"/> »
+                                    « <t t-out="v.statement"/> »
                                 </p>
                             </t>
                             <t t-if="v.state == 'withdrawn' and v.withdrawn_reason">
                                 <small class="text-danger d-block mt-1">
-                                    Motif de retrait : <t t-esc="v.withdrawn_reason"/>
+                                    Motif de retrait : <t t-out="v.withdrawn_reason"/>
                                 </small>
                             </t>
                         </div>
@@ -270,7 +242,7 @@
                 <h5 class="mb-3" style="color:#1a1a2e;">
                     Parrainages donnés
                     <span class="badge rounded-pill bg-secondary ms-2" style="font-size:.7rem;">
-                        <t t-esc="len(given)"/>
+                        <t t-out="len(given)"/>
                     </span>
                 </h5>
                 <t t-if="not given">
@@ -285,21 +257,14 @@
                                         <t t-out="(request.env['club_social_profile.profile']._display_name_for_user(v.newcomer_id) or '?')[0].upper()"/>
                                     </div>
                                     <div>
-                                        <a t-attf-href="/profile/#{v.newcomer_id.id}"
-                                           class="fw-semibold text-decoration-none"
-                                           style="color:#1a1a2e;"
-                                           t-esc="request.env['club_social_profile.profile']._display_name_for_user(v.newcomer_id)"/>
-                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}"
-                                              t-esc="'Actif' if v.state == 'active' else 'Retiré'"/>
+                                        <a t-attf-href="/profile/#{v.newcomer_id.id}" class="fw-semibold text-decoration-none" style="color:#1a1a2e;" t-out="request.env['club_social_profile.profile']._display_name_for_user(v.newcomer_id)"/>
+                                        <span t-attf-class="badge ms-2 #{'bg-success' if v.state == 'active' else 'bg-secondary'}" t-out="'Actif' if v.state == 'active' else 'Retiré'"/>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <small class="text-muted" t-field="v.create_date" t-options='{"widget":"date"}'/>
+                                    <small class="text-muted" t-field="v.create_date" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                                     <t t-if="v.state == 'active'">
-                                        <button class="btn btn-sm btn-outline-secondary py-0"
-                                                style="font-size:.75rem;"
-                                                data-bs-toggle="collapse"
-                                                t-attf-data-bs-target="#sn_withdraw_#{v.id}">
+                                        <button class="btn btn-sm btn-outline-secondary py-0" style="font-size:.75rem;" data-bs-toggle="collapse" t-attf-data-bs-target="#sn_withdraw_#{v.id}">
                                             Retirer
                                         </button>
                                     </t>
@@ -307,17 +272,15 @@
                             </div>
                             <t t-if="v.statement">
                                 <p class="mb-0 mt-2 fst-italic text-muted" style="font-size:.88rem;">
-                                    « <t t-esc="v.statement"/> »
+                                    « <t t-out="v.statement"/> »
                                 </p>
                             </t>
                             <!-- Formulaire retrait (collapse) -->
                             <t t-if="v.state == 'active'">
                                 <div class="collapse mt-2" t-attf-id="sn_withdraw_#{v.id}">
-                                    <form t-attf-action="/my/vouching/#{v.id}/withdraw" method="post"
-                                          class="d-flex gap-2 align-items-center">
+                                    <form t-attf-action="/my/vouching/#{v.id}/withdraw" method="post" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <input type="text" name="reason" class="form-control form-control-sm"
-                                               placeholder="Motif (obligatoire)" required="required" maxlength="256"/>
+                                        <input type="text" name="reason" class="form-control form-control-sm" placeholder="Motif (obligatoire)" required="required" maxlength="256"/>
                                         <button type="submit" class="btn btn-sm btn-danger" style="white-space:nowrap;">
                                             Confirmer le retrait
                                         </button>
@@ -326,7 +289,7 @@
                             </t>
                             <t t-if="v.state == 'withdrawn' and v.withdrawn_reason">
                                 <small class="text-danger d-block mt-1">
-                                    Motif : <t t-esc="v.withdrawn_reason"/>
+                                    Motif : <t t-out="v.withdrawn_reason"/>
                                 </small>
                             </t>
                         </div>
@@ -366,22 +329,14 @@
                                 <label class="form-label" for="vouch_invite_email">
                                     Email de la personne à inviter
                                 </label>
-                                <input id="vouch_invite_email" type="email"
-                                       name="email" class="form-control"
-                                       required="required" autofocus="autofocus"
-                                       t-att-value="email"
-                                       placeholder="prenom@example.com"/>
+                                <input id="vouch_invite_email" type="email" name="email" class="form-control" required="required" autofocus="autofocus" t-att-value="email" placeholder="prenom@example.com"/>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label" for="vouch_invite_statement">
                                     Déclaration <small class="text-muted">(visible dans l'email)</small>
                                 </label>
-                                <textarea id="vouch_invite_statement"
-                                          name="statement" class="form-control"
-                                          rows="3" maxlength="500"
-                                          placeholder="Comment tu connais cette personne et pourquoi tu la parraines."
-                                          t-out="statement"/>
+                                <textarea id="vouch_invite_statement" name="statement" class="form-control" rows="3" maxlength="500" placeholder="Comment tu connais cette personne et pourquoi tu la parraines." t-out="statement"/>
                             </div>
 
                             <p class="small text-muted">
@@ -391,8 +346,7 @@
                             </p>
 
                             <div class="d-flex gap-2">
-                                <button type="submit" class="btn"
-                                        style="background:#e94560;color:white;">
+                                <button type="submit" class="btn" style="background:#e94560;color:white;">
                                     Envoyer l'invitation
                                 </button>
                                 <a href="/my/vouching" class="btn btn-outline-secondary">
@@ -407,21 +361,15 @@
     </template>
 
     <!-- ══ Injection bouton Parrainer sur la page profil ════════════════ -->
-    <template id="portal_profile_vouch_button"
-              inherit_id="club_social_profile.portal_profile_public">
+    <template id="portal_profile_vouch_button" inherit_id="club_social_profile.portal_profile_public">
         <xpath expr="//t[@t-if='not is_own']/div[hasclass('d-flex')]" position="inside">
             <!-- Charger l'état du parrainage -->
-            <t t-set="_my_vouch" t-value="request.env['social_reputation.vouching'].sudo().search([
-                ('sponsor_id', '=', request.env.user.id),
-                ('newcomer_id', '=', target_user.id),
-                ('state', '=', 'active'),
-            ], limit=1)"/>
+            <t t-set="_my_vouch" t-value="request.env['social_reputation.vouching'].sudo().search([                 ('sponsor_id', '=', request.env.user.id),                 ('newcomer_id', '=', target_user.id),                 ('state', '=', 'active'),             ], limit=1)"/>
             <t t-if="_my_vouch">
                 <form t-attf-action="/my/vouching/#{_my_vouch.id}/withdraw" method="post">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <input type="hidden" name="reason" value="Retiré depuis la page profil"/>
-                    <button type="submit" class="btn btn-outline-secondary btn-sm"
-                            onclick="return confirm('Retirer votre parrainage ?')">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Retirer votre parrainage ?')">
                         🏅 Parrainé
                     </button>
                 </form>
@@ -435,24 +383,20 @@
     </template>
 
     <!-- ══ Encart « Parrainer par courriel » sur le tableau de bord ═══════ -->
-    <template id="portal_dashboard_invite"
-              inherit_id="club_social_profile.portal_dashboard">
+    <template id="portal_dashboard_invite" inherit_id="club_social_profile.portal_dashboard">
         <xpath expr="//div[@id='dashboard_sidebar']/t[1]" position="before">
             <div class="card mb-4">
-                <div class="card-header fw-bold"
-                     style="background:#1a1a2e; color:white;">
+                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
                     🤝 Parrainer
                 </div>
                 <div class="card-body text-center p-3">
                     <p class="text-muted mb-3" style="font-size:0.85rem;">
                         Invitez quelqu'un à rejoindre la communauté par courriel.
                     </p>
-                    <a href="/my/vouching/invite" class="btn btn-sm"
-                       style="background:#e94560; color:white;">
+                    <a href="/my/vouching/invite" class="btn btn-sm" style="background:#e94560; color:white;">
                         ✉️ Inviter par courriel
                     </a>
-                    <a href="/my/vouching" class="d-block mt-2 text-muted"
-                       style="font-size:0.78rem;">Mes parrainages →</a>
+                    <a href="/my/vouching" class="d-block mt-2 text-muted" style="font-size:0.78rem;">Mes parrainages →</a>
                 </div>
             </div>
         </xpath>

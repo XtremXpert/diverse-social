@@ -213,6 +213,7 @@ class DiscoveryCriteria(models.Model):
             'name': _('Discovery: %(name)s', name=self.name),
             'res_model': 'club_social_profile.profile',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('id', 'in', profiles.ids)],
             'context': {'search_default_': 0},
         }

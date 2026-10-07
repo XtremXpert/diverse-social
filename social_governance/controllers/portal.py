@@ -28,13 +28,10 @@ def _state_labels():
 
 class GovernancePortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'proposals_voting_count' in counters:
-            values['proposals_voting_count'] = request.env['social_governance.proposal'].sudo().search_count([
-                ('state', '=', 'voting'),
-            ])
-        return values
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'proposals_voting_count':
+            return 'social_governance.proposal', [('state', '=', 'voting')], 'sudo'
+        return super()._prepare_portal_counter_values(counter)
 
     # ── Liste ──────────────────────────────────────────────────────────────────
 

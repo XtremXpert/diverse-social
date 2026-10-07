@@ -1,7 +1,7 @@
 {
     'name': 'Website Members Only',
     'summary': 'Cache les événements aux visiteurs non connectés',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Website',
     'depends': ['website_event'],
     'data': [

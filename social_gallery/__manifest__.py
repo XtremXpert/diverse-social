@@ -1,6 +1,6 @@
 {
     'name': 'Social Gallery',
-    'version': '19.0.2.2.0',
+    'version': '20.0.2.2.0',
     'category': 'Social',
     'summary': 'Photo and video galleries for social networks',
     'author': 'Bemade, Odoo Community Association (OCA)',
@@ -12,11 +12,11 @@
         'portal',
     ],
     'data': [
-        'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/website_menu.xml',
         'views/gallery_views.xml',
         'views/portal_templates.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

@@ -8,7 +8,7 @@
               inherit_id="club_social_profile.portal_profile_edit">
         <xpath expr="//div[@id='card_notifications']//div[hasclass('card-body')]" position="inside">
             <t t-set="ntfy_server"
-               t-value="request.env['ir.config_parameter'].sudo().get_param('social_ntfy.server_url', 'https://ntfy.diverse-cite.com').rstrip('/')"/>
+               t-value="request.env['ir.config_parameter'].sudo().get_str('social_ntfy.server_url', 'https://ntfy.diverse-cite.com').rstrip('/')"/>
             <t t-set="ntfy_url" t-value="ntfy_server + '/' + (profile.ntfy_topic or '')"/>
 
             <div class="mt-3 pt-3 border-top" t-if="profile.ntfy_topic">
@@ -24,8 +24,8 @@
                          alt="QR ntfy" style="width:140px;height:140px;border:1px solid var(--dc-border,#ccc);border-radius:6px;background:#fff;padding:4px;"/>
                     <div class="small">
                         <div class="mb-1"><strong>1.</strong> Ouvre l'app ntfy → <strong>+</strong> (s'abonner).</div>
-                        <div class="mb-1"><strong>2.</strong> Serveur : <code t-esc="ntfy_server"/></div>
-                        <div class="mb-1"><strong>3.</strong> Topic : <code t-esc="profile.ntfy_topic"/></div>
+                        <div class="mb-1"><strong>2.</strong> Serveur : <code t-out="ntfy_server"/></div>
+                        <div class="mb-1"><strong>3.</strong> Topic : <code t-out="profile.ntfy_topic"/></div>
                         <div class="text-muted">Ou scanne le QR depuis un autre appareil.</div>
 
                         <form action="/my/ntfy/regenerate" method="post" class="mt-2"

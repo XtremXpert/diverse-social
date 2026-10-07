@@ -1,6 +1,6 @@
 {
     'name': 'Club — Memberships',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Club',
     'summary': "Membership management: status, period, dues, social network access",
     'author': 'Bemade',
@@ -11,7 +11,7 @@
     ],
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/membership_type_data.xml',
         'data/cron.xml',
         'views/membership_type_views.xml',

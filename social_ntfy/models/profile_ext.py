@@ -20,7 +20,7 @@ class ClubSocialProfile(models.Model):
 
         Idempotent: existing topics are left untouched. Uses sudo-safe write
         (the caller may be a portal user editing their own profile)."""
-        prefix = self.env['ir.config_parameter'].sudo().get_param(
+        prefix = self.env['ir.config_parameter'].sudo().get_str(
             'social_ntfy.topic_prefix', 'dc')
         for profile in self:
             if not profile.ntfy_topic:
@@ -30,7 +30,7 @@ class ClubSocialProfile(models.Model):
     def action_regenerate_ntfy_topic(self):
         """Rotate the topic (e.g. if the old one leaked). The member must
         re-subscribe their phone to the new topic afterwards."""
-        prefix = self.env['ir.config_parameter'].sudo().get_param(
+        prefix = self.env['ir.config_parameter'].sudo().get_str(
             'social_ntfy.topic_prefix', 'dc')
         for profile in self:
             profile.sudo().ntfy_topic = '%s_%s' % (prefix, uuid4().hex)

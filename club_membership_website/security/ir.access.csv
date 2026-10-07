@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_club_membership_type_portal,club_membership.type portal,club_membership.type,base.group_portal,r,
+access_club_membership_type_public,club_membership.type public,club_membership.type,base.group_public,r,
+rule_membership_portal_own,Membership : lecture portail (propre),club_membership.membership,base.group_portal,r,"[('partner_id', '=', user.partner_id.id)]"

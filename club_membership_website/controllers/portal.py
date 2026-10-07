@@ -6,13 +6,12 @@ from odoo.addons.portal.controllers.portal import CustomerPortal, pager as porta
 
 class ClubMembershipPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'membership_count' in counters:
-            values['membership_count'] = request.env['club_membership.membership'].search_count(
-                [('partner_id', '=', request.env.user.partner_id.id)]
-            )
-        return values
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'membership_count':
+            return 'club_membership.membership', [
+                ('partner_id', '=', request.env.user.partner_id.id),
+            ], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     @route('/my/membership', auth='user', website=True)
     def my_memberships(self, page=1, **kw):
@@ -79,7 +78,7 @@ class ClubMembershipPortal(CustomerPortal):
         if not variant:
             return request.redirect(f'/my/membership/{membership_id}')
 
-        order_sudo = request.cart or request.website._create_cart()
+        order_sudo = request.cart or request.env.website._create_cart()
         order_sudo.with_context(skip_cart_verification=True)._cart_add(
             product_id=variant.id,
             quantity=1,

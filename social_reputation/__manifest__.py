@@ -1,6 +1,6 @@
 {
     'name': 'Social Reputation',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': 'Community vouching: members sponsor newcomers, creating a chain of accountability',
     'author': 'Bemade',
@@ -11,8 +11,7 @@
         'social_discovery',
     ],
     'data': [
-        'security/ir.model.access.csv',
-        'security/security.xml',
+        'security/ir.access.csv',
         'data/website_menu.xml',
         'data/cron.xml',
         'data/mail_template.xml',
@@ -21,6 +20,7 @@
         'views/portal_templates.xml',
         'views/invitation_templates.xml',
         'wizards/invite_wizard_views.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

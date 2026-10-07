@@ -99,6 +99,7 @@ class ClubMembership(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'club_membership.membership',
             'view_mode': 'form',
+            'views': [(False, 'form')],  # requis par Odoo 20
             'context': {
                 'default_partner_id': self.partner_id.id,
                 'default_membership_type_id': self.membership_type_id.id,

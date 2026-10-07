@@ -1,6 +1,6 @@
 {
     'name': 'Club — Member Onboarding',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': "Guided profile completion flow for new members",
     'author': 'Bemade',
@@ -11,7 +11,7 @@
         'portal',
     ],
     'data': [
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'views/wizard_views.xml',
         'views/profile_views_ext.xml',
         'views/menus.xml',

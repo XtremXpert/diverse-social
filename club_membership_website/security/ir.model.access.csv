@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_club_membership_type_portal,club_membership.type portal,club_membership.model_club_membership_type,base.group_portal,1,0,0,0
-access_club_membership_type_public,club_membership.type public,club_membership.model_club_membership_type,base.group_public,1,0,0,0
-access_club_membership_portal,club_membership.membership portal,club_membership.model_club_membership_membership,base.group_portal,1,0,0,0

@@ -21,6 +21,13 @@ class TestSocialOnboarding(TransactionCase):
         })
         cls.type_regular = cls.env.ref('club_membership.membership_type_regular')
 
+    def _skip_age_gate(self, wizard):
+        """social_age_gate, s'il est installé, insère une étape « age_gate »
+        après « about » tant que le profil n'a pas passé la vérification d'âge :
+        ces tests portent sur le parcours de base, on la marque comme passée."""
+        if 'age_gate_passed' in wizard.profile_id._fields:
+            wizard.profile_id.sudo().age_gate_passed = True
+
     # ── Wizard creation ───────────────────────────────────────────────────────
 
     def test_action_open_creates_wizard(self):
@@ -70,6 +77,7 @@ class TestSocialOnboarding(TransactionCase):
         """action_next walks through every step in order."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        self._skip_age_gate(wizard)
         expected = ['welcome', 'about', 'preferences', 'done']
         for i, step in enumerate(expected):
             self.assertEqual(wizard.step, step)
@@ -80,6 +88,7 @@ class TestSocialOnboarding(TransactionCase):
         """action_previous moves back to the previous step."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        self._skip_age_gate(wizard)
         wizard.action_next()  # welcome → about
         wizard.action_next()  # about → preferences
         self.assertEqual(wizard.step, 'preferences')
@@ -110,7 +119,7 @@ class TestSocialOnboarding(TransactionCase):
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         # Simuler l'upload d'une image (1x1 pixel PNG en base64)
         fake_image = b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
-        wizard.write({'profile_image': fake_image})
+        wizard.write({'profile_image': fake_image.decode()})  # Odoo 20 : base64 en texte
         wizard.action_next()
         self.assertIsNotNone(wizard.profile_id.profile_image)
 
@@ -173,6 +182,7 @@ class TestSocialOnboarding(TransactionCase):
         """An adult birth year (18+) passes validation."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        self._skip_age_gate(wizard)
         current_year = datetime.date.today().year
         wizard.write({
             'step': 'about',
@@ -185,6 +195,7 @@ class TestSocialOnboarding(TransactionCase):
         """A birth_year of 0 (not provided) does not trigger age validation."""
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
+        self._skip_age_gate(wizard)
         wizard.write({'step': 'about', 'birth_year': 0})
         wizard.action_next()
         self.assertEqual(wizard.step, 'preferences')

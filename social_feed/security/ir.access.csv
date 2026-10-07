@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+access_feed_preference_user,social_feed.user_preference user,social_feed.user_preference,base.group_user,crud,
+access_feed_preference_portal,social_feed.user_preference portal,social_feed.user_preference,base.group_portal,crud,
+access_feed_preference_system,social_feed.user_preference system,social_feed.user_preference,base.group_system,crud,
+access_feed_read_marker_user,social_feed.read_marker user,social_feed.read_marker,base.group_user,crud,
+access_feed_read_marker_portal,social_feed.read_marker portal,social_feed.read_marker,base.group_portal,crud,
+access_feed_read_marker_system,social_feed.read_marker system,social_feed.read_marker,base.group_system,crud,

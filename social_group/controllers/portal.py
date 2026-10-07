@@ -6,13 +6,10 @@ from odoo.addons.portal.controllers.portal import CustomerPortal, pager as porta
 
 class GroupPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'my_groups_count' in counters:
-            values['my_groups_count'] = request.env['social_group.group'].search_count([
-                ('member_ids', 'in', request.env.user.id),
-            ])
-        return values
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'my_groups_count':
+            return 'social_group.group', [('member_ids', 'in', request.env.user.id)], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     @route(['/groups', '/groups/page/<int:page>'], auth='user', website=True, sitemap=True)
     def group_list(self, page=1, **kw):

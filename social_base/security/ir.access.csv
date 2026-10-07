@@ -1,0 +1,17 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_base_post_admin,social_base.post admin,social_base.post,group_social_admin,crud,
+access_social_base_post_system,social_base.post system,social_base.post,base.group_system,crud,
+access_social_base_post_portal,social_base.post portal,social_base.post,base.group_portal,r,
+access_social_base_comment_moderator,social_base.comment moderator,social_base.comment,group_social_moderator,crud,
+access_social_base_comment_admin,social_base.comment admin,social_base.comment,group_social_admin,crud,
+access_social_base_comment_system,social_base.comment system,social_base.comment,base.group_system,crud,
+access_social_base_comment_portal,social_base.comment portal,social_base.comment,base.group_portal,r,
+access_social_base_reaction_user,social_base.reaction user,social_base.reaction,group_social_user,crud,
+access_social_base_reaction_moderator,social_base.reaction moderator,social_base.reaction,group_social_moderator,crud,
+access_social_base_reaction_admin,social_base.reaction admin,social_base.reaction,group_social_admin,crud,
+access_social_base_reaction_system,social_base.reaction system,social_base.reaction,base.group_system,crud,
+access_social_base_reaction_portal,social_base.reaction portal,social_base.reaction,base.group_portal,crud,
+social_post_user_rule,Social Post: User Access,social_base.post,social_base.group_social_user,cru,"['|', ('author_id', '=', user.id), ('state', '=', 'published')]"
+social_post_moderator_rule,Social Post: Moderator Access,social_base.post,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+social_comment_user_rule,Social Comment: User Access,social_base.comment,social_base.group_social_user,cru,"['|', ('state', '=', 'published'), ('author_id', '=', user.id)]"
+social_post_portal_rule,Social Post: Portal Access,social_base.post,social_base.group_social_portal,r,"[('visibility', '=', 'public'), ('state', '=', 'published')]"

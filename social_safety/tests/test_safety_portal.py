@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.exceptions import UserError
 
@@ -109,13 +108,13 @@ class TestSafetyPortalHttp(HttpCase):
 
     def test_safety_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
 
     def test_safety_page_shows_sections(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/safety')
         self.assertEqual(resp.status_code, 200)
         # Structural markers: the page renders the panic form endpoints
@@ -126,7 +125,7 @@ class TestSafetyPortalHttp(HttpCase):
 
     def test_panic_activate_redirects(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/safety/panic/activate',
             data={'csrf_token': _csrf, },
@@ -136,7 +135,7 @@ class TestSafetyPortalHttp(HttpCase):
 
     def test_panic_lift_redirects(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/safety/panic/lift',
             data={'csrf_token': _csrf, },
@@ -154,7 +153,7 @@ class TestSafetyPortalHttp(HttpCase):
         })
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         self.authenticate('panic_owner_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         self.url_open('/safety/panic/activate', data={'csrf_token': _csrf, })
         profile.invalidate_recordset()
         self.assertTrue(profile.panic_mode)
@@ -170,7 +169,7 @@ class TestSafetyPortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(owner)
         profile.sudo().write({'panic_mode': True, 'panic_saved_visibility': 'members'})
         self.authenticate('panic_lifter_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         self.url_open('/safety/panic/lift', data={'csrf_token': _csrf, })
         profile.invalidate_recordset()
         self.assertFalse(profile.panic_mode)
@@ -191,7 +190,7 @@ class TestSafetyPortalHttp(HttpCase):
             'blocker_id': blocker.id, 'blocked_id': blocked.id,
         })
         self.authenticate('block_remover_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/safety/block/{block.id}/remove',
             data={'csrf_token': _csrf, },
@@ -220,7 +219,7 @@ class TestSafetyPortalHttp(HttpCase):
             'blocker_id': blocker.id, 'blocked_id': blocked.id,
         })
         self.authenticate('intruder_block_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         self.url_open(
             f'/safety/block/{block.id}/remove',
             data={'csrf_token': _csrf, },
@@ -243,7 +242,7 @@ class TestSafetyPortalHttp(HttpCase):
             'muter_id': muter.id, 'muted_id': muted.id,
         })
         self.authenticate('mute_remover_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/safety/mute/{mute.id}/remove',
             data={'csrf_token': _csrf, },

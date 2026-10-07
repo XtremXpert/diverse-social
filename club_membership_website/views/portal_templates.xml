@@ -1,19 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- Portal menu entry -->
-    <template id="portal_my_home_membership" name="Portal: memberships" inherit_id="portal.portal_my_home" priority="30">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Adhésion</t>
-                <t t-set="url">/my/membership</t>
-                <t t-set="icon" t-value="'/club_membership_website/static/src/img/membership.svg'"/>
-                <t t-set="placeholder_count">membership_count</t>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-
     <!-- Breadcrumb for membership pages -->
     <template id="portal_breadcrumb_membership" name="Membership breadcrumb">
         <ol class="breadcrumb">
@@ -24,7 +12,7 @@
                 <a href="/my/membership">Mes adhésions</a>
             </li>
             <li t-if="membership" class="breadcrumb-item active">
-                <t t-esc="membership.membership_type_id.name"/>
+                <t t-out="membership.membership_type_id.name"/>
             </li>
         </ol>
     </template>
@@ -52,21 +40,21 @@
                             <th>État</th>
                             <th>Début</th>
                             <th>Fin</th>
-                            <th></th>
+                            <th/>
                         </tr>
                     </thead>
                     <tbody>
                         <t t-foreach="memberships" t-as="m">
                             <tr>
-                                <td><t t-esc="m.membership_type_id.name"/></td>
+                                <td><t t-out="m.membership_type_id.name"/></td>
                                 <td>
                                     <span t-att-class="'badge rounded-pill ' + {'active': 'bg-success', 'pending': 'bg-warning text-dark', 'expired': 'bg-secondary', 'suspended': 'bg-warning text-dark', 'cancelled': 'bg-danger'}.get(m.state, 'bg-secondary')">
-                                        <t t-esc="m._get_state_label()"/>
+                                        <t t-out="m._get_state_label()"/>
                                     </span>
                                 </td>
-                                <td><t t-esc="m.start_date"/></td>
+                                <td><t t-out="m.start_date"/></td>
                                 <td>
-                                    <t t-if="m.end_date"><t t-esc="m.end_date"/></t>
+                                    <t t-if="m.end_date"><t t-out="m.end_date"/></t>
                                     <t t-else=""><span class="text-muted">—</span></t>
                                 </td>
                                 <td>
@@ -94,7 +82,7 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="mb-0">
-                        <t t-esc="membership.membership_type_id.name"/>
+                        <t t-out="membership.membership_type_id.name"/>
                     </h4>
                 </div>
                 <div class="card-body">
@@ -102,23 +90,23 @@
                         <dt class="col-sm-4">État</dt>
                         <dd class="col-sm-8">
                             <span t-att-class="'badge rounded-pill ' + {'active': 'bg-success', 'pending': 'bg-warning text-dark', 'expired': 'bg-secondary', 'suspended': 'bg-warning text-dark', 'cancelled': 'bg-danger'}.get(membership.state, 'bg-secondary')">
-                                <t t-esc="membership._get_state_label()"/>
+                                <t t-out="membership._get_state_label()"/>
                             </span>
                         </dd>
 
                         <dt class="col-sm-4">Date de début</dt>
-                        <dd class="col-sm-8"><t t-esc="membership.start_date"/></dd>
+                        <dd class="col-sm-8"><t t-out="membership.start_date"/></dd>
 
                         <dt class="col-sm-4">Date de fin</dt>
                         <dd class="col-sm-8">
-                            <t t-if="membership.end_date"><t t-esc="membership.end_date"/></t>
+                            <t t-if="membership.end_date"><t t-out="membership.end_date"/></t>
                             <t t-else=""><span class="text-muted">Illimitée</span></t>
                         </dd>
 
                         <dt class="col-sm-4" t-if="membership.fee_paid">Cotisation payée</dt>
                         <dd class="col-sm-8" t-if="membership.fee_paid">
-                            <t t-esc="'{:,.2f}'.format(membership.fee_paid)"/>
-                            <t t-esc="membership.currency_id.symbol"/>
+                            <t t-out="'{:,.2f}'.format(membership.fee_paid)"/>
+                            <t t-out="membership.currency_id.symbol"/>
                         </dd>
                     </dl>
                 </div>

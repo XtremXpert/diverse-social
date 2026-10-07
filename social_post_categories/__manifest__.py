@@ -1,6 +1,6 @@
 {
     'name': 'Social — Post categories',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': 'Generic category taxonomy for social_base.post (annonce/alerte/question/...)',
     'description': """
@@ -29,7 +29,7 @@ valuable than its categorisation.
         'social_group',
     ],
     'data': [
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'views/category_views.xml',
         'views/post_views.xml',
     ],

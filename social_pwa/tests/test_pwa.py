@@ -29,8 +29,8 @@ class TestPwaManifest(HttpCase):
 
     def test_manifest_picks_up_ir_config_parameter_overrides(self):
         ICP = self.env['ir.config_parameter'].sudo()
-        ICP.set_param('social_pwa.app_name', 'CustomApp')
-        ICP.set_param('social_pwa.theme_color', '#123456')
+        ICP.set_str('social_pwa.app_name', 'CustomApp')
+        ICP.set_str('social_pwa.theme_color', '#123456')
         resp = self.url_open('/manifest.webmanifest')
         data = json.loads(resp.text)
         self.assertEqual(data['name'], 'CustomApp')

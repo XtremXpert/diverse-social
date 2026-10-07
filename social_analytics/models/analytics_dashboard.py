@@ -211,6 +211,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'res_model': self._name,
             'res_id': record.id,
             'view_mode': 'form',
+            'views': [(False, 'form')],  # requis par Odoo 20
             'target': 'current',
         }
 
@@ -257,6 +258,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'res_model': self._name,
             'res_id': self.id,
             'view_mode': 'form',
+            'views': [(False, 'form')],  # requis par Odoo 20
             'target': 'current',
         }
 
@@ -268,6 +270,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'name': 'Signalements en attente',
             'res_model': 'club_social_moderation.report',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('state', '=', 'pending')],
         }
 
@@ -277,6 +280,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'name': 'Posts en attente de modération',
             'res_model': 'social_base.post',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('state', '=', 'moderation')],
         }
 
@@ -286,6 +290,7 @@ class SocialAnalyticsDashboard(models.TransientModel):
             'name': 'Adhésions en attente',
             'res_model': 'club_membership.membership',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('state', '=', 'pending')],
         }
 

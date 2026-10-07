@@ -54,7 +54,7 @@ class DigestPreview(Controller):
             summary = _DUMMY_SUMMARY
 
         total = sum(g['count'] for g in summary)
-        base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url', '')
+        base_url = request.env['ir.config_parameter'].sudo().get_str('web.base.url', '')
         unsub_token = Service._unsubscribe_token(user.id)
         unsubscribe_url = f'{base_url}/notifications/digest/unsubscribe/{user.id}/{unsub_token}'
 

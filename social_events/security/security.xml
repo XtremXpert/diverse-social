@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <data noupdate="0">
         <!--
@@ -20,34 +20,6 @@
             - events open to all members
             - circle-gated events where they belong to an allowed circle
         -->
-        <record id="rule_event_social_visibility" model="ir.rule">
-            <field name="name">Event: social visibility filter</field>
-            <field name="model_id" ref="event.model_event_event"/>
-            <field name="domain_force">
-                ['|',
-                 ('social_visibility', '=', False),
-                 '|',
-                 ('social_visibility', '=', 'members'),
-                 ('allowed_circle_ids.member_ids', 'in', [user.id])]
-            </field>
-            <field name="groups" eval="[(4, ref('social_base.group_social_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
         <!-- Organizer (moderator) can edit their own events -->
-        <record id="rule_event_organizer_write" model="ir.rule">
-            <field name="name">Event: organizer can edit</field>
-            <field name="model_id" ref="event.model_event_event"/>
-            <field name="domain_force">[('organizer_user_id', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('social_base.group_social_moderator'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-    </data>
+        </data>
 </odoo>

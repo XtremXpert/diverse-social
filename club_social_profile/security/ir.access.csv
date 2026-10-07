@@ -1,0 +1,23 @@
+id,name,model_id,group_id/id,operation,domain
+access_csp_language_user,club_social_profile.language user,club_social_profile.language,social_base.group_social_user,r,
+access_csp_language_admin,club_social_profile.language admin,club_social_profile.language,social_base.group_social_admin,crud,
+access_csp_language_system,club_social_profile.language system,club_social_profile.language,base.group_system,crud,
+access_csp_looking_for_user,club_social_profile.looking_for user,club_social_profile.looking_for,social_base.group_social_user,r,
+access_csp_looking_for_admin,club_social_profile.looking_for admin,club_social_profile.looking_for,social_base.group_social_admin,crud,
+access_csp_looking_for_system,club_social_profile.looking_for system,club_social_profile.looking_for,base.group_system,crud,
+access_csp_profile_visit_user,club_social_profile.profile_visit user,club_social_profile.profile_visit,social_base.group_social_user,cru,
+access_csp_profile_visit_admin,club_social_profile.profile_visit admin,club_social_profile.profile_visit,social_base.group_social_admin,crud,
+access_csp_profile_visit_system,club_social_profile.profile_visit system,club_social_profile.profile_visit,base.group_system,crud,
+access_csp_notification_admin,club_social_profile.notification admin,club_social_profile.notification,social_base.group_social_admin,crud,
+access_csp_device_token_user,club_social_profile.device_token user,club_social_profile.device_token,social_base.group_social_user,crud,
+access_csp_device_token_system,club_social_profile.device_token system,club_social_profile.device_token,base.group_system,crud,
+profile_user_read_rule,Club Social Profile: Member Read,club_social_profile.profile,social_base.group_social_user,r,"[(1, '=', 1)]"
+profile_user_write_rule,Club Social Profile: Own Profile Write,club_social_profile.profile,social_base.group_social_user,cu,"[('user_id', '=', user.id)]"
+connection_user_rule,Club Social Connection: User Access,club_social_profile.connection,social_base.group_social_user,crud,"['|', ('user_id', '=', user.id), ('connected_user_id', '=', user.id)]"
+notification_user_rule,Club Social Notification: User Access,club_social_profile.notification,social_base.group_social_user,cru,"[('user_id', '=', user.id)]"
+connection_moderator_rule,Club Social Connection: Moderator Access,club_social_profile.connection,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+connection_moderator_rule_1,Club Social Connection: Moderator Access,club_social_profile.connection,base.group_system,crud,"[(1, '=', 1)]"
+notification_moderator_rule,Club Social Notification: Moderator Access,club_social_profile.notification,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+notification_moderator_rule_1,Club Social Notification: Moderator Access,club_social_profile.notification,base.group_system,crud,"[(1, '=', 1)]"
+profile_moderator_rule,Club Social Profile: Moderator Access,club_social_profile.profile,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+profile_moderator_rule_1,Club Social Profile: Moderator Access,club_social_profile.profile,base.group_system,crud,"[(1, '=', 1)]"

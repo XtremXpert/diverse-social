@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- Le bouton de sortie rapide + camouflage MétéoMédia vit désormais
@@ -143,9 +143,7 @@
     </template>
 
     <!-- ══ Panic toggle on profile page (owner) ═════════════════════════════ -->
-    <template id="portal_profile_panic_inject"
-              inherit_id="club_social_profile.portal_profile_public"
-              name="Profile — Stealth mode button">
+    <template id="portal_profile_panic_inject" inherit_id="club_social_profile.portal_profile_public" name="Profile — Stealth mode button">
         <xpath expr="//a[@href='/my/profile/edit']" position="after">
             <t t-if="is_own and profile.panic_mode">
                 <form action="/safety/panic/lift" method="post" class="d-inline ms-2">
@@ -167,16 +165,4 @@
     </template>
 
     <!-- ══ Portal navigation entry ═══════════════════════════════════════════ -->
-    <template id="portal_my_home_safety" inherit_id="portal.portal_my_home"
-              name="Portal — Safety">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Sécurité</t>
-                <t t-set="url">/safety</t>
-                <t t-set="icon" t-value="'/social_safety/static/src/img/safety.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-
-</odoo>
+    </odoo>

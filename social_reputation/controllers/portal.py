@@ -7,16 +7,15 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 class ReputationPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'vouching_count' in counters:
-            values['vouching_count'] = request.env['social_reputation.vouching'].search_count([
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'vouching_count':
+            return 'social_reputation.vouching', [
                 '|',
                 ('sponsor_id', '=', request.env.user.id),
                 ('newcomer_id', '=', request.env.user.id),
                 ('state', '=', 'active'),
-            ])
-        return values
+            ], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     # ── Page principale ────────────────────────────────────────────────────
 

@@ -12,11 +12,11 @@
                         <h2 class="mb-0" style="color:#1a1a2e;">Carte des membres</h2>
                         <div class="d-flex gap-2">
                             <a href="/members" class="btn btn-sm btn-outline-secondary">
-                                <i class="fa fa-list"/>
+                                <i class="oi" data-icon="list"/>
                                 <span class="ms-1">Vue liste</span>
                             </a>
                             <a href="/my/profile/edit#privacy" class="btn btn-sm btn-outline-secondary">
-                                <i class="fa fa-cog"/>
+                                <i class="oi" data-icon="settings"/>
                                 <span class="ms-1">Réglages de la carte</span>
                             </a>
                         </div>
@@ -30,7 +30,7 @@
                         </t>
                     </p>
 
-                    <t t-set="_get" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
+                    <t t-set="_get" t-value="request.env['ir.config_parameter'].sudo().get_str"/>
                     <t t-set="_tile_url"
                        t-value="_get('social_discovery.map_tile_url', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')"/>
                     <t t-set="_tile_attr"

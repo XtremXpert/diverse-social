@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_social_story_user,social_story.story user,model_social_story_story,social_base.group_social_user,1,1,1,0
-access_social_story_moderator,social_story.story moderator,model_social_story_story,social_base.group_social_moderator,1,1,1,1
-access_social_story_admin,social_story.story admin,model_social_story_story,social_base.group_social_admin,1,1,1,1
-access_social_story_system,social_story.story system,model_social_story_story,base.group_system,1,1,1,1

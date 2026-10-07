@@ -1,6 +1,6 @@
 {
     'name': 'Club — Membership en ligne',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Club',
     'summary': "Public storefront for membership types, website_sale cart integration, member portal",
     'author': 'Bemade',
@@ -12,11 +12,11 @@
         'portal',
     ],
     'data': [
-        'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/website_menu.xml',
         'views/membership_website_templates.xml',
         'views/portal_templates.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+access_vouching_moderator,social_reputation.vouching moderator,social_reputation.vouching,social_base.group_social_moderator,crud,
+access_vouching_admin,social_reputation.vouching admin,social_reputation.vouching,social_base.group_social_admin,crud,
+access_social_reputation_vouching_system,social_reputation.vouching system,social_reputation.vouching,base.group_system,cru,
+access_invite_wizard_user,social_reputation.invite_wizard user,social_reputation.invite_wizard,social_base.group_social_user,crud,
+access_invite_wizard_system,social_reputation.invite_wizard system,social_reputation.invite_wizard,base.group_system,crud,
+rule_vouching_participants,Vouching: sponsor or newcomer access,social_reputation.vouching,social_base.group_social_user,cru,"['|', ('sponsor_id', '=', user.id), ('newcomer_id', '=', user.id)]"

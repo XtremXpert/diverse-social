@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_social_analytics_dashboard_moderator,social_analytics.dashboard moderator,model_social_analytics_dashboard,social_base.group_social_moderator,1,1,1,1
-access_social_analytics_dashboard_admin,social_analytics.dashboard admin,model_social_analytics_dashboard,social_base.group_social_admin,1,1,1,1
-access_social_analytics_dashboard_system,social_analytics.dashboard system,model_social_analytics_dashboard,base.group_system,1,1,1,1

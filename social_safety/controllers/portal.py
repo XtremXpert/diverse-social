@@ -26,7 +26,7 @@ class SafetyPortal(CustomerPortal):
 
         # exit_url : uniquement pour la carte « Quick exit » injectée par le
         # module optionnel social_safety_quick_exit (inoffensif s'il est absent).
-        exit_url = request.env['ir.config_parameter'].sudo().get_param(
+        exit_url = request.env['ir.config_parameter'].sudo().get_str(
             'social_safety.quick_exit_url', 'https://www.meteomedia.com/'
         )
 

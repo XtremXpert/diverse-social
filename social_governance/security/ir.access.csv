@@ -1,0 +1,15 @@
+id,name,model_id,group_id/id,operation,domain
+access_proposal_user,social_governance.proposal user,social_governance.proposal,social_base.group_social_user,cru,
+access_proposal_moderator,social_governance.proposal moderator,social_governance.proposal,social_base.group_social_moderator,crud,
+access_proposal_admin,social_governance.proposal admin,social_governance.proposal,social_base.group_social_admin,crud,
+access_vote_moderator,social_governance.vote moderator,social_governance.vote,social_base.group_social_moderator,crud,
+access_category_user,social_governance.category user,social_governance.proposal_category,social_base.group_social_user,r,
+access_category_admin,social_governance.category admin,social_governance.proposal_category,social_base.group_social_admin,crud,
+access_decision_log_user,social_governance.decision_log user,social_governance.decision_log,social_base.group_social_user,r,
+access_decision_log_moderator,social_governance.decision_log moderator,social_governance.decision_log,social_base.group_social_moderator,crud,
+access_decision_log_admin,social_governance.decision_log admin,social_governance.decision_log,social_base.group_social_admin,crud,
+access_social_governance_proposal_system,social_governance.proposal system,social_governance.proposal,base.group_system,cru,
+access_social_governance_vote_system,social_governance.vote system,social_governance.vote,base.group_system,cru,
+access_social_governance_proposal_category_system,social_governance.category system,social_governance.proposal_category,base.group_system,r,
+access_social_governance_decision_log_system,social_governance.decision_log system,social_governance.decision_log,base.group_system,r,
+rule_vote_own,Vote: own only,social_governance.vote,social_base.group_social_user,cru,"[('voter_id', '=', user.id)]"

@@ -1,6 +1,6 @@
 {
     'name': 'Social Safety',
-    'version': '19.0.2.1.0',
+    'version': '20.0.2.1.0',
     'category': 'Social',
     'summary': 'Block, mute, panic mode + share-lockdown on sensitive paths '
                '(quick-exit/camouflage extrait dans social_safety_quick_exit)',
@@ -12,8 +12,7 @@
         'portal',
     ],
     'data': [
-        'security/ir.model.access.csv',
-        'security/security.xml',
+        'security/ir.access.csv',
         'data/cron.xml',
         'data/website_menu.xml',
         'views/block_views.xml',
@@ -21,6 +20,7 @@
         'views/menus.xml',
         'views/portal_safety.xml',
         'views/portal_share_lockdown.xml',
+        'data/portal_entry_data.xml',
     ],
     'installable': True,
     'application': False,

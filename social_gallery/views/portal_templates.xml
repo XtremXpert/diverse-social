@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- ══ Assets ════════════════════════════════════════════════════════════ -->
@@ -9,19 +9,6 @@
     </record>
 
     <!-- ── Entrée portail home ──────────────────────────────────────────────── -->
-
-    <template id="portal_my_home_gallery" name="Portal My Home : Gallery"
-              inherit_id="portal.portal_my_home" customize_show="False" priority="40">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Galerie</t>
-                <t t-set="url">/my/gallery</t>
-                <t t-set="icon" t-value="'/social_gallery/static/src/img/gallery.svg'"/>
-                <t t-set="placeholder_count">gallery_pending_count</t>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
 
     <!-- ── Liste des galeries ──────────────────────────────────────────────── -->
 
@@ -41,18 +28,15 @@
                             <a t-attf-href="/gallery/#{gallery.id}" class="text-decoration-none">
                                 <div class="card h-100 shadow-sm">
                                     <t t-if="gallery.cover_photo_id">
-                                        <img t-attf-src="/web/image/social_gallery.photo/#{gallery.cover_photo_id.id}/image_512"
-                                             class="card-img-top" style="height:180px;object-fit:cover;"
-                                             t-att-alt="gallery.name"/>
+                                        <img t-attf-src="/web/image/social_gallery.photo/#{gallery.cover_photo_id.id}/image_512" class="card-img-top" style="height:180px;object-fit:cover;" t-att-alt="gallery.name"/>
                                     </t>
                                     <div class="card-body">
-                                        <h5 class="card-title mb-1" t-esc="gallery.name"/>
+                                        <h5 class="card-title mb-1" t-out="gallery.name"/>
                                         <p class="text-muted small mb-0">
-                                            <t t-esc="gallery.approved_photo_count"/> photo(s)
+                                            <t t-out="gallery.approved_photo_count"/> photo(s)
                                             <t t-if="gallery.is_shared"> · Galerie participative</t>
                                         </p>
-                                        <p t-if="gallery.description" class="card-text mt-2 small"
-                                           t-esc="gallery.description"/>
+                                        <p t-if="gallery.description" class="card-text mt-2 small" t-out="gallery.description"/>
                                     </div>
                                 </div>
                             </a>
@@ -71,7 +55,7 @@
             <nav aria-label="breadcrumb" class="container mt-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/gallery">Galeries</a></li>
-                    <li class="breadcrumb-item active" t-esc="gallery.name"/>
+                    <li class="breadcrumb-item active" t-out="gallery.name"/>
                 </ol>
             </nav>
 
@@ -80,24 +64,23 @@
                 <!-- En-tête galerie -->
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                     <div>
-                        <h3 class="mb-1" t-esc="gallery.name"/>
-                        <p t-if="gallery.description" class="text-muted mb-1" t-esc="gallery.description"/>
+                        <h3 class="mb-1" t-out="gallery.name"/>
+                        <p t-if="gallery.description" class="text-muted mb-1" t-out="gallery.description"/>
                         <!-- Propriétaire -->
                         <t t-if="gallery.owner_id">
                             <small class="text-muted">
                                 Par
                                 <t t-if="owner_profile">
-                                    <a t-attf-href="/profile/#{gallery.owner_id.id}"
-                                       t-esc="owner_profile.stealth_name or gallery.owner_id.name"/>
+                                    <a t-attf-href="/profile/#{gallery.owner_id.id}" t-out="owner_profile.stealth_name or gallery.owner_id.name"/>
                                 </t>
                                 <t t-else="">
-                                    <span t-esc="request.env['club_social_profile.profile']._display_name_for_user(gallery.owner_id)"/>
+                                    <span t-out="request.env['club_social_profile.profile']._display_name_for_user(gallery.owner_id)"/>
                                 </t>
                             </small>
                         </t>
                     </div>
                     <span class="badge bg-secondary" style="font-size:.85rem;">
-                        <t t-esc="gallery.approved_photo_count"/> photo(s)
+                        <t t-out="gallery.approved_photo_count"/> photo(s)
                         <t t-if="gallery.is_shared"> · Participative</t>
                     </span>
                 </div>
@@ -131,8 +114,7 @@
                             <t t-else="">📷 Soumettre une photo ou une vidéo</t>
                         </div>
                         <div class="card-body">
-                            <form t-attf-action="/gallery/#{gallery.id}/submit" method="post"
-                                  enctype="multipart/form-data">
+                            <form t-attf-action="/gallery/#{gallery.id}/submit" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <div class="row g-3">
                                     <div class="col-md-7">
@@ -144,8 +126,7 @@
                                         <input type="text" name="name" class="form-control" maxlength="128"/>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-sm mt-3"
-                                        style="background:#e94560;color:white;">
+                                <button type="submit" class="btn btn-sm mt-3" style="background:#e94560;color:white;">
                                     <t t-if="is_owner">Ajouter</t>
                                     <t t-else="">Soumettre</t>
                                 </button>
@@ -167,34 +148,22 @@
                             <!-- Vidéo : lecteur inline (pas de lightbox) -->
                             <t t-if="photo.media_type == 'video'">
                                 <div class="position-relative overflow-hidden rounded" style="height:160px;background:#000;">
-                                    <video controls="controls" preload="metadata"
-                                           class="w-100 h-100" style="object-fit:contain;background:#000;"
-                                           t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
+                                    <video controls="controls" preload="metadata" class="w-100 h-100" style="object-fit:contain;background:#000;" t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
                                     </video>
                                     <t t-if="photo.name">
-                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
-                                             style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;pointer-events:none;">
-                                            <t t-esc="photo.name"/>
+                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1" style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;pointer-events:none;">
+                                            <t t-out="photo.name"/>
                                         </div>
                                     </t>
                                 </div>
                             </t>
                             <!-- Image : vignette + lightbox -->
                             <t t-else="">
-                                <a href="#"
-                                   t-att-data-lightbox="photo.id"
-                                   t-attf-data-src="/web/image/social_gallery.photo/#{photo.id}/image_1920"
-                                   t-attf-data-thumb="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                   t-att-data-caption="photo.name or ''"
-                                   class="d-block position-relative overflow-hidden rounded"
-                                   style="height:160px;">
-                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                         class="w-100 h-100" style="object-fit:cover; transition:transform .2s;"
-                                         t-att-alt="photo.name or gallery.name"/>
+                                <a href="#" t-att-data-lightbox="photo.id" t-attf-data-src="/web/image/social_gallery.photo/#{photo.id}/image_1920" t-attf-data-thumb="/web/image/social_gallery.photo/#{photo.id}/image_512" t-att-data-caption="photo.name or ''" class="d-block position-relative overflow-hidden rounded" style="height:160px;">
+                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512" class="w-100 h-100" style="object-fit:cover; transition:transform .2s;" t-att-alt="photo.name or gallery.name"/>
                                     <t t-if="photo.name">
-                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
-                                             style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;">
-                                            <t t-esc="photo.name"/>
+                                        <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1" style="background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:.75rem;color:white;">
+                                            <t t-out="photo.name"/>
                                         </div>
                                     </t>
                                 </a>
@@ -238,8 +207,7 @@
                 <!-- Mes galeries -->
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                     <h4 class="mb-0" style="color:#1a1a2e;">Mes galeries</h4>
-                    <button class="btn btn-sm" style="background:#e94560;color:white;"
-                            data-bs-toggle="collapse" data-bs-target="#sn_create_gallery_form">
+                    <button class="btn btn-sm" style="background:#e94560;color:white;" data-bs-toggle="collapse" data-bs-target="#sn_create_gallery_form">
                         + Créer une galerie
                     </button>
                 </div>
@@ -263,8 +231,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-sm w-100"
-                                            style="background:#1a1a2e;color:white;">
+                                    <button type="submit" class="btn btn-sm w-100" style="background:#1a1a2e;color:white;">
                                         Créer
                                     </button>
                                 </div>
@@ -284,18 +251,15 @@
                                 <a t-attf-href="/gallery/#{gal.id}" class="text-decoration-none">
                                     <div class="card h-100 shadow-sm">
                                         <t t-if="gal.cover_photo_id">
-                                            <img t-attf-src="/web/image/social_gallery.photo/#{gal.cover_photo_id.id}/image_512"
-                                                 class="card-img-top" style="height:130px;object-fit:cover;"
-                                                 t-att-alt="gal.name"/>
+                                            <img t-attf-src="/web/image/social_gallery.photo/#{gal.cover_photo_id.id}/image_512" class="card-img-top" style="height:130px;object-fit:cover;" t-att-alt="gal.name"/>
                                         </t>
-                                        <div t-else="" class="card-img-top d-flex align-items-center justify-content-center"
-                                             style="height:130px;background:#f8f9fa;font-size:2rem;">
+                                        <div t-else="" class="card-img-top d-flex align-items-center justify-content-center" style="height:130px;background:#f8f9fa;font-size:2rem;">
                                             🖼️
                                         </div>
                                         <div class="card-body py-2 px-3">
-                                            <div class="fw-semibold" style="font-size:.9rem;" t-esc="gal.name"/>
+                                            <div class="fw-semibold" style="font-size:.9rem;" t-out="gal.name"/>
                                             <small class="text-muted">
-                                                <t t-esc="gal.approved_photo_count"/> photo(s)
+                                                <t t-out="gal.approved_photo_count"/> photo(s)
                                             </small>
                                         </div>
                                     </div>
@@ -312,20 +276,16 @@
                 <h4 class="mb-3" style="color:#1a1a2e;">Mes photos soumises</h4>
 
                 <div class="btn-group mb-3">
-                    <a t-attf-href="/my/gallery"
-                       t-attf-class="btn btn-sm #{'btn-secondary' if state_filter == 'all' else 'btn-outline-secondary'}">
+                    <a t-attf-href="/my/gallery" t-attf-class="btn btn-sm #{'btn-secondary' if state_filter == 'all' else 'btn-outline-secondary'}">
                         Tout
                     </a>
-                    <a t-attf-href="/my/gallery?state=pending"
-                       t-attf-class="btn btn-sm #{'btn-warning' if state_filter == 'pending' else 'btn-outline-warning'}">
+                    <a t-attf-href="/my/gallery?state=pending" t-attf-class="btn btn-sm #{'btn-warning' if state_filter == 'pending' else 'btn-outline-warning'}">
                         En attente
                     </a>
-                    <a t-attf-href="/my/gallery?state=approved"
-                       t-attf-class="btn btn-sm #{'btn-success' if state_filter == 'approved' else 'btn-outline-success'}">
+                    <a t-attf-href="/my/gallery?state=approved" t-attf-class="btn btn-sm #{'btn-success' if state_filter == 'approved' else 'btn-outline-success'}">
                         Approuvées
                     </a>
-                    <a t-attf-href="/my/gallery?state=rejected"
-                       t-attf-class="btn btn-sm #{'btn-danger' if state_filter == 'rejected' else 'btn-outline-danger'}">
+                    <a t-attf-href="/my/gallery?state=rejected" t-attf-class="btn btn-sm #{'btn-danger' if state_filter == 'rejected' else 'btn-outline-danger'}">
                         Rejetées
                     </a>
                 </div>
@@ -338,35 +298,25 @@
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="position-relative">
                                 <t t-if="photo.media_type == 'video'">
-                                    <video controls="controls" preload="metadata"
-                                           class="rounded shadow-sm"
-                                           style="height:160px;width:100%;object-fit:contain;background:#000;"
-                                           t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
+                                    <video controls="controls" preload="metadata" class="rounded shadow-sm" style="height:160px;width:100%;object-fit:contain;background:#000;" t-attf-src="/web/content/social_gallery.photo/#{photo.id}/video_file?filename_field=video_filename">
                                     </video>
                                 </t>
                                 <t t-else="">
-                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512"
-                                         class="img-fluid rounded shadow-sm"
-                                         style="height:160px;width:100%;object-fit:cover;"
-                                         t-att-alt="photo.name or ''"/>
+                                    <img t-attf-src="/web/image/social_gallery.photo/#{photo.id}/image_512" class="img-fluid rounded shadow-sm" style="height:160px;width:100%;object-fit:cover;" t-att-alt="photo.name or ''"/>
                                 </t>
-                                <span t-att-class="'badge position-absolute top-0 end-0 m-1 ' + {'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')"
-                                      t-esc="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
+                                <span t-att-class="'badge position-absolute top-0 end-0 m-1 ' + {'pending':'bg-warning text-dark','approved':'bg-success','rejected':'bg-danger'}.get(photo.state,'bg-secondary')" t-out="{'pending':'En attente','approved':'Approuvée','rejected':'Rejetée'}.get(photo.state, photo.state)"/>
                                 <!-- Bouton supprimer (pending ou rejected seulement) -->
                                 <t t-if="photo.state != 'approved'">
-                                    <form t-attf-action="/my/gallery/photo/#{photo.id}/delete" method="post"
-                                          class="position-absolute top-0 start-0 m-1">
+                                    <form t-attf-action="/my/gallery/photo/#{photo.id}/delete" method="post" class="position-absolute top-0 start-0 m-1">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <button type="submit" class="btn btn-sm btn-danger py-0 px-1"
-                                                style="font-size:.7rem;"
-                                                onclick="return confirm('Supprimer cette photo ?')">
+                                        <button type="submit" class="btn btn-sm btn-danger py-0 px-1" style="font-size:.7rem;" onclick="return confirm('Supprimer cette photo ?')">
                                             ✕
                                         </button>
                                     </form>
                                 </t>
                             </div>
                             <p class="small mt-1 mb-0">
-                                <a t-attf-href="/gallery/#{photo.gallery_id.id}" t-esc="photo.gallery_id.name"/>
+                                <a t-attf-href="/gallery/#{photo.gallery_id.id}" t-out="photo.gallery_id.name"/>
                             </p>
                         </div>
                     </t>

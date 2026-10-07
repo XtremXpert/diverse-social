@@ -283,7 +283,7 @@ class SocialVouching(models.Model):
         self.ensure_one()
         if not self.invite_token:
             return ''
-        base = self.env['ir.config_parameter'].sudo().get_param(
+        base = self.env['ir.config_parameter'].sudo().get_str(
             'web.base.url', 'http://localhost:8069',
         )
         return f'{base}/vouching/accept/{self.invite_token}'

@@ -1,6 +1,6 @@
 {
     'name': 'Social Base',
-    'version': '19.0.1.0.1',
+    'version': '20.0.1.0.1',
     'category': 'Social',
     'summary': 'Core social network primitives: posts, comments, reactions',
     'author': 'Bemade, Odoo Community Association (OCA)',
@@ -14,7 +14,7 @@
     ],
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'views/post_views.xml',
     ],
     'assets': {

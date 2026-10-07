@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -195,7 +194,7 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_my_circles_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
         # Structural marker: the page is rendered by the my_circles template.
@@ -203,14 +202,14 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_my_circles_has_visibility_form(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'detailed_visibility', resp.content)
 
     def test_circle_create_post(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         ct = _get_or_create_http_type(self.env, 'HTTP Create Type')
         resp = self.url_open(
             '/my/circles/create',
@@ -225,7 +224,7 @@ class TestCirclesPortalHttp(HttpCase):
     def test_circle_create_no_type_redirects(self):
         """Submitting without a type_id redirects with error."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/circles/create',
             data={'csrf_token': _csrf, 'type_id': ''},
@@ -234,7 +233,7 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_circle_update(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
@@ -256,7 +255,7 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_circle_delete(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
@@ -287,7 +286,7 @@ class TestCirclesPortalHttp(HttpCase):
             'group_ids': [(4, self.env.ref('base.group_portal').id)],
         })
         self.authenticate('http_circ_other2', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/my/circles/{circle.id}/delete',
             data={'csrf_token': _csrf, },
@@ -297,7 +296,7 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_visibility_post(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/circles/visibility',
             data={'csrf_token': _csrf, 
@@ -314,7 +313,7 @@ class TestCirclesPortalHttp(HttpCase):
 
     def test_add_member_non_connection_ignored(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         profile = self.env['club_social_profile.profile'].sudo().search(
             [('user_id', '=', admin.id)], limit=1
@@ -340,7 +339,7 @@ class TestCirclesPortalHttp(HttpCase):
         `except ValidationError` would swallow the error and leave the
         partial row committed."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         ct = _get_or_create_http_type(self.env, 'HTTP Duplicate Leak Type')
         # First create succeeds
         self.url_open('/my/circles/create', data={
@@ -380,7 +379,7 @@ class TestCirclesPortalHttp(HttpCase):
             'member_ids': [(4, admin.id)],
         })
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/circles')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Other Owner Circle', resp.content)

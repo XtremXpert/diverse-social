@@ -1,6 +1,6 @@
 {
     'name': 'Social Discovery',
-    'version': '19.0.4.0.0',
+    'version': '20.0.4.0.0',
     'category': 'Social',
     'summary': 'Consensual profile discovery: you search, not the algorithm',
     'author': 'Bemade',
@@ -12,8 +12,7 @@
         'portal',
     ],
     'data': [
-        'security/ir.model.access.csv',
-        'security/security.xml',
+        'security/ir.access.csv',
         'data/values.xml',
         'data/cron.xml',
         'data/map_config_data.xml',
@@ -23,6 +22,7 @@
         'views/portal_members_map.xml',
         'views/portal_profile_edit_ext.xml',
         'views/portal_dashboard_ext.xml',
+        'data/portal_entry_data.xml',
     ],
     'assets': {
         'web.assets_frontend': [

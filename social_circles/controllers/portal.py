@@ -9,16 +9,15 @@ _VALID_DETAIL_VIS = frozenset({'members', 'circles', 'specific', 'connections', 
 
 class CirclesPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'my_circles_count' in counters:
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'my_circles_count':
             profile = request.env['club_social_profile.profile'].sudo().search([
                 ('user_id', '=', request.env.user.id),
             ], limit=1)
-            values['my_circles_count'] = request.env['social_circles.circle'].search_count([
-                ('profile_id', '=', profile.id),
-            ]) if profile else 0
-        return values
+            if not profile:
+                return False, [], False
+            return 'social_circles.circle', [('profile_id', '=', profile.id)], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     # ── Page principale ───────────────────────────────────────────────────
 

@@ -47,7 +47,7 @@ class ClubMembershipWebsite(Controller):
         if not variant:
             return request.redirect('/membership')
 
-        order_sudo = request.cart or request.website._create_cart()
+        order_sudo = request.cart or request.env.website._create_cart()
         order_sudo.with_context(skip_cart_verification=True)._cart_add(
             product_id=variant.id,
             quantity=1,

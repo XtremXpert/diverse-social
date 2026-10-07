@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -155,19 +154,19 @@ class TestNotificationsPortalHttp(HttpCase):
 
     def test_notifications_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/notifications')
         self.assertEqual(resp.status_code, 200)
 
     def test_notifications_filter_unread(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/notifications?filter=unread')
         self.assertEqual(resp.status_code, 200)
 
     def test_api_list_authenticated(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/notifications')
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -177,7 +176,7 @@ class TestNotificationsPortalHttp(HttpCase):
 
     def test_api_list_unread_only(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/notifications?unread_only=true')
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -187,7 +186,7 @@ class TestNotificationsPortalHttp(HttpCase):
 
     def test_api_mark_all_read(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/notifications/read_all', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -195,7 +194,7 @@ class TestNotificationsPortalHttp(HttpCase):
 
     def test_notifications_page_shows_title(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/notifications')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Notifications', resp.content)
@@ -217,7 +216,7 @@ class TestNotificationsPortalHttp(HttpCase):
         # Bypass: _notify ignores user==actor, so write directly
         notif.sudo().write({'is_read': False})
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/social/api/notifications/{notif.id}/read', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -242,14 +241,14 @@ class TestNotificationsPortalHttp(HttpCase):
             'body': 'Belongs to other',
         })
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/social/api/notifications/{notif.id}/read', data={'csrf_token': _csrf, })
         self.assertEqual(resp.status_code, 404)
 
     def test_api_notif_to_dict_structure(self):
         """API response contains the expected fields for each notification."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/notifications')
         self.assertEqual(resp.status_code, 200)
         data = resp.json()

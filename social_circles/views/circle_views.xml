@@ -56,7 +56,7 @@
                     <t t-name="card">
                         <div t-attf-class="oe_kanban_color_#{record.color.raw_value}">
                             <strong><field name="name"/></strong>
-                            <p class="text-muted"><t t-esc="record.member_count.raw_value"/> member(s)</p>
+                            <p class="text-muted"><t t-out="record.member_count.raw_value"/> member(s)</p>
                         </div>
                     </t>
                 </templates>

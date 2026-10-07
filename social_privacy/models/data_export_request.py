@@ -49,7 +49,7 @@ class DataExportRequest(models.Model):
         )
 
         self.write({
-            'export_file': base64.b64encode(json_bytes),
+            'export_file': base64.b64encode(json_bytes).decode('ascii'),
             'export_filename': filename,
             'generated_at': now,
             'expires_at': fields.Datetime.add(now, days=30),

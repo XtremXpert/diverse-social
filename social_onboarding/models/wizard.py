@@ -71,6 +71,7 @@ class SocialOnboardingWizard(models.TransientModel):
             'res_model': self._name,
             'res_id': self.id,
             'view_mode': 'form',
+            'views': [(False, 'form')],  # requis par Odoo 20
             'target': 'current',
         }
 
@@ -108,6 +109,7 @@ class SocialOnboardingWizard(models.TransientModel):
                     'type': 'ir.actions.act_window',
                     'res_model': 'social_base.post',
                     'view_mode': 'list,form',
+                    'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
                     'target': 'current',
                 },
             },

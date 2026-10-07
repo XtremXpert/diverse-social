@@ -49,9 +49,7 @@
                         <field name="dpo_comments"/>
                     </group>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
+                <chatter/>
             </form>
         </field>
     </record>

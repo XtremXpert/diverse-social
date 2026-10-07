@@ -1,16 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
-
-    <template id="portal_my_home_stories" name="Portal My Home: Stories" inherit_id="portal.portal_my_home" priority="40">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Stories</t>
-                <t t-set="url">/my/stories</t>
-                <t t-set="icon" t-value="'/social_story/static/src/img/stories.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
 
     <template id="portal_my_stories" name="My Stories">
         <t t-call="portal.portal_layout">
@@ -19,12 +8,9 @@
             </t>
             <div class="container mt-3">
                 <div class="mb-3">
-                    <a t-attf-href="/my/stories?filter=active"
-                       t-attf-class="btn btn-sm me-1 #{filter == 'active' and 'btn-primary' or 'btn-outline-secondary'}">Actives</a>
-                    <a t-attf-href="/my/stories?filter=expired"
-                       t-attf-class="btn btn-sm me-1 #{filter == 'expired' and 'btn-primary' or 'btn-outline-secondary'}">Expired</a>
-                    <a t-attf-href="/my/stories?filter=all"
-                       t-attf-class="btn btn-sm #{filter == 'all' and 'btn-primary' or 'btn-outline-secondary'}">Toutes</a>
+                    <a t-attf-href="/my/stories?filter=active" t-attf-class="btn btn-sm me-1 #{filter == 'active' and 'btn-primary' or 'btn-outline-secondary'}">Actives</a>
+                    <a t-attf-href="/my/stories?filter=expired" t-attf-class="btn btn-sm me-1 #{filter == 'expired' and 'btn-primary' or 'btn-outline-secondary'}">Expired</a>
+                    <a t-attf-href="/my/stories?filter=all" t-attf-class="btn btn-sm #{filter == 'all' and 'btn-primary' or 'btn-outline-secondary'}">Toutes</a>
                 </div>
                 <t t-if="stories">
                     <div class="row">
@@ -32,11 +18,11 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card h-100">
                                     <div class="card-body">
-                                        <h6 class="card-title" t-esc="story.name"/>
+                                        <h6 class="card-title" t-out="story.name"/>
                                         <p class="small text-muted">
-                                            <span t-esc="story.view_count"/> vue(s) ·
+                                            <span t-out="story.view_count"/> vue(s) ·
                                             <t t-if="story.state == 'active'">
-                                                <span class="text-success">Active</span> · expire <t t-esc="story.expires_at"/>
+                                                <span class="text-success">Active</span> · expire <t t-out="story.expires_at"/>
                                             </t>
                                             <t t-else="">
                                                 <span class="text-muted">Expired</span>

@@ -2,7 +2,6 @@ import datetime
 
 from odoo import fields
 from odoo.exceptions import UserError
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -189,33 +188,33 @@ class TestGovernancePortalHttp(HttpCase):
 
     def test_governance_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/governance')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Gouvernance communautaire'.encode(), resp.content)
 
     def test_governance_log_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/governance/log')
         self.assertEqual(resp.status_code, 200)
 
     def test_governance_state_filter(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         for state in ('draft', 'open', 'voting', 'accepted', 'rejected'):
             resp = self.url_open(f'/governance?state={state}')
             self.assertEqual(resp.status_code, 200)
 
     def test_governance_detail_not_found(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/governance/999999')
         self.assertEqual(resp.status_code, 404)
 
     def test_governance_list_has_create_form(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/governance')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'governance/create', resp.content)
@@ -223,7 +222,7 @@ class TestGovernancePortalHttp(HttpCase):
     def test_create_proposal(self):
         category = self.env.ref('social_governance.category_other')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/governance/create',
             data={'csrf_token': _csrf, 
@@ -242,7 +241,7 @@ class TestGovernancePortalHttp(HttpCase):
 
     def test_create_proposal_missing_fields(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/governance/create',
             data={'csrf_token': _csrf, 'name': '', 'description': '', 'category_id': ''},
@@ -253,7 +252,7 @@ class TestGovernancePortalHttp(HttpCase):
     def test_detail_page_shows_proposal(self):
         p = self._make_proposal()
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/governance/{p.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'HTTP Test Proposal', resp.content)
@@ -261,7 +260,7 @@ class TestGovernancePortalHttp(HttpCase):
     def test_vote_on_proposal(self):
         p = self._make_proposal(state='voting')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/vote',
             data={'csrf_token': _csrf, 'choice': 'yes'},
@@ -277,7 +276,7 @@ class TestGovernancePortalHttp(HttpCase):
     def test_vote_invalid_choice_redirects_with_error(self):
         p = self._make_proposal(state='voting')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/vote',
             data={'csrf_token': _csrf, 'choice': 'invalid'},
@@ -289,7 +288,7 @@ class TestGovernancePortalHttp(HttpCase):
         admin = self.env.ref('base.user_admin')
         p = self._make_proposal(user=admin, state='draft')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/withdraw',
             data={'csrf_token': _csrf, },
@@ -302,7 +301,7 @@ class TestGovernancePortalHttp(HttpCase):
         mod = self._setup_mod()
         p = self._make_proposal(user=mod, state='draft')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/withdraw',
             data={'csrf_token': _csrf, },
@@ -316,7 +315,7 @@ class TestGovernancePortalHttp(HttpCase):
             'proposal_id': p.id, 'voter_id': admin.id, 'choice': 'yes',
         })
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/governance/{p.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'progress-bar', resp.content)
@@ -327,7 +326,7 @@ class TestGovernancePortalHttp(HttpCase):
         admin = self.env.ref('base.user_admin')
         p = self._make_proposal(user=admin, state='draft')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/open',
             data={'csrf_token': _csrf, },
@@ -348,7 +347,7 @@ class TestGovernancePortalHttp(HttpCase):
             ],
         })
         self.authenticate('gov_member_http', 'Test1234!')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/open',
             data={'csrf_token': _csrf, },
@@ -361,7 +360,7 @@ class TestGovernancePortalHttp(HttpCase):
         admin = self.env.ref('base.user_admin')
         p = self._make_proposal(user=admin, state='draft')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         import datetime as dt
         closes = (fields.Datetime.now() + dt.timedelta(days=3)).strftime('%Y-%m-%dT%H:%M')
         resp = self.url_open(
@@ -376,7 +375,7 @@ class TestGovernancePortalHttp(HttpCase):
         admin = self.env.ref('base.user_admin')
         p = self._make_proposal(user=admin, state='draft')
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/governance/{p.id}/start_voting',
             data={'csrf_token': _csrf, 'voting_closes_at': 'not-a-date'},

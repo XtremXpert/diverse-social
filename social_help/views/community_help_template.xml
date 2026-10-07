@@ -8,7 +8,7 @@
             <div class="row g-4 mt-1">
                 <div class="col-md-10 offset-md-1">
                     <h2 class="mb-3">
-                        Help &amp; charter — <span t-esc="community_name"/>
+                        Help &amp; charter — <span t-out="community_name"/>
                     </h2>
                     <p class="text-muted">
                         Three short answers to get you publishing,

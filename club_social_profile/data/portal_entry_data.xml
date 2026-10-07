@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Cartes du portail /my (Odoo 20 : portal.entry remplace les t-call portal_docs_entry) -->
+    <record id="portal_entry_my_profile_edit" model="portal.entry">
+        <field name="name">Mon profil</field>
+        <field name="url">/my/profile/edit</field>
+        <field name="image" type="bytes" file="club_social_profile/static/src/img/profile.svg"/>
+        <field name="is_config_card" eval="True"/>
+        <field name="sequence" eval="50"/>
+    </record>
+    <record id="portal_entry_my_dashboard" model="portal.entry">
+        <field name="name">Tableau de bord</field>
+        <field name="url">/my/dashboard</field>
+        <field name="image" type="bytes" file="club_social_profile/static/src/img/dashboard.svg"/>
+        <field name="is_config_card" eval="True"/>
+        <field name="sequence" eval="20"/>
+    </record>
+    <record id="portal_entry_discover" model="portal.entry">
+        <field name="name">Découvrir</field>
+        <field name="url">/discover</field>
+        <field name="image" type="bytes" file="club_social_profile/static/src/img/discover.svg"/>
+        <field name="placeholder_count">discover_count</field>
+        <field name="is_config_card" eval="True"/>
+        <field name="sequence" eval="20"/>
+    </record>
+</odoo>

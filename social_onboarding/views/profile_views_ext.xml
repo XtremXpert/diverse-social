@@ -11,7 +11,7 @@
                 <div class="alert alert-info d-flex align-items-center justify-content-between"
                      invisible="onboarding_done">
                     <span>
-                        <i class="fa fa-info-circle me-2" title="Info"/>
+                        <i class="oi me-2" data-icon="info" title="Info"/>
                         Incomplete profile — Complete your profile to be more visible to other members.
                     </span>
                     <button name="action_open_onboarding"

@@ -1,0 +1,19 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_group_group_admin,social_group.group admin,social_group.group,social_base.group_social_admin,crud,
+access_social_group_group_system,social_group.group system,social_group.group,base.group_system,crud,
+access_social_group_group_portal,social_group.group portal,social_group.group,base.group_portal,r,
+access_social_group_rule_user,social_group.rule user,social_group.rule,social_base.group_social_user,r,
+access_social_group_rule_admin,social_group.rule admin,social_group.rule,social_base.group_social_admin,crud,
+access_social_group_rule_system,social_group.rule system,social_group.rule,base.group_system,crud,
+access_social_group_join_request_moderator,social_group.join_request moderator,social_group.join_request,social_base.group_social_moderator,cd,
+access_social_group_join_request_admin,social_group.join_request admin,social_group.join_request,social_base.group_social_admin,crud,
+access_social_group_join_request_system,social_group.join_request system,social_group.join_request,base.group_system,crud,
+access_social_group_invitation_user,social_group.invitation user,social_group.invitation,social_base.group_social_user,cru,
+access_social_group_invitation_moderator,social_group.invitation moderator,social_group.invitation,social_base.group_social_moderator,crud,
+access_social_group_invitation_admin,social_group.invitation admin,social_group.invitation,social_base.group_social_admin,crud,
+access_social_group_invitation_system,social_group.invitation system,social_group.invitation,base.group_system,crud,
+social_group_user_rule,Social Group: User Access,social_group.group,social_base.group_social_user,r,"['|', ('privacy', 'in', ['public', 'private']), ('member_ids', 'in', [user.id])]"
+social_group_admin_write_rule,Social Group: Admin Write,social_group.group,social_base.group_social_user,c,"['|', ('creator_id', '=', user.id), ('admin_ids', 'in', [user.id])]"
+social_group_moderator_rule,Social Group: Moderator Access,social_group.group,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+social_group_join_request_user_rule,Social Group Join Request: User Access,social_group.join_request,social_base.group_social_user,cr,"[('user_id', '=', user.id)]"
+social_group_join_request_moderator_rule,Social Group Join Request: Moderator Access,social_group.join_request,social_base.group_social_moderator,ru,"[(1, '=', 1)]"

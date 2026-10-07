@@ -6,7 +6,7 @@
     <template id="pwa_head_tags" inherit_id="web.frontend_layout"
               name="PWA manifest + meta tags">
         <xpath expr="//head" position="inside">
-            <t t-set="_pwa_get" t-value="request.env['ir.config_parameter'].sudo().get_param"/>
+            <t t-set="_pwa_get" t-value="request.env['ir.config_parameter'].sudo().get_str"/>
             <t t-set="_pwa_theme" t-value="_pwa_get('social_pwa.theme_color', '#5fa8d3')"/>
             <t t-set="_pwa_title" t-value="_pwa_get('social_pwa.app_short_name', 'Météo')"/>
 

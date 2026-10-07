@@ -1,4 +1,3 @@
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 
@@ -158,13 +157,13 @@ class TestProfileEditHttp(HttpCase):
 
     def test_edit_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
 
     def test_edit_preferences_tab(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/profile/edit?section=preferences')
         self.assertEqual(resp.status_code, 200)
         # Assert structural anchors instead of translated labels so the
@@ -174,7 +173,7 @@ class TestProfileEditHttp(HttpCase):
 
     def test_save_identity_redirects(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/profile/edit/identity',
             data={'csrf_token': _csrf, 
@@ -189,7 +188,7 @@ class TestProfileEditHttp(HttpCase):
 
     def test_save_identity_invalid_gender_ignored(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/profile/edit/identity',
             data={'csrf_token': _csrf, 'gender': 'INVALIDE'},
@@ -199,7 +198,7 @@ class TestProfileEditHttp(HttpCase):
     def test_save_identity_underage_returns_error(self):
         import datetime
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/profile/edit/identity',
             data={'csrf_token': _csrf, 'birth_year': str(datetime.date.today().year - 16)},
@@ -212,7 +211,7 @@ class TestProfileEditHttp(HttpCase):
 
     def test_save_preferences_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/profile/edit/preferences',
             data={'csrf_token': _csrf, 
@@ -225,7 +224,7 @@ class TestProfileEditHttp(HttpCase):
 
     def test_edit_page_has_tabs(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/profile/edit')
         self.assertEqual(resp.status_code, 200)
         # The visible tab labels go through _() and shift with language.
@@ -257,13 +256,13 @@ class TestProfilePortalHttp(HttpCase):
         admin_user = self.env.ref('base.user_admin')
         self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)
 
     def test_nonexistent_profile_returns_404(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/profile/999999999')
         self.assertEqual(resp.status_code, 404)
 
@@ -271,7 +270,7 @@ class TestProfilePortalHttp(HttpCase):
         admin_user = self.env.ref('base.user_admin')
         self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(admin_user.name.encode(), resp.content)
@@ -281,6 +280,6 @@ class TestProfilePortalHttp(HttpCase):
         profile = self.env['club_social_profile.profile'].sudo().get_or_create_for_user(admin_user)
         profile.sudo().write({'bio': 'Bio test HTTP portail'})
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(f'/profile/{admin_user.id}')
         self.assertEqual(resp.status_code, 200)

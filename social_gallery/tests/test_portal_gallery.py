@@ -1,6 +1,5 @@
 import base64
 
-from odoo.http import Request
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 _TINY_PNG = (
@@ -143,14 +142,14 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_gallery_list_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/gallery')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Galeries', resp.content)
 
     def test_gallery_detail_invalid_404(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/gallery/999999999')
         self.assertEqual(resp.status_code, 404)
 
@@ -160,14 +159,14 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_my_gallery_authenticated_ok(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/gallery')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'galerie', resp.content.lower())
 
     def test_create_gallery_post(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/gallery/create',
             data={'csrf_token': _csrf, 
@@ -183,7 +182,7 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_create_gallery_no_name_redirects(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             '/my/gallery/create',
             data={'csrf_token': _csrf, 'name': ''},
@@ -192,7 +191,7 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_gallery_detail_with_photos(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'HTTP Detail Test',
@@ -212,7 +211,7 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_delete_pending_photo(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Delete Test Gallery',
@@ -236,7 +235,7 @@ class TestPortalGalleryHttp(HttpCase):
 
     def test_lightbox_data_attrs_in_html(self):
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Lightbox Test',
@@ -256,7 +255,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_delete_approved_photo_forbidden(self):
         """Supprimer une photo approuvée retourne 403."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Del Approved Gallery',
@@ -279,7 +278,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_api_galleries_authenticated_returns_json(self):
         """GET /social/api/galleries retourne du JSON avec une clé 'galleries'."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         self.env['social_gallery.gallery'].sudo().create({
             'name': 'API Test Gallery',
@@ -300,7 +299,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_api_gallery_photos_returns_list(self):
         """GET /social/api/galleries/<id>/photos retourne la liste des photos approuvées."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'API Photos Gallery',
@@ -322,7 +321,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_api_gallery_photos_pending_excluded(self):
         """Les photos en attente n'apparaissent pas dans l'API publique."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'API Pending Gallery',
@@ -343,28 +342,28 @@ class TestPortalGalleryHttp(HttpCase):
     def test_api_gallery_photos_nonexistent_404(self):
         """GET /social/api/galleries/999999/photos retourne 404."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/social/api/galleries/999999/photos')
         self.assertEqual(resp.status_code, 404)
 
     def test_my_gallery_state_filter_approved(self):
         """Le filtre state=approved sur /my/gallery retourne 200."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/gallery?state=approved')
         self.assertEqual(resp.status_code, 200)
 
     def test_my_gallery_state_filter_pending(self):
         """Le filtre state=pending sur /my/gallery retourne 200."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open('/my/gallery?state=pending')
         self.assertEqual(resp.status_code, 200)
 
     def test_submit_to_shared_gallery(self):
         """POST /gallery/<id>/submit sur une galerie partagée crée une photo en attente."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Submit Test Gallery',
@@ -393,7 +392,7 @@ class TestPortalGalleryHttp(HttpCase):
         })
         # On soumet en tant qu'admin (qui n'est PAS le propriétaire).
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         resp = self.url_open(
             f'/gallery/{gallery.id}/submit',
             data={'csrf_token': _csrf},
@@ -407,7 +406,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_owner_upload_image_approved(self):
         """Le propriétaire ajoute une image à sa propre galerie → publiée direct."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Owner Image Gallery', 'owner_id': admin.id,
@@ -428,7 +427,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_owner_upload_video(self):
         """Le propriétaire ajoute une vidéo → media_type=video, video_file rempli."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Owner Video Gallery', 'owner_id': admin.id,
@@ -450,7 +449,7 @@ class TestPortalGalleryHttp(HttpCase):
     def test_submit_bad_type_rejected(self):
         """Un type non supporté (ex: .txt) est rejeté, aucune photo créée."""
         self.authenticate('admin', 'admin')
-        _csrf = Request.csrf_token(self)
+        _csrf = self.csrf_token()
         admin = self.env.ref('base.user_admin')
         gallery = self.env['social_gallery.gallery'].sudo().create({
             'name': 'Bad Type Gallery', 'owner_id': admin.id,

@@ -33,7 +33,7 @@
                         <t t-foreach="steps" t-as="s">
                             <t t-if="s != 'done'">
                                 <span t-attf-class="small #{step_index > steps.index(s) and 'text-success fw-semibold' or step == s and 'text-primary fw-semibold' or 'text-muted'}">
-                                    <t t-esc="step_titles[s]"/>
+                                    <t t-out="step_titles[s]"/>
                                 </span>
                             </t>
                         </t>
@@ -44,11 +44,11 @@
                     </div>
                 </div>
 
-                <h2 class="mb-4"><t t-esc="step_titles[step]"/></h2>
+                <h2 class="mb-4"><t t-out="step_titles[step]"/></h2>
 
                 <!-- Error message -->
                 <div class="alert alert-danger" t-if="error">
-                    <t t-esc="error"/>
+                    <t t-out="error"/>
                 </div>
 
                 <!-- ── Step 1: Welcome / photo ──────────────────────────── -->
@@ -114,7 +114,7 @@
                             <label class="form-label" for="bio">Bio</label>
                             <textarea class="form-control" name="bio" id="bio" rows="4"
                                       placeholder="Tell us about yourself in a few words…">
-                                <t t-esc="form_values.get('bio', profile.bio or '')"/>
+                                <t t-out="form_values.get('bio', profile.bio or '')"/>
                             </textarea>
                         </div>
 

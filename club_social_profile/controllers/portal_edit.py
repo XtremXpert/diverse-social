@@ -138,7 +138,7 @@ class ProfileEditPortal(CustomerPortal):
                 user.write({'lang': lang.code})
                 # Redirige vers l'URL localisée pour que l'interface bascule
                 # immédiatement (le rendu suit l'URL, pas user.lang).
-                default = request.website.default_lang_id
+                default = request.env.website.default_lang_id
                 prefix = '' if lang == default else '/' + lang.url_code
                 resp = request.redirect(
                     '%s/my/profile/edit?section=preferences&saved=1' % prefix)

@@ -62,6 +62,7 @@ class SaleOrder(models.Model):
             'name': 'Memberships',
             'res_model': 'club_membership.membership',
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],  # requis par Odoo 20
             'domain': [('sale_order_id', '=', self.id)],
         }
 

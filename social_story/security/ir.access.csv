@@ -1,0 +1,6 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_story_admin,social_story.story admin,social_story.story,social_base.group_social_admin,crud,
+access_social_story_system,social_story.story system,social_story.story,base.group_system,crud,
+social_story_user_read_rule,Social Story: User Read,social_story.story,social_base.group_social_user,r,"['|', ('state', '=', 'active'), ('author_id', '=', user.id)]"
+social_story_user_write_rule,Social Story: User Write Own,social_story.story,social_base.group_social_user,cu,"[('author_id', '=', user.id)]"
+social_story_moderator_rule,Social Story: Moderator Access,social_story.story,social_base.group_social_moderator,crud,"[(1, '=', 1)]"

@@ -1,21 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
-    <template id="portal_my_home_governance" name="Portal My Home: Governance"
-              inherit_id="portal.portal_my_home" priority="35">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-if="proposals_voting_count is not None">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">Propositions ouvertes au vote</t>
-                    <t t-set="url">/governance</t>
-                    <t t-set="icon" t-value="'/social_governance/static/src/img/governance.svg'"/>
-                    <t t-set="count" t-value="proposals_voting_count"/>
-                </t>
-            </t>
-        </xpath>
-    </template>
-
     <!-- ══ Proposals list ════════════════════════════════════════════════════ -->
     <template id="portal_governance_list" name="Gouvernance communautaire">
         <t t-call="portal.portal_layout">
@@ -26,16 +12,14 @@
 
                 <!-- Alertes -->
                 <t t-if="error or request.params.get('error')">
-                    <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
+                    <div class="alert alert-danger" t-out="error or request.params.get('error')"/>
                 </t>
 
                 <!-- ── State filters ───────────────────────────────────── -->
                 <div class="d-flex flex-wrap gap-1 mb-4">
                     <t t-foreach="[('voting','Au vote'),('open','Ouverte'),('draft','Brouillon'),('accepted','Acceptée'),('rejected','Rejetée')]" t-as="st">
-                        <a t-attf-href="/governance?state=#{st[0]}"
-                           t-attf-class="btn btn-sm #{state_filter == st[0] and 'text-white' or 'btn-outline-secondary'}"
-                           t-attf-style="#{state_filter == st[0] and 'background:#1a1a2e;' or ''}">
-                            <t t-esc="st[1]"/>
+                        <a t-attf-href="/governance?state=#{st[0]}" t-attf-class="btn btn-sm #{state_filter == st[0] and 'text-white' or 'btn-outline-secondary'}" t-attf-style="#{state_filter == st[0] and 'background:#1a1a2e;' or ''}">
+                            <t t-out="st[1]"/>
                         </a>
                     </t>
                 </div>
@@ -43,8 +27,7 @@
                 <!-- ── Create a proposal (collapse) ───────────────────── -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="mb-0" style="color:#1a1a2e;">Propositions</h5>
-                    <button class="btn btn-sm" style="background:#e94560;color:white;"
-                            data-bs-toggle="collapse" data-bs-target="#sn_create_proposal">
+                    <button class="btn btn-sm" style="background:#e94560;color:white;" data-bs-toggle="collapse" data-bs-target="#sn_create_proposal">
                         + Nouvelle proposition
                     </button>
                 </div>
@@ -53,30 +36,25 @@
                         <form action="/governance/create" method="post">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <div class="mb-2">
-                                <input type="text" name="name" class="form-control form-control-sm"
-                                       placeholder="Titre de la proposition" required="required" maxlength="200"/>
+                                <input type="text" name="name" class="form-control form-control-sm" placeholder="Titre de la proposition" required="required" maxlength="200"/>
                             </div>
                             <div class="mb-2">
-                                <textarea name="description" class="form-control form-control-sm" rows="4"
-                                          placeholder="Description détaillée" required="required" maxlength="5000"/>
+                                <textarea name="description" class="form-control form-control-sm" rows="4" placeholder="Description détaillée" required="required" maxlength="5000"/>
                             </div>
                             <div class="row g-2 mb-2">
                                 <div class="col-md-6">
                                     <select name="category_id" class="form-select form-select-sm" required="required">
                                         <option value="">— Catégorie —</option>
                                         <t t-foreach="categories" t-as="cat">
-                                            <option t-att-value="cat.id" t-esc="cat.name"/>
+                                            <option t-att-value="cat.id" t-out="cat.name"/>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="datetime-local" name="voting_closes_at"
-                                           class="form-control form-control-sm"
-                                           title="Date de clôture du vote (optionnelle)"/>
+                                    <input type="datetime-local" name="voting_closes_at" class="form-control form-control-sm" title="Date de clôture du vote (optionnelle)"/>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-sm"
-                                    style="background:#1a1a2e;color:white;">
+                            <button type="submit" class="btn btn-sm" style="background:#1a1a2e;color:white;">
                                 Soumettre la proposition
                             </button>
                         </form>
@@ -86,40 +64,37 @@
                 <!-- ── Proposals list ─────────────────────────────────── -->
                 <div class="list-group shadow-sm mb-4">
                     <t t-foreach="proposals" t-as="proposal">
-                        <a t-attf-href="/governance/#{proposal.id}"
-                           class="list-group-item list-group-item-action py-3 text-decoration-none">
+                        <a t-attf-href="/governance/#{proposal.id}" class="list-group-item list-group-item-action py-3 text-decoration-none">
                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold" style="color:#1a1a2e;">
-                                        <t t-esc="proposal.name"/>
+                                        <t t-out="proposal.name"/>
                                     </div>
                                     <small class="text-muted">
-                                        Par <t t-esc="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
-                                        <t t-esc="proposal.category_id.name"/>
+                                        Par <t t-out="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
+                                        <t t-out="proposal.category_id.name"/>
                                     </small>
                                     <!-- Barre de vote si en cours -->
-                                    <t t-if="proposal.state == 'voting' and proposal.vote_count > 0">
+                                    <t t-if="proposal.state == 'voting' and proposal.vote_count &gt; 0">
                                         <div class="progress mt-2" style="height:6px;">
-                                            <div class="progress-bar bg-success" role="progressbar"
-                                                 t-attf-style="width:#{proposal.approval_pct}%"/>
-                                            <div class="progress-bar bg-danger" role="progressbar"
-                                                 t-attf-style="width:#{100 - proposal.approval_pct}%"/>
+                                            <div class="progress-bar bg-success" role="progressbar" t-attf-style="width:#{proposal.approval_pct}%"/>
+                                            <div class="progress-bar bg-danger" role="progressbar" t-attf-style="width:#{100 - proposal.approval_pct}%"/>
                                         </div>
                                         <small class="text-muted" style="font-size:.75rem;">
-                                            <span class="text-success"><t t-esc="proposal.yes_count"/> oui</span> ·
-                                            <span class="text-danger"><t t-esc="proposal.no_count"/> non</span> ·
-                                            <t t-esc="proposal.abstain_count"/> abstentions
+                                            <span class="text-success"><t t-out="proposal.yes_count"/> oui</span> ·
+                                            <span class="text-danger"><t t-out="proposal.no_count"/> non</span> ·
+                                            <t t-out="proposal.abstain_count"/> abstentions
                                         </small>
                                     </t>
                                 </div>
                                 <div class="text-end flex-shrink-0">
                                     <span t-attf-class="badge #{proposal.state == 'voting' and 'bg-warning text-dark' or proposal.state == 'accepted' and 'bg-success' or proposal.state == 'rejected' and 'bg-danger' or 'bg-secondary'}">
-                                        <t t-esc="state_labels.get(proposal.state, proposal.state)"/>
+                                        <t t-out="state_labels.get(proposal.state, proposal.state)"/>
                                     </span>
                                     <t t-if="proposal.state == 'voting' and proposal.voting_closes_at">
                                         <div class="text-muted" style="font-size:.72rem; margin-top:2px;">
                                             Clôture :
-                                            <span t-field="proposal.voting_closes_at" t-options='{"widget":"date"}'/>
+                                            <span t-field="proposal.voting_closes_at" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                                         </div>
                                     </t>
                                 </div>
@@ -159,7 +134,7 @@
                             <a href="/governance" style="color:#e94560;">Gouvernance</a>
                         </li>
                         <li class="breadcrumb-item active text-truncate" style="max-width:300px;">
-                            <t t-esc="proposal.name"/>
+                            <t t-out="proposal.name"/>
                         </li>
                     </ol>
                 </nav>
@@ -181,7 +156,7 @@
                     <div class="alert alert-success">Vote démarré.</div>
                 </t>
                 <t t-if="error or request.params.get('error')">
-                    <div class="alert alert-danger" t-esc="error or request.params.get('error')"/>
+                    <div class="alert alert-danger" t-out="error or request.params.get('error')"/>
                 </t>
 
                 <!-- ── Header ────────────────────────────────────────── -->
@@ -189,46 +164,36 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
                             <h2 style="font-size:1.25rem; color:#1a1a2e; margin-bottom:0;">
-                                <t t-esc="proposal.name"/>
+                                <t t-out="proposal.name"/>
                             </h2>
                             <div class="d-flex gap-2 align-items-center">
                                 <span t-attf-class="badge #{proposal.state == 'voting' and 'bg-warning text-dark' or proposal.state == 'accepted' and 'bg-success' or proposal.state == 'rejected' and 'bg-danger' or 'bg-secondary'}">
-                                    <t t-esc="state_labels.get(proposal.state, proposal.state)"/>
+                                    <t t-out="state_labels.get(proposal.state, proposal.state)"/>
                                 </span>
                                 <!-- Open (author or moderator, draft only) -->
                                 <t t-if="(is_author or is_moderator) and proposal.state == 'draft'">
-                                    <form t-attf-action="/governance/#{proposal.id}/open" method="post"
-                                          class="d-inline">
+                                    <form t-attf-action="/governance/#{proposal.id}/open" method="post" class="d-inline">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <button type="submit" class="btn btn-sm btn-outline-primary"
-                                                style="font-size:.75rem;">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" style="font-size:.75rem;">
                                             Ouvrir
                                         </button>
                                     </form>
                                 </t>
                                 <!-- Start voting (author or moderator, draft or open) -->
                                 <t t-if="(is_author or is_moderator) and proposal.state in ('draft', 'open')">
-                                    <form t-attf-action="/governance/#{proposal.id}/start_voting" method="post"
-                                          class="d-inline">
+                                    <form t-attf-action="/governance/#{proposal.id}/start_voting" method="post" class="d-inline">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <input type="datetime-local" name="voting_closes_at"
-                                               class="form-control-sm d-inline-block"
-                                               style="width:auto; font-size:.75rem;"
-                                               title="Date de clôture du vote"/>
-                                        <button type="submit" class="btn btn-sm"
-                                                style="background:#1a1a2e;color:white;font-size:.75rem;">
+                                        <input type="datetime-local" name="voting_closes_at" class="form-control-sm d-inline-block" style="width:auto; font-size:.75rem;" title="Date de clôture du vote"/>
+                                        <button type="submit" class="btn btn-sm" style="background:#1a1a2e;color:white;font-size:.75rem;">
                                             Démarrer le vote
                                         </button>
                                     </form>
                                 </t>
                                 <!-- Withdraw (author or moderator) -->
                                 <t t-if="(is_author or is_moderator) and proposal.state not in ('accepted','rejected','withdrawn')">
-                                    <form t-attf-action="/governance/#{proposal.id}/withdraw" method="post"
-                                          class="d-inline"
-                                          onsubmit="return confirm('Retirer cette proposition ?')">
+                                    <form t-attf-action="/governance/#{proposal.id}/withdraw" method="post" class="d-inline" onsubmit="return confirm('Retirer cette proposition ?')">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary"
-                                                style="font-size:.75rem;">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;">
                                             Retirer
                                         </button>
                                     </form>
@@ -236,9 +201,9 @@
                             </div>
                         </div>
                         <p class="text-muted mb-0" style="font-size:.85rem;">
-                            Par <strong t-esc="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
-                            <t t-esc="proposal.category_id.name"/> ·
-                            <span t-field="proposal.create_date" t-options='{"widget":"date"}'/>
+                            Par <strong t-out="request.env['club_social_profile.profile']._display_name_for_user(proposal.author_id)"/> ·
+                            <t t-out="proposal.category_id.name"/> ·
+                            <span t-field="proposal.create_date" t-options="{&quot;widget&quot;:&quot;date&quot;}"/>
                         </p>
                     </div>
                 </div>
@@ -258,31 +223,27 @@
                             <t t-if="deadline_hours is not None">
                                 <span class="float-end fw-normal" style="font-size:.8rem;">
                                     <t t-if="deadline_hours == 0">Clôture imminente</t>
-                                    <t t-elif="deadline_hours &lt; 24"><t t-esc="deadline_hours"/> h restantes</t>
-                                    <t t-else=""><t t-esc="deadline_hours // 24"/> j restants</t>
+                                    <t t-elif="deadline_hours &lt; 24"><t t-out="deadline_hours"/> h restantes</t>
+                                    <t t-else=""><t t-out="deadline_hours // 24"/> j restants</t>
                                 </span>
                             </t>
                         </div>
                         <div class="card-body">
                             <!-- Results bar -->
-                            <t t-if="proposal.vote_count > 0">
+                            <t t-if="proposal.vote_count &gt; 0">
                                 <div class="progress mb-2" style="height:16px; border-radius:8px;">
-                                    <div class="progress-bar bg-success fw-bold"
-                                         t-attf-style="width:#{proposal.approval_pct}%"
-                                         t-esc="proposal.approval_pct > 10 and str(proposal.approval_pct) + '%' or ''"/>
-                                    <div class="progress-bar bg-danger fw-bold"
-                                         t-attf-style="width:#{100 - proposal.approval_pct}%"
-                                         t-esc="(100 - proposal.approval_pct) > 10 and str(100 - proposal.approval_pct) + '%' or ''"/>
+                                    <div class="progress-bar bg-success fw-bold" t-attf-style="width:#{proposal.approval_pct}%" t-out="proposal.approval_pct &gt; 10 and str(proposal.approval_pct) + '%' or ''"/>
+                                    <div class="progress-bar bg-danger fw-bold" t-attf-style="width:#{100 - proposal.approval_pct}%" t-out="(100 - proposal.approval_pct) &gt; 10 and str(100 - proposal.approval_pct) + '%' or ''"/>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3" style="font-size:.85rem;">
                                     <span class="text-success fw-bold">
-                                        <t t-esc="proposal.yes_count"/> oui
+                                        <t t-out="proposal.yes_count"/> oui
                                     </span>
                                     <span class="text-muted">
-                                        <t t-esc="proposal.abstain_count"/> abstentions
+                                        <t t-out="proposal.abstain_count"/> abstentions
                                     </span>
                                     <span class="text-danger fw-bold">
-                                        <t t-esc="proposal.no_count"/> non
+                                        <t t-out="proposal.no_count"/> non
                                     </span>
                                 </div>
                             </t>
@@ -294,7 +255,7 @@
                             <t t-if="my_vote">
                                 <div class="alert alert-info py-2 mb-3" style="font-size:.85rem;">
                                     Votre vote actuel :
-                                    <strong t-esc="my_vote == 'yes' and 'Oui' or my_vote == 'no' and 'Non' or 'Abstention'"/>
+                                    <strong t-out="my_vote == 'yes' and 'Oui' or my_vote == 'no' and 'Non' or 'Abstention'"/>
                                     — vous pouvez le modifier.
                                 </div>
                             </t>
@@ -303,16 +264,13 @@
                             <form t-attf-action="/governance/#{proposal.id}/vote" method="post">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <div class="d-flex gap-2 flex-wrap">
-                                    <button type="submit" name="choice" value="yes"
-                                            t-attf-class="btn btn-sm #{my_vote == 'yes' and 'btn-success' or 'btn-outline-success'}">
+                                    <button type="submit" name="choice" value="yes" t-attf-class="btn btn-sm #{my_vote == 'yes' and 'btn-success' or 'btn-outline-success'}">
                                         ✓ Oui
                                     </button>
-                                    <button type="submit" name="choice" value="no"
-                                            t-attf-class="btn btn-sm #{my_vote == 'no' and 'btn-danger' or 'btn-outline-danger'}">
+                                    <button type="submit" name="choice" value="no" t-attf-class="btn btn-sm #{my_vote == 'no' and 'btn-danger' or 'btn-outline-danger'}">
                                         ✗ Non
                                     </button>
-                                    <button type="submit" name="choice" value="abstain"
-                                            t-attf-class="btn btn-sm #{my_vote == 'abstain' and 'btn-secondary' or 'btn-outline-secondary'}">
+                                    <button type="submit" name="choice" value="abstain" t-attf-class="btn btn-sm #{my_vote == 'abstain' and 'btn-secondary' or 'btn-outline-secondary'}">
                                         ○ Abstention
                                     </button>
                                 </div>
@@ -323,24 +281,20 @@
 
                 <!-- ── Final results (accepted / rejected) ──────────── -->
                 <t t-elif="proposal.state in ('accepted', 'rejected')">
-                    <div t-attf-class="card mb-4 border-left-0"
-                         t-attf-style="border-left:4px solid #{proposal.state == 'accepted' and '#27ae60' or '#e94560'};">
-                        <div t-attf-class="card-header fw-bold"
-                             t-attf-style="background:#{proposal.state == 'accepted' and '#27ae60' or '#e94560'};color:white;">
-                            <t t-esc="proposal.state == 'accepted' and '✓ Proposition acceptée' or '✗ Proposition rejetée'"/>
+                    <div t-attf-class="card mb-4 border-left-0" t-attf-style="border-left:4px solid #{proposal.state == 'accepted' and '#27ae60' or '#e94560'};">
+                        <div t-attf-class="card-header fw-bold" t-attf-style="background:#{proposal.state == 'accepted' and '#27ae60' or '#e94560'};color:white;">
+                            <t t-out="proposal.state == 'accepted' and '✓ Proposition acceptée' or '✗ Proposition rejetée'"/>
                         </div>
                         <div class="card-body">
-                            <t t-if="proposal.vote_count > 0">
+                            <t t-if="proposal.vote_count &gt; 0">
                                 <div class="progress mb-2" style="height:16px; border-radius:8px;">
-                                    <div class="progress-bar bg-success"
-                                         t-attf-style="width:#{proposal.approval_pct}%"/>
-                                    <div class="progress-bar bg-danger"
-                                         t-attf-style="width:#{100 - proposal.approval_pct}%"/>
+                                    <div class="progress-bar bg-success" t-attf-style="width:#{proposal.approval_pct}%"/>
+                                    <div class="progress-bar bg-danger" t-attf-style="width:#{100 - proposal.approval_pct}%"/>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size:.85rem;">
-                                    <span class="text-success fw-bold"><t t-esc="proposal.yes_count"/> oui</span>
-                                    <span class="text-muted"><t t-esc="proposal.abstain_count"/> abstentions</span>
-                                    <span class="text-danger fw-bold"><t t-esc="proposal.no_count"/> non</span>
+                                    <span class="text-success fw-bold"><t t-out="proposal.yes_count"/> oui</span>
+                                    <span class="text-muted"><t t-out="proposal.abstain_count"/> abstentions</span>
+                                    <span class="text-danger fw-bold"><t t-out="proposal.no_count"/> non</span>
                                 </div>
                             </t>
                             <t t-else="">
@@ -373,10 +327,10 @@
                         <div class="list-group-item py-3">
                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div>
-                                    <div class="fw-semibold" style="color:#1a1a2e;" t-esc="entry.title"/>
+                                    <div class="fw-semibold" style="color:#1a1a2e;" t-out="entry.title"/>
                                     <small class="text-muted">
-                                        <span t-field="entry.decision_date" t-options='{"widget":"date"}'/> ·
-                                        <t t-esc="entry.category"/>
+                                        <span t-field="entry.decision_date" t-options="{&quot;widget&quot;:&quot;date&quot;}"/> ·
+                                        <t t-out="entry.category"/>
                                     </small>
                                 </div>
                             </div>

@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_post_category_user,social_post_categories.category user,social_post_categories.category,social_base.group_social_user,r,
+access_post_category_admin,social_post_categories.category admin,social_post_categories.category,social_base.group_social_admin,crud,
+access_post_category_system,social_post_categories.category system,social_post_categories.category,base.group_system,crud,

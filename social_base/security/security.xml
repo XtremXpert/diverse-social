@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <data noupdate="1">
 
@@ -30,49 +30,5 @@
 
     <data>
 
-        <record id="social_post_user_rule" model="ir.rule">
-            <field name="name">Social Post: User Access</field>
-            <field name="model_id" ref="model_social_base_post"/>
-            <field name="domain_force">['|', ('author_id', '=', user.id), ('state', '=', 'published')]</field>
-            <field name="groups" eval="[(4, ref('group_social_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <record id="social_post_moderator_rule" model="ir.rule">
-            <field name="name">Social Post: Moderator Access</field>
-            <field name="model_id" ref="model_social_base_post"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_social_moderator'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <record id="social_comment_user_rule" model="ir.rule">
-            <field name="name">Social Comment: User Access</field>
-            <field name="model_id" ref="model_social_base_comment"/>
-            <field name="domain_force">['|', ('state', '=', 'published'), ('author_id', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('group_social_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <record id="social_post_portal_rule" model="ir.rule">
-            <field name="name">Social Post: Portal Access</field>
-            <field name="model_id" ref="model_social_base_post"/>
-            <field name="domain_force">[('visibility', '=', 'public'), ('state', '=', 'published')]</field>
-            <field name="groups" eval="[(4, ref('group_social_portal'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-    </data>
+        </data>
 </odoo>

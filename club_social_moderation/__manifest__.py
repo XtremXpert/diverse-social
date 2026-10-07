@@ -1,6 +1,6 @@
 {
     'name': 'Club Social Moderation',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Social',
     'summary': 'Bans, shadow bans and content reports for private clubs',
     'author': 'Bemade',
@@ -9,8 +9,7 @@
         'club_social_profile',
     ],
     'data': [
-        'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/ir_cron.xml',
         'views/moderation_views.xml',
         'views/portal_templates.xml',

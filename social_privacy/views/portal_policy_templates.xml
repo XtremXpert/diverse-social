@@ -96,12 +96,12 @@
             <div class="row mt-3 pt-3 border-top">
                 <div class="col-12 text-center text-muted small">
                     <t t-if="dpo_officer">
-                        <span t-esc="dpo_officer.user_id.name"/> — Responsable de la protection des renseignements personnels
+                        <span t-out="dpo_officer.user_id.name"/> — Responsable de la protection des renseignements personnels
                         <a t-attf-href="mailto:{{ dpo_officer.contact_email }}" class="ms-2 text-muted">
-                            <i class="fa fa-envelope-o"/> <t t-out="dpo_officer.contact_email"/>
+                            <i class="oi" data-icon="mail"/> <t t-out="dpo_officer.contact_email"/>
                         </a>
                         <t t-if="dpo_officer.contact_phone">
-                            <span class="ms-2"><i class="fa fa-phone"/> <t t-out="dpo_officer.contact_phone"/></span>
+                            <span class="ms-2"><i class="oi" data-icon="call"/> <t t-out="dpo_officer.contact_phone"/></span>
                         </t>
                     </t>
                 </div>

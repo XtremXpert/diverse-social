@@ -1,0 +1,10 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_gallery_gallery_admin,social_gallery.gallery admin,social_gallery.gallery,social_base.group_social_admin,crud,
+access_social_gallery_gallery_system,social_gallery.gallery system,social_gallery.gallery,base.group_system,crud,
+access_social_gallery_photo_admin,social_gallery.photo admin,social_gallery.photo,social_base.group_social_admin,crud,
+access_social_gallery_photo_system,social_gallery.photo system,social_gallery.photo,base.group_system,crud,
+social_gallery_user_rule,Social Gallery: User Access,social_gallery.gallery,social_base.group_social_user,r,"['|', ('visibility', 'in', ['public', 'members', 'connections']), ('owner_id', '=', user.id)]"
+social_gallery_owner_rule,Social Gallery: Owner Write,social_gallery.gallery,social_base.group_social_user,cud,"[('owner_id', '=', user.id)]"
+social_gallery_photo_user_rule,Social Gallery Photo: User Access,social_gallery.photo,social_base.group_social_user,cr,"['|', ('state', '=', 'approved'), ('submitted_by_id', '=', user.id)]"
+social_gallery_moderator_rule,Social Gallery: Moderator Access,social_gallery.gallery,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
+social_gallery_photo_moderator_rule,Social Gallery Photo: Moderator Access,social_gallery.photo,social_base.group_social_moderator,crud,"[(1, '=', 1)]"

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<!-- post_author : dans l'en-tête de l'article complet -->
-<template id="post_author_login" inherit_id="website_blog.post_author">
-    <!-- Mode édition (editable=True) : remplacer le span t-field par login -->
-    <xpath expr="//span[@t-if='editable'][@t-field='blog_post.author_id']" position="replace">
-        <span t-if="editable" t-out="blog_post.author_login"/>
+<!-- Odoo 20 : l'auteur d'un article est rendu par website_blog.post_published_info
+     (post_author est vide) ; en édition un div t-field, sinon un div t-out. -->
+<template id="post_author_login" inherit_id="website_blog.post_published_info">
+    <xpath expr="//div[@t-if='editable'][@t-field='blog_post.author_id']" position="replace">
+        <div t-if="editable" t-out="blog_post.author_login"/>
     </xpath>
-    <!-- Mode vue (editable=False) : remplacer le span t-else -->
-    <xpath expr="//span[@t-out='blog_post.author_name']" position="replace">
-        <span t-else="" t-out="blog_post.author_login"/>
+    <xpath expr="//div[@t-out='blog_post.author_name']" position="replace">
+        <div t-else="" class="o_not_editable" t-out="blog_post.author_login"/>
     </xpath>
 </template>
 
@@ -20,10 +19,10 @@
     </xpath>
 </template>
 
-<!-- post_heading : dans les listes/boucles de posts -->
-<template id="post_heading_login" inherit_id="website_blog.post_heading">
-    <xpath expr="//span[@t-field='blog_post.author_id']" position="replace">
-        <span t-out="blog_post.author_login"/>
+<!-- Badge auteur des listes dynamiques (filtre) -->
+<template id="dynamic_filter_blog_post_single_badge_login" inherit_id="website_blog.dynamic_filter_template_blog_post_single_badge">
+    <xpath expr="//span[@t-field='record.author_id.name']" position="replace">
+        <span class="text-muted" t-out="record.author_login" t-if="blog_posts_post_author_active"/>
     </xpath>
 </template>
 

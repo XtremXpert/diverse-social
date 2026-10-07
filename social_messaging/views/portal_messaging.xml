@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
     <!-- ══ Assets ════════════════════════════════════════════════════════ -->
@@ -19,22 +19,6 @@
     </record>
 
     <!-- ══ Portal home entry ═════════════════════════════════════════════ -->
-    <template id="portal_my_home_messages" name="Private Messages"
-              inherit_id="portal.portal_my_home" priority="30">
-        <!-- Carte config → dans portal_common_category, avant Adresses (priorité 30 :
-             s'insère juste après Tableau de bord, ce qui donne l'ordre
-             Tableau de bord → Messages → Adresses → Connexion). Cf. note dans
-             club_social_profile/portal_dashboard.xml. -->
-        <xpath expr="//div[@id='portal_common_category']/t[@t-call='portal.portal_docs_entry'][t[@t-set='url' and @t-value=&quot;'/my/addresses'&quot;]]" position="before">
-            <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Messages</t>
-                <t t-set="url">/my/messages</t>
-                <t t-set="icon" t-value="'/social_messaging/static/src/img/messages.svg'"/>
-                <t t-set="config_card" t-value="True"/>
-            </t>
-        </xpath>
-    </template>
-
     <!-- ══ Conversations list ════════════════════════════════════════════ -->
     <template id="portal_messages_list" name="My Messages">
         <t t-call="portal.portal_layout">
@@ -58,18 +42,15 @@
                 <t t-else="">
                     <div class="list-group shadow-sm">
                         <t t-foreach="thread_data" t-as="td">
-                            <a t-attf-href="/my/messages/#{td['thread'].id}"
-                               t-attf-class="list-group-item list-group-item-action py-3 px-3 #{'' if td['unread'] == 0 else 'bg-light'}">
+                            <a t-attf-href="/my/messages/#{td['thread'].id}" t-attf-class="list-group-item list-group-item-action py-3 px-3 #{'' if td['unread'] == 0 else 'bg-light'}">
                                 <div class="d-flex align-items-center gap-3">
                                     <!-- Avatar -->
                                     <div style="width:46px; height:46px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
                                         <t t-if="td.get('other_profile') and td['other_profile'].profile_image">
-                                            <img t-attf-src="/web/image/club_social_profile.profile/#{td['other_profile'].id}/profile_image"
-                                                 class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                            <img t-attf-src="/web/image/club_social_profile.profile/#{td['other_profile'].id}/profile_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
                                         </t>
                                         <t t-else="">
-                                            <div class="d-flex align-items-center justify-content-center h-100"
-                                                 style="color:white; font-size:18px;">
+                                            <div class="d-flex align-items-center justify-content-center h-100" style="color:white; font-size:18px;">
                                                 <t t-out="((td.get('other_profile') and (td['other_profile'].stealth_name or '')) or (td['other'] and td['other'].name) or '?')[0].upper()"/>
                                             </div>
                                         </t>
@@ -119,12 +100,10 @@
                     <t t-if="other">
                         <div style="width:40px; height:40px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
                             <t t-if="other_profile and other_profile.profile_image">
-                                <img t-attf-src="/web/image/club_social_profile.profile/#{other_profile.id}/profile_image"
-                                     class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                <img t-attf-src="/web/image/club_social_profile.profile/#{other_profile.id}/profile_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
                             </t>
                             <t t-else="">
-                                <div class="d-flex align-items-center justify-content-center h-100"
-                                     style="color:white; font-size:16px;">
+                                <div class="d-flex align-items-center justify-content-center h-100" style="color:white; font-size:16px;">
                                     <t t-out="((other_profile and (other_profile.stealth_name or '')) or other.name or '?')[0].upper()"/>
                                 </div>
                             </t>
@@ -144,8 +123,7 @@
                      web.public_components via <owl-component>) -->
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="card shadow-sm o-sn-thread-card">
-                    <owl-component name="social_messaging.thread"
-                                   t-attf-props='{"threadId": #{thread.id}, "currentUserId": #{request.env.user.id}}'/>
+                    <owl-component name="social_messaging.thread" t-attf-props="{&quot;threadId&quot;: #{thread.id}, &quot;currentUserId&quot;: #{request.env.user.id}}"/>
                 </div>
 
             </div>
@@ -153,8 +131,7 @@
     </template>
 
     <!-- ══ "Message" button on profile page ══════════════════════════════ -->
-    <template id="portal_profile_message_start_form"
-              inherit_id="club_social_profile.portal_profile_public">
+    <template id="portal_profile_message_start_form" inherit_id="club_social_profile.portal_profile_public">
         <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">
             <form t-attf-action="/my/messages/start/#{target_user.id}" method="post">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>

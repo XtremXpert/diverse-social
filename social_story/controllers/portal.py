@@ -6,14 +6,13 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 class StoryPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        if 'my_stories_count' in counters:
-            values['my_stories_count'] = request.env['social_story.story'].search_count([
+    def _prepare_portal_counter_values(self, counter):
+        if counter == 'my_stories_count':
+            return 'social_story.story', [
                 ('author_id', '=', request.env.user.id),
                 ('state', '=', 'active'),
-            ])
-        return values
+            ], 'read'
+        return super()._prepare_portal_counter_values(counter)
 
     @route('/my/stories', auth='user', website=True)
     def my_stories(self, filter='active', **kw):

@@ -1,6 +1,6 @@
 {
     'name': 'Social ntfy Push',
-    'version': '19.0.1.0.1',
+    'version': '20.0.1.0.1',
     'category': 'Social',
     'summary': 'Native iPhone/Android push via a self-hosted ntfy server (generic-payload, per-user topic)',
     'description': """
@@ -25,7 +25,7 @@
         'club_social_profile',
     ],
     'data': [
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/ir_config_parameter.xml',
         'data/ir_cron.xml',
         'views/portal_ntfy.xml',

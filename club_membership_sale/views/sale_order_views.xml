@@ -19,7 +19,7 @@
                 <button name="action_view_memberships"
                         type="object"
                         class="oe_stat_button"
-                        icon="fa-id-card"
+                        icon="badge"
                         invisible="membership_count == 0">
                     <field name="membership_count" widget="statinfo" string="Memberships"/>
                 </button>

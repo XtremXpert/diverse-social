@@ -16,11 +16,11 @@ class CommunityHelp(http.Controller):
     def community_help(self, **kw):
         Param = request.env['ir.config_parameter'].sudo()
         community_name = (
-            Param.get_param('social_help.community_name')
+            Param.get_str('social_help.community_name')
             or _('this community')
         )
         charter_html = (
-            Param.get_param('social_help.charter_html')
+            Param.get_str('social_help.charter_html')
             or _DEFAULT_CHARTER_HTML
         )
         return request.render('social_help.community_help_page', {

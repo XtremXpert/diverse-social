@@ -21,7 +21,7 @@ class NtfyPushService(models.AbstractModel):
 
     @api.model
     def _generic_payload(self, topic):
-        get = self.env['ir.config_parameter'].sudo().get_param
+        get = self.env['ir.config_parameter'].sudo().get_str
         base = (get('web.base.url', '') or 'https://www.diverse-cite.com').rstrip('/')
         return {
             'topic': topic,
@@ -40,7 +40,7 @@ class NtfyPushService(models.AbstractModel):
         5xx errors so the outbox retries; a 4xx (bad topic/token) returns 0
         and is dropped — retrying a client error never helps.
         """
-        get = self.env['ir.config_parameter'].sudo().get_param
+        get = self.env['ir.config_parameter'].sudo().get_str
         # publish_url lets the server POST to an internal address (e.g. the
         # in-cluster service http://ntfy.ntfy.svc.cluster.local) while members
         # still see/subscribe to the public server_url — avoids hairpin-NAT

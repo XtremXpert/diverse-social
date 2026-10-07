@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_analytics_dashboard_moderator,social_analytics.dashboard moderator,social_analytics.dashboard,social_base.group_social_moderator,crud,
+access_social_analytics_dashboard_admin,social_analytics.dashboard admin,social_analytics.dashboard,social_base.group_social_admin,crud,
+access_social_analytics_dashboard_system,social_analytics.dashboard system,social_analytics.dashboard,base.group_system,crud,
