@@ -17,9 +17,8 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
             'name': 'Portal Tremblay',
             'login': 'portail_login@test.com',
             'email': 'portail@test.com',
+            'group_ids': [(6, 0, cls.env.ref('base.group_portal').ids)],
         })
-        cls.env.ref('base.group_user').user_ids -= cls.portal_user
-        cls.env.ref('base.group_portal').user_ids |= cls.portal_user
 
     def test_internal_user_display_name_is_name(self):
         partner = self.internal_user.partner_id
@@ -58,8 +57,8 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
             'email': 'partage_portal@test.com',
             'partner_id': partner.id,
         })
-        internal_group.user_ids -= u_portal
-        portal_group.user_ids |= u_portal
+        # Odoo 20 : remplacer tous les groupes, ceux par défaut impliquent interne
+        u_portal.write({'group_ids': [(6, 0, portal_group.ids)]})
         partner.invalidate_recordset(['display_name'])
         self.assertNotEqual(partner.display_name, 'partage_portal@test.com')
 
@@ -85,14 +84,13 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         """Deux utilisateurs portail actifs → display_name = login du premier."""
         partner = self.env['res.partner'].create({'name': 'Multi Portail'})
         portal_group = self.env.ref('base.group_portal')
-        internal_group = self.env.ref('base.group_user')
         for login in ('multi_p1@test.com', 'multi_p2@test.com'):
             u = self.env['res.users'].create({
                 'name': 'Multi Portail', 'login': login,
                 'email': login, 'partner_id': partner.id,
             })
-            internal_group.user_ids -= u
-            portal_group.user_ids |= u
+            # Odoo 20 : remplacer tous les groupes, ceux par défaut impliquent interne
+            u.write({'group_ids': [(6, 0, portal_group.ids)]})
         partner.invalidate_recordset(['display_name'])
         self.assertIn(partner.display_name, {'multi_p1@test.com', 'multi_p2@test.com'})
 
@@ -108,7 +106,6 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         """Interne inactif + portail actif → le filtre retire l'interne → login portail affiché."""
         partner = self.env['res.partner'].create({'name': 'Interne Inactif'})
         portal_group = self.env.ref('base.group_portal')
-        internal_group = self.env.ref('base.group_user')
         u_internal = self.env['res.users'].sudo().with_context(no_reset_password=True).create({
             'name': 'Interne Inactif', 'login': 'interne_inactif2@test.com',
             'email': 'interne_inactif2@test.com', 'partner_id': partner.id,
@@ -118,8 +115,8 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
             'name': 'Interne Inactif', 'login': 'portail_actif2@test.com',
             'email': 'portail_actif2@test.com', 'partner_id': partner.id,
         })
-        internal_group.user_ids -= u_portal
-        portal_group.user_ids |= u_portal
+        # Odoo 20 : remplacer tous les groupes, ceux par défaut impliquent interne
+        u_portal.write({'group_ids': [(6, 0, portal_group.ids)]})
         partner.invalidate_recordset(['display_name'])
         self.assertEqual(partner.display_name, 'portail_actif2@test.com')
 
@@ -127,13 +124,12 @@ class TestClubBasePartnerDisplayName(common.TransactionCase):
         """Après désactivation du portail, display_name revient au nom du partenaire."""
         partner = self.env['res.partner'].create({'name': 'Portail Désactivé'})
         portal_group = self.env.ref('base.group_portal')
-        internal_group = self.env.ref('base.group_user')
         u = self.env['res.users'].create({
             'name': 'Portail Désactivé', 'login': 'portail_desactive@test.com',
             'email': 'portail_desactive@test.com', 'partner_id': partner.id,
         })
-        internal_group.user_ids -= u
-        portal_group.user_ids |= u
+        # Odoo 20 : remplacer tous les groupes, ceux par défaut impliquent interne
+        u.write({'group_ids': [(6, 0, portal_group.ids)]})
         partner.invalidate_recordset(['display_name'])
         self.assertEqual(partner.display_name, 'portail_desactive@test.com')
         # Désactivation

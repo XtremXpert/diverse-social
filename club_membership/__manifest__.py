@@ -1,6 +1,6 @@
 {
     'name': 'Club — Memberships',
-    'version': '20.0.1.0.0',
+    'version': '20.0.1.0.1',
     'category': 'Club',
     'summary': "Membership management: status, period, dues, social network access",
     'author': 'Bemade',

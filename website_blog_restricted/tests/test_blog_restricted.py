@@ -42,9 +42,8 @@ class TestBlogRestricted(common.HttpCase):
             'login': 'user_portal',
             'password': 'user_portal',
             'email': 'portal@test.com',
+            'group_ids': [(6, 0, self.env.ref('base.group_portal').ids)],
         })
-        self.env.ref('base.group_user').user_ids -= self.user_portal
-        self.env.ref('base.group_portal').user_ids |= self.user_portal
 
         slug = self.env['ir.http']._slug
         self.url_public = '/blog/%s' % slug(self.blog_public)

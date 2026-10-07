@@ -146,7 +146,12 @@ class ClubMembership(models.Model):
             return  # déjà portal, rien à faire
         if internal not in user.group_ids:
             return  # ni internal ni portal (public ?) — on ne touche pas
-        user.sudo().write({'group_ids': [(3, internal.id), (4, portal.id)]})
+        # Odoo 20 refuse internal + portal : retirer aussi chaque groupe qui
+        # implique internal (groupes par défaut d'un utilisateur créé).
+        internal_groups = user.group_ids.filtered(lambda g: internal in g.all_implied_ids)
+        user.sudo().write({
+            'group_ids': [(3, g.id) for g in internal_groups] + [(4, portal.id)],
+        })
 
     def _sync_social_access(self, grant):
         """Grant or revoke group_social_user based on the membership state.

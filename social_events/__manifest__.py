@@ -1,6 +1,6 @@
 {
     'name': 'Social Events',
-    'version': '20.0.1.0.0',
+    'version': '20.0.1.0.1',
     'category': 'Social',
     'summary': 'Community events with circle-based visibility — extends Odoo Event',
     'author': 'Bemade',

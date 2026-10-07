@@ -14,5 +14,5 @@ access_event.event_tag_system,event.tag social,event.tag,base.group_system,r,
 access_event.event_tag_category_system,event.tag.category social,event.tag.category,base.group_system,r,
 access_event.event_event_ticket_system,event.event.ticket social,event.event.ticket,base.group_system,r,
 access_event.event_type_system,event.type social,event.type,base.group_system,r,
-rule_event_social_visibility,Event: social visibility filter,event.event,social_base.group_social_user,r,"['|', ('social_visibility', '=', False), '|', ('social_visibility', '=', 'members'), ('allowed_circle_ids.member_ids', 'in', [user.id])]"
+rule_event_social_visibility,Event: social visibility filter,event.event,,r,"[] if not user.has_group('social_base.group_social_user') else ['|', '|', '|', ('social_visibility', '=', False), ('social_visibility', '=', 'members'), ('allowed_circle_ids.member_ids', 'in', [user.id]), ('organizer_user_id', '=', user.id)]"
 rule_event_organizer_write,Event: organizer can edit,event.event,social_base.group_social_moderator,cru,"[('organizer_user_id', '=', user.id)]"

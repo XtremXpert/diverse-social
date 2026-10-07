@@ -150,7 +150,7 @@ class TestClubMembership(TransactionCase):
     def test_activate_noop_when_already_portal(self):
         """User already portal stays portal (no swap thrash)."""
         self.user_alice.sudo().write({
-            'group_ids': [(3, self.group_user.id), (4, self.group_portal.id)],
+            'group_ids': [(6, 0, self.group_portal.ids)],
         })
         m = self._make_membership(self.partner_alice)
         m.action_activate()

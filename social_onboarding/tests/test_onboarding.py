@@ -28,6 +28,12 @@ class TestSocialOnboarding(TransactionCase):
         if 'age_gate_passed' in wizard.profile_id._fields:
             wizard.profile_id.sudo().age_gate_passed = True
 
+    def _accept_privacy(self, wizard):
+        """social_privacy, s'il est installé, exige l'acceptation de la
+        politique de confidentialité pour terminer : on l'accepte."""
+        if 'privacy_policy_accepted' in wizard._fields:
+            wizard.privacy_policy_accepted = True
+
     # ── Wizard creation ───────────────────────────────────────────────────────
 
     def test_action_open_creates_wizard(self):
@@ -138,6 +144,7 @@ class TestSocialOnboarding(TransactionCase):
         })
         # Walk forward to the preferences step so that finish() is reachable
         wizard.step = 'preferences'
+        self._accept_privacy(wizard)
         wizard.action_finish()
         profile = wizard.profile_id
         self.assertEqual(profile.pronouns, 'iel/iel')
@@ -154,6 +161,7 @@ class TestSocialOnboarding(TransactionCase):
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         self.assertFalse(wizard.profile_id.onboarding_done)
         wizard.step = 'preferences'
+        self._accept_privacy(wizard)
         wizard.action_finish()
         self.assertTrue(wizard.profile_id.onboarding_done)
 
@@ -279,6 +287,7 @@ class TestSocialOnboarding(TransactionCase):
         action = self.env['social_onboarding.wizard'].with_user(self.user).action_open()
         wizard = self.env['social_onboarding.wizard'].browse(action['res_id'])
         wizard.step = 'preferences'
+        self._accept_privacy(wizard)
         result = wizard.action_finish()
         self.assertEqual(result['type'], 'ir.actions.client')
         self.assertEqual(result['tag'], 'display_notification')
