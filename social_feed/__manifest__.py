@@ -1,6 +1,6 @@
 {
     'name': 'Social Feed',
-    'version': '20.0.2.0.0',
+    'version': '20.0.2.0.1',
     'category': 'Social',
     'summary': "Fil d'actualité agrégé : posts, stories, événements, propositions, préférences + read state",
     'author': 'Bemade',

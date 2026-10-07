@@ -90,9 +90,16 @@ class SocialFeedService(models.AbstractModel):
             connection_set = set(ctx['connection_user_ids'])
             for item in items:
                 item['score'] = self._score_item(item, ctx, now, connection_set)
-            items.sort(key=lambda x: (x['score'], x['timestamp']), reverse=True)
+            items.sort(
+                key=lambda x: (x['score'], x['timestamp'], x['item_type'], x['id']),
+                reverse=True,
+            )
         else:
-            items.sort(key=lambda x: x['timestamp'], reverse=True)
+            # Type et id départagent les dates égales : sans eux, deux pages
+            # successives peuvent se chevaucher.
+            items.sort(
+                key=lambda x: (x['timestamp'], x['item_type'], x['id']), reverse=True
+            )
 
         page = items[offset: offset + limit]
         self._annotate_read_state(page, ctx['user'])
@@ -236,7 +243,9 @@ class SocialFeedService(models.AbstractModel):
             blocked_user_ids=ctx['blocked_ids'],
         )
 
-        posts = self.env['social_base.post'].search(domain, limit=limit)
+        posts = self.env['social_base.post'].search(
+            domain, limit=limit, order='create_date desc, id desc'
+        )
         return [self._post_item(p) for p in posts]
 
     def _post_item(self, p):
@@ -272,7 +281,9 @@ class SocialFeedService(models.AbstractModel):
         if blocked_ids:
             domain.append(('author_id', 'not in', blocked_ids))
 
-        stories = self.env['social_story.story'].search(domain, limit=limit)
+        stories = self.env['social_story.story'].search(
+            domain, limit=limit, order='create_date desc, id desc'
+        )
         return [self._story_item(s) for s in stories]
 
     def _story_item(self, s):
@@ -303,7 +314,7 @@ class SocialFeedService(models.AbstractModel):
         ]
         domain = [('date_begin', '>=', now)] + visibility_domain
         events = self.env['event.event'].search(
-            domain, limit=limit, order='date_begin asc'
+            domain, limit=limit, order='date_begin asc, id asc'
         )
         if not events:
             return []
@@ -383,7 +394,7 @@ class SocialFeedService(models.AbstractModel):
             ('partner_id', 'in', conn_partner_ids),
             ('state', '=', 'open'),
             ('event_id.date_begin', '>=', now),
-        ], limit=limit, order='create_date desc')
+        ], limit=limit, order='create_date desc, id desc')
 
         return [self._event_registration_item(reg, partner_to_user) for reg in regs]
 
@@ -409,7 +420,7 @@ class SocialFeedService(models.AbstractModel):
     @api.model
     def _feed_proposals(self, ctx, limit):
         proposals = self.env['social_governance.proposal'].search(
-            [('state', '=', 'voting')], limit=limit
+            [('state', '=', 'voting')], limit=limit, order='create_date desc, id desc'
         )
         return [self._proposal_item(p) for p in proposals]
 

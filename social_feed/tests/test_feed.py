@@ -265,8 +265,9 @@ class TestSocialFeed(TransactionCase):
     def test_feed_pagination(self):
         result_p1 = self.Feed.with_user(self.alice).get_feed(limit=5, offset=0)
         result_p2 = self.Feed.with_user(self.alice).get_feed(limit=5, offset=5)
-        ids_p1 = [i['id'] for i in result_p1['items']]
-        ids_p2 = [i['id'] for i in result_p2['items']]
+        # Chaque type d'élément a ses propres ids : la clé est (type, id).
+        ids_p1 = [(i['item_type'], i['id']) for i in result_p1['items']]
+        ids_p2 = [(i['item_type'], i['id']) for i in result_p2['items']]
         self.assertFalse(set(ids_p1) & set(ids_p2), 'Pages should not overlap')
 
     def test_limit_capped(self):
