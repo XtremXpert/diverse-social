@@ -1,6 +1,6 @@
 {
     'name': 'Social ntfy Push',
-    'version': '20.0.1.0.1',
+    'version': '20.0.1.0.2',
     'category': 'Social',
     'summary': 'Native iPhone/Android push via a self-hosted ntfy server (generic-payload, per-user topic)',
     'description': """
