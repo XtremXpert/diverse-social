@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+        Override de la page d'accueil website. On édite la view template
+        (key=website.homepage, créée par le module `website`). En cas
+        d'édition via le builder Odoo pour le website actuel, Odoo crée
+        une COW (Copy-On-Write) liée à res.website — si tu veux que ce
+        XML reprenne la main, supprime la COW : DELETE FROM ir_ui_view
+        WHERE key='website.homepage' AND website_id IS NOT NULL;
+
+        noupdate non spécifié (= 0 par défaut) : chaque upgrade du module
+        ré-applique ce contenu. Pour éditer le texte sans redéploiement,
+        passe par /odoo > Website > Pages > Home > Edit (qui créera une
+        COW dérogeant à ce template jusqu'au prochain upgrade).
+
+        Contenu bilingue via t-if sur env.lang plutôt que via i18n .po :
+        plus verbeux mais auto-suffisant (pas de workflow extract/import
+        à maintenir). Le helper `is_fr` est posé une fois en haut.
+        -->
+        <record id="website.homepage" model="ir.ui.view">
+            <!-- ir.ui.view.name is varchar (non-translatable). It feeds
+                 <title>{name} | {website.name}</title> via Odoo's website.layout.
+                 Setting it to "Accueil" gives a sensible FR default; visitors
+                 on /en will see the same string (we accept that minor cost
+                 over the misleading "Home | Diverse-Cité" when serving FR). -->
+            <field name="name">Accueil</field>
+            <field name="arch" type="xml"><t name="Home" t-name="website.homepage">
+<t t-call="website.layout">
+  <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+  <div id="wrap" class="oe_structure oe_empty">
+
+    <!-- HERO — o_cc3 = palette combination 3 (dark/inverted), drives bg + text + buttons from the active theme.
+         dc-hero ajoute la matière velours + vignette + filet doré ornemental (theme_diverse_cite). -->
+    <section class="s_cover o_cc o_cc3 dc-hero pt96 pb96" data-snippet="s_cover">
+      <div class="container">
+        <div class="row align-items-center" style="min-height: 60vh;">
+          <div class="col-lg-9 mx-auto text-center">
+            <div class="dc-eyebrow mb-3">✦
+              <t t-if="is_fr">Réseau privé</t><t t-else="">Private network</t>
+            ✦</div>
+            <h1 class="display-3 mb-3">Diverse-<span class="dc-gold-word">Cité</span></h1>
+            <p class="lead mb-4">
+              <t t-if="is_fr">Réseau québécois pour les communautés libertine, BDSM et fétiche.</t>
+              <t t-else="">Quebec-based network for the libertine, BDSM and fetish communities.</t>
+              <br/>
+              <span class="small">
+                <t t-if="is_fr">Une initiative OBNL au service de la santé sexuelle et du lien communautaire.</t>
+                <t t-else="">A non-profit initiative dedicated to sexual health and community connection.</t>
+              </span>
+            </p>
+            <div class="mt-5">
+              <t t-if="request.env.user._is_public()">
+                <a href="/web/login" class="btn btn-primary btn-lg me-2 mb-2">
+                  <i class="oi me-2" data-icon="login"/>
+                  <t t-if="is_fr">J&#8217;ai été invité&#183;e</t>
+                  <t t-else="">I&#8217;ve been invited</t>
+                </a>
+              </t>
+              <t t-else="">
+                <a href="/my/dashboard" class="btn btn-primary btn-lg me-2 mb-2">
+                  <i class="oi me-2" data-icon="speed"/>
+                  <t t-if="is_fr">Tableau de bord</t>
+                  <t t-else="">Dashboard</t>
+                </a>
+              </t>
+              <a href="#mission" class="btn btn-outline-primary btn-lg mb-2">
+                <t t-if="is_fr">Notre mission</t>
+                <t t-else="">Our mission</t>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION — o_cc1 = primary palette combination (light bg, dark text) -->
+    <section id="mission" class="s_text_block o_cc o_cc1 pt64 pb64">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4 text-center">
+              <t t-if="is_fr">Une plateforme construite par et pour la communauté</t>
+              <t t-else="">A platform built by and for the community</t>
+            </h2>
+            <p class="lead" t-if="is_fr">
+              Diverse-Cité est un <strong>organisme à but non lucratif québécois</strong> qui développe
+              une infrastructure moderne pour les clubs, organisateurs et personnes des milieux
+              libertin, BDSM et fétiche.
+            </p>
+            <p class="lead" t-else="">
+              Diverse-Cité is a <strong>Quebec-based non-profit organization</strong> developing
+              a modern infrastructure for clubs, organizers and people in the libertine, BDSM and
+              fetish communities.
+            </p>
+            <p t-if="is_fr">
+              Notre mission : offrir un espace de rencontre sécuritaire, conforme à la
+              <strong>Loi 25</strong>, et porter un <strong>passeport santé numérique</strong>
+              qui intègre la prévention IST dans le parcours de chaque membre &#8212; sans
+              stigmatisation, sans obligation, sans publicité, sans vente de données.
+            </p>
+            <p t-else="">
+              Our mission: provide a safe meeting space, compliant with Quebec&#8217;s
+              <strong>Law 25</strong>, and offer a <strong>digital health passport</strong>
+              that integrates STI prevention into every member&#8217;s experience &#8212;
+              without stigma, without obligation, without ads, without data resale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEUILLE DE ROUTE (3 phases) — o_cc2 = secondary palette combination -->
+    <section class="s_three_columns o_cc o_cc2 pt64 pb64">
+      <div class="container">
+        <h2 class="text-center mb-5">
+          <t t-if="is_fr">Notre feuille de route</t>
+          <t t-else="">Our roadmap</t>
+        </h2>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body" t-if="is_fr">
+                <div class="mb-3"><span class="badge bg-success">Aujourd&#8217;hui</span></div>
+                <h4>Réseau communautaire</h4>
+                <p class="text-muted small mb-2"><em>Beta fermée</em></p>
+                <p>
+                  Profils, groupes, événements, messagerie privée, gouvernance par les
+                  membres. Accès <strong>uniquement par parrainage</strong> d&#8217;un
+                  membre actif.
+                </p>
+              </div>
+              <div class="card-body" t-else="">
+                <div class="mb-3"><span class="badge bg-success">Today</span></div>
+                <h4>Community network</h4>
+                <p class="text-muted small mb-2"><em>Closed beta</em></p>
+                <p>
+                  Profiles, groups, events, private messaging, member-driven
+                  governance. Access <strong>by sponsorship only</strong> from an
+                  active member.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body" t-if="is_fr">
+                <div class="mb-3"><span class="badge bg-info">Bientôt</span></div>
+                <h4>Passeport santé</h4>
+                <p class="text-muted small mb-2"><em>En développement</em></p>
+                <p>
+                  Application sécurisée pour gérer tes tests IST, vaccinations et
+                  attestations. Données <strong>chiffrées et stockées localement</strong>
+                  sur ton téléphone. En partenariat avec les cliniques de santé sexuelle.
+                </p>
+              </div>
+              <div class="card-body" t-else="">
+                <div class="mb-3"><span class="badge bg-info">Coming soon</span></div>
+                <h4>Health passport</h4>
+                <p class="text-muted small mb-2"><em>In development</em></p>
+                <p>
+                  Secure app to manage your STI tests, vaccinations, and attestations.
+                  Data <strong>encrypted and stored locally</strong> on your phone.
+                  In partnership with sexual health clinics.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body" t-if="is_fr">
+                <div class="mb-3"><span class="badge bg-secondary">Ensuite</span></div>
+                <h4>Communautés et tampons</h4>
+                <p class="text-muted small mb-2"><em>Phase d&#8217;expansion</em></p>
+                <p>
+                  Espaces dédiés (libertin, BDSM, fétiche) avec accès filtré.
+                  Tampons de certification pour faciliter la reconnaissance entre
+                  personnes certifiées, sans exclure les autres.
+                </p>
+              </div>
+              <div class="card-body" t-else="">
+                <div class="mb-3"><span class="badge bg-secondary">Then</span></div>
+                <h4>Communities and stamps</h4>
+                <p class="text-muted small mb-2"><em>Expansion phase</em></p>
+                <p>
+                  Dedicated spaces (libertine, BDSM, fetish) with filtered access.
+                  Certification stamps to help certified members recognize each
+                  other, without excluding others.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA / ACCÈS — o_cc4 = strong contrast (typically inverted) -->
+    <section class="s_call_to_action o_cc o_cc4 pt64 pb64">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-9 mx-auto text-center">
+            <h2 class="mb-3" t-if="is_fr">Comment accéder à Diverse-Cité aujourd&#8217;hui</h2>
+            <h2 class="mb-3" t-else="">How to access Diverse-Cité today</h2>
+            <p class="lead" t-if="is_fr">
+              L&#8217;accès se fait <strong>par parrainage</strong>. Un membre actuel
+              t&#8217;invite, tu lis et acceptes notre
+              <a href="/community/help">charte communautaire</a> (cinq principes :
+              respect, vie privée, consentement, ressources d&#8217;aide, modération
+              à hauteur d&#8217;humain), et tu rejoins le réseau.
+            </p>
+            <p class="lead" t-else="">
+              Access is <strong>by sponsorship</strong>. A current member invites you,
+              you read and accept our <a href="/community/help">community charter</a>
+              (five principles: respect, privacy, consent, help resources,
+              human-scale moderation), and you join the network.
+            </p>
+            <hr class="my-4"/>
+            <div class="row text-start">
+              <div class="col-md-6 mb-3" t-if="is_fr">
+                <h5><i class="oi me-2 text-success" data-icon="account_circle"/>Tu connais un membre ?</h5>
+                <p class="text-muted">
+                  Demande-lui de t&#8217;envoyer une invitation depuis
+                  <code>/my/vouching</code>.
+                </p>
+              </div>
+              <div class="col-md-6 mb-3" t-else="">
+                <h5><i class="oi me-2 text-success" data-icon="account_circle"/>Know a member?</h5>
+                <p class="text-muted">
+                  Ask them to send you an invitation from
+                  <code>/my/vouching</code>.
+                </p>
+              </div>
+              <div class="col-md-6 mb-3" t-if="is_fr">
+                <h5><i class="oi me-2 text-primary" data-icon="mail"/>Organisateur, clinique, ou partenaire ?</h5>
+                <p class="text-muted">
+                  Écris-nous à <a href="mailto:contact@diverse-cite.com">contact@diverse-cite.com</a>.
+                </p>
+              </div>
+              <div class="col-md-6 mb-3" t-else="">
+                <h5><i class="oi me-2 text-primary" data-icon="mail"/>Organizer, clinic, or partner?</h5>
+                <p class="text-muted">
+                  Write to us at <a href="mailto:contact@diverse-cite.com">contact@diverse-cite.com</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</t>
+</t></field>
+        </record>
+    </data>
+</odoo>

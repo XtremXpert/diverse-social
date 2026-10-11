@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+        Page Conditions d'utilisation — Diverse-Cité
+        =============================================
+
+        Route publique (pas d'authentification requise).
+        Créée comme website.page pour permettre l'édition via le website builder.
+
+        Contenu bilingue (FR/EN) intégré directement (pas de .po).
+        Legal review requis avant mise en production — consult avec équipe légale/conformité Loi 25.
+
+        IMPORTANT: Cette page s'affiche sur le sitemap. Pour modifier sans redéploiement,
+        passe par /odoo > Website > Pages > Terms (édit ira créer une COW bypass).
+        -->
+        <record id="website_terms_page" model="website.page">
+            <field name="name">Conditions d'utilisation</field>
+            <field name="url">/terms</field>
+            <field name="type">qweb</field>
+            <field name="key">diverse_club_social.website_terms</field>
+            <field name="arch" type="xml">
+                <t t-name="diverse_club_social.website_terms">
+                    <t t-call="website.layout">
+                        <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                        <div id="wrap" class="o_website_container">
+                            <section class="s_text_image o_cc o_cc1 pt64 pb64">
+                                <div class="container">
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-10 mx-auto">
+                                            <h1 class="mb-4" t-if="is_fr">Conditions d'utilisation</h1>
+                                            <h1 class="mb-4" t-else="">Terms of Use</h1>
+
+                                            <!-- INTRO -->
+                                            <div class="mb-5">
+                                                <p class="lead" t-if="is_fr">
+                                                    Bienvenue sur <strong>Diverse-Cité</strong>. Les présentes conditions régissent votre accès
+                                                    à notre plateforme et à nos services. En utilisant Diverse-Cité, vous acceptez ces conditions
+                                                    dans leur intégralité.
+                                                </p>
+                                                <p class="lead" t-else="">
+                                                    Welcome to <strong>Diverse-Cité</strong>. These terms govern your access to our platform and services.
+                                                    By using Diverse-Cité, you accept these terms in full.
+                                                </p>
+                                            </div>
+
+                                            <!-- 1. ÂGE ET CAPACITÉ -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">1. Âge minimum et capacité</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">1. Age and Capacity</h2>
+                                            <p t-if="is_fr">
+                                                Vous attestez avoir <strong>au moins 18 ans</strong> (ou l'âge légal d'accès
+                                                dans votre juridiction) et la capacité légale à conclure ce contrat.
+                                            </p>
+                                            <p t-else="">
+                                                You confirm you are <strong>at least 18 years old</strong> (or the legal age of access
+                                                in your jurisdiction) and have the legal capacity to enter this agreement.
+                                            </p>
+
+                                            <!-- 2. UTILISATION APPROPRIÉE -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">2. Utilisation appropriée</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">2. Appropriate Use</h2>
+                                            <p t-if="is_fr">
+                                                Vous vous engagez à utiliser Diverse-Cité de manière légale et respectueuse. Vous acceptez de ne pas :
+                                            </p>
+                                            <p t-else="">
+                                                You agree to use Diverse-Cité legally and respectfully. You agree not to:
+                                            </p>
+                                            <ul>
+                                                <li t-if="is_fr">
+                                                    Partager le contenu d'autres membres (textes, images, vidéos) sans consentement explicite ;
+                                                </li>
+                                                <li t-else="">
+                                                    Share other members' content (text, images, videos) without explicit consent;
+                                                </li>
+
+                                                <li t-if="is_fr">
+                                                    Harceler, menacer, intimider ou discriminer d'autres membres ;
+                                                </li>
+                                                <li t-else="">
+                                                    Harass, threaten, intimidate or discriminate against other members;
+                                                </li>
+
+                                                <li t-if="is_fr">
+                                                    Utiliser la plateforme à des fins commerciales sans autorisation explicite ;
+                                                </li>
+                                                <li t-else="">
+                                                    Use the platform for commercial purposes without explicit authorization;
+                                                </li>
+
+                                                <li t-if="is_fr">
+                                                    Violer les lois applicables ou encourager des activités illégales.
+                                                </li>
+                                                <li t-else="">
+                                                    Violate applicable laws or encourage illegal activities.
+                                                </li>
+                                            </ul>
+
+                                            <!-- 3. RESPONSABILITÉ PERSONNELLE ET CONSENTEMENT -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">3. Responsabilité personnelle et consentement</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">3. Personal Responsibility and Consent</h2>
+                                            <p t-if="is_fr">
+                                                Vous êtes seul responsable de vos interactions avec d'autres membres.
+                                                Diverse-Cité fournit les outils (négociation, sécurité, consentement) mais
+                                                <strong>n'intervient pas directement dans les négociations ou rencontres hors-ligne</strong>.
+                                            </p>
+                                            <p t-else="">
+                                                You are solely responsible for your interactions with other members.
+                                                Diverse-Cité provides tools (negotiation, safety, consent) but
+                                                <strong>does not directly intervene in off-platform negotiations or meetings</strong>.
+                                            </p>
+                                            <p t-if="is_fr" class="text-muted">
+                                                Avant toute rencontre : utilisez les outils de négociation, posez vos limites clairement,
+                                                vérifiez l'identité et le respect des consentements établis.
+                                            </p>
+                                            <p t-else="" class="text-muted">
+                                                Before any meeting: use negotiation tools, set boundaries clearly,
+                                                verify identity and respect established consent.
+                                            </p>
+
+                                            <!-- 4. CONFIDENTIALITÉ ET LOIS APPLICABLES -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">4. Confidentialité et Loi 25</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">4. Privacy and Law 25 Compliance</h2>
+                                            <p t-if="is_fr">
+                                                Diverse-Cité respecte la <strong>Loi 25 du Québec</strong> sur la protection des données personnelles.
+                                                <a href="/my/privacy">Consultez votre espace confidentialité</a> pour contrôler vos données.
+                                            </p>
+                                            <p t-else="">
+                                                Diverse-Cité complies with <strong>Quebec's Law 25</strong> on personal data protection.
+                                                <a href="/my/privacy">Visit your privacy dashboard</a> to control your data.
+                                            </p>
+
+                                            <!-- 5. PROPRIÉTÉ INTELLECTUELLE -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">5. Propriété intellectuelle</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">5. Intellectual Property</h2>
+                                            <p t-if="is_fr">
+                                                Le contenu que vous publiez vous appartient. Vous accordez à Diverse-Cité une licence
+                                                non-exclusive pour l'héberger et le servir aux autres membres selon vos paramètres de visibilité.
+                                            </p>
+                                            <p t-else="">
+                                                Content you publish remains yours. You grant Diverse-Cité a non-exclusive license to host
+                                                and serve it to other members according to your privacy settings.
+                                            </p>
+
+                                            <!-- 6. LIMITATION DE RESPONSABILITÉ -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">6. Limitation de responsabilité</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">6. Limitation of Liability</h2>
+                                            <p t-if="is_fr">
+                                                <strong>Diverse-Cité est fournie « en l'état »</strong>. Nous ne garantissons pas l'absence de bugs,
+                                                d'interruptions ou d'erreurs. <strong>Nous ne sommes pas responsables des dommages directs ou indirects
+                                                découlant de l'utilisation ou de l'impossibilité d'utiliser la plateforme.</strong>
+                                            </p>
+                                            <p t-else="">
+                                                <strong>Diverse-Cité is provided "as is"</strong>. We do not guarantee freedom from bugs,
+                                                interruptions or errors. <strong>We are not liable for any direct or indirect damages
+                                                arising from use or inability to use the platform.</strong>
+                                            </p>
+
+                                            <!-- 7. MODIFICATIONS ET RÉSILIATION -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">7. Modifications et résiliation</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">7. Changes and Termination</h2>
+                                            <p t-if="is_fr">
+                                                Nous nous réservons le droit de modifier ces conditions. Les modifications majeures
+                                                seront communiquées aux membres par notification. Votre utilisation continue signifie
+                                                votre acceptation des conditions modifiées.
+                                            </p>
+                                            <p t-else="">
+                                                We reserve the right to modify these terms. Major changes will be notified to members.
+                                                Your continued use means acceptance of the modified terms.
+                                            </p>
+
+                                            <!-- 8. CONTACT -->
+                                            <h2 class="mt-5 mb-3" t-if="is_fr">8. Nous contacter</h2>
+                                            <h2 class="mt-5 mb-3" t-else="">8. Contact Us</h2>
+                                            <p t-if="is_fr">
+                                                Questions ou préoccupations ? <a href="/contactus">Contactez-nous</a> ou
+                                                envoyez un courriel à <strong>hello@diverse-cite.com</strong>.
+                                            </p>
+                                            <p t-else="">
+                                                Questions or concerns? <a href="/contactus">Contact us</a> or
+                                                email <strong>hello@diverse-cite.com</strong>.
+                                            </p>
+
+                                            <!-- FOOTER -->
+                                            <hr class="my-5"/>
+                                            <p class="text-muted text-center" t-if="is_fr">
+                                                <strong>Dernière mise à jour :</strong> juin 2026
+                                                <br/>
+                                                ⚠️ <em>Ces conditions sont un brouillon. Validation légale/conformité requise avant mise en production.</em>
+                                            </p>
+                                            <p class="text-muted text-center" t-else="">
+                                                <strong>Last updated:</strong> June 2026
+                                                <br/>
+                                                ⚠️ <em>These terms are a draft. Legal/compliance review required before production.</em>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </t>
+                </t>
+            </field>
+        </record>
+    </data>
+</odoo>

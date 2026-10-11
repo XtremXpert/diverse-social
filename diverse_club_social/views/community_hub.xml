@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="community_hub" name="Community Hub">
+            <t t-call="website.layout">
+                <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                <div id="wrap" class="o_website_container">
+                    <!-- HERO SECTION -->
+                    <section class="s_cover o_cc o_cc3 dc-hero pt96 pb96">
+                        <div class="container">
+                            <div class="row align-items-center" style="min-height: 50vh;">
+                                <div class="col-lg-10 mx-auto text-center">
+                                    <h1 class="display-3 mb-4" t-if="is_fr">
+                                        Bienvenue dans la <span class="dc-gold-word">Communauté</span>
+                                    </h1>
+                                    <h1 class="display-3 mb-4" t-else="">
+                                        Welcome to the <span class="dc-gold-word">Community</span>
+                                    </h1>
+                                    <p class="lead mb-0" t-if="is_fr">
+                                        Découvrez les groupes, propositions, négociations et membres de Diverse-Cité.
+                                    </p>
+                                    <p class="lead mb-0" t-else="">
+                                        Discover groups, proposals, negotiations and members of Diverse-Cité.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MAIN CONTENT -->
+                    <section class="s_text_block o_cc o_cc1 pt64 pb64">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <!-- GRID DE LIENS PRINCIPAUX -->
+                                    <div class="row g-4">
+                                        <!-- GROUPS -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/groups" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">👥</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Groupes</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Groups</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Rejoignez des groupes d'intérêt, créez-en de nouveaux,
+                                                            échangez avec la communauté.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Join interest groups, create new ones,
+                                                            and connect with the community.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <!-- GOVERNANCE -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/governance" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">🗳️</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Gouvernance</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Governance</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Participez aux décisions de la communauté
+                                                            par le vote sur les propositions.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Participate in community decisions
+                                                            by voting on proposals.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <!-- NEGOTIATIONS -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/my/negotiations" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">📋</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Négociations</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Negotiations</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Documentez vos limites et désirs
+                                                            avant les rencontres.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Document your boundaries and desires
+                                                            before meetings.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <!-- DISCOVER -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/discover" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">🔍</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Découvrir</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Discover</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Explorez les profils et trouvez des connexions
+                                                            selon vos affinités.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Explore profiles and find connections
+                                                            based on your interests.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <!-- REPUTATION -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/reputation" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">⭐</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Réputation</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Reputation</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Construisez votre réputation par le parrainage
+                                                            et les recommandations.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Build your reputation through vouching
+                                                            and recommendations.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <!-- SAFETY -->
+                                        <div class="col-lg-6 col-xl-4">
+                                            <a href="/safety" class="text-decoration-none">
+                                                <div class="card h-100 border-0 shadow-sm hover-lift">
+                                                    <div class="card-body text-center py-5">
+                                                        <div class="mb-3" style="font-size: 3rem;">🛡️</div>
+                                                        <h5 class="card-title mb-2" t-if="is_fr">Sécurité</h5>
+                                                        <h5 class="card-title mb-2" t-else="">Safety</h5>
+                                                        <p class="card-text text-muted small" t-if="is_fr">
+                                                            Gérez vos blocages, silences et outils de protection
+                                                            personnelle.
+                                                        </p>
+                                                        <p class="card-text text-muted small" t-else="">
+                                                            Manage your blocks, mutes and personal protection
+                                                            tools.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- CHARTER SECTION -->
+                                    <hr class="my-5"/>
+                                    <div class="row mt-5">
+                                        <div class="col-lg-10 mx-auto">
+                                            <div class="bg-light p-4 rounded">
+                                                <h4 class="mb-3" t-if="is_fr">
+                                                    <i class="oi me-2" data-icon="book"/>Charte communautaire
+                                                </h4>
+                                                <h4 class="mb-3" t-else="">
+                                                    <i class="oi me-2" data-icon="book"/>Community Charter
+                                                </h4>
+                                                <p t-if="is_fr">
+                                                    Avant de participer à la communauté, lisez notre
+                                                    <a href="/community/help">charte communautaire</a> qui définit
+                                                    les principes de respect, confidentialité et consentement.
+                                                </p>
+                                                <p t-else="">
+                                                    Before participating in the community, read our
+                                                    <a href="/community/help">community charter</a> which defines
+                                                    the principles of respect, privacy and consent.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CSS FOR HOVER LIFT -->
+                    <style>
+                        .hover-lift {
+                            transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        }
+                        .hover-lift:hover {
+                            transform: translateY(-8px);
+                            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+                        }
+                    </style>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Page Partenaires — formulaire de demande -->
+        <template id="partners_page" name="Partners Page">
+            <t t-call="website.layout">
+                <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                <div id="wrap" class="o_website_container">
+                    <!-- HERO SECTION -->
+                    <section class="s_cover o_cc o_cc3 dc-hero pt96 pb96">
+                        <div class="container">
+                            <div class="row align-items-center" style="min-height: 50vh;">
+                                <div class="col-lg-10 mx-auto text-center">
+                                    <h1 class="display-3 mb-4" t-if="is_fr">Partenaires</h1>
+                                    <h1 class="display-3 mb-4" t-else="">Partners</h1>
+                                    <p class="lead mb-0" t-if="is_fr">
+                                        Rejoignez Diverse-Cité et développez votre réseau avec nos communautés.
+                                    </p>
+                                    <p class="lead mb-0" t-else="">
+                                        Join Diverse-Cité and grow your network with our communities.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MAIN CONTENT -->
+                    <section class="s_text_block o_cc o_cc1 pt64 pb64">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-10 mx-auto">
+                                    <!-- INFO SECTION -->
+                                    <div class="mb-5" t-if="is_fr">
+                                        <h2 class="mb-4">Devenez partenaire</h2>
+                                        <p class="lead">
+                                            Diverse-Cité collabore avec des clubs, organisateurs, fournisseurs et sponsors
+                                            qui partagent nos valeurs de respect, confidentialité et gouvernance communautaire.
+                                        </p>
+                                        <p>
+                                            Si vous représentez une organisation intéressée à s'associer avec Diverse-Cité,
+                                            nous aimerions vous rencontrer. Remplissez le formulaire ci-dessous et notre équipe
+                                            vous contactera rapidement.
+                                        </p>
+                                    </div>
+                                    <div class="mb-5" t-else="">
+                                        <h2 class="mb-4">Become a Partner</h2>
+                                        <p class="lead">
+                                            Diverse-Cité collaborates with clubs, organizers, vendors and sponsors
+                                            who share our values of respect, privacy and community governance.
+                                        </p>
+                                        <p>
+                                            If you represent an organization interested in partnering with Diverse-Cité,
+                                            we'd love to meet you. Fill out the form below and our team will contact you shortly.
+                                        </p>
+                                    </div>
+
+                                    <!-- SUBMENU SECTION -->
+                                    <div class="row g-3 mb-5">
+                                        <div class="col-md-6">
+                                            <a href="/partners" class="text-decoration-none">
+                                                <div class="card border-0 shadow-sm bg-light h-100">
+                                                    <div class="card-body text-center">
+                                                        <div class="mb-2" style="font-size: 2rem;">🤝</div>
+                                                        <h5 class="card-title" t-if="is_fr">Devenir partenaire</h5>
+                                                        <h5 class="card-title" t-else="">Become a Partner</h5>
+                                                        <p class="card-text small text-muted" t-if="is_fr">
+                                                            Exprimez votre intérêt de partenariat
+                                                        </p>
+                                                        <p class="card-text small text-muted" t-else="">
+                                                            Express your partnership interest
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="/partners/hosting" class="text-decoration-none">
+                                                <div class="card border-0 shadow-sm bg-light h-100">
+                                                    <div class="card-body text-center">
+                                                        <div class="mb-2" style="font-size: 2rem;">🏨</div>
+                                                        <h5 class="card-title" t-if="is_fr">Demander un hébergement</h5>
+                                                        <h5 class="card-title" t-else="">Request Hosting</h5>
+                                                        <p class="card-text small text-muted" t-if="is_fr">
+                                                            Devis d'hébergement pour votre événement
+                                                        </p>
+                                                        <p class="card-text small text-muted" t-else="">
+                                                            Hosting quotes for your event
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- ERROR MESSAGE -->
+                                    <t t-if="error">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong t-if="is_fr">Erreur :</strong>
+                                            <strong t-else="">Error:</strong>
+                                            <span t-out="error"/>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"/>
+                                        </div>
+                                    </t>
+
+                                    <!-- FORM -->
+                                    <form method="post" action="/partners/submit" class="mt-5" id="partner_form">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                        <!-- ROW 1: Nom + Email -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="name" class="form-label" t-if="is_fr">Votre nom *</label>
+                                                <label for="name" class="form-label" t-else="">Your name *</label>
+                                                <input type="text" class="form-control" id="name" name="name" required="required"
+                                                       t-att-value="form_data.get('name', '')"/>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label" t-if="is_fr">Courriel *</label>
+                                                <label for="email" class="form-label" t-else="">Email *</label>
+                                                <input type="email" class="form-control" id="email" name="email" required="required"
+                                                       t-att-value="form_data.get('email', '')"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- ROW 2: Téléphone + Nom entreprise -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="phone" class="form-label" t-if="is_fr">Téléphone</label>
+                                                <label for="phone" class="form-label" t-else="">Phone</label>
+                                                <input type="tel" class="form-control" id="phone" name="phone"
+                                                       t-att-value="form_data.get('phone', '')"/>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="company_name" class="form-label" t-if="is_fr">Nom entreprise/organisation *</label>
+                                                <label for="company_name" class="form-label" t-else="">Company/Organization name *</label>
+                                                <input type="text" class="form-control" id="company_name" name="company_name" required="required"
+                                                       t-att-value="form_data.get('company_name', '')"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- TYPE D'INTÉRÊT -->
+                                        <div class="mb-3">
+                                            <label for="interest_type" class="form-label" t-if="is_fr">Type d'intérêt *</label>
+                                            <label for="interest_type" class="form-label" t-else="">Interest type *</label>
+                                            <select class="form-select" id="interest_type" name="interest_type" required="required">
+                                                <option value="">
+                                                    <t t-if="is_fr">Sélectionnez un type...</t>
+                                                    <t t-else="">Select a type...</t>
+                                                </option>
+                                                <option value="club" t-att-selected="form_data.get('interest_type') == 'club'">
+                                                    <t t-if="is_fr">Club/Venue</t>
+                                                    <t t-else="">Club/Venue</t>
+                                                </option>
+                                                <option value="organizer" t-att-selected="form_data.get('interest_type') == 'organizer'">
+                                                    <t t-if="is_fr">Organisateur/Promoteur</t>
+                                                    <t t-else="">Organizer/Promoter</t>
+                                                </option>
+                                                <option value="vendor" t-att-selected="form_data.get('interest_type') == 'vendor'">
+                                                    <t t-if="is_fr">Fournisseur</t>
+                                                    <t t-else="">Vendor</t>
+                                                </option>
+                                                <option value="sponsor" t-att-selected="form_data.get('interest_type') == 'sponsor'">
+                                                    <t t-if="is_fr">Sponsor</t>
+                                                    <t t-else="">Sponsor</t>
+                                                </option>
+                                                <option value="affiliate" t-att-selected="form_data.get('interest_type') == 'affiliate'">
+                                                    <t t-if="is_fr">Affilié</t>
+                                                    <t t-else="">Affiliate</t>
+                                                </option>
+                                                <option value="other" t-att-selected="form_data.get('interest_type') == 'other'">
+                                                    <t t-if="is_fr">Autre</t>
+                                                    <t t-else="">Other</t>
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- DESCRIPTION -->
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label" t-if="is_fr">Description du projet *</label>
+                                            <label for="description" class="form-label" t-else="">Project description *</label>
+                                            <textarea class="form-control" id="description" name="description" rows="6" required="required"
+                                                      placeholder="Décrivez votre projet, votre club, ou votre offre..."
+                                                      t-att-placeholder="'Describe your project, club, or offer...' if not is_fr else 'Décrivez votre projet, votre club, ou votre offre...'"
+                                                      t-out="form_data.get('description', '')"/>
+                                        </div>
+
+                                        <!-- SUBMIT -->
+                                        <div class="mb-3">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100" t-if="is_fr">
+                                                <i class="oi me-2" data-icon="send"/>Soumettre ma demande
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-lg w-100" t-else="">
+                                                <i class="oi me-2" data-icon="send"/>Submit my inquiry
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- FOOTER NOTE -->
+                                    <p class="text-muted text-center small mt-4" t-if="is_fr">
+                                        Nous reviendrons vers vous dans les 5 à 7 jours ouvrables.
+                                    </p>
+                                    <p class="text-muted text-center small mt-4" t-else="">
+                                        We'll get back to you within 5-7 business days.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Page Success -->
+        <template id="partners_success" name="Partners Success">
+            <t t-call="website.layout">
+                <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                <div id="wrap" class="o_website_container">
+                    <section class="s_text_block o_cc o_cc1 pt96 pb96">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8 mx-auto text-center">
+                                    <div class="mb-4" style="font-size: 4rem; color: #28a745;">
+                                        <i class="oi" data-icon="check_circle"/>
+                                    </div>
+                                    <h1 class="mb-4" t-if="is_fr">Merci pour votre intérêt !</h1>
+                                    <h1 class="mb-4" t-else="">Thank you for your interest!</h1>
+
+                                    <p class="lead mb-4" t-if="is_fr">
+                                        Votre demande de partenariat a été reçue avec succès.
+                                    </p>
+                                    <p class="lead mb-4" t-else="">
+                                        Your partnership inquiry has been received successfully.
+                                    </p>
+
+                                    <p t-if="is_fr">
+                                        Notre équipe examinera votre demande et vous contactera dans les 5 à 7 jours ouvrables
+                                        à l'adresse courriel <strong t-out="inquiry.email"/>.
+                                    </p>
+                                    <p t-else="">
+                                        Our team will review your inquiry and contact you within 5-7 business days
+                                        at <strong t-out="inquiry.email"/>.
+                                    </p>
+
+                                    <hr class="my-5"/>
+
+                                    <div class="mt-5">
+                                        <a href="/partners" class="btn btn-outline-primary me-2" t-if="is_fr">
+                                            Retour à la page
+                                        </a>
+                                        <a href="/partners" class="btn btn-outline-primary me-2" t-else="">
+                                            Back to page
+                                        </a>
+                                        <a href="/" class="btn btn-primary" t-if="is_fr">
+                                            Accueil
+                                        </a>
+                                        <a href="/" class="btn btn-primary" t-else="">
+                                            Home
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
