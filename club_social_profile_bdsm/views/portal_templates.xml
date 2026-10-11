@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <template id="portal_bdsm_profile" name="My BDSM profile">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My BDSM profile</t>
+            </t>
+
+            <div class="container mt-3" style="max-width: 760px;">
+
+                <!-- Notifications -->
+                <div class="alert alert-success" t-if="request.params.get('kink_requested')">
+                    Your request has been submitted to the moderators.
+                </div>
+                <div class="alert alert-danger" t-if="request.params.get('error') == 'name_required'">
+                    Kink name is required.
+                </div>
+
+                <!-- Privacy note -->
+                <div class="alert alert-info small mb-4">
+                    <strong>Privacy:</strong> This information is only shared with
+                    members whose connection request you have accepted.
+                </div>
+
+                <!-- ── Role and experience ─────────────────────────────────── -->
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Role and experience</strong></div>
+                    <div class="card-body">
+                        <form action="/my/profile/bdsm/save" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="bdsm_role">BDSM role</label>
+                                    <select class="form-select" name="bdsm_role" id="bdsm_role">
+                                        <option value="">— Unspecified —</option>
+                                        <t t-foreach="role_labels.items()" t-as="item">
+                                            <option t-att-value="item[0]" t-att-selected="profile.bdsm_role == item[0] and 'selected' or None">
+                                                <t t-out="item[1]"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="experience">Experience</label>
+                                    <select class="form-select" name="experience" id="experience">
+                                        <option value="">— Unspecified —</option>
+                                        <t t-foreach="experience_labels.items()" t-as="item">
+                                            <option t-att-value="item[0]" t-att-selected="profile.experience == item[0] and 'selected' or None">
+                                                <t t-out="item[1]"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="soft_limits">
+                                    Negotiable limits
+                                    <span class="text-muted small ms-1">(soft limits)</span>
+                                </label>
+                                <textarea class="form-control" name="soft_limits" id="soft_limits" rows="3" placeholder="What you accept with prior negotiation…">
+                                    <t t-out="profile.soft_limits or ''"/>
+                                </textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="hard_limits">
+                                    Hard limits
+                                    <span class="text-muted small ms-1">(hard limits)</span>
+                                </label>
+                                <textarea class="form-control" name="hard_limits" id="hard_limits" rows="3" placeholder="What you absolutely refuse…">
+                                    <t t-out="profile.hard_limits or ''"/>
+                                </textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ── My kinks ────────────────────────────────────────────── -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>My interests / kinks</strong>
+                        <span class="badge bg-secondary"><t t-out="len(profile.kink_level_ids)"/></span>
+                    </div>
+                    <t t-if="profile.kink_level_ids">
+                        <ul class="list-group list-group-flush">
+                            <t t-foreach="profile.kink_level_ids" t-as="kl">
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                    <div>
+                                        <span t-out="kl.kink_id.name"/>
+                                        <span t-att-class="'badge ms-2 ' + {'curieux': 'bg-secondary', 'soft': 'bg-info text-dark', 'oui': 'bg-success', 'expert': 'bg-warning text-dark'}.get(kl.level, 'bg-secondary')">
+                                            <t t-out="level_labels.get(kl.level, kl.level)"/>
+                                        </span>
+                                    </div>
+                                    <form t-attf-action="/my/profile/bdsm/kink/#{kl.id}/remove" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-link text-danger p-0">Remove</button>
+                                    </form>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                    <t t-else="">
+                        <div class="card-body">
+                            <p class="text-muted mb-0">No interests added yet.</p>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- ── Add a kink from the catalog ─────────────────────────── -->
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Add from catalog</strong></div>
+                    <div class="card-body">
+                        <form action="/my/profile/bdsm/kink/add" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row g-2 align-items-end">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="kink_id">Kink</label>
+                                    <select class="form-select form-select-sm" name="kink_id" id="kink_id">
+                                        <option value="">— Choose —</option>
+                                        <t t-foreach="kinks_all" t-as="kink">
+                                            <t t-if="kink.id not in my_kink_ids">
+                                                <option t-att-value="kink.id" t-out="kink.name"/>
+                                            </t>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="form-label" for="level">Level</label>
+                                    <select class="form-select form-select-sm" name="level" id="level">
+                                        <t t-foreach="level_labels.items()" t-as="item">
+                                            <option t-att-value="item[0]"><t t-out="item[1]"/></option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-secondary btn-sm w-100">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ── Suggest a new kink ──────────────────────────────────── -->
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Suggest a new kink</strong></div>
+                    <div class="card-body">
+                        <p class="text-muted small">
+                            If you don't find what you're looking for in the catalog,
+                            submit a request to the moderators.
+                        </p>
+                        <form action="/my/profile/bdsm/kink/request" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control form-control-sm" name="name" placeholder="Kink name *" required="required"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control form-control-sm" name="description" placeholder="Description (optional)"/>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                Submit request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

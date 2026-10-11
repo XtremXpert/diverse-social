@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="assets_portal_compat_widget" model="ir.asset">
+        <field name="name">BDSM Compat Widget JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/club_social_profile_bdsm/static/src/js/portal_compat_widget.js</field>
+    </record>
+
+    <!--
+        Inject the BDSM section into the public profile page.
+        Uses an XPath on the "profile_bdsm_section" id to avoid any coupling
+        with club_social_profile.
+    -->
+    <template id="portal_profile_public_bdsm_inject"
+              inherit_id="club_social_profile.portal_profile_public"
+              name="Profile — BDSM Section">
+        <xpath expr="//div[@id='profile_bdsm_section']" position="replace">
+            <t t-set="_role_labels" t-value="{
+                'dominant': 'Dominant',
+                'soumis': 'Submissive',
+                'switch': 'Switch',
+                'maitre': 'Master/Mistress',
+                'esclave': 'Slave',
+                'sadique': 'Sadist',
+                'masochiste': 'Masochist',
+                'curieux': 'Curious',
+                'spectateur': 'Spectator',
+                'autre': 'Other',
+            }"/>
+            <t t-set="_exp_labels" t-value="{
+                'nouveau': 'New',
+                'intermediate': 'Intermediate',
+                'experimente': 'Experienced',
+            }"/>
+
+            <t t-if="profile.bdsm_role or profile.kink_level_ids">
+                <div class="card mb-4" id="profile_bdsm_section">
+                    <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                        ⛓️ BDSM Profile
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Role + experience -->
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <t t-if="profile.bdsm_role">
+                                <span class="badge rounded-pill" style="background:#e94560; color:white; font-size:0.9rem;">
+                                    <t t-out="_role_labels.get(profile.bdsm_role, profile.bdsm_role)"/>
+                                </span>
+                            </t>
+                            <t t-if="profile.experience">
+                                <span class="badge rounded-pill bg-secondary" style="font-size:0.9rem;">
+                                    <t t-out="_exp_labels.get(profile.experience, profile.experience)"/>
+                                </span>
+                            </t>
+                        </div>
+
+                        <!-- Kinks -->
+                        <t t-if="profile.kink_level_ids">
+                            <t t-set="_level_styles" t-value="{
+                                'curieux': ('bg-light text-dark border', '🤔'),
+                                'soft':    ('bg-info text-white', '💙'),
+                                'oui':     ('bg-success text-white', '✅'),
+                                'expert':  ('bg-danger text-white', '🔥'),
+                            }"/>
+                            <h6 class="text-muted mb-2">Interests</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                <t t-foreach="profile.kink_level_ids" t-as="kl">
+                                    <t t-set="_style" t-value="_level_styles.get(kl.level, ('bg-light text-dark', ''))"/>
+                                    <span t-attf-class="badge rounded-pill #{_style[0]}"
+                                          style="font-size:0.82rem;">
+                                        <t t-out="_style[1]"/> <t t-out="kl.kink_id.name"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Link to management if owner -->
+                        <t t-if="is_own">
+                            <div class="mt-3">
+                                <a href="/my/profile/bdsm" class="btn btn-outline-secondary btn-sm">
+                                    Manage my BDSM preferences →
+                                </a>
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div id="profile_bdsm_section"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ── BDSM compatibility widget ──────────────────────────────────────── -->
+    <template id="portal_profile_compat_inject"
+              inherit_id="club_social_profile.portal_profile_public"
+              name="Profile — BDSM compatibility widget">
+        <xpath expr="//div[@id='profile_compat_widget']" position="replace">
+            <div id="profile_compat_widget"
+                 t-att-data-profile-id="profile.id"
+                 t-att-data-is-own="'1' if is_own else '0'">
+                <t t-if="not is_own">
+                    <div id="sn_compat_card" class="card mb-4" style="display:none;">
+                        <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                            💘 BDSM compatibility
+                        </div>
+                        <div class="card-body text-center py-3">
+
+                            <!-- Jauge circulaire CSS -->
+                            <div style="position:relative; display:inline-block; width:90px; height:90px; margin-bottom:8px;">
+                                <svg viewBox="0 0 36 36" style="transform:rotate(-90deg); width:90px; height:90px;">
+                                    <circle cx="18" cy="18" r="15.9"
+                                            fill="none" stroke="#eee" stroke-width="3"/>
+                                    <circle id="sn_compat_arc" cx="18" cy="18" r="15.9"
+                                            fill="none" stroke="#e94560" stroke-width="3"
+                                            stroke-dasharray="0 100"
+                                            stroke-linecap="round"
+                                            style="transition: stroke-dasharray .6s ease;"/>
+                                </svg>
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                                    <span id="sn_compat_score"
+                                          style="font-size:1.3rem; font-weight:bold; color:#e94560;">—</span>
+                                </div>
+                            </div>
+
+                            <div id="sn_compat_details" style="font-size:0.82rem; color:#666;"/>
+                            <div id="sn_compat_kinks" class="mt-2"/>
+                        </div>
+                    </div>
+
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

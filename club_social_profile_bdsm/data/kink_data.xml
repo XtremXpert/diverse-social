@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Liste initiale de kinks / intérêts. noupdate=1 : seed de départ,
+         ensuite gérée en base (ajouts via le flux de demandes + modération). -->
+
+    <!-- ── Attache & restriction ─────────────────────────────────────────── -->
+    <record id="kink_bondage" model="club_social_profile_bdsm.kink">
+        <field name="name">Bondage</field>
+        <field name="description">Attache et restriction des mouvements.</field>
+    </record>
+    <record id="kink_shibari" model="club_social_profile_bdsm.kink">
+        <field name="name">Shibari / Kinbaku</field>
+        <field name="description">Art japonais du ligotage à la corde.</field>
+    </record>
+    <record id="kink_suspension" model="club_social_profile_bdsm.kink">
+        <field name="name">Suspension</field>
+        <field name="description">Ligotage suspendu, partiel ou complet.</field>
+    </record>
+    <record id="kink_menottes" model="club_social_profile_bdsm.kink">
+        <field name="name">Menottes</field>
+        <field name="description">Entraves aux poignets ou aux chevilles.</field>
+    </record>
+    <record id="kink_baillon" model="club_social_profile_bdsm.kink">
+        <field name="name">Bâillon</field>
+        <field name="description">Réduction ou suppression de la parole.</field>
+    </record>
+    <record id="kink_bandeau" model="club_social_profile_bdsm.kink">
+        <field name="name">Bandeau sur les yeux</field>
+        <field name="description">Privation de la vue.</field>
+    </record>
+
+    <!-- ── Domination / soumission ───────────────────────────────────────── -->
+    <record id="kink_domination" model="club_social_profile_bdsm.kink">
+        <field name="name">Domination</field>
+        <field name="description">Prise de contrôle consentie sur le ou la partenaire.</field>
+    </record>
+    <record id="kink_soumission" model="club_social_profile_bdsm.kink">
+        <field name="name">Soumission</field>
+        <field name="description">Abandon consenti du contrôle.</field>
+    </record>
+    <record id="kink_switch" model="club_social_profile_bdsm.kink">
+        <field name="name">Switch</field>
+        <field name="description">Alterne les rôles dominant et soumis.</field>
+    </record>
+    <record id="kink_dressage" model="club_social_profile_bdsm.kink">
+        <field name="name">Dressage</field>
+        <field name="description">Conditionnement et apprentissage de comportements.</field>
+    </record>
+    <record id="kink_discipline" model="club_social_profile_bdsm.kink">
+        <field name="name">Discipline</field>
+        <field name="description">Règles, punitions et récompenses.</field>
+    </record>
+    <record id="kink_protocole" model="club_social_profile_bdsm.kink">
+        <field name="name">Protocole</field>
+        <field name="description">Codes de conduite et rituels formels.</field>
+    </record>
+    <record id="kink_service" model="club_social_profile_bdsm.kink">
+        <field name="name">Service domestique</field>
+        <field name="description">Soumission par le service et les tâches.</field>
+    </record>
+    <record id="kink_collaring" model="club_social_profile_bdsm.kink">
+        <field name="name">Collaring (collier)</field>
+        <field name="description">Symbole d'appartenance et d'engagement.</field>
+    </record>
+    <record id="kink_chastete" model="club_social_profile_bdsm.kink">
+        <field name="name">Chasteté</field>
+        <field name="description">Contrôle de l'orgasme via cage ou abstinence.</field>
+    </record>
+
+    <!-- ── Impact ────────────────────────────────────────────────────────── -->
+    <record id="kink_fessee" model="club_social_profile_bdsm.kink">
+        <field name="name">Fessée</field>
+        <field name="description">Coups donnés à la main sur les fesses.</field>
+    </record>
+    <record id="kink_flagellation" model="club_social_profile_bdsm.kink">
+        <field name="name">Flagellation</field>
+        <field name="description">Coups portés avec un instrument souple.</field>
+    </record>
+    <record id="kink_martinet" model="club_social_profile_bdsm.kink">
+        <field name="name">Martinet</field>
+        <field name="description">Lanières de cuir pour impact léger à modéré.</field>
+    </record>
+    <record id="kink_paddle" model="club_social_profile_bdsm.kink">
+        <field name="name">Paddle</field>
+        <field name="description">Palette rigide pour impact.</field>
+    </record>
+    <record id="kink_cravache" model="club_social_profile_bdsm.kink">
+        <field name="name">Cravache</field>
+        <field name="description">Impact ciblé et piquant.</field>
+    </record>
+    <record id="kink_fouet" model="club_social_profile_bdsm.kink">
+        <field name="name">Fouet</field>
+        <field name="description">Impact à distance, du léger au sévère.</field>
+    </record>
+
+    <!-- ── Sensation ─────────────────────────────────────────────────────── -->
+    <record id="kink_wax" model="club_social_profile_bdsm.kink">
+        <field name="name">Cire chaude</field>
+        <field name="description">Coulée de cire sur la peau.</field>
+    </record>
+    <record id="kink_temperature" model="club_social_profile_bdsm.kink">
+        <field name="name">Jeu de température</field>
+        <field name="description">Alternance chaud / froid (glace, métal).</field>
+    </record>
+    <record id="kink_pinces" model="club_social_profile_bdsm.kink">
+        <field name="name">Pinces</field>
+        <field name="description">Pincement (tétons, peau) pour la sensation.</field>
+    </record>
+    <record id="kink_electro" model="club_social_profile_bdsm.kink">
+        <field name="name">Électrostimulation</field>
+        <field name="description">Stimulation électrique contrôlée.</field>
+    </record>
+    <record id="kink_sensory_deprivation" model="club_social_profile_bdsm.kink">
+        <field name="name">Privation sensorielle</field>
+        <field name="description">Réduction des sens pour intensifier le reste.</field>
+    </record>
+    <record id="kink_marquage" model="club_social_profile_bdsm.kink">
+        <field name="name">Marquage</field>
+        <field name="description">Griffures et morsures laissant des marques.</field>
+    </record>
+    <record id="kink_tickling" model="club_social_profile_bdsm.kink">
+        <field name="name">Chatouilles</field>
+        <field name="description">Jeu de chatouilles, parfois sous contrainte.</field>
+    </record>
+
+    <!-- ── Rôle & jeu ────────────────────────────────────────────────────── -->
+    <record id="kink_roleplay" model="club_social_profile_bdsm.kink">
+        <field name="name">Jeux de rôle</field>
+        <field name="description">Scénarios et personnages.</field>
+    </record>
+    <record id="kink_petplay" model="club_social_profile_bdsm.kink">
+        <field name="name">Petplay</field>
+        <field name="description">Incarnation d'un animal (chiot, chaton...).</field>
+    </record>
+    <record id="kink_ageplay" model="club_social_profile_bdsm.kink">
+        <field name="name">Ageplay (DD/lg)</field>
+        <field name="description">Dynamique de type Daddy/Mommy et little.</field>
+    </record>
+    <record id="kink_primal" model="club_social_profile_bdsm.kink">
+        <field name="name">Primal play</field>
+        <field name="description">Jeu instinctif et animal.</field>
+    </record>
+    <record id="kink_medical" model="club_social_profile_bdsm.kink">
+        <field name="name">Jeu médical</field>
+        <field name="description">Mise en scène de soins médicaux.</field>
+    </record>
+
+    <!-- ── Psychologique & contrôle ──────────────────────────────────────── -->
+    <record id="kink_humiliation" model="club_social_profile_bdsm.kink">
+        <field name="name">Humiliation consensuelle</field>
+        <field name="description">Rabaissement consenti et négocié.</field>
+    </record>
+    <record id="kink_edging" model="club_social_profile_bdsm.kink">
+        <field name="name">Edging / contrôle de l'orgasme</field>
+        <field name="description">Approcher l'orgasme puis le retenir.</field>
+    </record>
+    <record id="kink_findom" model="club_social_profile_bdsm.kink">
+        <field name="name">Findom (domination financière)</field>
+        <field name="description">Domination par l'argent, strictement négociée.</field>
+    </record>
+    <record id="kink_cnc" model="club_social_profile_bdsm.kink">
+        <field name="name">CNC (non-consentement consenti)</field>
+        <field name="description">Jeu de non-consentement mis en scène, strictement négocié et encadré.</field>
+    </record>
+
+    <!-- ── Esthétique & matières ─────────────────────────────────────────── -->
+    <record id="kink_latex" model="club_social_profile_bdsm.kink">
+        <field name="name">Latex</field>
+        <field name="description">Vêtements et accessoires en latex.</field>
+    </record>
+    <record id="kink_cuir" model="club_social_profile_bdsm.kink">
+        <field name="name">Cuir</field>
+        <field name="description">Esthétique et matières en cuir.</field>
+    </record>
+    <record id="kink_uniformes" model="club_social_profile_bdsm.kink">
+        <field name="name">Uniformes</field>
+        <field name="description">Jeu autour des tenues et des rôles.</field>
+    </record>
+    <record id="kink_footplay" model="club_social_profile_bdsm.kink">
+        <field name="name">Footplay (pieds)</field>
+        <field name="description">Jeu et adoration des pieds.</field>
+    </record>
+
+    <!-- ── Exhibition ────────────────────────────────────────────────────── -->
+    <record id="kink_exhibitionnisme" model="club_social_profile_bdsm.kink">
+        <field name="name">Exhibitionnisme</field>
+        <field name="description">Plaisir d'être vu.</field>
+    </record>
+    <record id="kink_voyeurisme" model="club_social_profile_bdsm.kink">
+        <field name="name">Voyeurisme</field>
+        <field name="description">Plaisir de regarder.</field>
+    </record>
+
+</odoo>
