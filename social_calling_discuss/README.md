@@ -11,7 +11,9 @@ Bouton « Appeler » du portail qui lance un appel vidéo par le Discuss natif d
 
 ## Configuration
 
-Le module crée deux serveurs ICE (`mail.ice.server`) : un STUN et un TURN pointant vers le serveur coturn du projet. Ces enregistrements sont `noupdate`. Après l'installation, les modifier au besoin dans les réglages Discuss d'Odoo. Attention : l'identifiant et le mot de passe TURN sont aujourd'hui versionnés en clair dans `data/ice_servers.xml`. Ils doivent être sortis du dépôt, configurés dans les réglages Discuss, et le mot de passe changé sur le serveur coturn.
+Le module crée deux serveurs ICE (`mail.ice.server`) : un STUN et un TURN pointant vers le serveur coturn du projet. Ces enregistrements sont `noupdate` : créés à l'installation, puis modifiables dans les réglages Discuss d'Odoo.
+
+Le compte TURN (identifiant et mot de passe) n'est pas dans le dépôt. Après l'installation, le saisir dans **Paramètres → Discuss → serveurs ICE**, sur le serveur TURN, depuis l'entrée Vaultwarden « coturn rke01 — compte TURN (diverse) ». Sans ce compte, les appels qui ne peuvent pas passer en direct échouent.
 
 ## Accès et limites
 
