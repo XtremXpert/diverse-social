@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+access_health_practice_mod,health.practice moderator,health.practice,social_base.group_social_moderator,crud,
+access_health_infection_mod,health.infection moderator,health.infection,social_base.group_social_moderator,crud,
+access_health_risk_mod,health.risk moderator,health.risk,social_base.group_social_moderator,crud,
+access_health_prevention_mod,health.prevention moderator,health.prevention,social_base.group_social_moderator,crud,
+access_health_resource_mod,health.resource moderator,health.resource,social_base.group_social_moderator,crud,
+access_health_page_view_mod,health.page.view moderator,health.page.view,social_base.group_social_moderator,r,

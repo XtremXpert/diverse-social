@@ -1,0 +1,600 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!-- ── Portal home: Consent entry ───────────────────────────────────── -->
+    <!-- ── Portal: dashboard /my/consent ──────────────────────────────────── -->
+    <template id="portal_my_consent" name="Consent — Dashboard">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My consents</t>
+            </t>
+
+            <div class="row g-4 mt-1">
+
+                <!-- My gate -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <strong>My consent gate</strong>
+                            <a href="/my/consent/gate" class="btn btn-sm btn-outline-primary">
+                                Configurer
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="not gate">
+                                <p class="text-muted mb-2">You don't have a gate yet.</p>
+                                <a href="/my/consent/gate" class="btn btn-primary btn-sm">
+                                    Create my gate
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <dl class="row mb-0">
+                                    <dt class="col-6">State</dt>
+                                    <dd class="col-6">
+                                        <span t-if="gate.is_active" class="badge bg-success">Active</span>
+                                        <span t-else="" class="badge bg-secondary">Inactive</span>
+                                    </dd>
+                                    <dt class="col-6">Conditions</dt>
+                                    <dd class="col-6"><t t-out="len(gate.item_ids)"/> item(s)</dd>
+                                    <dt class="col-6">Pending</dt>
+                                    <dd class="col-6">
+                                        <a href="/my/consent/received">
+                                            <t t-out="len(pending_requests)"/> request(s)
+                                        </a>
+                                    </dd>
+                                </dl>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Received requests (preview) -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <strong>Received pending requests</strong>
+                            <a href="/my/consent/received" class="btn btn-sm btn-outline-secondary" invisible="not gate">All</a>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="not pending_requests">
+                                <p class="text-muted mb-0">No pending requests.</p>
+                            </t>
+                            <t t-else="">
+                                <ul class="list-unstyled mb-0">
+                                    <t t-foreach="pending_requests" t-as="req">
+                                        <li class="mb-2">
+                                            <a t-attf-href="/consent/request/#{req.id}">
+                                                <t t-out="request.env['club_social_profile.profile']._display_name_for_user(req.requester_id)"/>
+                                            </a>
+                                            <span class="badge bg-warning text-dark ms-1">
+                                                <t t-out="req.state"/>
+                                            </span>
+                                            <span class="text-muted small ms-1" t-if="req.submitted_at">
+                                                — <t t-out="req.submitted_at.strftime('%d/%m/%Y')"/>
+                                            </span>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My sent requests (preview) -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <strong>My sent requests</strong>
+                            <a href="/my/consent/sent" class="btn btn-sm btn-outline-secondary">
+                                Toutes
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="not sent_requests">
+                                <p class="text-muted mb-0">You haven't sent any request yet.</p>
+                            </t>
+                            <t t-else="">
+                                <table class="table table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Profile</th>
+                                            <th>State</th>
+                                            <th>Date</th>
+                                            <th/>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="sent_requests" t-as="req">
+                                            <tr>
+                                                <td><t t-out="request.env['club_social_profile.profile']._display_name_for_user(req.gate_id.profile_id.user_id)"/></td>
+                                                <td>
+                                                    <span t-att-class="'badge ' + {'approved': 'bg-success', 'rejected': 'bg-danger', 'withdrawn': 'bg-secondary'}.get(req.state, 'bg-warning text-dark')">
+                                                        <t t-out="req.state"/>
+                                                    </span>
+                                                </td>
+                                                <td class="text-muted small">
+                                                    <t t-if="req.submitted_at">
+                                                        <t t-out="req.submitted_at.strftime('%d/%m/%Y')"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <a t-attf-href="/consent/request/#{req.id}" class="btn btn-sm btn-outline-primary">
+                                                        View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Portal: manage my gate /my/consent/gate ────────────────────────── -->
+    <template id="portal_my_gate" name="Consent — My gate">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My consent gate</t>
+            </t>
+
+            <div style="max-width: 700px;">
+
+                <div class="alert alert-danger" t-if="error">
+                    <t t-out="error"/>
+                </div>
+
+                <!-- Status + toggle -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>
+                            Status:
+                            <span t-if="gate and gate.is_active" class="badge bg-success ms-1">Active</span>
+                            <span t-elif="gate" class="badge bg-secondary ms-1">Inactive</span>
+                            <span t-else="" class="badge bg-secondary ms-1">Not yet created</span>
+                        </span>
+                        <form action="/my/consent/gate/toggle" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" t-attf-class="btn btn-sm #{gate and gate.is_active and 'btn-outline-warning' or 'btn-success'}">
+                                <t t-if="gate and gate.is_active">Deactivate</t>
+                                <t t-else="">Activate</t>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-0">
+                            When the gate is active, members wishing to contact you
+                            must first fill out and submit this form.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Settings</strong></div>
+                    <div class="card-body">
+                        <form action="/my/consent/gate/save" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-3">
+                                <label class="form-label" for="intro_text">
+                                    Intro text
+                                </label>
+                                <textarea class="form-control" name="intro_text" id="intro_text" rows="3" placeholder="This text is shown to the visitor before they fill out the form.">
+                                    <t t-if="gate"><t t-out="gate.intro_text or ''"/></t>
+                                </textarea>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="min_delay_hours">
+                                        Minimum delay before approval (hours)
+                                    </label>
+                                    <input type="number" class="form-control" name="min_delay_hours" id="min_delay_hours" min="0" t-att-value="gate.min_delay_hours if gate else 24"/>
+                                </div>
+                                <div class="col-sm-6 d-flex align-items-end">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="require_all_checks" id="require_all_checks" t-att-checked="(gate and gate.require_all_checks) and 'checked' or None"/>
+                                        <label class="form-check-label" for="require_all_checks">
+                                            All boxes must be ticked
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Save
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Existing items -->
+                <div class="card mb-4" t-if="gate and gate.item_ids">
+                    <div class="card-header"><strong>Current conditions</strong></div>
+                    <ul class="list-group list-group-flush">
+                        <t t-foreach="gate.item_ids" t-as="item">
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-secondary me-2">
+                                        <t t-if="item.item_type == 'check'">Box</t>
+                                        <t t-else="">Question</t>
+                                    </span>
+                                    <t t-out="item.text"/>
+                                    <span t-if="item.required" class="text-danger ms-1">*</span>
+                                    <div class="text-muted small" t-if="item.hint">
+                                        <t t-out="item.hint"/>
+                                    </div>
+                                </div>
+                                <form t-attf-action="/my/consent/gate/item/#{item.id}/delete" method="post" class="ms-2 flex-shrink-0">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this condition?')">
+                                        ✕
+                                    </button>
+                                </form>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+
+                <!-- Add a condition -->
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Add a condition</strong></div>
+                    <div class="card-body">
+                        <form action="/my/consent/gate/item/add" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-4">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" name="item_type">
+                                        <option value="check">Checkbox</option>
+                                        <option value="question">Open question</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="form-label">Text <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="text" placeholder="E.g.: I have read and accept the club rules."/>
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-8">
+                                    <label class="form-label">Hint (optional)</label>
+                                    <input type="text" class="form-control" name="hint" placeholder="Help text shown under the condition."/>
+                                </div>
+                                <div class="col-sm-4 d-flex align-items-end">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="required" id="item_required" checked="checked"/>
+                                        <label class="form-check-label" for="item_required">
+                                            Required
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">
+                                Add
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <a href="/my/consent" class="btn btn-link ps-0">← Back</a>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Portal: received requests /my/consent/received ─────────────────── -->
+    <template id="portal_received_requests" name="Consent — Received requests">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Received requests</t>
+            </t>
+
+            <!-- Filter by state -->
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a t-attf-href="/my/consent/received?state=all" t-attf-class="btn btn-sm #{state_filter == 'all' and 'btn-primary' or 'btn-outline-secondary'}">
+                    All
+                </a>
+                <a t-attf-href="/my/consent/received?state=submitted" t-attf-class="btn btn-sm #{state_filter == 'submitted' and 'btn-primary' or 'btn-outline-secondary'}">
+                    Submitted
+                </a>
+                <a t-attf-href="/my/consent/received?state=under_review" t-attf-class="btn btn-sm #{state_filter == 'under_review' and 'btn-primary' or 'btn-outline-secondary'}">
+                    Under review
+                </a>
+                <a t-attf-href="/my/consent/received?state=approved" t-attf-class="btn btn-sm #{state_filter == 'approved' and 'btn-primary' or 'btn-outline-secondary'}">
+                    Approved
+                </a>
+            </div>
+
+            <t t-if="not requests">
+                <div class="alert alert-info">No request in this category.</div>
+            </t>
+            <t t-else="">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Requester</th>
+                            <th>State</th>
+                            <th>Submitted on</th>
+                            <th>Reviewable</th>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="requests" t-as="req">
+                            <tr>
+                                <td><t t-out="request.env['club_social_profile.profile']._display_name_for_user(req.requester_id)"/></td>
+                                <td>
+                                    <span t-att-class="'badge ' + {'approved': 'bg-success', 'rejected': 'bg-danger', 'under_review': 'bg-info', 'submitted': 'bg-warning text-dark', 'withdrawn': 'bg-secondary'}.get(req.state, 'bg-secondary')">
+                                        <t t-out="req.state"/>
+                                    </span>
+                                </td>
+                                <td class="text-muted small">
+                                    <t t-if="req.submitted_at">
+                                        <t t-out="req.submitted_at.strftime('%d/%m/%Y %H:%M')"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <span t-if="req.can_review" class="text-success">✓</span>
+                                    <span t-else="" class="text-muted">—</span>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/consent/request/#{req.id}" class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+
+            <a href="/my/consent" class="btn btn-link ps-0">← Back</a>
+        </t>
+    </template>
+
+    <!-- ── Portal: my sent requests /my/consent/sent ─────────────────────── -->
+    <template id="portal_sent_requests" name="Consent — Sent requests">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My sent requests</t>
+            </t>
+
+            <t t-if="not requests">
+                <div class="alert alert-info">
+                    You haven't sent any consent request yet.
+                </div>
+            </t>
+            <t t-else="">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>State</th>
+                            <th>Submitted on</th>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="requests" t-as="req">
+                            <tr>
+                                <td><t t-out="request.env['club_social_profile.profile']._display_name_for_user(req.gate_id.profile_id.user_id)"/></td>
+                                <td>
+                                    <span t-att-class="'badge ' + {'approved': 'bg-success', 'rejected': 'bg-danger', 'withdrawn': 'bg-secondary', 'submitted': 'bg-warning text-dark', 'under_review': 'bg-info'}.get(req.state, 'bg-secondary')">
+                                        <t t-out="req.state"/>
+                                    </span>
+                                </td>
+                                <td class="text-muted small">
+                                    <t t-if="req.submitted_at">
+                                        <t t-out="req.submitted_at.strftime('%d/%m/%Y %H:%M')"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/consent/request/#{req.id}" class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+
+            <a href="/my/consent" class="btn btn-link ps-0">← Back</a>
+        </t>
+    </template>
+
+    <!-- ── Portal: consent gate page ──────────────────────────────────────── -->
+    <template id="portal_gate" name="Consent — Portal gate">
+        <t t-call="portal.portal_layout">
+
+            <div class="container py-4" style="max-width: 700px;">
+
+                <!-- Profile header -->
+                <div class="mb-4">
+                    <h2>Contact request</h2>
+                    <p class="text-muted">
+                        Profile of
+                        <strong><t t-out="request.env['club_social_profile.profile']._display_name_for_user(gate.profile_id.user_id)"/></strong>
+                    </p>
+                </div>
+
+                <!-- Error message -->
+                <div class="alert alert-danger" t-if="error">
+                    <t t-out="error"/>
+                </div>
+
+                <!-- Existing request -->
+                <div t-if="existing_request" class="alert alert-info">
+                    <strong>You already have a pending request.</strong>
+                    State:
+                    <span t-out="existing_request.state"/>
+                    —
+                    <a t-attf-href="/consent/request/#{existing_request.id}">
+                        View my request
+                    </a>
+                </div>
+
+                <t t-if="not existing_request">
+                    <!-- Introduction -->
+                    <div class="card mb-4" t-if="gate.intro_text">
+                        <div class="card-body">
+                            <p class="mb-0" t-out="gate.intro_text"/>
+                        </div>
+                    </div>
+
+                    <!-- Consent form -->
+                    <form t-attf-action="/consent/gate/#{gate.id}/start" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <strong>Conditions</strong>
+                            </div>
+                            <div class="card-body">
+                                <t t-foreach="gate.item_ids" t-as="item">
+                                    <div class="mb-3">
+                                        <!-- Checkbox -->
+                                        <t t-if="item.item_type == 'check'">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" t-attf-name="check_#{item.id}" t-attf-id="check_#{item.id}" t-att-required="item.required or None"/>
+                                                <label class="form-check-label" t-attf-for="check_#{item.id}">
+                                                    <t t-out="item.text"/>
+                                                    <span class="text-danger" t-if="item.required"> *</span>
+                                                </label>
+                                                <div class="form-text text-muted" t-if="item.hint">
+                                                    <t t-out="item.hint"/>
+                                                </div>
+                                            </div>
+                                        </t>
+
+                                        <!-- Open question -->
+                                        <t t-if="item.item_type == 'question'">
+                                            <label t-attf-for="text_#{item.id}" class="form-label">
+                                                <t t-out="item.text"/>
+                                                <span class="text-danger" t-if="item.required"> *</span>
+                                            </label>
+                                            <textarea class="form-control" t-attf-name="text_#{item.id}" t-attf-id="text_#{item.id}" rows="3" t-att-required="item.required or None"/>
+                                            <div class="form-text text-muted" t-if="item.hint">
+                                                <t t-out="item.hint"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Submit my request
+                            </button>
+                            <a href="/web" class="btn btn-link text-muted">Cancel</a>
+                        </div>
+                    </form>
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Portal: request detail ─────────────────────────────────────────── -->
+    <template id="portal_request" name="Consent — Portal request">
+        <t t-call="portal.portal_layout">
+
+            <div class="container py-4" style="max-width: 700px;">
+
+                <div class="mb-4">
+                    <h2>My contact request</h2>
+                    <p class="text-muted">
+                        To the profile of
+                        <strong><t t-out="request.env['club_social_profile.profile']._display_name_for_user(req.gate_id.profile_id.user_id)"/></strong>
+                    </p>
+                </div>
+
+                <!-- Error message -->
+                <div class="alert alert-danger" t-if="error">
+                    <t t-out="error"/>
+                </div>
+
+                <!-- Status -->
+                <div t-att-class="'alert ' + {'approved': 'alert-success', 'rejected': 'alert-danger', 'withdrawn': 'alert-secondary'}.get(req.state, 'alert-info')">
+                    <strong>State:</strong>
+                    <t t-out="req.state"/>
+                    <span t-if="req.submitted_at" class="ms-2 text-muted small">
+                        — submitted on <t t-out="req.submitted_at.strftime('%d/%m/%Y %H:%M')"/>
+                    </span>
+                </div>
+
+                <!-- Owner note -->
+                <div class="card mb-4" t-if="req.reviewer_note">
+                    <div class="card-header">Note from the profile owner</div>
+                    <div class="card-body">
+                        <p class="mb-0" t-out="req.reviewer_note"/>
+                    </div>
+                </div>
+
+                <!-- Answers -->
+                <div class="card mb-4" t-if="req.answer_ids">
+                    <div class="card-header">Your answers</div>
+                    <ul class="list-group list-group-flush">
+                        <t t-foreach="req.answer_ids" t-as="answer">
+                            <li class="list-group-item">
+                                <div class="fw-semibold"><t t-out="answer.item_text"/></div>
+                                <div t-if="answer.item_type == 'check'" class="text-muted small">
+                                    <span t-if="answer.checked" class="text-success">✓ Acknowledged</span>
+                                    <span t-else="" class="text-danger">✗ Not ticked</span>
+                                </div>
+                                <div t-if="answer.item_type == 'question'" class="text-muted">
+                                    <t t-out="answer.text or '—'"/>
+                                </div>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+
+                <!-- Owner actions: approve / reject -->
+                <t t-if="req.gate_id.profile_id.user_id == request.env.user and req.state in ('submitted', 'under_review')">
+                    <div class="card mb-4">
+                        <div class="card-header">Actions</div>
+                        <div class="card-body">
+                            <p t-if="not req.can_review" class="text-muted small">
+                                You can approve or reject this request once
+                                the minimum delay of <t t-out="req.gate_id.min_delay_hours"/> hour(s) has elapsed.
+                            </p>
+                            <div class="d-flex gap-2" t-if="req.can_review">
+                                <form t-attf-action="/consent/request/#{req.id}/approve" method="post" class="d-inline">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" name="note" class="form-control form-control-sm mb-2" placeholder="Note (optional)"/>
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Approve
+                                    </button>
+                                </form>
+                                <form t-attf-action="/consent/request/#{req.id}/reject" method="post" class="d-inline">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" name="note" class="form-control form-control-sm mb-2" placeholder="Reason (optional)"/>
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Reject
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Visitor action: withdraw -->
+                <t t-if="req.requester_id == request.env.user and req.state in ('draft', 'submitted', 'under_review')">
+                    <form t-attf-action="/consent/request/#{req.id}/withdraw" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">
+                            Withdraw my request
+                        </button>
+                    </form>
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

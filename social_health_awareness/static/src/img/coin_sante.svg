@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Coin Santé">
+  <path d="M32 55 C18 45 7 34.5 7 23.5 A13.5 13.5 0 0 1 32 16 a13.5 13.5 0 0 1 25 7.5 C57 34.5 46 45 32 55z" fill="#2e9e5b"/>
+  <path d="M29 21h6v8h8v6h-8v8h-6v-8h-8v-6h8z" fill="#ffffff"/>
+</svg>

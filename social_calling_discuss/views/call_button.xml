@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bouton d'appel (Discuss natif). Depuis le retrait de Jitsi, c'est LE
+         bouton d'appel du portail. Il vit dans social_calling_discuss ; le
+         module social_calling reste installé pour sa plomberie partagée
+         (service incoming_call.js qui fait sonner l'appelé, bus, etc.).
+         Contexte attendu : `profile` (club_social_profile.profile). -->
+    <template id="call_widget" name="Discuss Call Button">
+        <!-- Grisé si l'interlocuteur n'est pas en ligne : un appel temps réel n'a
+             de sens que si la personne est présente (im_status == 'online'). -->
+        <t t-set="callee_online" t-value="profile.user_id.im_status == 'online'"/>
+        <div class="d-flex gap-2">
+            <a t-if="callee_online"
+               t-attf-href="/discuss-call/{{ profile.user_id.id }}"
+               class="btn btn-sm" style="background:#e94560;color:white;"
+               title="Appeler (Discuss)">
+                📹 Appeler
+            </a>
+            <button t-else="" type="button" class="btn btn-sm" disabled="disabled"
+                    title="Hors ligne — appel indisponible"
+                    style="background:#adb5bd;color:white;">
+                📹 Appeler
+            </button>
+        </div>
+    </template>
+
+    <!-- Intègre le bouton dans la barre d'actions de /profile/<id>, juste avant
+         le bouton « Bloquer » (btn-outline-danger), donc dans le bloc not is_own. -->
+    <template id="discuss_call_button_profile_inject"
+              name="Profile: inject Discuss call button"
+              inherit_id="club_social_profile.portal_profile_public" priority="20">
+        <xpath expr="//a[hasclass('btn-outline-danger')]" position="before">
+            <t t-call="social_calling_discuss.call_widget"/>
+        </xpath>
+    </template>
+
+    <!-- (Le bouton d'appel dans l'ancien header de conversation social_messaging
+         a été retiré : la messagerie a migré vers Discuss, qui intègre nativement
+         l'appel dans le canal.) -->
+</odoo>

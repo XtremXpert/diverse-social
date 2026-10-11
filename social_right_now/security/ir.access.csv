@@ -1,0 +1,3 @@
+id,name,model_id,group_id/id,operation,domain
+rule_right_now_session_own,Right Now: own session,social_right_now.session,social_base.group_social_user,r,"[('user_id', '=', user.id)]"
+rule_right_now_session_moderator,Right Now: moderators see all,social_right_now.session,social_base.group_social_moderator,crud,"[(1, '=', 1)]"

@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_pending_invite_moderator,social_invitations.pending moderator,social_invitations.pending,social_base.group_social_moderator,crud,
+access_pending_invite_system,social_invitations.pending system,social_invitations.pending,base.group_system,crud,
+rule_pending_invite_own,Pending invite: own,social_invitations.pending,social_base.group_social_user,r,"[('inviter_user_id', '=', user.id)]"

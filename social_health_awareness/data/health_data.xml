@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ⚠️ CONTENU PLACEHOLDER — À FAIRE VALIDER PAR UN PROFESSIONNEL DE LA SANTÉ
+  (INSPQ / MSSS / RÉZO ou équivalent) AVANT TOUTE MISE EN LIGNE RÉELLE.
+  Niveaux qualitatifs, illustratifs. noupdate=1 : les modifications des
+  modérateurs ne sont pas écrasées lors des mises à jour du module.
+-->
+<odoo noupdate="1">
+
+    <!-- ══ Infections ══════════════════════════════════════════════════════ -->
+    <record id="inf_vih" model="health.infection"><field name="name">VIH</field><field name="sequence">10</field></record>
+    <record id="inf_gono" model="health.infection"><field name="name">Gonorrhée</field><field name="sequence">20</field></record>
+    <record id="inf_chlam" model="health.infection"><field name="name">Chlamydia</field><field name="sequence">30</field></record>
+    <record id="inf_syph" model="health.infection"><field name="name">Syphilis</field><field name="sequence">40</field></record>
+    <record id="inf_herpes" model="health.infection"><field name="name">Herpès (HSV)</field><field name="sequence">50</field></record>
+    <record id="inf_hpv" model="health.infection"><field name="name">HPV</field><field name="vaccine_available">1</field><field name="sequence">60</field></record>
+    <record id="inf_hepa" model="health.infection"><field name="name">Hépatite A</field><field name="vaccine_available">1</field><field name="sequence">70</field></record>
+    <record id="inf_hepb" model="health.infection"><field name="name">Hépatite B</field><field name="vaccine_available">1</field><field name="sequence">80</field></record>
+    <record id="inf_hepc" model="health.infection"><field name="name">Hépatite C</field><field name="sequence">90</field></record>
+    <record id="inf_mpox" model="health.infection"><field name="name">Mpox</field><field name="vaccine_available">1</field><field name="sequence">100</field></record>
+
+    <!-- ══ Pratiques ═══════════════════════════════════════════════════════ -->
+    <record id="pr_oral" model="health.practice"><field name="name">Sexe oral</field><field name="category">oral</field><field name="sequence">10</field></record>
+    <record id="pr_pen_bar" model="health.practice"><field name="name">Pénétration (avec barrière)</field><field name="category">penetration</field><field name="sequence">20</field></record>
+    <record id="pr_pen_nobar" model="health.practice"><field name="name">Pénétration (sans barrière)</field><field name="category">penetration</field><field name="sequence">30</field></record>
+    <record id="pr_fisting" model="health.practice"><field name="name">Fisting</field><field name="category">manuel</field><field name="sequence">40</field></record>
+    <record id="pr_jouets" model="health.practice"><field name="name">Jouets partagés</field><field name="category">jouets</field><field name="sequence">50</field></record>
+    <record id="pr_rimming" model="health.practice"><field name="name">Rimming (anulingus)</field><field name="category">oral</field><field name="sequence">60</field></record>
+    <record id="pr_sang" model="health.practice"><field name="name">Jeux de sang / edge</field><field name="category">fluides</field><field name="sequence">70</field></record>
+    <record id="pr_contact" model="health.practice"><field name="name">Contact peau / frottement</field><field name="category">contact</field><field name="sequence">80</field></record>
+
+    <!-- ══ Risques (pratique × infection) ══════════════════════════════════ -->
+    <record id="rk_oral_gono" model="health.risk"><field name="practice_id" ref="pr_oral"/><field name="infection_id" ref="inf_gono"/><field name="level">modere</field><field name="note">Pense au dépistage de gorge.</field></record>
+    <record id="rk_oral_chlam" model="health.risk"><field name="practice_id" ref="pr_oral"/><field name="infection_id" ref="inf_chlam"/><field name="level">faible</field></record>
+    <record id="rk_oral_syph" model="health.risk"><field name="practice_id" ref="pr_oral"/><field name="infection_id" ref="inf_syph"/><field name="level">modere</field></record>
+    <record id="rk_oral_herpes" model="health.risk"><field name="practice_id" ref="pr_oral"/><field name="infection_id" ref="inf_herpes"/><field name="level">modere</field></record>
+
+    <record id="rk_penbar_vih" model="health.risk"><field name="practice_id" ref="pr_pen_bar"/><field name="infection_id" ref="inf_vih"/><field name="level">faible</field></record>
+    <record id="rk_penbar_gono" model="health.risk"><field name="practice_id" ref="pr_pen_bar"/><field name="infection_id" ref="inf_gono"/><field name="level">faible</field></record>
+    <record id="rk_penbar_syph" model="health.risk"><field name="practice_id" ref="pr_pen_bar"/><field name="infection_id" ref="inf_syph"/><field name="level">faible</field></record>
+
+    <record id="rk_pennobar_vih" model="health.risk"><field name="practice_id" ref="pr_pen_nobar"/><field name="infection_id" ref="inf_vih"/><field name="level">eleve</field></record>
+    <record id="rk_pennobar_gono" model="health.risk"><field name="practice_id" ref="pr_pen_nobar"/><field name="infection_id" ref="inf_gono"/><field name="level">eleve</field></record>
+    <record id="rk_pennobar_chlam" model="health.risk"><field name="practice_id" ref="pr_pen_nobar"/><field name="infection_id" ref="inf_chlam"/><field name="level">eleve</field></record>
+    <record id="rk_pennobar_syph" model="health.risk"><field name="practice_id" ref="pr_pen_nobar"/><field name="infection_id" ref="inf_syph"/><field name="level">eleve</field></record>
+    <record id="rk_pennobar_hepb" model="health.risk"><field name="practice_id" ref="pr_pen_nobar"/><field name="infection_id" ref="inf_hepb"/><field name="level">modere</field></record>
+
+    <record id="rk_fisting_hepc" model="health.risk"><field name="practice_id" ref="pr_fisting"/><field name="infection_id" ref="inf_hepc"/><field name="level">modere</field><field name="note">Lésions possibles ; ne pas partager gants/lubrifiant.</field></record>
+
+    <record id="rk_jouets_hpv" model="health.risk"><field name="practice_id" ref="pr_jouets"/><field name="infection_id" ref="inf_hpv"/><field name="level">modere</field></record>
+    <record id="rk_jouets_herpes" model="health.risk"><field name="practice_id" ref="pr_jouets"/><field name="infection_id" ref="inf_herpes"/><field name="level">modere</field></record>
+    <record id="rk_jouets_hepc" model="health.risk"><field name="practice_id" ref="pr_jouets"/><field name="infection_id" ref="inf_hepc"/><field name="level">faible</field></record>
+
+    <record id="rk_rimming_hepa" model="health.risk"><field name="practice_id" ref="pr_rimming"/><field name="infection_id" ref="inf_hepa"/><field name="level">modere</field></record>
+
+    <record id="rk_sang_vih" model="health.risk"><field name="practice_id" ref="pr_sang"/><field name="infection_id" ref="inf_vih"/><field name="level">eleve</field></record>
+    <record id="rk_sang_hepb" model="health.risk"><field name="practice_id" ref="pr_sang"/><field name="infection_id" ref="inf_hepb"/><field name="level">eleve</field></record>
+    <record id="rk_sang_hepc" model="health.risk"><field name="practice_id" ref="pr_sang"/><field name="infection_id" ref="inf_hepc"/><field name="level">eleve</field></record>
+
+    <record id="rk_contact_herpes" model="health.risk"><field name="practice_id" ref="pr_contact"/><field name="infection_id" ref="inf_herpes"/><field name="level">modere</field></record>
+    <record id="rk_contact_hpv" model="health.risk"><field name="practice_id" ref="pr_contact"/><field name="infection_id" ref="inf_hpv"/><field name="level">modere</field></record>
+
+    <!-- ══ Préventions transversales ═══════════════════════════════════════ -->
+    <record id="prev_prep" model="health.prevention">
+        <field name="name">PrEP / PEP</field><field name="prevention_type">prep</field><field name="is_transversal">1</field><field name="sequence">10</field>
+        <field name="description">Médication qui prévient le VIH (PrEP en continu, PEP en urgence après exposition).</field>
+    </record>
+    <record id="prev_vaccin" model="health.prevention">
+        <field name="name">Vaccination</field><field name="prevention_type">vaccin</field><field name="is_transversal">1</field><field name="sequence">20</field>
+        <field name="description">Hépatites A et B, HPV, mpox — des vaccins existent et protègent durablement.</field>
+    </record>
+    <record id="prev_uu" model="health.prevention">
+        <field name="name">U=U (indétectable = intransmissible)</field><field name="prevention_type">autre</field><field name="is_transversal">1</field><field name="sequence">30</field>
+        <field name="description">Une personne vivant avec le VIH et ayant une charge virale indétectable ne transmet pas le VIH.</field>
+    </record>
+    <record id="prev_depistage" model="health.prevention">
+        <field name="name">Dépistage régulier</field><field name="prevention_type">depistage</field><field name="is_transversal">1</field><field name="sequence">40</field>
+        <field name="description">Se faire dépister régulièrement, et selon les pratiques (gorge, anus, sang).</field>
+    </record>
+    <record id="prev_comm" model="health.prevention">
+        <field name="name">Communication entre partenaires</field><field name="prevention_type">communication</field><field name="is_transversal">1</field><field name="sequence">50</field>
+        <field name="description">Parler des pratiques, des limites et des mesures avant — dans le respect et l'anonymat choisi.</field>
+    </record>
+
+    <!-- ══ Préventions par pratique ════════════════════════════════════════ -->
+    <record id="prev_condom" model="health.prevention">
+        <field name="name">Condom</field><field name="prevention_type">barriere</field><field name="sequence">60</field>
+        <field name="practice_ids" eval="[(6,0,[ref('pr_oral'),ref('pr_pen_bar'),ref('pr_pen_nobar'),ref('pr_jouets')])]"/>
+    </record>
+    <record id="prev_digue" model="health.prevention">
+        <field name="name">Digue dentaire</field><field name="prevention_type">barriere</field><field name="sequence">70</field>
+        <field name="practice_ids" eval="[(6,0,[ref('pr_oral'),ref('pr_rimming')])]"/>
+    </record>
+    <record id="prev_gants" model="health.prevention">
+        <field name="name">Gants + lubrifiant</field><field name="prevention_type">hygiene</field><field name="sequence">80</field>
+        <field name="practice_ids" eval="[(6,0,[ref('pr_fisting'),ref('pr_sang')])]"/>
+    </record>
+    <record id="prev_jouet" model="health.prevention">
+        <field name="name">Jouet à usage unique / désinfecté / condom</field><field name="prevention_type">hygiene</field><field name="sequence">90</field>
+        <field name="practice_ids" eval="[(6,0,[ref('pr_jouets')])]"/>
+    </record>
+    <record id="prev_materiel" model="health.prevention">
+        <field name="name">Matériel à usage unique</field><field name="prevention_type">hygiene</field><field name="sequence">100</field>
+        <field name="practice_ids" eval="[(6,0,[ref('pr_sang')])]"/>
+    </record>
+
+</odoo>

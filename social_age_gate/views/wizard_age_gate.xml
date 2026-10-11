@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_social_onboarding_wizard_age_gate" model="ir.ui.view">
+        <field name="name">social_onboarding.wizard.age_gate</field>
+        <field name="model">social_onboarding.wizard</field>
+        <field name="inherit_id" ref="social_onboarding.view_social_onboarding_wizard_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Progress badge for the age_gate step -->
+            <xpath expr="//span[contains(@class,'badge') and contains(.,'Preferences')]" position="before">
+                <span invisible="step != 'age_gate'" class="badge rounded-pill bg-primary fs-6">Step 3/5 — Age verification (18+)</span>
+            </xpath>
+
+            <!-- age_gate panel — inserted before the preferences panel -->
+            <xpath expr="//div[@invisible=&quot;step != 'preferences'&quot;]" position="before">
+                <div invisible="step != 'age_gate'">
+                    <div class="oe_title mb-3">
+                        <h2>Age verification</h2>
+                        <p class="text-muted">
+                            This social network is reserved for adults (18 and over).
+                        </p>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        <i class="oi me-2" data-icon="info" title="Info"/>
+                        By confirming, you declare on your honor that you are 18 or older.
+                    </div>
+                    <group>
+                        <field name="age_gate_confirmed" widget="boolean_toggle"
+                               string="I confirm I am 18 or older"/>
+                    </group>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,416 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!-- ══ Entrée portail home ════════════════════════════════════════════ -->
+    <!-- ══ Liste des négociations ════════════════════════════════════════ -->
+    <template id="portal_my_negotiations" name="Mes négociations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:780px;">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <h1 style="font-size:1.5rem; color:#1a1a2e;">🤝 Négociations</h1>
+                    <t t-if="connections">
+                        <button class="btn btn-sm" style="background:#e94560;color:white;" data-bs-toggle="collapse" data-bs-target="#sn_new_neg_form">
+                            + Nouvelle négociation
+                        </button>
+                    </t>
+                </div>
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('error') == 'partner_required'">
+                    <div class="alert alert-danger">Veuillez choisir un partenaire.</div>
+                </t>
+                <t t-if="request.params.get('error') == 'not_connected'">
+                    <div class="alert alert-danger">Vous devez être connecté avec cette personne.</div>
+                </t>
+
+                <!-- Formulaire création -->
+                <t t-if="connections">
+                    <div class="collapse mb-4" id="sn_new_neg_form">
+                        <div class="card card-body">
+                            <form action="/my/negotiation/create" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-semibold">Avec qui ? <span class="text-danger">*</span></label>
+                                        <select name="partner_id" class="form-select" required="required">
+                                            <option value="">— choisir une connexion —</option>
+                                            <t t-foreach="connections" t-as="conn">
+                                                <option t-att-value="conn.id" t-out="request.env['club_social_profile.profile']._display_name_for_user(conn)"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">Mot de sécurité</label>
+                                        <input type="text" name="safe_word" class="form-control" placeholder="ex. Ananas" maxlength="64"/>
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button type="submit" class="btn w-100" style="background:#1a1a2e;color:white;">
+                                            Créer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="alert alert-info mb-4">
+                        Vous devez avoir des <a href="/my/connections">connexions</a> pour démarrer une négociation.
+                    </div>
+                </t>
+
+                <!-- Filtres état -->
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                    <a t-attf-href="/my/negotiation" t-attf-class="btn btn-sm #{'btn-secondary' if state_filter == 'all' else 'btn-outline-secondary'}">
+                        Tout
+                    </a>
+                    <t t-foreach="state_labels.items()" t-as="sl">
+                        <a t-attf-href="/my/negotiation?state=#{sl[0]}" t-attf-class="btn btn-sm #{'btn-secondary' if state_filter == sl[0] else 'btn-outline-secondary'}" t-out="sl[1]"/>
+                    </t>
+                </div>
+
+                <!-- Liste -->
+                <t t-if="not negotiations">
+                    <div class="card text-center py-5">
+                        <div style="font-size:2.5rem;" class="mb-2">🤝</div>
+                        <p class="text-muted mb-0">Aucune négociation trouvée.</p>
+                    </div>
+                </t>
+
+                <div class="list-group shadow-sm mb-3">
+                    <t t-foreach="negotiations" t-as="neg">
+                        <a t-attf-href="/my/negotiation/#{neg.id}" t-attf-class="list-group-item list-group-item-action py-3 #{'bg-light' if neg.state == 'archived' else ''}">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+                                <div>
+                                    <span class="fw-semibold">
+                                        <t t-if="neg.initiator_id == request.env.user">
+                                            Avec <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.partner_id)"/>
+                                        </t>
+                                        <t t-else="">
+                                            Initié par <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)"/>
+                                        </t>
+                                    </span>
+                                    <span t-attf-class="badge ms-2 #{'bg-success' if neg.state == 'active' else 'bg-secondary' if neg.state == 'archived' else 'bg-warning text-dark'}" t-out="state_labels.get(neg.state, neg.state)"/>
+                                    <t t-if="neg.version &gt; 1">
+                                        <span class="badge bg-info ms-1">v<t t-out="neg.version"/></span>
+                                    </t>
+                                </div>
+                                <small class="text-muted">
+                                    <t t-out="neg.item_count"/> item(s) ·
+                                    <strong t-out="neg.agreement_score"/>% compatibilité
+                                </small>
+                            </div>
+                            <div class="mt-1 d-flex gap-3">
+                                <t t-set="i_signed" t-value="neg.initiator_signed_at and True"/>
+                                <t t-set="p_signed" t-value="neg.partner_signed_at and True"/>
+                                <small class="text-muted">
+                                    <t t-if="neg.is_fully_signed">✅ Signé par les deux parties</t>
+                                    <t t-elif="neg.initiator_id == request.env.user and i_signed">En attente de signature du partenaire</t>
+                                    <t t-elif="neg.partner_id == request.env.user and p_signed">En attente de votre signature</t>
+                                    <t t-elif="neg.state == 'shared'">⏳ En attente de réponse</t>
+                                </small>
+                            </div>
+                        </a>
+                    </t>
+                </div>
+
+                <t t-if="pager">
+                    <t t-call="portal.pager">
+                        <t t-set="pager" t-value="pager"/>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Détail d'une négociation ══════════════════════════════════════ -->
+    <template id="portal_negotiation_detail" name="Négociation – détail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:900px;">
+
+                <!-- Fil d'Ariane -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/my/negotiation">Négociations</a></li>
+                        <li class="breadcrumb-item active">
+                            <t t-if="is_initiator">Avec <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.partner_id)"/></t>
+                            <t t-else="">Initié par <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)"/></t>
+                        </li>
+                    </ol>
+                </nav>
+
+                <!-- Alertes -->
+                <t t-if="request.params.get('error')">
+                    <div class="alert alert-danger" t-out="request.params.get('error')"/>
+                </t>
+                <t t-if="request.params.get('responded')">
+                    <div class="alert alert-success">Vos réponses ont été enregistrées.</div>
+                </t>
+                <t t-if="request.params.get('error') == 'item_empty'">
+                    <div class="alert alert-danger">Le texte de l'item est requis.</div>
+                </t>
+
+                <!-- ── En-tête ────────────────────────────────────────── -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header" style="background:#1a1a2e; color:white;">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold" style="font-size:1.05rem;">
+                                    <t t-if="is_initiator">
+                                        Négociation avec <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.partner_id)"/>
+                                    </t>
+                                    <t t-else="">
+                                        Négociation avec <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)"/>
+                                    </t>
+                                </span>
+                                <span t-attf-class="badge #{'bg-success' if neg.state == 'active' else 'bg-secondary' if neg.state == 'archived' else 'bg-warning text-dark'}" t-out="state_labels.get(neg.state, neg.state)"/>
+                                <t t-if="neg.version &gt; 1">
+                                    <span class="badge bg-info">v<t t-out="neg.version"/></span>
+                                </t>
+                            </div>
+                            <div class="text-white opacity-75" style="font-size:.85rem;">
+                                <t t-out="neg.item_count"/> items ·
+                                <strong><t t-out="neg.agreement_score"/>%</strong> compatibilité
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- Signatures -->
+                            <div class="col-md-6">
+                                <div class="d-flex gap-4">
+                                    <div>
+                                        <small class="text-muted d-block">Initiateur</small>
+                                        <span class="fw-semibold" t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)"/>
+                                        <div style="font-size:.8rem;">
+                                            <t t-if="neg.initiator_signed_at">
+                                                <span class="text-success">✓ Signé</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">Non signé</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Partenaire</small>
+                                        <span class="fw-semibold" t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.partner_id)"/>
+                                        <div style="font-size:.8rem;">
+                                            <t t-if="neg.partner_signed_at">
+                                                <span class="text-success">✓ Signé</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">Non signé</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <t t-if="neg.safe_word and neg.state == 'active'">
+                                        <div>
+                                            <small class="text-muted d-block">Mot de sécurité</small>
+                                            <span class="fw-semibold text-danger" t-out="neg.safe_word"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="col-md-6 d-flex gap-2 flex-wrap align-items-start">
+                                <!-- Partager (initiateur, brouillon) -->
+                                <t t-if="is_initiator and neg.state == 'draft'">
+                                    <form t-attf-action="/my/negotiation/#{neg.id}/share" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
+                                            📤 Partager
+                                        </button>
+                                    </form>
+                                </t>
+                                <!-- Signer -->
+                                <t t-if="not user_signed and neg.state in ('shared', 'reviewing')">
+                                    <form t-attf-action="/my/negotiation/#{neg.id}/sign" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            ✍️ Signer
+                                        </button>
+                                    </form>
+                                </t>
+                                <!-- Nouvelle version (actif) -->
+                                <t t-if="neg.state == 'active'">
+                                    <form t-attf-action="/my/negotiation/#{neg.id}/new_version" method="post" onsubmit="return confirm('Créer une nouvelle version ? L\'actuelle sera archivée.')">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            🔄 Nouvelle version
+                                        </button>
+                                    </form>
+                                </t>
+                                <!-- Archiver -->
+                                <t t-if="neg.state not in ('archived', 'draft')">
+                                    <form t-attf-action="/my/negotiation/#{neg.id}/archive" method="post" onsubmit="return confirm('Archiver ce document ?')">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            📦 Archiver
+                                        </button>
+                                    </form>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Ajouter un item (brouillon, initiateur) ───────── -->
+                <t t-if="is_initiator and neg.state == 'draft'">
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold" style="background:#1a1a2e;color:white;">
+                            + Ajouter un item
+                        </div>
+                        <div class="card-body">
+                            <form t-attf-action="/my/negotiation/#{neg.id}/item/add" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2">
+                                    <div class="col-md-5">
+                                        <input type="text" name="text" class="form-control form-control-sm" placeholder="Activité / Sujet *" required="required" maxlength="200"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select name="category" class="form-select form-select-sm">
+                                            <option value="desire">Désir</option>
+                                            <option value="hard_limit">Limite dure</option>
+                                            <option value="soft_limit">Limite douce</option>
+                                            <option value="safeguard">Safeguard / Aftercare</option>
+                                            <option value="other">Autre</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-sm w-100" style="background:#1a1a2e;color:white;">
+                                            Ajouter
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ── Formulaire réponses (shared/reviewing) ────────── -->
+                <t t-if="neg.state in ('shared', 'reviewing') and neg.item_ids">
+                    <div class="card mb-4" style="border-left:3px solid #e94560;">
+                        <div class="card-header fw-bold" style="background:#1a1a2e;color:white;">
+                            📝 Remplir mes réponses
+                        </div>
+                        <div class="card-body p-0">
+                            <form t-attf-action="/my/negotiation/#{neg.id}/respond" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Activité / Sujet</th>
+                                                <th style="width:80px; font-size:.75rem;">Catégorie</th>
+                                                <th style="width:180px;">Ma réponse</th>
+                                                <th style="width:200px;">Note commune</th>
+                                                <t t-if="is_initiator and neg.state == 'draft'">
+                                                    <th style="width:50px;"/>
+                                                </t>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="neg.item_ids.sorted(key=lambda i:(i.category,i.sequence))" t-as="item">
+                                                <tr>
+                                                    <td style="font-size:.9rem;" t-out="item.text"/>
+                                                    <td>
+                                                        <span class="badge bg-light text-dark border" style="font-size:.7rem;">
+                                                            <t t-out="category_labels.get(item.category, item.category)"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <select t-attf-name="response_#{item.id}" class="form-select form-select-sm">
+                                                            <option value="">—</option>
+                                                            <t t-foreach="[('oui','✅ Oui'),('soft','🟡 Soft'),('non','🚫 Non'),('na','— N/A')]" t-as="ro">
+                                                                <t t-set="_cur" t-value="item.initiator_response if is_initiator else item.partner_response"/>
+                                                                <option t-att-value="ro[0]" t-att-selected="'selected' if _cur == ro[0] else None" t-out="ro[1]"/>
+                                                            </t>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" t-attf-name="note_#{item.id}" class="form-control form-control-sm" t-att-value="item.note or ''" maxlength="256"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="p-3">
+                                    <button type="submit" class="btn btn-sm" style="background:#e94560;color:white;">
+                                        💾 Enregistrer mes réponses
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ── Tableau récapitulatif ────────────────────────── -->
+                <t t-if="neg.item_ids">
+                    <t t-foreach="items_by_category.items()" t-as="cat">
+                        <h5 class="mt-4 mb-2" style="color:#1a1a2e;">
+                            <t t-out="category_labels.get(cat[0], cat[0])"/>
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead style="background:#1a1a2e; color:white;">
+                                    <tr>
+                                        <th>Activité / Sujet</th>
+                                        <th class="text-center" style="width:140px;">
+                                            <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.initiator_id)"/>
+                                        </th>
+                                        <th class="text-center" style="width:140px;">
+                                            <t t-out="request.env['club_social_profile.profile']._display_name_for_user(neg.partner_id)"/>
+                                        </th>
+                                        <th style="width:160px;">Note</th>
+                                        <t t-if="is_initiator and neg.state == 'draft'">
+                                            <th style="width:50px;"/>
+                                        </t>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="cat[1]" t-as="item">
+                                        <tr t-attf-class="#{'table-success' if item.is_compatible else ''}">
+                                            <td style="font-size:.9rem;" t-out="item.text"/>
+                                            <td class="text-center" style="font-size:.85rem;">
+                                                <t t-out="response_labels.get(item.initiator_response, '—')"/>
+                                            </td>
+                                            <td class="text-center" style="font-size:.85rem;">
+                                                <t t-out="response_labels.get(item.partner_response, '—')"/>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted" t-out="item.note or ''"/>
+                                            </td>
+                                            <t t-if="is_initiator and neg.state == 'draft'">
+                                                <td class="text-center">
+                                                    <form t-attf-action="/my/negotiation/#{neg.id}/item/#{item.id}/delete" method="post" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Supprimer cet item ?')">
+                                                            ✕
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+                <t t-elif="neg.state == 'draft'">
+                    <div class="text-center py-4 text-muted">
+                        Aucun item — ajoutez des sujets à négocier ci-dessus.
+                    </div>
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_negotiation_root"
+              name="Negotiations"
+              sequence="40"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_negotiation_list"
+              name="My Documents"
+              parent="menu_negotiation_root"
+              action="action_negotiations"
+              sequence="10"/>
+
+</odoo>

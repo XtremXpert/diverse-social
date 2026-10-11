@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bouton « Inviter… » sur la fiche d'un membre : dropdown avec mes groupes
+         (où j'ai le droit d'inviter) et mes cercles. Injecté après « Signaler ». -->
+    <template id="profile_invite_button"
+              inherit_id="club_social_profile.portal_profile_public"
+              name="Profile: Invite button" priority="30">
+        <xpath expr="//a[contains(@t-attf-href,'/report/club_social_profile.profile')]"
+               position="after">
+            <t t-set="_me" t-value="request.env.user"/>
+            <t t-set="_my_groups"
+               t-value="request.env['social_group.group'].sudo().search([('member_ids','in',_me.id)]).filtered(lambda g: g.can_invite(_me) and target_user.id not in g.member_ids.ids)"/>
+            <t t-set="_my_profile"
+               t-value="request.env['club_social_profile.profile'].sudo().search([('user_id','=',_me.id)], limit=1)"/>
+            <!-- Cercle = connexions acceptées seulement : on ne propose les
+                 cercles que si la cible est une connexion. -->
+            <t t-set="_conn"
+               t-value="request.env['club_social_profile.connection'].sudo()"/>
+            <t t-set="_is_conn"
+               t-value="_conn.is_connected(_me, target_user) or _conn.is_connected(target_user, _me)"/>
+            <t t-set="_my_circles"
+               t-value="request.env['social_circles.circle'].sudo().search([('profile_id','=',_my_profile.id)]).filtered(lambda c: target_user.id not in c.member_ids.ids) if (_my_profile and _is_conn) else request.env['social_circles.circle']"/>
+            <t t-if="_my_groups or _my_circles">
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        ➕ Inviter…
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width:240px;">
+                        <t t-if="_my_groups">
+                            <li class="dropdown-header">À un groupe</li>
+                            <t t-foreach="_my_groups" t-as="g">
+                                <li>
+                                    <form t-attf-action="/invite/group/#{g.id}/#{target_user.id}"
+                                          method="post" class="px-2 py-1">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-link p-0 text-decoration-none"
+                                                t-out="g.name"/>
+                                    </form>
+                                </li>
+                            </t>
+                        </t>
+                        <t t-if="_my_circles">
+                            <li t-if="_my_groups"><hr class="dropdown-divider"/></li>
+                            <li class="dropdown-header">À un cercle</li>
+                            <t t-foreach="_my_circles" t-as="c">
+                                <li>
+                                    <form t-attf-action="/invite/circle/#{c.id}/#{target_user.id}"
+                                          method="post" class="px-2 py-1">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-link p-0 text-decoration-none"
+                                                t-out="c.display_name"/>
+                                    </form>
+                                </li>
+                            </t>
+                        </t>
+                    </ul>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

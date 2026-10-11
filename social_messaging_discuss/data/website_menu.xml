@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Entrée de navigation top du site, sous « My Network », à côté de
+         « Messages » (social_messaging, seq 20) pendant l'A/B. Donne un accès
+         à la messagerie Discuss (/my/chats) depuis partout sur le site. -->
+    <record id="menu_discuss_messages" model="website.menu">
+        <field name="name">Messages</field>
+        <field name="url">/my/messages</field>
+        <field name="parent_id" ref="club_social_profile.menu_my_network_root"/>
+        <field name="sequence">21</field>
+    </record>
+</odoo>

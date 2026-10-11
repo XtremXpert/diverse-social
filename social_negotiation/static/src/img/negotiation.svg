@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Négociations">
+  <path d="M16 8 H38 L48 18 V56 H16 Z" fill="#e94560"/>
+  <path d="M38 8 L48 18 H38 Z" fill="#ffffff" opacity="0.55"/>
+  <rect x="22" y="27" width="20" height="3.2" rx="1.6" fill="#ffffff"/>
+  <rect x="22" y="35" width="20" height="3.2" rx="1.6" fill="#ffffff"/>
+  <rect x="22" y="43" width="13" height="3.2" rx="1.6" fill="#ffffff"/>
+</svg>

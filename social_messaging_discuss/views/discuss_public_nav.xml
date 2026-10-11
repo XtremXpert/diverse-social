@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- La page Discuss publique (/discuss/channel/<id>) est un document HTML
+         autonome plein écran SANS aucune navigation → l'utilisateur est piégé.
+         On injecte un bandeau de retour fixe en haut, et on décale l'app Discuss
+         (.o-main-components-container est position:absolute; height:100%) de la
+         hauteur du bandeau pour ne rien recouvrir. Affiché seulement pour les
+         utilisateurs connectés (un invité anonyme n'a pas de portail /my). -->
+    <template id="discuss_public_nav_bar"
+              inherit_id="mail.discuss_public_channel_template"
+              name="Discuss public: barre de retour portail">
+        <xpath expr="//head" position="inside">
+            <style t-if="not request.env.user._is_public()">
+                .o-sc-nav { position: fixed; top: 0; left: 0; right: 0; height: 44px;
+                    z-index: 2000; background: #1a1a2e; display: flex; align-items: center;
+                    gap: 1.25rem; padding: 0 14px; font-family: system-ui, sans-serif; }
+                .o-sc-nav a { color: #cbd3e0; text-decoration: none; font-size: 0.9rem; }
+                .o-sc-nav a.o-sc-home { color: #fff; font-weight: 600; }
+                .o-sc-nav a:hover { color: #fff; text-decoration: underline; }
+                .o-main-components-container { top: 44px !important; height: calc(100% - 44px) !important; }
+            </style>
+        </xpath>
+        <xpath expr="//body/t[@t-out]" position="before">
+            <div class="o-sc-nav" t-if="not request.env.user._is_public()">
+                <a href="/my/chats" class="o-sc-home">← Mes messages</a>
+                <a href="/my/dashboard">Mon réseau</a>
+                <a href="/discover">Découvrir</a>
+                <a href="/" style="margin-left:auto;">diverse-cité</a>
+            </div>
+        </xpath>
+    </template>
+</odoo>
