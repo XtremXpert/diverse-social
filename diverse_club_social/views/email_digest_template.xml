@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="email_weekly_digest" name="Diverse — Weekly Digest Email">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f8f8;">
+
+            <!-- En-tête -->
+            <div style="background: #1a1a2e; padding: 30px 40px; text-align: center;">
+                <h1 style="color: #e94560; margin: 0; font-size: 24px;">Diverse</h1>
+                <p style="color: #aaa; margin: 8px 0 0; font-size: 14px;">Votre résumé hebdomadaire</p>
+            </div>
+
+            <div style="background: white; padding: 30px 40px;">
+                <p style="font-size: 16px; color: #333;">
+                    Bonjour <strong t-out="member.name"/>,
+                </p>
+                <p style="color: #666;">Voici ce qui s'est passé sur votre profil et dans la communauté cette semaine.</p>
+
+                <!-- ── Statistiques personnelles ── -->
+                <div style="display: flex; gap: 16px; margin: 24px 0;">
+                    <div style="flex: 1; background: #f0f0f0; border-radius: 8px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #e94560;" t-out="profile_views"/>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">vues de profil</div>
+                    </div>
+                    <div style="flex: 1; background: #f0f0f0; border-radius: 8px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #e94560;" t-out="new_connections"/>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">nouvelles connexions</div>
+                    </div>
+                    <t t-if="new_members_count">
+                        <div style="flex: 1; background: #f0f0f0; border-radius: 8px; padding: 20px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold; color: #e94560;" t-out="new_members_count"/>
+                            <div style="font-size: 13px; color: #666; margin-top: 4px;">nouveaux membres</div>
+                        </div>
+                    </t>
+                    <t t-if="pending_requests">
+                        <div style="flex: 1; background: #fff3cd; border-radius: 8px; padding: 20px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold; color: #e94560;" t-out="pending_requests"/>
+                            <div style="font-size: 13px; color: #666; margin-top: 4px;">demandes en attente</div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- ── Propositions en vote ── -->
+                <t t-if="proposals_voting">
+                    <h2 style="font-size: 18px; color: #1a1a2e; border-bottom: 2px solid #e94560; padding-bottom: 8px; margin-top: 30px;">
+                        Propositions en cours de vote
+                    </h2>
+                    <t t-foreach="proposals_voting" t-as="proposal">
+                        <div style="padding: 14px 0; border-bottom: 1px solid #eee;">
+                            <div style="font-weight: bold; color: #333; font-size: 14px;" t-out="proposal.name"/>
+                            <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                                ✅ <t t-out="proposal.yes_count"/> pour ·
+                                ❌ <t t-out="proposal.no_count"/> contre ·
+                                Clôture : <t t-out="proposal.voting_closes_at.strftime('%d/%m/%Y') if proposal.voting_closes_at else '?'"/>
+                            </div>
+                            <a t-attf-href="#{base_url}/governance/#{proposal.id}"
+                               style="font-size: 13px; color: #e94560; text-decoration: none;">
+                                Voter →
+                            </a>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- ── Événements à venir ── -->
+                <t t-if="upcoming_events">
+                    <h2 style="font-size: 18px; color: #1a1a2e; border-bottom: 2px solid #e94560; padding-bottom: 8px; margin-top: 30px;">
+                        Événements cette semaine
+                    </h2>
+                    <t t-foreach="upcoming_events" t-as="event">
+                        <div style="padding: 14px 0; border-bottom: 1px solid #eee;">
+                            <div style="font-weight: bold; color: #333; font-size: 14px;" t-out="event.name"/>
+                            <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                                📅 <t t-out="event.date_begin.strftime('%d/%m/%Y à %H:%M') if event.date_begin else '?'"/>
+                                <t t-if="event.organizer_id"> · <t t-out="event.organizer_id.name"/></t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- ── Posts populaires ── -->
+                <t t-if="top_posts">
+                    <h2 style="font-size: 18px; color: #1a1a2e; border-bottom: 2px solid #e94560; padding-bottom: 8px; margin-top: 30px;">
+                        Posts populaires cette semaine
+                    </h2>
+                    <t t-foreach="top_posts" t-as="post">
+                        <div style="padding: 16px 0; border-bottom: 1px solid #eee;">
+                            <div style="font-weight: bold; color: #333; font-size: 14px;" t-out="post.env['club_social_profile.profile']._display_name_for_user(post.author_id)"/>
+                            <div style="color: #555; font-size: 14px; margin: 4px 0; line-height: 1.5;">
+                                <t t-out="(post.content or '')[:200]"/>
+                                <t t-if="post.content and len(post.content) > 200">…</t>
+                            </div>
+                            <div style="font-size: 12px; color: #999;">
+                                ❤️ <t t-out="post.like_count"/> · 💬 <t t-out="post.comment_count"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- ── RSVPs des connexions ── -->
+                <t t-if="connection_rsvps">
+                    <h2 style="font-size: 18px; color: #1a1a2e; border-bottom: 2px solid #e94560; padding-bottom: 8px; margin-top: 30px;">
+                        Vos connexions participent à ces événements
+                    </h2>
+                    <t t-foreach="connection_rsvps" t-as="rsvp">
+                        <div style="padding: 14px 0; border-bottom: 1px solid #eee;">
+                            <div style="font-weight: bold; color: #333; font-size: 14px;" t-out="rsvp['event'].name"/>
+                            <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                                📅 <t t-out="rsvp['event'].date_begin.strftime('%d/%m/%Y à %H:%M') if rsvp['event'].date_begin else '?'"/>
+                            </div>
+                            <div style="font-size: 13px; color: #666; margin-top: 4px;">
+                                👥 <t t-out="', '.join(rsvp['registrant_names'])"/>
+                                <t t-if="len(rsvp['registrant_names']) >= 3"> et d'autres…</t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- ── Appel à l'action ── -->
+                <div style="text-align: center; margin: 32px 0 16px;">
+                    <a t-attf-href="#{base_url}/social/feed"
+                       style="background: #e94560; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 15px; font-weight: bold; display: inline-block;">
+                        Voir le feed
+                    </a>
+                </div>
+
+                <t t-if="pending_requests">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <a t-attf-href="#{base_url}/social/connections"
+                           style="color: #e94560; font-size: 14px;">
+                            Voir mes demandes de connexion (<t t-out="pending_requests"/>)
+                        </a>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Pied de page -->
+            <div style="background: #1a1a2e; padding: 20px 40px; text-align: center;">
+                <p style="color: #666; font-size: 12px; margin: 0;">
+                    Vous recevez cet email car vous êtes membre de Diverse.
+                    <a t-attf-href="#{base_url}/onboarding?step=preferences"
+                       style="color: #e94560;">
+                        Gérer vos préférences
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </template>
+</odoo>

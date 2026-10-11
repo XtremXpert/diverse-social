@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Override social_help.community_name (vide par défaut) avec
+             le nom du site, affiché dans le titre de /community/help.
+             Référence l'XML ID créé par social_help → UPDATE, pas INSERT
+             (sinon violation de UNIQUE sur ir_config_parameter.key). -->
+        <record id="social_help.param_community_name" model="ir.config_parameter">
+            <field name="value">diverse-cite.com</field>
+        </record>
+
+        <!-- Charte communautaire affichée sur /community/help.
+             Texte HTML, modifiable depuis Settings > Technique >
+             Paramètres système sans redéploiement.
+             Référence l'XML ID créé par social_help → UPDATE, pas INSERT. -->
+        <record id="social_help.param_charter_html" model="ir.config_parameter">
+            <field name="value"><![CDATA[<p><strong>Bienvenue dans diverse-cite.com.</strong>
+Cet espace est animé par des bénévoles de la communauté.
+Les principes qui suivent encadrent l'expérience commune —
+leur respect conditionne votre participation.</p>
+
+<ol>
+<li><strong>Respect inconditionnel des personnes.</strong>
+On critique des idées, des comportements, des choix de mots —
+jamais des personnes. Insultes, mépris des identités de genre
+ou d'orientation, shaming des pratiques consensuelles : tout
+est retiré sans préavis.</li>
+
+<li><strong>Vie privée et confidentialité d'abord.</strong>
+Aucun outing : on ne révèle ni l'identité civile, ni l'orientation,
+ni les pratiques d'une personne sans son consentement explicite.
+Pas de photos identifiables d'autres membres. Conformément à la
+Loi 25, chaque membre peut demander la suppression de ses données
+depuis <a href="/my/privacy">/my/privacy</a>.</li>
+
+<li><strong>Consentement éclairé.</strong>
+Conversations explicites, propositions et invitations doivent
+respecter le consentement de l'autre partie — silence ou
+non-réponse ne valent pas accord. Les négociations de limites
+se font via l'outil prévu
+(<a href="/my/negotiations">/my/negotiations</a>). Tout
+signalement d'atteinte au consentement est traité prioritairement
+par la modération.</li>
+
+<li><strong>Ressources d'aide hors-plateforme.</strong>
+Le 9-1-1 reste le seul canal pour les urgences médicales ou
+criminelles. Pour le soutien LGBTQ+ : Interligne
+<strong>1-888-505-1010</strong> (24/7,
+<a href="https://interligne.co">interligne.co</a>). Pour les
+ITSS : <strong>1-877-644-4545</strong> (Info-Santé 811). Cette
+plateforme n'est pas surveillée 24h/24 et n'offre pas
+d'intervention de crise.</li>
+
+<li><strong>Modération à hauteur d'humain.</strong>
+Les modérateurs et modératrices sont des membres bénévoles.
+Elles et ils tranchent en cohérence avec la charte, expliquent
+leurs décisions, et acceptent le débat. Désaccord ? Discussion
+privée d'abord, recours auprès du conseil ensuite — proposition
+de gouvernance ouverte à tous les membres
+(<a href="/governance">/governance</a>).</li>
+</ol>
+
+<p class="text-muted small">Charte v1 — adoptée par les modérateurs
+initiaux. Révisable par proposition de gouvernance.</p>]]></field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Page Hébergement — formulaire de demande de prix -->
+        <template id="hosting_page" name="Hosting Page">
+            <t t-call="website.layout">
+                <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                <div id="wrap" class="o_website_container">
+                    <!-- BREADCRUMB -->
+                    <section class="s_text_block o_cc o_cc2 pt32 pb32">
+                        <div class="container">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="/partners" t-if="is_fr">Partenaires</a>
+                                        <a href="/partners" t-else="">Partners</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        <t t-if="is_fr">Hébergement</t>
+                                        <t t-else="">Hosting</t>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </section>
+
+                    <!-- HERO SECTION -->
+                    <section class="s_cover o_cc o_cc3 dc-hero pt64 pb64">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-lg-10 mx-auto text-center">
+                                    <h1 class="display-4 mb-4" t-if="is_fr">
+                                        Demande de prix — <span class="dc-gold-word">Hébergement</span>
+                                    </h1>
+                                    <h1 class="display-4 mb-4" t-else="">
+                                        Quote Request — <span class="dc-gold-word">Hosting</span>
+                                    </h1>
+                                    <p class="lead mb-0" t-if="is_fr">
+                                        Trouvez l'hébergement parfait pour votre événement ou votre club.
+                                    </p>
+                                    <p class="lead mb-0" t-else="">
+                                        Find the perfect hosting for your event or club.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MAIN CONTENT -->
+                    <section class="s_text_block o_cc o_cc1 pt64 pb64">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-10 mx-auto">
+                                    <!-- INFO SECTION -->
+                                    <div class="mb-5" t-if="is_fr">
+                                        <h2 class="mb-4">Demandez un devis d'hébergement</h2>
+                                        <p class="lead">
+                                            Diverse-Cité collabore avec une sélection de partenaires d'hébergement
+                                            qui offrent des espaces accueillants et inclusifs pour les communautés
+                                            libertine, BDSM et fétiche.
+                                        </p>
+                                        <p>
+                                            Remplissez le formulaire ci-dessous pour recevoir des devis personnalisés
+                                            adaptés à vos besoins et à votre budget.
+                                        </p>
+                                    </div>
+                                    <div class="mb-5" t-else="">
+                                        <h2 class="mb-4">Request a Hosting Quote</h2>
+                                        <p class="lead">
+                                            Diverse-Cité works with a selection of hosting partners
+                                            who offer welcoming and inclusive spaces for libertine, BDSM and fetish communities.
+                                        </p>
+                                        <p>
+                                            Fill out the form below to receive personalized quotes
+                                            tailored to your needs and budget.
+                                        </p>
+                                    </div>
+
+                                    <!-- ERROR MESSAGE -->
+                                    <t t-if="error">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong t-if="is_fr">Erreur :</strong>
+                                            <strong t-else="">Error:</strong>
+                                            <span t-out="error"/>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"/>
+                                        </div>
+                                    </t>
+
+                                    <!-- FORM -->
+                                    <form method="post" action="/partners/hosting/submit" class="mt-5" id="hosting_form">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                        <!-- SECTION 1: Informations du demandeur -->
+                                        <fieldset class="mb-4">
+                                            <h4 class="mb-3" t-if="is_fr">Vos informations</h4>
+                                            <h4 class="mb-3" t-else="">Your information</h4>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="partner_name" class="form-label" t-if="is_fr">Nom du partenaire/organisation *</label>
+                                                    <label for="partner_name" class="form-label" t-else="">Partner/Organization name *</label>
+                                                    <input type="text" class="form-control" id="partner_name" name="partner_name" required="required"
+                                                           t-att-value="form_data.get('partner_name', '')"/>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="contact_name" class="form-label" t-if="is_fr">Nom du contact *</label>
+                                                    <label for="contact_name" class="form-label" t-else="">Contact name *</label>
+                                                    <input type="text" class="form-control" id="contact_name" name="contact_name" required="required"
+                                                           t-att-value="form_data.get('contact_name', '')"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="email" class="form-label" t-if="is_fr">Courriel *</label>
+                                                    <label for="email" class="form-label" t-else="">Email *</label>
+                                                    <input type="email" class="form-control" id="email" name="email" required="required"
+                                                           t-att-value="form_data.get('email', '')"/>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="phone" class="form-label" t-if="is_fr">Téléphone</label>
+                                                    <label for="phone" class="form-label" t-else="">Phone</label>
+                                                    <input type="tel" class="form-control" id="phone" name="phone"
+                                                           t-att-value="form_data.get('phone', '')"/>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <hr class="my-4"/>
+
+                                        <!-- SECTION 2: Détails de l'événement/lieu -->
+                                        <fieldset class="mb-4">
+                                            <h4 class="mb-3" t-if="is_fr">Détails de votre événement/lieu</h4>
+                                            <h4 class="mb-3" t-else="">Event/Venue details</h4>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="event_name" class="form-label" t-if="is_fr">Nom de l'événement/lieu *</label>
+                                                    <label for="event_name" class="form-label" t-else="">Event/Venue name *</label>
+                                                    <input type="text" class="form-control" id="event_name" name="event_name" required="required"
+                                                           t-att-value="form_data.get('event_name', '')"/>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="event_date" class="form-label" t-if="is_fr">Date prévue</label>
+                                                    <label for="event_date" class="form-label" t-else="">Expected date</label>
+                                                    <input type="date" class="form-control" id="event_date" name="event_date"
+                                                           t-att-value="form_data.get('event_date', '')"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="hosting_type" class="form-label" t-if="is_fr">Type d'hébergement requis *</label>
+                                                    <label for="hosting_type" class="form-label" t-else="">Type of hosting needed *</label>
+                                                    <select class="form-select" id="hosting_type" name="hosting_type" required="required">
+                                                        <option value="">
+                                                            <t t-if="is_fr">Sélectionnez un type...</t>
+                                                            <t t-else="">Select a type...</t>
+                                                        </option>
+                                                        <option value="club_venue" t-att-selected="form_data.get('hosting_type') == 'club_venue'">
+                                                            <t t-if="is_fr">Club/Venue</t>
+                                                            <t t-else="">Club/Venue</t>
+                                                        </option>
+                                                        <option value="event" t-att-selected="form_data.get('hosting_type') == 'event'">
+                                                            <t t-if="is_fr">Événement spécial</t>
+                                                            <t t-else="">Special event</t>
+                                                        </option>
+                                                        <option value="retreat" t-att-selected="form_data.get('hosting_type') == 'retreat'">
+                                                            <t t-if="is_fr">Retraite/Workshop</t>
+                                                            <t t-else="">Retreat/Workshop</t>
+                                                        </option>
+                                                        <option value="festival" t-att-selected="form_data.get('hosting_type') == 'festival'">
+                                                            <t t-if="is_fr">Festival</t>
+                                                            <t t-else="">Festival</t>
+                                                        </option>
+                                                        <option value="other" t-att-selected="form_data.get('hosting_type') == 'other'">
+                                                            <t t-if="is_fr">Autre</t>
+                                                            <t t-else="">Other</t>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="duration_nights" class="form-label" t-if="is_fr">Nombre de nuits</label>
+                                                    <label for="duration_nights" class="form-label" t-else="">Number of nights</label>
+                                                    <input type="number" class="form-control" id="duration_nights" name="duration_nights" min="1"
+                                                           t-att-value="form_data.get('duration_nights', '')"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="expected_guests" class="form-label" t-if="is_fr">Nombre de participants attendus</label>
+                                                    <label for="expected_guests" class="form-label" t-else="">Expected number of guests</label>
+                                                    <input type="number" class="form-control" id="expected_guests" name="expected_guests" min="1"
+                                                           t-att-value="form_data.get('expected_guests', '')"/>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="budget_range" class="form-label" t-if="is_fr">Gamme de budget</label>
+                                                    <label for="budget_range" class="form-label" t-else="">Budget range</label>
+                                                    <select class="form-select" id="budget_range" name="budget_range">
+                                                        <option value="not_specified" t-att-selected="form_data.get('budget_range') == 'not_specified'">
+                                                            <t t-if="is_fr">Non spécifié</t>
+                                                            <t t-else="">Not specified</t>
+                                                        </option>
+                                                        <option value="under_50" t-att-selected="form_data.get('budget_range') == 'under_50'">
+                                                            <t t-if="is_fr">Moins de 50$/nuit</t>
+                                                            <t t-else="">Under $50/night</t>
+                                                        </option>
+                                                        <option value="50_100" t-att-selected="form_data.get('budget_range') == '50_100'">
+                                                            50-100$/night
+                                                        </option>
+                                                        <option value="100_150" t-att-selected="form_data.get('budget_range') == '100_150'">
+                                                            100-150$/night
+                                                        </option>
+                                                        <option value="150_200" t-att-selected="form_data.get('budget_range') == '150_200'">
+                                                            150-200$/night
+                                                        </option>
+                                                        <option value="200_plus" t-att-selected="form_data.get('budget_range') == '200_plus'">
+                                                            <t t-if="is_fr">200$ et plus/nuit</t>
+                                                            <t t-else="">$200+/night</t>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <hr class="my-4"/>
+
+                                        <!-- SECTION 3: Exigences -->
+                                        <fieldset class="mb-4">
+                                            <h4 class="mb-3" t-if="is_fr">Exigences et préférences</h4>
+                                            <h4 class="mb-3" t-else="">Requirements and preferences</h4>
+
+                                            <div class="mb-3">
+                                                <label for="requirements" class="form-label" t-if="is_fr">Exigences spéciales *</label>
+                                                <label for="requirements" class="form-label" t-else="">Special requirements *</label>
+                                                <textarea class="form-control" id="requirements" name="requirements" rows="5" required="required"
+                                                          placeholder="Décrivez vos besoins spécifiques (aménagements, services, commodités, atmosphère, etc.)"
+                                                          t-att-placeholder="'Describe your specific needs (amenities, services, facilities, atmosphere, etc.)' if not is_fr else 'Décrivez vos besoins spécifiques (aménagements, services, commodités, atmosphère, etc.)'"
+                                                          t-out="form_data.get('requirements', '')"/>
+                                                <small class="text-muted" t-if="is_fr">
+                                                    Soyez aussi détaillés que possible pour nous aider à trouver la meilleure option.
+                                                </small>
+                                                <small class="text-muted" t-else="">
+                                                    Be as detailed as possible to help us find the best option.
+                                                </small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="preferred_locations" class="form-label" t-if="is_fr">Emplacements préférés</label>
+                                                <label for="preferred_locations" class="form-label" t-else="">Preferred locations</label>
+                                                <textarea class="form-control" id="preferred_locations" name="preferred_locations" rows="3"
+                                                          placeholder="Régions, villes ou provinces préférées"
+                                                          t-att-placeholder="'Preferred regions, cities or provinces' if not is_fr else 'Régions, villes ou provinces préférées'"
+                                                          t-out="form_data.get('preferred_locations', '')"/>
+                                            </div>
+                                        </fieldset>
+
+                                        <!-- SUBMIT -->
+                                        <div class="mb-3 pt-3">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100" t-if="is_fr">
+                                                <i class="oi me-2" data-icon="send"/>Demander un devis
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-lg w-100" t-else="">
+                                                <i class="oi me-2" data-icon="send"/>Request a Quote
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- FOOTER NOTE -->
+                                    <p class="text-muted text-center small mt-4" t-if="is_fr">
+                                        Nous examinerons votre demande et vous enverrons des devis dans les 3 à 5 jours ouvrables.
+                                    </p>
+                                    <p class="text-muted text-center small mt-4" t-else="">
+                                        We'll review your request and send you quotes within 3-5 business days.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Success Page -->
+        <template id="hosting_success" name="Hosting Success">
+            <t t-call="website.layout">
+                <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+                <div id="wrap" class="o_website_container">
+                    <section class="s_text_block o_cc o_cc1 pt96 pb96">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8 mx-auto text-center">
+                                    <div class="mb-4" style="font-size: 4rem; color: #28a745;">
+                                        <i class="oi" data-icon="check_circle"/>
+                                    </div>
+                                    <h1 class="mb-4" t-if="is_fr">Demande reçue !</h1>
+                                    <h1 class="mb-4" t-else="">Request received!</h1>
+
+                                    <p class="lead mb-4" t-if="is_fr">
+                                        Votre demande de devis d'hébergement a été soumise avec succès.
+                                    </p>
+                                    <p class="lead mb-4" t-else="">
+                                        Your hosting quote request has been submitted successfully.
+                                    </p>
+
+                                    <p t-if="is_fr">
+                                        Nous examinerons votre demande et vous enverrons des devis adaptés à vos besoins
+                                        à l'adresse courriel <strong t-out="quote_request.email"/>.
+                                    </p>
+                                    <p t-else="">
+                                        We'll review your request and send you personalized quotes
+                                        to <strong t-out="quote_request.email"/>.
+                                    </p>
+
+                                    <p class="text-muted small" t-if="is_fr">
+                                        Délai estimé : 3 à 5 jours ouvrables.
+                                    </p>
+                                    <p class="text-muted small" t-else="">
+                                        Expected timeframe: 3-5 business days.
+                                    </p>
+
+                                    <hr class="my-5"/>
+
+                                    <div class="mt-5">
+                                        <a href="/partners" class="btn btn-outline-primary me-2" t-if="is_fr">
+                                            Retour à Partenaires
+                                        </a>
+                                        <a href="/partners" class="btn btn-outline-primary me-2" t-else="">
+                                            Back to Partners
+                                        </a>
+                                        <a href="/" class="btn btn-primary" t-if="is_fr">
+                                            Accueil
+                                        </a>
+                                        <a href="/" class="btn btn-primary" t-else="">
+                                            Home
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

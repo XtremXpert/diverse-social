@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+    Force French view names for portal pages so the <title> tag renders in FR.
+    The ir.ui.view.name field feeds <title>{name} | {website.name}</title>
+    via website.layout. These overrides are noupdate=1 so they survive module
+    upgrades without being overwritten by the upstream English name.
+    -->
+    <record id="club_social_profile.portal_profile_public" model="ir.ui.view">
+        <field name="name">Profil membre</field>
+    </record>
+    <record id="club_social_profile.portal_profile_edit" model="ir.ui.view">
+        <field name="name">Modifier mon profil</field>
+    </record>
+    <record id="club_social_profile.portal_discover" model="ir.ui.view">
+        <field name="name">Découvrir des membres</field>
+    </record>
+    <record id="club_social_profile_bdsm.portal_bdsm_profile" model="ir.ui.view">
+        <field name="name">Mon profil BDSM</field>
+    </record>
+    <record id="social_circles.portal_my_circles" model="ir.ui.view">
+        <field name="name">Mes cercles de confiance</field>
+    </record>
+    <record id="social_consent.portal_my_consent" model="ir.ui.view">
+        <field name="name">Consentement — Tableau de bord</field>
+    </record>
+    <record id="social_group.portal_my_groups" model="ir.ui.view">
+        <field name="name">Mes groupes</field>
+    </record>
+    <record id="social_story.portal_my_stories" model="ir.ui.view">
+        <field name="name">Mes stories</field>
+    </record>
+    <record id="social_safety.portal_safety_page" model="ir.ui.view">
+        <field name="name">Sécurité et confidentialité</field>
+    </record>
+    <record id="social_notifications.portal_notifications_page" model="ir.ui.view">
+        <field name="name">Mes notifications</field>
+    </record>
+    <record id="social_privacy.portal_privacy_dashboard" model="ir.ui.view">
+        <field name="name">Ma confidentialité</field>
+    </record>
+    <record id="club_membership_website.portal_my_memberships" model="ir.ui.view">
+        <field name="name">Mon adhésion</field>
+    </record>
+    <record id="social_messaging_discuss.portal_chats_list" model="ir.ui.view">
+        <field name="name">Mes messages</field>
+    </record>
+
+    <!-- Odoo core modules (not submodules — these refs resolve via website / website_sale) -->
+    <record id="website_sale.products" model="ir.ui.view">
+        <field name="name">Boutique</field>
+    </record>
+    <record id="website.contactus" model="ir.ui.view">
+        <field name="name">Contactez-nous</field>
+    </record>
+</odoo>

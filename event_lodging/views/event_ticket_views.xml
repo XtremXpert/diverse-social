@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Formulaire billet inline (dans l'onglet Billets de l'événement) -->
+<record id="event_event_ticket_view_form_from_event_lodging" model="ir.ui.view">
+    <field name="name">event.event.ticket.view.form.from.event.lodging</field>
+    <field name="model">event.event.ticket</field>
+    <field name="inherit_id" ref="event.event_event_ticket_view_form_from_event"/>
+    <field name="arch" type="xml">
+        <field name="description" position="after">
+            <field name="lodging_type"/>
+        </field>
+    </field>
+</record>
+
+<!-- Liste billets inline -->
+<record id="event_event_ticket_view_tree_from_event_lodging" model="ir.ui.view">
+    <field name="name">event.event.ticket.view.tree.from.event.lodging</field>
+    <field name="model">event.event.ticket</field>
+    <field name="inherit_id" ref="event.event_event_ticket_view_tree_from_event"/>
+    <field name="arch" type="xml">
+        <field name="seats_max" position="before">
+            <field name="lodging_type"/>
+        </field>
+    </field>
+</record>
+
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Icônes brandées (#e94560) des cartes /my/home fournies par les modules
+         Odoo standard (account / account_payment / sale / portal), afin
+         d'harmoniser le hub avec les cartes du réseau social.
+
+         Odoo 20 : les cartes sont des enregistrements portal.entry (plus des
+         gabarits QWeb) ; on surcharge simplement leur champ image. -->
+
+    <record id="account.portal_invoice_client" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/facture.svg"/>
+    </record>
+    <record id="account.portal_invoice_vendor" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/facture.svg"/>
+    </record>
+    <record id="account_payment.portal_entry_overdue_invoices" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/paiement.svg"/>
+    </record>
+    <record id="sale.portal_your_orders" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/vente.svg"/>
+    </record>
+    <record id="sale.portal_quotations_to_review" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/vente.svg"/>
+    </record>
+    <record id="portal.portal_entry_addresses" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/adresse.svg"/>
+    </record>
+    <record id="portal.portal_entry_base" model="portal.entry">
+        <field name="image" type="bytes" file="diverse_club_social/static/src/img/connexion.svg"/>
+    </record>
+
+</odoo>

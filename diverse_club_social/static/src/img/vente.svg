@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" role="img" aria-label="Ventes">
+  <path d="M14 22 H50 L47 56 H17 Z" fill="#e94560"/>
+  <path d="M24 24 V18 a8 8 0 0 1 16 0 V24" fill="none" stroke="#e94560" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="33" r="2.6" fill="#ffffff"/>
+  <circle cx="40" cy="33" r="2.6" fill="#ffffff"/>
+</svg>

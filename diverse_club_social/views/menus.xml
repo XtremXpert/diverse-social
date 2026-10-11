@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Réorganisation des menus du réseau social en 4 catégories sous l'app
+        "Social" (parent: social_base.menu_social_base_root).
+
+        Chaque social_* déclare son menuitem top-level dans son propre module
+        (sans parent). Ici on les ré-attache aux groupes catégoriels.
+
+        Hiérarchie finale visible par un user (group_social_user) :
+
+            Social
+            ├── Discovery
+            │   ├── (social_discovery) Members + My Searches
+            │   └── (social_circles) Circles + My Circles + All Circles (Admin)
+            ├── Safety
+            │   ├── (social_safety) Safety + Blocked Users + Muted Users
+            │   ├── (social_consent) Consent + My Gate + Inbox + Sent + Admin
+            │   └── Privacy & Compliance         (moderator+)
+            │       ├── (social_privacy) Privacy by Design
+            │       ├── (social_privacy) Consent Records
+            │       ├── (social_privacy) Policy Versions
+            │       └── (social_privacy) Retention Rules
+            ├── Content
+            │   ├── (social_story) Stories
+            │   └── (social_gallery) Galleries
+            └── Community
+                ├── (social_group) Groups
+                ├── (social_messaging) Messages
+                ├── (social_notifications) Notifications
+                ├── (social_governance) Governance
+                ├── (social_negotiation) Negotiations
+                └── (social_reputation) Reputation
+
+        Apps top-level conservées dans le grid (en plus de Social) :
+        - Memberships (club_membership)
+        - Privacy (OCA data_protection, séparé de social_privacy)
+        - Discuss, Settings, etc. (Odoo standard)
+    -->
+
+    <!-- ── Catégories sous Social ─────────────────────────────────── -->
+    <menuitem id="menu_social_discovery_grp" name="Discovery"
+              parent="social_base.menu_social_base_root" sequence="10"
+              groups="social_base.group_social_user"/>
+    <menuitem id="menu_social_safety_grp" name="Safety"
+              parent="social_base.menu_social_base_root" sequence="20"
+              groups="social_base.group_social_user"/>
+    <menuitem id="menu_social_content_grp" name="Content"
+              parent="social_base.menu_social_base_root" sequence="30"
+              groups="social_base.group_social_user"/>
+    <menuitem id="menu_social_community_grp" name="Community"
+              parent="social_base.menu_social_base_root" sequence="40"
+              groups="social_base.group_social_user"/>
+
+    <!-- Sub-group pour les outils de modération privacy/compliance -->
+    <menuitem id="menu_social_compliance_grp" name="Privacy &amp; Compliance"
+              parent="menu_social_safety_grp" sequence="90"
+              groups="social_base.group_social_moderator"/>
+
+    <!-- ── Re-parents : Discovery ─────────────────────────────────── -->
+    <menuitem id="social_discovery.menu_discovery_root"
+              parent="menu_social_discovery_grp" sequence="10"/>
+    <menuitem id="social_circles.menu_circles_root"
+              parent="menu_social_discovery_grp" sequence="20"/>
+
+    <!-- ── Re-parents : Safety ────────────────────────────────────── -->
+    <menuitem id="social_safety.menu_safety_root"
+              parent="menu_social_safety_grp" sequence="10"/>
+    <menuitem id="social_consent.menu_consent_root"
+              parent="menu_social_safety_grp" sequence="20"/>
+
+    <!-- ── Re-parents : Content ───────────────────────────────────── -->
+    <menuitem id="social_story.menu_social_stories"
+              parent="menu_social_content_grp" sequence="10"/>
+    <menuitem id="social_gallery.menu_social_galleries"
+              parent="menu_social_content_grp" sequence="20"/>
+
+    <!-- ── Re-parents : Community ─────────────────────────────────── -->
+    <menuitem id="social_group.menu_social_groups"
+              parent="menu_social_community_grp" sequence="10"/>
+    <!-- social_messaging.menu_social_messaging retiré (module désinstallé, migré vers Discuss) -->
+    <menuitem id="social_notifications.menu_my_notifications"
+              parent="menu_social_community_grp" sequence="30"/>
+    <menuitem id="social_governance.menu_governance_root"
+              parent="menu_social_community_grp" sequence="40"/>
+    <menuitem id="social_negotiation.menu_negotiation_root"
+              parent="menu_social_community_grp" sequence="50"/>
+    <menuitem id="social_reputation.menu_reputation_root"
+              parent="menu_social_community_grp" sequence="60"/>
+
+    <!-- ── Re-parents : Privacy &amp; Compliance ──────────────────────── -->
+    <menuitem id="social_privacy.menu_design_review"
+              parent="menu_social_compliance_grp" sequence="10"/>
+    <menuitem id="social_privacy.menu_consent_record"
+              parent="menu_social_compliance_grp" sequence="20"/>
+    <menuitem id="social_privacy.menu_policy_version"
+              parent="menu_social_compliance_grp" sequence="30"/>
+    <menuitem id="social_privacy.menu_retention_rule"
+              parent="menu_social_compliance_grp" sequence="40"/>
+
+</odoo>

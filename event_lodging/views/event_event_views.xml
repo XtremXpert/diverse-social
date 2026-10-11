@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Smart button "Chambres" sur le formulaire événement -->
+<record id="event_event_form_lodging" model="ir.ui.view">
+    <field name="name">event.event.form.lodging</field>
+    <field name="model">event.event</field>
+    <field name="inherit_id" ref="event.view_event_form"/>
+    <field name="arch" type="xml">
+        <div name="button_box" position="inside">
+            <button name="%(event_lodging.action_event_lodging_registrations)d"
+                    type="action"
+                    class="oe_stat_button"
+                    icon="bed"
+                    invisible="lodging_total_count == 0"
+                    context="{'default_event_id': id, 'search_default_event_id': id}">
+                <div class="o_stat_info">
+                    <span class="o_stat_value">
+                        <field name="lodging_total_count"/>
+                    </span>
+                    <span class="o_stat_text">Chambres</span>
+                </div>
+            </button>
+        </div>
+    </field>
+</record>
+
+</odoo>

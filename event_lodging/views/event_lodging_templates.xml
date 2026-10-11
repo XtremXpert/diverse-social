@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Injection des champs partenaire 2 dans le formulaire d'inscription -->
+<template id="registration_attendee_details_lodging"
+          inherit_id="website_event.registration_attendee_details"
+          name="Hébergement — Partenaire 2">
+    <xpath expr="//input[contains(@t-attf-name, 'event_ticket_id')]" position="after">
+        <!-- Stocker lodging_type pour usage JS -->
+        <input type="hidden"
+               t-attf-name="#{counter}-lodging_type"
+               t-att-value="ticket.get('lodging_type', 'none')"/>
+
+        <!-- Section partenaire 2 — visible uniquement pour lit double -->
+        <div t-if="ticket.get('lodging_type') == 'double'"
+             class="o_event_lodging_partner2 border rounded p-3 mt-3 bg-light">
+            <h6 class="mb-3">
+                <i class="oi me-2" data-icon="person_add"/>Informations du/de la partenaire
+            </h6>
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <label t-attf-for="partner2_name_#{counter}" class="form-label">
+                        Nom <span class="text-danger">*</span>
+                    </label>
+                    <input class="form-control"
+                           type="text"
+                           t-attf-id="partner2_name_#{counter}"
+                           t-attf-name="#{counter}-partner2_name"
+                           required="required"
+                           placeholder="Prénom Nom"/>
+                </div>
+                <div class="col-lg-6">
+                    <label t-attf-for="partner2_email_#{counter}" class="form-label">
+                        Courriel
+                    </label>
+                    <input class="form-control"
+                           type="email"
+                           t-attf-id="partner2_email_#{counter}"
+                           t-attf-name="#{counter}-partner2_email"
+                           placeholder="courriel@exemple.com"/>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+</odoo>

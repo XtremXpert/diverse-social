@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         Tableau de bord Diverse-Cité (rendu par /my et /my/dashboard).
+         Remplace l'ancienne grille de raccourcis /my (qui dupliquait la nav).
+         Charte « velours + or » via les classes .dc-* (theme_diverse_cite),
+         bilingue via le helper is_fr. Bloc « Mon compte » = gestion/facturation
+         absente de la navigation.
+         ════════════════════════════════════════════════════════════════════ -->
+    <template id="portal_dashboard_diverse" name="Diverse: tableau de bord">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <t t-set="page_name" t-value="'dashboard'"/>
+            <t t-set="is_fr" t-value="(request.env.lang or 'fr_CA').startswith('fr')"/>
+            <t t-set="display_name"
+               t-value="(profile and profile.stealth_name) or request.env.user.name"/>
+
+            <!-- ── HERO / seuil ──────────────────────────────────────────── -->
+            <section class="dc-hero dc-hero--portal">
+                <div class="container">
+                    <div class="dc-eyebrow mb-2">✦
+                        <t t-if="is_fr">Tableau de bord</t>
+                        <t t-else="">Dashboard</t>
+                    ✦</div>
+                    <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                        <div class="dc-avatar dc-avatar--lg">
+                            <t t-if="profile and profile.profile_image">
+                                <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image"
+                                     alt=""/>
+                            </t>
+                            <t t-else="">
+                                <div class="dc-avatar-initial">
+                                    <t t-out="(display_name or '?')[0].upper()"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="text-start">
+                            <h1 class="mb-1">
+                                <t t-if="is_fr">Bonjour, </t>
+                                <t t-else="">Hello, </t>
+                                <span class="dc-gold-word" t-out="display_name"/>
+                            </h1>
+                            <t t-if="member_state == 'active'">
+                                <span class="dc-badge dc-badge--gold">
+                                    <t t-if="is_fr">Membre · actif</t>
+                                    <t t-else="">Member · active</t>
+                                </span>
+                            </t>
+                            <t t-elif="member_state == 'pending'">
+                                <span class="dc-badge dc-badge--warning">
+                                    <t t-if="is_fr">Adhésion en attente</t>
+                                    <t t-else="">Membership pending</t>
+                                </span>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="container py-4 o_portal_wrap">
+
+                <!-- ── Stat cards ────────────────────────────────────────── -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="dc-card dc-stat h-100 text-center">
+                            <div class="dc-stat-value" t-out="profile_views"/>
+                            <div class="dc-stat-label">
+                                👁️ <t t-if="is_fr">Visites profil</t><t t-else="">Profile views</t>
+                                <br/><span class="dc-stat-sub">(<t t-if="is_fr">7 jours</t><t t-else="">7 days</t>)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="dc-card dc-stat h-100 text-center">
+                            <div class="dc-stat-value" t-out="new_connections"/>
+                            <div class="dc-stat-label">
+                                🤝 <t t-if="is_fr">Nouvelles connexions</t><t t-else="">New connections</t>
+                                <br/><span class="dc-stat-sub">(<t t-if="is_fr">7 jours</t><t t-else="">7 days</t>)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/my/connections" class="text-decoration-none">
+                            <div class="dc-card dc-stat h-100 text-center">
+                                <div class="dc-stat-value" t-out="pending_requests"/>
+                                <div class="dc-stat-label">
+                                    ⏳ <t t-if="is_fr">Demandes en attente</t><t t-else="">Pending requests</t>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/social/notifications" class="text-decoration-none">
+                            <div class="dc-card dc-stat h-100 text-center">
+                                <div class="dc-stat-value" t-out="unread_notifs"/>
+                                <div class="dc-stat-label">
+                                    🔔 <t t-if="is_fr">Notifs non lues</t><t t-else="">Unread notifs</t>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+
+                    <!-- ── Colonne principale ────────────────────────────── -->
+                    <div class="col-lg-8">
+
+                        <!-- Propositions au vote -->
+                        <t t-if="proposals_voting">
+                            <div class="dc-card mb-4">
+                                <div class="dc-card-header d-flex justify-content-between align-items-center">
+                                    <span>🗳️ <t t-if="is_fr">Propositions au vote</t><t t-else="">Open for voting</t></span>
+                                    <a href="/governance" class="dc-card-link">
+                                        <t t-if="is_fr">Tout voir →</t><t t-else="">View all →</t>
+                                    </a>
+                                </div>
+                                <ul class="dc-list">
+                                    <t t-foreach="proposals_voting" t-as="prop">
+                                        <a t-attf-href="/governance/#{prop.id}" class="dc-list-item">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <div class="dc-list-title" t-out="prop.name"/>
+                                                    <div class="dc-list-sub">
+                                                        <t t-if="is_fr">par </t><t t-else="">by </t>
+                                                        <t t-out="request.env['club_social_profile.profile']._display_name_for_user(prop.author_id)"/>
+                                                    </div>
+                                                </div>
+                                                <t t-if="prop.voting_closes_at">
+                                                    <span class="dc-badge dc-badge--warning" style="white-space:nowrap;">
+                                                        <t t-if="is_fr">Clôt </t><t t-else="">Closes </t>
+                                                        <t t-out="prop.voting_closes_at.strftime('%d/%m')"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Événements à venir -->
+                        <t t-if="upcoming_events">
+                            <div class="dc-card mb-4">
+                                <div class="dc-card-header d-flex justify-content-between align-items-center">
+                                    <span>📅 <t t-if="is_fr">Événements à venir</t><t t-else="">Upcoming events</t></span>
+                                    <a href="/event" class="dc-card-link">
+                                        <t t-if="is_fr">Tout voir →</t><t t-else="">View all →</t>
+                                    </a>
+                                </div>
+                                <ul class="dc-list">
+                                    <t t-foreach="upcoming_events" t-as="ev">
+                                        <a t-att-href="ev.website_url" class="dc-list-item">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="dc-date-chip text-center">
+                                                    <div class="dc-date-day" t-out="ev.date_begin.strftime('%d')"/>
+                                                    <div class="dc-date-mon" t-out="ev.date_begin.strftime('%b')"/>
+                                                </div>
+                                                <div>
+                                                    <div class="dc-list-title" t-out="ev.name"/>
+                                                    <div class="dc-list-sub">
+                                                        <t t-out="ev.date_begin.strftime('%H:%M')"/>
+                                                        <t t-if="ev.address_id"> · <t t-out="ev.address_id.city or ''"/></t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Notifications récentes -->
+                        <t t-if="recent_notifs">
+                            <div class="dc-card mb-4">
+                                <div class="dc-card-header d-flex justify-content-between align-items-center">
+                                    <span>🔔 <t t-if="is_fr">Notifications récentes</t><t t-else="">Recent notifications</t></span>
+                                    <a href="/social/notifications" class="dc-card-link">
+                                        <t t-if="is_fr">Tout voir →</t><t t-else="">View all →</t>
+                                    </a>
+                                </div>
+                                <ul class="dc-list">
+                                    <t t-foreach="recent_notifs" t-as="notif">
+                                        <li t-attf-class="dc-list-item #{'' if notif.is_read else 'dc-list-item--unread'}">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <span style="font-size:1.2rem;" t-out="notif_icons.get(notif.type, '🔔')"/>
+                                                <div class="flex-grow-1">
+                                                    <div class="dc-list-title" t-out="notif.body"/>
+                                                    <div class="dc-list-sub" t-out="notif.create_date.strftime('%d/%m %H:%M')"/>
+                                                </div>
+                                                <t t-if="not notif.is_read">
+                                                    <span class="dc-badge dc-badge--crimson">
+                                                        <t t-if="is_fr">Nouveau</t><t t-else="">New</t>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Empty state -->
+                        <t t-if="not proposals_voting and not upcoming_events and not recent_notifs">
+                            <div class="dc-card text-center py-5">
+                                <div style="font-size:2.5rem;" class="mb-2">🌙</div>
+                                <p class="dc-text-muted mb-0">
+                                    <t t-if="is_fr">Tout est calme pour l'instant.</t>
+                                    <t t-else="">All quiet for now.</t>
+                                </p>
+                            </div>
+                        </t>
+
+                    </div>
+
+                    <!-- ── Aside ─────────────────────────────────────────── -->
+                    <div class="col-lg-4" id="dashboard_sidebar">
+
+                        <!-- Mes groupes -->
+                        <t t-if="my_groups">
+                            <div class="dc-card mb-4">
+                                <div class="dc-card-header d-flex justify-content-between align-items-center">
+                                    <span>👥 <t t-if="is_fr">Mes groupes</t><t t-else="">My groups</t></span>
+                                    <a href="/my/groups" class="dc-card-link">
+                                        <t t-if="is_fr">Tout voir →</t><t t-else="">View all →</t>
+                                    </a>
+                                </div>
+                                <div class="p-2">
+                                    <div class="row g-2">
+                                        <t t-foreach="my_groups" t-as="grp">
+                                            <div class="col-6">
+                                                <a t-attf-href="/groups/#{grp.id}" class="dc-mini-tile text-center">
+                                                    <div style="font-size:1.4rem;">👥</div>
+                                                    <div class="text-truncate dc-list-title" t-out="grp.name"/>
+                                                    <div class="dc-list-sub">
+                                                        <t t-out="grp.member_count or 0"/>
+                                                        <t t-if="is_fr"> membres</t><t t-else=""> members</t>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Nouvelles connexions -->
+                        <t t-if="recent_conn_profiles">
+                            <div class="dc-card mb-4">
+                                <div class="dc-card-header">
+                                    🤝 <t t-if="is_fr">Nouvelles connexions</t><t t-else="">New connections</t>
+                                </div>
+                                <ul class="dc-list">
+                                    <t t-foreach="recent_conn_profiles" t-as="cp">
+                                        <a t-attf-href="/profile/#{cp.user_id.id}"
+                                           class="dc-list-item d-flex align-items-center gap-2">
+                                            <div class="dc-avatar dc-avatar--sm">
+                                                <t t-if="cp.profile_image">
+                                                    <img t-attf-src="/web/image/club_social_profile.profile/#{cp.id}/profile_image" alt=""/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="dc-avatar-initial">
+                                                        <t t-out="(cp.stealth_name or cp.user_id.name or '?')[0].upper()"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            <span class="dc-list-title" t-out="cp.stealth_name or cp.user_id.name"/>
+                                        </a>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- Carte profil -->
+                        <t t-if="profile">
+                            <div class="dc-card mb-4 text-center py-3">
+                                <div class="dc-avatar dc-avatar--lg mx-auto mb-2">
+                                    <t t-if="profile.profile_image">
+                                        <img t-attf-src="/web/image/club_social_profile.profile/#{profile.id}/profile_image" alt=""/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="dc-avatar-initial">
+                                            <t t-out="(display_name or '?')[0].upper()"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="dc-list-title" t-out="display_name"/>
+                                <t t-if="profile.city">
+                                    <div class="dc-list-sub">📍 <t t-out="profile.city"/></div>
+                                </t>
+                                <div class="mt-2 d-flex gap-2 justify-content-center flex-wrap">
+                                    <a t-attf-href="/profile/#{request.env.user.id}" class="btn btn-sm btn-outline-primary">
+                                        <t t-if="is_fr">Voir mon profil</t><t t-else="">View my profile</t>
+                                    </a>
+                                    <a href="/my/profile/edit" class="btn btn-sm btn-crimson">
+                                        ✏️ <t t-if="is_fr">Modifier</t><t t-else="">Edit</t>
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+
+                <!-- ── MON COMPTE (gestion/facturation, hors nav) ─────────── -->
+                <h2 class="dc-section-title mt-5 mb-3">
+                    <t t-if="is_fr">Mon compte</t><t t-else="">My account</t>
+                </h2>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <a href="/my/vouching/invite" class="dc-card dc-account-tile d-block text-decoration-none h-100">
+                            <div class="dc-card-icon">🤝</div>
+                            <div class="dc-list-title"><t t-if="is_fr">Inviter / Parrainer</t><t t-else="">Invite / Sponsor</t></div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/my/privacy" class="dc-card dc-account-tile d-block text-decoration-none h-100">
+                            <div class="dc-card-icon">⚙️</div>
+                            <div class="dc-list-title"><t t-if="is_fr">Confidentialité</t><t t-else="">Privacy</t></div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/my/invoices" class="dc-card dc-account-tile d-block text-decoration-none h-100">
+                            <div class="dc-card-icon">💳</div>
+                            <div class="dc-list-title">
+                                <t t-if="is_fr">Facturation</t><t t-else="">Billing</t>
+                                <t t-if="invoice_count"> <span class="dc-badge dc-badge--gold" t-out="invoice_count"/></t>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/my/addresses" class="dc-card dc-account-tile d-block text-decoration-none h-100">
+                            <div class="dc-card-icon">📍</div>
+                            <div class="dc-list-title"><t t-if="is_fr">Adresses</t><t t-else="">Addresses</t></div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/my/security" class="dc-card dc-account-tile d-block text-decoration-none h-100">
+                            <div class="dc-card-icon">🔐</div>
+                            <div class="dc-list-title"><t t-if="is_fr">Connexion &amp; sécurité</t><t t-else="">Sign-in &amp; security</t></div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Formulaire d'inscription — partenaire 2 (couple) -->
+<record id="event_registration_form_lodging" model="ir.ui.view">
+    <field name="name">event.registration.form.lodging</field>
+    <field name="model">event.registration</field>
+    <field name="inherit_id" ref="event.view_event_registration_form"/>
+    <field name="arch" type="xml">
+        <field name="phone" position="after">
+            <field name="lodging_type" readonly="1"/>
+            <field name="partner2_id"
+                   invisible="lodging_type != 'double'"
+                   required="lodging_type == 'double'"
+                   options="{'no_create': False}"/>
+        </field>
+    </field>
+</record>
+
+<!-- Liste des inscriptions — colonnes hébergement -->
+<record id="event_registration_list_lodging" model="ir.ui.view">
+    <field name="name">event.registration.list.lodging</field>
+    <field name="model">event.registration</field>
+    <field name="inherit_id" ref="event.view_event_registration_tree"/>
+    <field name="arch" type="xml">
+        <field name="event_ticket_id" position="after">
+            <field name="lodging_type" optional="show"/>
+            <field name="partner2_id" optional="show"/>
+        </field>
+    </field>
+</record>
+
+<!-- Action : liste des chambres pour un événement (smart button) -->
+<record id="action_event_lodging_registrations" model="ir.actions.act_window">
+    <field name="name">Chambres réservées</field>
+    <field name="res_model">event.registration</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('lodging_type', '!=', 'none'), ('state', '!=', 'cancel')]</field>
+    <field name="context">{'group_by': 'lodging_type'}</field>
+</record>
+
+</odoo>
