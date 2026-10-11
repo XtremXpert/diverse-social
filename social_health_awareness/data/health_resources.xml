@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ⚠️ RESSOURCES PLACEHOLDER — À FAIRE VALIDER (coordonnées, pertinence,
+  couverture régionale) AVANT TOUTE MISE EN LIGNE RÉELLE.
+  noupdate=1 : les modifications des modérateurs ne sont pas écrasées.
+  Ces records créent aussi le res.partner délégué (organismes, pas des membres).
+-->
+<odoo noupdate="1">
+
+    <record id="res_prelib" model="health.resource">
+        <field name="name">Prelib</field>
+        <field name="resource_type">depistage</field>
+        <field name="region">Montréal / en ligne</field>
+        <field name="website">https://prelib.com</field>
+        <field name="city">Montréal</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Dépistage ITSS sur rendez-vous pris en ligne, sans jugement.</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="res_clsc_depistage" model="health.resource">
+        <field name="name">Dépistage ITSS en CLSC</field>
+        <field name="resource_type">depistage</field>
+        <field name="region">Partout au Québec</field>
+        <field name="website">https://www.quebec.ca/sante/conseils-et-prevention/depistage-et-offre-de-tests/depistage-itss</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Gratuit avec la carte RAMQ ; plusieurs points de service sans rendez-vous.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="res_actuel" model="health.resource">
+        <field name="name">Clinique médicale l'Actuel</field>
+        <field name="resource_type">prep</field>
+        <field name="region">Montréal</field>
+        <field name="website">https://cliniquelactuel.com</field>
+        <field name="city">Montréal</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Référence VIH/ITSS : PrEP, PEP, suivi, dépistage.</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="res_clic_sante" model="health.resource">
+        <field name="name">Clic Santé — vaccination</field>
+        <field name="resource_type">vaccination</field>
+        <field name="region">Partout au Québec</field>
+        <field name="website">https://clicsante.ca</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Prise de rendez-vous pour la vaccination (hépatites A/B, HPV, mpox).</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="res_rezo" model="health.resource">
+        <field name="name">RÉZO</field>
+        <field name="resource_type">communautaire</field>
+        <field name="region">Montréal</field>
+        <field name="website">https://www.rezosante.org</field>
+        <field name="city">Montréal</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Santé et mieux-être des hommes gais et bisexuels, cis et trans ; approche RdR.</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="res_interligne" model="health.resource">
+        <field name="name">Interligne</field>
+        <field name="resource_type">communautaire</field>
+        <field name="region">Partout au Québec</field>
+        <field name="website">https://interligne.co</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Écoute et soutien LGBTQ+ 24/7, anonyme et confidentiel.</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="res_info_sante" model="health.resource">
+        <field name="name">Info-Santé 811</field>
+        <field name="resource_type">urgence</field>
+        <field name="region">Partout au Québec</field>
+        <field name="phone">811</field>
+        <field name="is_company">1</field>
+        <field name="rdr_notes">Conseils de santé 24/7 par des infirmières ; anonyme et gratuit.</field>
+        <field name="sequence">70</field>
+    </record>
+
+</odoo>

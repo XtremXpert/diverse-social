@@ -1,0 +1,149 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_age_gate
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 12:40+0000\n"
+"PO-Revision-Date: 2026-05-20 12:40+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.view_social_onboarding_wizard_age_gate
+msgid ""
+"<i class=\"fa fa-info-circle me-2\" title=\"Info\"/>\n"
+"                        By confirming, you declare on your honor that you are 18 or older."
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.view_social_onboarding_wizard_age_gate
+msgid ""
+"<span invisible=\"step != 'age_gate'\" class=\"badge rounded-pill bg-primary"
+" fs-6\">Step 3/5 — Age verification (18+)</span>"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.view_social_onboarding_wizard_age_gate
+msgid "Age verification"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields.selection,name:social_age_gate.selection__social_onboarding_wizard__step__age_gate
+msgid "Age verification (18+)"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,field_description:social_age_gate.field_club_social_profile_profile__age_gate_passed
+msgid "Age verification (18+) passed"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid "Birth year (optional)"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid "Confirm and continue"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,field_description:social_age_gate.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_age_gate.field_social_onboarding_wizard__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,field_description:social_age_gate.field_social_onboarding_wizard__age_gate_confirmed
+#: model_terms:ir.ui.view,arch_db:social_age_gate.view_social_onboarding_wizard_age_gate
+msgid "I confirm I am 18 or older"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid ""
+"I declare that I am <strong>18 or older</strong> and accept the terms of use"
+" of this adults-only network."
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,field_description:social_age_gate.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_age_gate.field_social_onboarding_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model,name:social_age_gate.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: social_age_gate
+#. odoo-python
+#: code:addons/social_age_gate/controllers/portal.py:0
+msgid "Please enter a valid birth year."
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,help:social_age_gate.field_club_social_profile_profile__age_gate_passed
+msgid ""
+"Set to True only when the member explicitly confirms their age via the "
+"portal (/age-verify) or the onboarding wizard. Never set automatically from "
+"birth_year — that would bypass the explicit consent step."
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model,name:social_age_gate.model_social_onboarding_wizard
+msgid "Social Network Onboarding Wizard"
+msgstr ""
+
+#. module: social_age_gate
+#: model:ir.model.fields,field_description:social_age_gate.field_social_onboarding_wizard__step
+msgid "Step"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid ""
+"This private social network is reserved for adults (18 and over).<br/>Please"
+" confirm your age to continue."
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.view_social_onboarding_wizard_age_gate
+msgid "This social network is reserved for adults (18 and over)."
+msgstr ""
+
+#. module: social_age_gate
+#. odoo-python
+#: code:addons/social_age_gate/controllers/portal.py:0
+msgid "You must be 18 or older to access this network."
+msgstr ""
+
+#. module: social_age_gate
+#. odoo-python
+#: code:addons/social_age_gate/controllers/portal.py:0
+msgid "You must check the box to confirm your age."
+msgstr ""
+
+#. module: social_age_gate
+#. odoo-python
+#: code:addons/social_age_gate/models/wizard_ext.py:0
+msgid "You must confirm being 18 or older to access the social network."
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid "e.g. 1990"
+msgstr ""
+
+#. module: social_age_gate
+#: model_terms:ir.ui.view,arch_db:social_age_gate.portal_age_gate
+msgid "🔒 Adults-only access"
+msgstr ""

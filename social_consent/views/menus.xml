@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_consent_root" name="Consent" sequence="30"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_consent_my_gate" name="My Gate"
+              parent="menu_consent_root" sequence="10"
+              action="action_consent_gate"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_consent_inbox" name="Requests Inbox"
+              parent="menu_consent_root" sequence="20"
+              action="action_my_consent_requests_inbox"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_consent_sent" name="Sent Requests"
+              parent="menu_consent_root" sequence="30"
+              action="action_my_sent_requests"
+              groups="social_base.group_social_user"/>
+
+    <menuitem id="menu_consent_admin" name="Administration"
+              parent="menu_consent_root" sequence="90"
+              groups="social_base.group_social_moderator"/>
+
+    <menuitem id="menu_consent_gates_admin" name="All Gates"
+              parent="menu_consent_admin" sequence="10"
+              action="action_consent_gate_admin"
+              groups="social_base.group_social_moderator"/>
+
+    <menuitem id="menu_consent_requests_admin" name="All Requests"
+              parent="menu_consent_admin" sequence="20"
+              action="action_consent_requests_admin"
+              groups="social_base.group_social_moderator"/>
+
+</odoo>

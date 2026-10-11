@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ JS écouteur d'appel entrant ════════════════════════════════════════ -->
+    <record id="assets_incoming_call" model="ir.asset">
+        <field name="name">Social Calling Incoming Call JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">/social_calling/static/src/js/incoming_call.js</field>
+    </record>
+
+    <!-- ══ Styles de la fenêtre d'appel entrant ═══════════════════════════════ -->
+    <template id="incoming_call_styles" inherit_id="portal.portal_layout"
+              name="Styles appel entrant">
+        <xpath expr="//div[@id='wrap']" position="before">
+            <t t-if="request.env.user and not request.env.user._is_public()">
+                <style>
+                    #sc_incoming_overlay {
+                        position: fixed; inset: 0; z-index: 2000;
+                        display: flex; align-items: center; justify-content: center;
+                        background: rgba(0, 0, 0, 0.55);
+                    }
+                    #sc_incoming_overlay .sc-card {
+                        background: #1a1a2e; color: #fff;
+                        border-radius: 16px; padding: 32px 40px;
+                        text-align: center; min-width: 280px;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                    }
+                    #sc_incoming_overlay .sc-pulse {
+                        font-size: 48px; margin-bottom: 12px;
+                        animation: sc-pulse 1.2s ease-in-out infinite;
+                    }
+                    @keyframes sc-pulse {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.15); opacity: 0.7; }
+                    }
+                    #sc_incoming_overlay .sc-title {
+                        font-size: 13px; text-transform: uppercase;
+                        letter-spacing: 1px; opacity: 0.6;
+                    }
+                    #sc_incoming_overlay .sc-caller {
+                        font-size: 22px; font-weight: 600; margin: 6px 0 2px;
+                    }
+                    #sc_incoming_overlay .sc-sub { font-size: 14px; opacity: 0.7; }
+                    #sc_incoming_overlay .sc-actions {
+                        display: flex; gap: 12px; justify-content: center; margin-top: 22px;
+                    }
+                    #sc_incoming_overlay .sc-btn {
+                        border: none; border-radius: 24px; padding: 10px 22px;
+                        font-size: 15px; font-weight: 600; cursor: pointer; color: #fff;
+                    }
+                    #sc_incoming_overlay .sc-accept { background: #2ecc71; }
+                    #sc_incoming_overlay .sc-decline { background: #e94560; }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

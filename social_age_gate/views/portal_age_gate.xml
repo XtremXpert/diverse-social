@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="portal_age_gate" name="Age verification (18+)">&lt;!DOCTYPE html&gt;
+    <html t-att-lang="(request.context.get('lang') or 'fr_CA').replace('_', '-')">
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="robots" content="noindex, nofollow"/>
+        <title>Adults-only access</title>
+        <style>
+          * { box-sizing: border-box; }
+          html, body { margin: 0; padding: 0; height: 100%; }
+          body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-font-smoothing: antialiased;
+          }
+          .age-gate-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+          }
+          .age-gate-card {
+            background: #16213e;
+            border: 1px solid #e94560;
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+          }
+          .age-gate-card h1 {
+            color: #e94560;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+          }
+          .age-gate-card p {
+            color: #aaa;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.5;
+          }
+          .age-gate-input {
+            background: #0f3460;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #eee;
+            font-size: 1rem;
+            padding: 0.6rem 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            outline: none;
+            font-family: inherit;
+          }
+          .age-gate-input:focus { border-color: #e94560; }
+          .age-gate-input::placeholder { color: #666; }
+          .age-gate-check {
+            text-align: left;
+            margin-bottom: 1.5rem;
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+          }
+          .age-gate-check input { margin-right: 0.5rem; accent-color: #e94560; }
+          .age-gate-btn {
+            background: #e94560;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            width: 100%;
+            transition: background 0.2s;
+            font-family: inherit;
+          }
+          .age-gate-btn:hover { background: #c73652; }
+          .age-gate-error {
+            background: rgba(233,69,96,0.15);
+            border: 1px solid #e94560;
+            border-radius: 6px;
+            color: #e94560;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+          }
+          .age-gate-optional {
+            color: #666;
+            font-size: 0.8rem;
+            margin: 0 0 0.25rem 0;
+            text-align: left;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="age-gate-wrapper">
+          <div class="age-gate-card">
+            <h1>&#128274; Adults-only access</h1>
+            <p>This private social network is reserved for adults (18 and over).<br/>Please confirm your age to continue.</p>
+
+            <t t-if="error">
+              <div class="age-gate-error">
+                <t t-out="error"/>
+              </div>
+            </t>
+
+            <form action="/age-verify/submit" method="post">
+              <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+              <p class="age-gate-optional">Birth year (optional)</p>
+              <input
+                type="number"
+                name="birth_year"
+                class="age-gate-input"
+                placeholder="e.g. 1990"
+                min="1900"
+                t-att-max="max_birth_year"
+                t-att-value="birth_year or ''"
+              />
+
+              <div class="age-gate-check">
+                <label>
+                  <input type="checkbox" name="confirmed" value="1"/>
+                  I declare that I am <strong>18 or older</strong> and accept the terms of use of this adults-only network.
+                </label>
+              </div>
+
+              <button type="submit" class="age-gate-btn">Confirm and continue</button>
+            </form>
+          </div>
+        </div>
+      </body>
+    </html>
+  </template>
+
+</odoo>

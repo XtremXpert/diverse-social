@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Pratiques ═══════════════════════════════════════════════════════ -->
+    <record id="view_health_practice_list" model="ir.ui.view">
+        <field name="name">health.practice.list</field>
+        <field name="model">health.practice</field>
+        <field name="arch" type="xml">
+            <list string="Pratiques">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_health_practice_form" model="ir.ui.view">
+        <field name="name">health.practice.form</field>
+        <field name="model">health.practice</field>
+        <field name="arch" type="xml">
+            <form string="Pratique">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description" placeholder="Description, transmission…"/>
+                    <notebook>
+                        <page string="Risques">
+                            <field name="risk_ids">
+                                <list editable="bottom">
+                                    <field name="infection_id"/>
+                                    <field name="level"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_health_practice" model="ir.actions.act_window">
+        <field name="name">Pratiques</field>
+        <field name="res_model">health.practice</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ══ Infections ══════════════════════════════════════════════════════ -->
+    <record id="view_health_infection_list" model="ir.ui.view">
+        <field name="name">health.infection.list</field>
+        <field name="model">health.infection</field>
+        <field name="arch" type="xml">
+            <list string="Infections">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="vaccine_available"/>
+                <field name="window_period"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_health_infection_form" model="ir.ui.view">
+        <field name="name">health.infection.form</field>
+        <field name="model">health.infection</field>
+        <field name="arch" type="xml">
+            <form string="Infection">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="vaccine_available"/>
+                        <field name="window_period"/>
+                        <field name="screening"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_health_infection" model="ir.actions.act_window">
+        <field name="name">Infections</field>
+        <field name="res_model">health.infection</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ══ Risques (matrice) ═══════════════════════════════════════════════ -->
+    <record id="view_health_risk_list" model="ir.ui.view">
+        <field name="name">health.risk.list</field>
+        <field name="model">health.risk</field>
+        <field name="arch" type="xml">
+            <list string="Risques" editable="bottom">
+                <field name="practice_id"/>
+                <field name="infection_id"/>
+                <field name="level"/>
+                <field name="note"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_health_risk" model="ir.actions.act_window">
+        <field name="name">Risques (matrice)</field>
+        <field name="res_model">health.risk</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ══ Préventions ═════════════════════════════════════════════════════ -->
+    <record id="view_health_prevention_list" model="ir.ui.view">
+        <field name="name">health.prevention.list</field>
+        <field name="model">health.prevention</field>
+        <field name="arch" type="xml">
+            <list string="Préventions">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="prevention_type"/>
+                <field name="is_transversal"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_health_prevention_form" model="ir.ui.view">
+        <field name="name">health.prevention.form</field>
+        <field name="model">health.prevention</field>
+        <field name="arch" type="xml">
+            <form string="Prévention">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="prevention_type"/>
+                        <field name="is_transversal"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description"/>
+                    <group>
+                        <field name="practice_ids" widget="many2many_tags"/>
+                        <field name="infection_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_health_prevention" model="ir.actions.act_window">
+        <field name="name">Préventions</field>
+        <field name="res_model">health.prevention</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ══ Ressources locales ══════════════════════════════════════════════ -->
+    <record id="view_health_resource_list" model="ir.ui.view">
+        <field name="name">health.resource.list</field>
+        <field name="model">health.resource</field>
+        <field name="arch" type="xml">
+            <list string="Ressources">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="resource_type"/>
+                <field name="region"/>
+                <field name="website"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_health_resource_form" model="ir.ui.view">
+        <field name="name">health.resource.form</field>
+        <field name="model">health.resource</field>
+        <field name="arch" type="xml">
+            <form string="Ressource locale">
+                <sheet>
+                    <group>
+                        <group string="Organisme">
+                            <field name="name"/>
+                            <field name="resource_type"/>
+                            <field name="region"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="website" widget="url"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="city"/>
+                        </group>
+                    </group>
+                    <field name="rdr_notes"
+                           placeholder="Sans rendez-vous, gratuit, friendly communautés kink/LGBTQ+…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_health_resource" model="ir.actions.act_window">
+        <field name="name">Ressources locales</field>
+        <field name="res_model">health.resource</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ══ Consultations (agrégat anonyme) ═════════════════════════════════ -->
+    <record id="view_health_page_view_list" model="ir.ui.view">
+        <field name="name">health.page.view.list</field>
+        <field name="model">health.page.view</field>
+        <field name="arch" type="xml">
+            <list string="Consultations" create="false" edit="false" delete="false">
+                <field name="date"/>
+                <field name="page"/>
+                <field name="count" sum="Total"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_health_page_view" model="ir.actions.act_window">
+        <field name="name">Consultations (agrégat anonyme)</field>
+        <field name="res_model">health.page.view</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ══ Menus (modérateurs) ═════════════════════════════════════════════ -->
+    <menuitem id="menu_health_root" name="Coin Santé"
+              sequence="90"
+              groups="social_base.group_social_moderator"/>
+    <menuitem id="menu_health_practice" name="Pratiques" parent="menu_health_root"
+              action="action_health_practice" sequence="10"/>
+    <menuitem id="menu_health_infection" name="Infections" parent="menu_health_root"
+              action="action_health_infection" sequence="20"/>
+    <menuitem id="menu_health_risk" name="Risques (matrice)" parent="menu_health_root"
+              action="action_health_risk" sequence="30"/>
+    <menuitem id="menu_health_prevention" name="Préventions" parent="menu_health_root"
+              action="action_health_prevention" sequence="40"/>
+    <menuitem id="menu_health_resource" name="Ressources locales" parent="menu_health_root"
+              action="action_health_resource" sequence="50"/>
+    <menuitem id="menu_health_page_view" name="Consultations" parent="menu_health_root"
+              action="action_health_page_view" sequence="60"/>
+
+</odoo>

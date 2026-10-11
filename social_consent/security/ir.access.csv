@@ -1,0 +1,18 @@
+id,name,model_id,group_id/id,operation,domain
+access_consent_gate_moderator,social_consent.gate moderator,social_consent.gate,social_base.group_social_moderator,crud,
+access_consent_gate_admin,social_consent.gate admin,social_consent.gate,social_base.group_social_admin,crud,
+access_consent_gate_item_user,social_consent.gate_item user,social_consent.gate_item,social_base.group_social_user,crud,
+access_consent_gate_item_moderator,social_consent.gate_item moderator,social_consent.gate_item,social_base.group_social_moderator,crud,
+access_consent_gate_item_admin,social_consent.gate_item admin,social_consent.gate_item,social_base.group_social_admin,crud,
+access_consent_request_moderator,social_consent.request moderator,social_consent.request,social_base.group_social_moderator,crud,
+access_consent_request_admin,social_consent.request admin,social_consent.request,social_base.group_social_admin,crud,
+access_consent_answer_moderator,social_consent.answer moderator,social_consent.answer,social_base.group_social_moderator,crud,
+access_consent_answer_admin,social_consent.answer admin,social_consent.answer,social_base.group_social_admin,crud,
+access_social_consent_gate_system,social_consent.gate system,social_consent.gate,base.group_system,crud,
+access_social_consent_gate_item_system,social_consent.gate_item system,social_consent.gate_item,base.group_system,crud,
+access_social_consent_request_system,social_consent.request system,social_consent.request,base.group_system,cru,
+access_social_consent_answer_system,social_consent.answer system,social_consent.answer,base.group_system,cru,
+rule_consent_gate_owner,Consent Gate: owner access,social_consent.gate,social_base.group_social_user,crud,"[('profile_id.user_id', '=', user.id)]"
+rule_consent_gate_read_active,Consent Gate: read active gates,social_consent.gate,social_base.group_social_user,r,"[('is_active', '=', True)]"
+rule_consent_request_requester,Consent Request: requester access,social_consent.request,social_base.group_social_user,cru,"['|', ('requester_id', '=', user.id), ('gate_id.profile_id.user_id', '=', user.id)]"
+rule_consent_answer_access,Consent Answer: requester or gate owner,social_consent.answer,social_base.group_social_user,cru,"['|', ('request_id.requester_id', '=', user.id), ('request_id.gate_id.profile_id.user_id', '=', user.id)]"

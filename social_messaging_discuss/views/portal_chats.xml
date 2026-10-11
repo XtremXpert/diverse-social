@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!-- ══ Entrée portail (carte) ════════════════════════════════════════════ -->
+    <!-- ══ Liste des conversations ═══════════════════════════════════════════ -->
+    <template id="portal_chats_list" name="My Chats (Discuss)">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+
+            <div class="container py-4" style="max-width:700px;">
+                <h1 class="mb-4" style="font-size:1.5rem; color:#1a1a2e;">
+                    💬 Messages
+                </h1>
+
+                <t t-if="not chat_data">
+                    <div class="card text-center py-5">
+                        <div style="font-size:2.5rem;" class="mb-2">💬</div>
+                        <p class="text-muted mb-0">Aucune conversation.</p>
+                        <p class="text-muted" style="font-size:0.85rem;">
+                            Visitez le profil d'un membre et cliquez « Message » pour démarrer.
+                        </p>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <div class="list-group shadow-sm">
+                        <t t-foreach="chat_data" t-as="cd">
+                            <a t-attf-href="/discuss/channel/#{cd['channel'].id}" t-attf-class="list-group-item list-group-item-action py-3 px-3 #{'' if cd['unread'] == 0 else 'bg-light'}">
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- Avatar -->
+                                    <div style="width:46px; height:46px; border-radius:50%; overflow:hidden; background:#e94560; flex-shrink:0;">
+                                        <t t-if="cd.get('other_profile') and cd['other_profile'].profile_image">
+                                            <img t-attf-src="/web/image/club_social_profile.profile/#{cd['other_profile'].id}/profile_image" class="w-100 h-100" style="object-fit:cover;" alt=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="d-flex align-items-center justify-content-center h-100" style="color:white; font-size:18px;">
+                                                <t t-out="((cd.get('other_profile') and (cd['other_profile'].stealth_name or '')) or (cd['other_user'] and cd['other_user'].name) or '?')[0].upper()"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="d-flex justify-content-between align-items-baseline">
+                                            <span class="fw-semibold" style="font-size:0.95rem;">
+                                                <t t-out="(cd.get('other_profile') and (cd['other_profile'].stealth_name or (cd['other_user'] and cd['other_user'].name))) or (cd['other_user'] and cd['other_user'].name) or 'Inconnu'"/>
+                                            </span>
+                                            <span class="text-muted" style="font-size:0.75rem;">
+                                                <t t-if="cd['last_date']">
+                                                    <t t-out="cd['last_date'].strftime('%d/%m %H:%M')"/>
+                                                </t>
+                                            </span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted text-truncate" style="font-size:0.82rem; max-width:260px;">
+                                                <t t-out="cd['preview'] or '…'"/>
+                                            </span>
+                                            <t t-if="cd['unread']">
+                                                <span class="badge rounded-pill" style="background:#e94560; color:white; font-size:0.7rem;">
+                                                    <t t-out="cd['unread']"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

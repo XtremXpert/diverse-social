@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bouton « Message » du profil. social_messaging étant désinstallé, ce
+         module reprend le remplacement du lien natif « Message »
+         (/web#action=mail.action_discuss, cassé pour le portail) → /discuss-message
+         (ouvre/crée le chat Discuss). Plus de conflit de double-replace : c'est
+         désormais l'unique propriétaire de ce nœud. -->
+    <template id="discuss_message_button_inject"
+              name="Profile: Discuss message button"
+              inherit_id="club_social_profile.portal_profile_public" priority="25">
+        <xpath expr="//a[contains(@t-attf-href,'action=mail.action_discuss')]" position="replace">
+            <t t-if="request.env['discuss.channel']._smd_can_open_chat_ui(target_user)">
+                <a t-attf-href="/discuss-message/#{target_user.id}"
+                   class="btn btn-outline-secondary btn-sm"
+                   title="Envoyer un message">
+                    💬 Message
+                </a>
+            </t>
+            <t t-else="">
+                <!-- Politique de contact : hors connexions/groupes/cercles, il
+                     faut d'abord se connecter (ou attendre une session « Dispo
+                     maintenant »). Bouton désactivé pour l'expliquer. -->
+                <span class="btn btn-outline-secondary btn-sm disabled"
+                      title="Connecte-toi d'abord pour pouvoir écrire à cette personne.">
+                    💬 Message
+                </span>
+            </t>
+        </xpath>
+    </template>
+</odoo>

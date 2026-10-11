@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List ── -->
+    <record id="view_negotiation_list" model="ir.ui.view">
+        <field name="name">social_negotiation.negotiation.list</field>
+        <field name="model">social_negotiation.negotiation</field>
+        <field name="arch" type="xml">
+            <list string="Negotiations"
+                  decoration-warning="state == 'shared'"
+                  decoration-success="state == 'active'"
+                  decoration-muted="state == 'archived'">
+                <field name="initiator_id"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="version"/>
+                <field name="item_count" string="Items"/>
+                <field name="agreement_score" string="Agreement %"/>
+                <field name="is_fully_signed"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form ── -->
+    <record id="view_negotiation_form" model="ir.ui.view">
+        <field name="name">social_negotiation.negotiation.form</field>
+        <field name="model">social_negotiation.negotiation</field>
+        <field name="arch" type="xml">
+            <form string="Negotiation Document">
+                <header>
+                    <button name="action_share" string="Share with Partner"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start_review" string="Start Review"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'shared'"/>
+                    <button name="action_sign" string="Sign"
+                            type="object" class="oe_highlight"
+                            invisible="state not in ('shared','reviewing')"/>
+                    <button name="action_new_version" string="New Version"
+                            type="object"
+                            invisible="state not in ('active','archived')"/>
+                    <button name="action_archive" string="Archive"
+                            type="object"
+                            invisible="state == 'archived'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,shared,reviewing,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="initiator_id" readonly="state != 'draft'"/>
+                            <span> ↔ </span>
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                        </h1>
+                        <h2>Version <field name="version" readonly="1"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="safe_word" password="True"/>
+                            <field name="is_fully_signed"/>
+                        </group>
+                        <group>
+                            <field name="initiator_signed_at" readonly="1"/>
+                            <field name="partner_signed_at" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <field name="item_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="category"/>
+                            <field name="text"/>
+                            <field name="initiator_response"/>
+                            <field name="partner_response"/>
+                            <field name="is_compatible" optional="show"/>
+                            <field name="note" optional="hide"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search ── -->
+    <record id="view_negotiation_search" model="ir.ui.view">
+        <field name="name">social_negotiation.negotiation.search</field>
+        <field name="model">social_negotiation.negotiation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initiator_id"/>
+                <field name="partner_id"/>
+                <filter name="active_docs" string="Active"
+                        domain="[('state','=','active')]"/>
+                <filter name="awaiting_me" string="Awaiting My Signature"
+                        domain="[('state','in',('shared','reviewing'))]"/>
+                <filter name="archived" string="Archived"
+                        domain="[('state','=','archived')]"/>
+                <filter name="by_state" string="State"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ── -->
+    <record id="action_negotiations" model="ir.actions.act_window">
+        <field name="name">Negotiation Documents</field>
+        <field name="res_model">social_negotiation.negotiation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_negotiation_search"/>
+        <field name="context">{'search_default_active_docs': 1}</field>
+    </record>
+
+</odoo>

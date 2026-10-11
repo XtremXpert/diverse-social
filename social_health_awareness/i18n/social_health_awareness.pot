@@ -1,0 +1,1738 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_health_awareness
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-15 10:03+0000\n"
+"PO-Revision-Date: 2026-07-15 10:03+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "%s pratique cochée"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "%s pratiques cochées"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_my_home_coin_sante
+msgid "/sante"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "1. Les pratiques envisagées"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+msgid "100 % anonyme : rien n'est enregistré, aucune connexion requise."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "2. Ton résumé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "<em>Coche au moins une pratique pour voir ton résumé.</em>"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid ""
+"<strong>100 % anonyme :</strong> le calcul se fait dans ton navigateur.\n"
+"                            Tes réponses ne sont <strong>jamais transmises ni enregistrées</strong> —\n"
+"                            ferme la page et il n'en reste rien."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid ""
+"<strong>Info :</strong> cet outil est <strong>éducatif</strong> et vise la\n"
+"                            réduction des risques. Il ne remplace pas un avis médical, un diagnostic ni un\n"
+"                            dépistage. Pour toute question de santé, consulte un professionnel ou une\n"
+"                            clinique de dépistage."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "<strong>Réduire le risque :</strong>"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__active
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__active
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__active
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__active
+msgid "Active"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__active_lang_count
+msgid "Active Lang Count"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__type
+msgid "Address Type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__type_address_label
+msgid "Address Type Description"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__lang
+msgid ""
+"All the emails and documents sent to this contact will be translated in this"
+" language."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid ""
+"Aucune infection répertoriée pour cette sélection dans le guide actuel."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Auto-évaluation anonyme"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "Auto-évaluation — Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__autre
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__autre
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__autre
+msgid "Autre"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__avatar_1920
+msgid "Avatar"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__avatar_1024
+msgid "Avatar 1024"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__avatar_128
+msgid "Avatar 128"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__avatar_256
+msgid "Avatar 256"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__avatar_512
+msgid "Avatar 512"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__bank_ids
+msgid "Banks"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__barcode
+msgid "Barcode"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__barriere
+msgid "Barrière (condom, gant, digue)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__is_blacklisted
+msgid "Blacklist"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__phone_blacklisted
+msgid "Blacklisted Phone is Phone"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_bounce
+msgid "Bounce"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__can_publish
+msgid "Can Publish"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__category
+msgid "Catégorie"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.constraint,message:social_health_awareness.constraint_health_risk_practice_infection_uniq
+msgid "Ce couple pratique / infection existe déjà."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__channel_member_ids
+msgid "Channel Member"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__channel_ids
+msgid "Channels"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__is_company
+msgid "Check if the contact is a company, otherwise it is a person"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__employee
+msgid "Check this box if this contact is an Employee."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_chlam
+msgid "Chlamydia"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__city
+msgid "City"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid ""
+"Coche les pratiques envisagées, obtiens un résumé personnalisé.\n"
+"                                        Rien n'est enregistré ni transmis."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid ""
+"Coche les pratiques que tu envisages : tu obtiens un résumé des risques\n"
+"                            à considérer, des moyens de les réduire et des suggestions de dépistage."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_root
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_my_home_coin_sante
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_negotiation_coin_sante
+msgid "Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__color
+msgid "Color Index"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Commencer"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_infection__screening
+msgid "Comment se faire dépister (prélèvement, site)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__commercial_partner_id
+msgid "Commercial Entity"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__communication
+msgid "Communication"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_comm
+msgid "Communication entre partenaires"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_id
+msgid "Company"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_registry
+msgid "Company ID"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_registry_label
+msgid "Company ID Label"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_name
+msgid "Company Name"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__commercial_company_name
+msgid "Company Name Entity"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_registry_placeholder
+msgid "Company Registry Placeholder"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__company_type
+msgid "Company Type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__contact_address
+msgid "Complete Address"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__complete_name
+msgid "Complete Name"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_condom
+msgid "Condom"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_info_sante
+msgid "Conseils de santé 24/7 par des infirmières ; anonyme et gratuit."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__count
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_page_view
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_page_view_list
+msgid "Consultations"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_page_view
+msgid "Consultations (agrégat anonyme)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_page_view
+msgid "Consultations Coin Santé (agrégat anonyme)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__child_ids
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_resource_form
+msgid "Contact"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_contact
+msgid "Contact peau / frottement"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__contact
+msgid "Contact peau à peau"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_bounce
+msgid "Counter of the number of bounced emails for this contact"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__country_id
+msgid "Country"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__country_code
+msgid "Country Code"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__create_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__create_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__create_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__create_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__create_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__create_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__create_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__create_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__create_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__create_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Dans tous les cas"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__date
+msgid "Date"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__description
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__description
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__description
+msgid "Description"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_practice_form
+msgid "Description, transmission…"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_digue
+msgid "Digue dentaire"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__display_name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__display_name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__display_name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__display_name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__display_name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_infection__window_period
+msgid "Délai avant qu'un dépistage soit fiable."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__window_period
+msgid "Délai fenêtre"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__screening
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__depistage
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__depistage
+msgid "Dépistage"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_prelib
+msgid "Dépistage ITSS sur rendez-vous pris en ligne, sans jugement."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_depistage
+msgid "Dépistage régulier"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Dépistage suggéré"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.health_resources_block
+msgid ""
+"Dépistage, PrEP, vaccination, soutien : des ressources concrètes au Québec."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__partner_share
+msgid ""
+"Either customer (not a user), either shared user. Indicated the current "
+"partner is a customer without access or with a limited access created for "
+"sharing data."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__email
+msgid "Email"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__employee
+msgid "Employee"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_risk__level__faible
+msgid "Faible"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__partner_id
+msgid "Fiche contact"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__phone_sanitized
+msgid ""
+"Field used to store sanitized phone number. Helps speeding up searches and "
+"comparisons."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_fisting
+msgid "Fisting"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__email_formatted
+msgid "Format email address \"Name <email@domain>\""
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__email_formatted
+msgid "Formatted Email"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_gants
+msgid "Gants + lubrifiant"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__partner_latitude
+msgid "Geo Latitude"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__partner_longitude
+msgid "Geo Longitude"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__date_localization
+msgid "Geolocation Date"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_gono
+msgid "Gonorrhée"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_clsc_depistage
+msgid ""
+"Gratuit avec la carte RAMQ ; plusieurs points de service sans rendez-vous."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_safety_coin_sante
+msgid ""
+"Guide de réduction des risques et auto-évaluation\n"
+"                        <strong>100 % anonyme</strong> — rien n'est enregistré,\n"
+"                        aucun statut, aucun jugement."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_hpv
+msgid "HPV"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__search_relation_type_id
+msgid "Has relation of type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__search_relation_partner_id
+msgid "Has relation with"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__search_relation_partner_category_id
+msgid "Has relation with a partner in category"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_herpes
+msgid "Herpès (HSV)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__hygiene
+msgid "Hygiène / matériel"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_hepa
+msgid "Hépatite A"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_hepb
+msgid "Hépatite B"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_hepc
+msgid "Hépatite C"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,description:social_health_awareness.prev_vaccin
+msgid ""
+"Hépatites A et B, HPV, mpox — des vaccins existent et protègent durablement."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__id
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__id
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__id
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__id
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__id
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__id
+msgid "ID"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__im_status
+msgid "IM Status"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_has_error
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__is_blacklisted
+msgid ""
+"If the email address is on the blacklist, the contact won't receive mass "
+"mailing anymore, from any list"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__phone_sanitized_blacklisted
+msgid ""
+"If the sanitized phone number is on the blacklist, the contact won't receive"
+" mass mailing sms anymore, from any list"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__image_1920
+msgid "Image"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__image_1024
+msgid "Image 1024"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__image_128
+msgid "Image 128"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__image_256
+msgid "Image 256"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__image_512
+msgid "Image 512"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__phone_blacklisted
+msgid ""
+"Indicates if a blacklisted sanitized phone number is a phone number. Helps "
+"distinguish which number is blacklisted             when there is both a "
+"mobile and phone field in a model."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__industry_id
+msgid "Industry"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__infection_id
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_infection_form
+msgid "Infection"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_infection
+msgid "Infection (réduction des risques)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Infection à considérer"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_infection
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_infection
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_infection_list
+msgid "Infections"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__infection_ids
+msgid "Infections concernées"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Infections à considérer"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__rdr_notes
+msgid ""
+"Infos pratiques : sans rendez-vous, gratuit, friendly communautés "
+"kink/LGBTQ+…"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__contact_address_inline
+msgid "Inlined Complete Address"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__is_in_call
+msgid "Is In Call"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__is_public
+msgid "Is Public"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__is_published
+msgid "Is Published"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__is_company
+msgid "Is a Company"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_sang
+msgid "Jeux de sang / edge"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__function
+msgid "Job Position"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_jouet
+msgid "Jouet à usage unique / désinfecté / condom"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__jouets
+msgid "Jouets"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_jouets
+msgid "Jouets partagés"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid ""
+"La conversation santé se fait entre partenaires. Cette page informe, elle ne\n"
+"                            juge pas et n'enregistre rien."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__lang
+msgid "Language"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__write_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__write_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__write_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__write_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__write_uid
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__write_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__write_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__write_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__write_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__write_date
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Le contenu du guide sera bientôt disponible."
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid ""
+"Le dépistage régulier reste pertinent même sans symptôme — plusieurs "
+"infections passent inaperçues."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__relation_left_ids
+msgid "Left relations with current partner"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.risk,note:social_health_awareness.rk_fisting_hepc
+msgid "Lésions possibles ; ne pas partager gants/lubrifiant."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__main_user_id
+msgid "Main User"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__manuel
+msgid "Manuel / fisting"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_materiel
+msgid "Matériel à usage unique"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_prevention
+msgid "Mesure de réduction des risques"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__is_transversal
+msgid "Mesure transversale"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Mesures qui protègent largement"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_risk__level__modere
+msgid "Modéré"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,region:social_health_awareness.res_actuel
+#: model:health.resource,region:social_health_awareness.res_rezo
+msgid "Montréal"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,region:social_health_awareness.res_prelib
+msgid "Montréal / en ligne"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_mpox
+msgid "Mpox"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,description:social_health_awareness.prev_prep
+msgid ""
+"Médication qui prévient le VIH (PrEP en continu, PEP en urgence après "
+"exposition)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__name
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__name
+msgid "Name"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__level
+msgid "Niveau de risque"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__email_normalized
+msgid "Normalized Email"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__note
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Note"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__comment
+msgid "Notes"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__rdr_notes
+msgid "Notes RdR"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__offline_since
+msgid "Offline since"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid ""
+"On parle de pratiques et de risques, jamais de personnes ni de statuts.\n"
+"                            La conversation santé se fait entre partenaires — cette page informe,\n"
+"                            elle ne juge pas et n'enregistre rien."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__oral
+msgid "Oral"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_resource_form
+msgid "Organisme"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.health_resources_block
+msgid "Où agir près de chez toi"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Où agir près de chez toi ↓"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_page_view__page
+msgid "Page"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Par pratique"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__parent_name
+msgid "Parent name"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,description:social_health_awareness.prev_comm
+msgid ""
+"Parler des pratiques, des limites et des mesures avant — dans le respect et "
+"l'anonymat choisi."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__same_company_registry_partner_id
+msgid "Partner with same Company Registry"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__same_vat_partner_id
+msgid "Partner with same Tax ID"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,region:social_health_awareness.res_clic_sante
+#: model:health.resource,region:social_health_awareness.res_clsc_depistage
+#: model:health.resource,region:social_health_awareness.res_info_sante
+#: model:health.resource,region:social_health_awareness.res_interligne
+msgid "Partout au Québec"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.risk,note:social_health_awareness.rk_oral_gono
+msgid "Pense au dépistage de gorge."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__phone
+msgid "Phone"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__phone_sanitized_blacklisted
+msgid "Phone Blacklisted"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__phone_mobile_search
+msgid "Phone Number"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_prep
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__prep
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__prep
+msgid "PrEP / PEP"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_risk__practice_id
+msgid "Practice"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_practice_form
+msgid "Pratique"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_practice
+msgid "Pratique (réduction des risques)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_practice
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_practice
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_practice_list
+msgid "Pratiques"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__practice_ids
+msgid "Pratiques concernées"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_clic_sante
+msgid "Prise de rendez-vous pour la vaccination (hépatites A/B, HPV, mpox)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__properties
+msgid "Properties"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__properties_base_definition_id
+msgid "Properties Base Definition"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_prevention_form
+msgid "Prévention"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_prevention
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_prevention
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_prevention_list
+msgid "Préventions"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__penetration
+msgid "Pénétration"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_pen_bar
+msgid "Pénétration (avec barrière)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_pen_nobar
+msgid "Pénétration (sans barrière)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+msgid "QR code vers le Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__ref
+msgid "Reference"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__parent_id
+msgid "Related Company"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__relation_count
+msgid "Relation Count"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__search_relation_date
+msgid "Relation valid"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_resource_form
+msgid "Ressource locale"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_resource
+msgid "Ressource locale (réduction des risques)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_resource_list
+msgid "Ressources"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_resource
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_resource
+msgid "Ressources locales"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__website_id
+msgid "Restrict to a specific website."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__relation_right_ids
+msgid "Right relations with current partner"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_rimming
+msgid "Rimming (anulingus)"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid "Risque"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model,name:social_health_awareness.model_health_risk
+msgid "Risque : pratique × infection"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__risk_ids
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_practice_form
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_risk_list
+msgid "Risques"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.actions.act_window,name:social_health_awareness.action_health_risk
+#: model:ir.ui.menu,name:social_health_awareness.menu_health_risk
+msgid "Risques (matrice)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__rtc_session_ids
+msgid "Rtc Session"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+msgid ""
+"Réduction des risques — sans jugement, sans statut, sans donnée personnelle.\n"
+"                            On parle de <strong>pratiques et de risques</strong>, jamais de personnes."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+msgid "Réduction des risques — sans jugement, sans statut."
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Réduire les risques"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_actuel
+msgid "Référence VIH/ITSS : PrEP, PEP, suivi, dépistage."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__region
+msgid "Région"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__region
+msgid "Région desservie (ex. Montréal, Québec, province)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__user_id
+msgid "Salesperson"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__phone_sanitized
+msgid "Sanitized Number"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_resource_form
+msgid "Sans rendez-vous, gratuit, friendly communautés kink/LGBTQ+…"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_rezo
+msgid ""
+"Santé et mieux-être des hommes gais et bisexuels, cis et trans ; approche "
+"RdR."
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+msgid ""
+"Scanne pour le guide des pratiques, l'auto-évaluation anonyme\n"
+"                        et les ressources locales (dépistage, PrEP, vaccination)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,description:social_health_awareness.prev_depistage
+msgid ""
+"Se faire dépister régulièrement, et selon les pratiques (gorge, anus, sang)."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__self
+msgid "Self"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__sequence
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_practice__sequence
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__sequence
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.practice,name:social_health_awareness.pr_oral
+msgid "Sexe oral"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__partner_share
+msgid "Share Partner"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__signup_type
+msgid "Signup Token Type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__communautaire
+msgid "Soutien communautaire"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__state_id
+msgid "State"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__application_statistics
+msgid "Stats"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__street
+msgid "Street"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__street2
+msgid "Street2"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_syph
+msgid "Syphilis"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__category_id
+msgid "Tags"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__vat
+msgid "Tax ID"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__vat_label
+msgid "Tax ID Label"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__country_code
+msgid ""
+"The ISO country code in two chars. \n"
+"You can use this field for quick search."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__vat
+msgid ""
+"The Tax Identification Number. Values here will be validated based on the "
+"country format. You can use '/' to indicate that the partner is not subject "
+"to tax."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__website_absolute_url
+msgid "The full absolute URL to access the document through the website."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__website_url
+msgid "The full relative URL to access the document through the website."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__user_id
+msgid "The internal user in charge of this contact."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__company_registry
+msgid ""
+"The registry number of the company. Use it if it is different from the Tax "
+"ID. It must be unique across all partners of a same country"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__main_user_id
+msgid ""
+"There can be several users related to the same partner. When a single user "
+"is needed, this field attempts to find the most appropriate one."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__email_normalized
+msgid ""
+"This field is used to search on email address as the primary email field can"
+" contain more than strictly an email address."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__tz
+msgid "Timezone"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__tz_offset
+msgid "Timezone offset"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.view_health_page_view_list
+msgid "Total"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "Tout effacer"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_prevention__prevention_type
+msgid "Type"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__resource_type
+msgid "Type de ressource"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_uu
+msgid "U=U (indétectable = intransmissible)"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.constraint,message:social_health_awareness.constraint_health_page_view_page_date_uniq
+msgid "Un seul compteur par page et par jour."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,description:social_health_awareness.prev_uu
+msgid ""
+"Une personne vivant avec le VIH et ayant une charge virale indétectable ne "
+"transmet pas le VIH."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__urgence
+msgid "Urgence / info-santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__barcode
+msgid "Use a barcode to identify this contact."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__user_ids
+msgid "Users"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.infection,name:social_health_awareness.inf_vih
+msgid "VIH"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_infection__vaccine_available
+msgid "Vaccin disponible"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.prevention,name:social_health_awareness.prev_vaccin
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_prevention__prevention_type__vaccin
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_resource__resource_type__vaccination
+msgid "Vaccination"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "Via"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website_published
+msgid "Visible on current website"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_safety_coin_sante
+msgid "Visiter le Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__visitor_ids
+msgid "Visitors"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website_id
+msgid "Website"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website_absolute_url
+msgid "Website Absolute URL"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website
+msgid "Website Link"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__website_url
+msgid "Website URL"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,help:social_health_awareness.field_health_resource__tz
+msgid ""
+"When printing documents and exporting/importing data, time values are computed according to this timezone.\n"
+"If the timezone is not set, UTC (Coordinated Universal Time) is used.\n"
+"Anywhere else, time values are computed according to the time offset of your web client."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields,field_description:social_health_awareness.field_health_resource__zip
+msgid "Zip"
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+msgid "fiable après %s"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_negotiation_coin_sante
+msgid ""
+"offre un guide de réduction des\n"
+"                risques et une auto-évaluation anonymes — rien n'y est enregistré."
+msgstr ""
+
+#. module: social_health_awareness
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_practice__category__fluides
+msgid "Échange de fluides"
+msgstr ""
+
+#. module: social_health_awareness
+#: model:health.resource,rdr_notes:social_health_awareness.res_interligne
+msgid "Écoute et soutien LGBTQ+ 24/7, anonyme et confidentiel."
+msgstr ""
+
+#. module: social_health_awareness
+#. odoo-javascript
+#: code:addons/social_health_awareness/static/src/js/coin_sante_autoeval.js:0
+#: model:ir.model.fields.selection,name:social_health_awareness.selection__health_risk__level__eleve
+msgid "Élevé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_autoeval_page
+msgid "← Retour au Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_page
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_safety_coin_sante
+msgid "💚 Coin Santé"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.portal_negotiation_coin_sante
+msgid "💚 Parler santé avec un·e partenaire ? Le"
+msgstr ""
+
+#. module: social_health_awareness
+#: model_terms:ir.ui.view,arch_db:social_health_awareness.coin_sante_affiche_page
+msgid "🖨️ Imprimer"
+msgstr ""

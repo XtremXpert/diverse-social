@@ -1,0 +1,984 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* social_consent
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 15:32+0000\n"
+"PO-Revision-Date: 2026-05-20 15:32+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_home_consent
+msgid "/my/consent"
+msgstr "/my/consent"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid ""
+"<select class=\"form-select\" name=\"item_type\">\n"
+"                                        <option value=\"check\">Checkbox</option>\n"
+"                                        <option value=\"question\">Open question</option>\n"
+"                                    </select>"
+msgstr ""
+"<select class=\"form-select\" name=\"item_type\">\n"
+"                                        <option value=\"check\">Case à cocher</option>\n"
+"                                        <option value=\"question\">Question ouverte</option>\n"
+"                                    </select>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "<strong>Add a condition</strong>"
+msgstr "<strong>Ajouter une condition</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "<strong>Conditions</strong>"
+msgstr "<strong>Conditions</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "<strong>Current conditions</strong>"
+msgstr "<strong>Conditions actuelles</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "<strong>My consent gate</strong>"
+msgstr "<strong>Ma gate de consentement</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "<strong>My sent requests</strong>"
+msgstr "<strong>Mes demandes envoyées</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "<strong>Received pending requests</strong>"
+msgstr "<strong>Demandes reçues en attente</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "<strong>Settings</strong>"
+msgstr "<strong>Paramètres</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "<strong>State:</strong>"
+msgstr "<strong>État :</strong>"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid ""
+"<strong>You already have a pending request.</strong>\n"
+"                    State:"
+msgstr ""
+"<strong>Vous avez déjà une demande en attente.</strong>\n"
+"                    État :"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/gate.py:0
+msgid "A consent gate already exists for this profile."
+msgstr "Une gate de consentement existe déjà pour ce profil."
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_gate_item__item_type__check
+msgid "Acknowledgement"
+msgstr "Engagement"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_needaction
+msgid "Action Needed"
+msgstr "Nécessite une action"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Actions"
+msgstr "Actions"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Activate"
+msgstr "Activer"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__is_active
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Active"
+msgstr "Actif"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Add"
+msgstr "Ajouter"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_admin
+msgid "Administration"
+msgstr "Administration"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "All"
+msgstr "Toutes"
+
+#. module: social_consent
+#: model:ir.actions.act_window,name:social_consent.action_consent_requests_admin
+msgid "All Consent Requests"
+msgstr "Toutes les demandes de consentement"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_gates_admin
+msgid "All Gates"
+msgstr "Toutes les gates"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_requests_admin
+msgid "All Requests"
+msgstr "Toutes les demandes"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "All boxes must be ticked"
+msgstr "Toutes les cases doivent être cochées"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_gate__require_all_checks
+msgid "All checkbox items must be ticked before submitting."
+msgstr "Toutes les cases doivent être cochées avant la soumission."
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__text
+msgid "Answer"
+msgstr "Réponse"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "Answer required for: %(item)s"
+msgstr "Réponse requise pour : %(item)s"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__answer_ids
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Answers"
+msgstr "Réponses"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Approve"
+msgstr "Approuver"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__approved
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Approved"
+msgstr "Approuvée"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_attachment_count
+msgid "Attachment Count"
+msgstr "Nombre de pièces jointes"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Box"
+msgstr "Case"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__can_review
+msgid "Can Review"
+msgstr "Révisable"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__checked
+msgid "Checked"
+msgstr "Coché"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Conditions"
+msgstr "Conditions"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Configurer"
+msgstr "Configurer"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_root
+#: model:website.menu,name:social_consent.menu_social_consent
+msgid "Consent"
+msgstr "Consentement"
+
+#. module: social_consent
+#: model:ir.model,name:social_consent.model_social_consent_gate
+#: model:ir.model.fields,field_description:social_consent.field_club_social_profile_profile__consent_gate_id
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_form
+msgid "Consent Gate"
+msgstr "Gate de consentement"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_club_social_profile_profile__consent_required
+msgid "Consent Gate Active"
+msgstr "Gate de consentement active"
+
+#. module: social_consent
+#: model:ir.model,name:social_consent.model_social_consent_answer
+msgid "Consent Gate Answer"
+msgstr "Réponse à la gate de consentement"
+
+#. module: social_consent
+#: model:ir.model,name:social_consent.model_social_consent_gate_item
+msgid "Consent Gate Item"
+msgstr "Élément de gate de consentement"
+
+#. module: social_consent
+#: model:ir.actions.act_window,name:social_consent.action_consent_gate_admin
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_list
+msgid "Consent Gates"
+msgstr "Gates de consentement"
+
+#. module: social_consent
+#: model:ir.model,name:social_consent.model_social_consent_request
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Consent Request"
+msgstr "Demande de consentement"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_list
+msgid "Consent Requests"
+msgstr "Demandes de consentement"
+
+#. module: social_consent
+#: model:ir.actions.act_window,name:social_consent.action_my_consent_requests_inbox
+msgid "Consent Requests (Inbox)"
+msgstr "Demandes de consentement (Boîte de réception)"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_home_consent
+msgid "Consents"
+msgstr "Consentements"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "Contact request"
+msgstr "Demande de contact"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Create my gate"
+msgstr "Créer ma gate"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__create_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__create_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__create_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__create_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__create_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__create_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Date"
+msgstr "Date"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Deactivate"
+msgstr "Désactiver"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_club_social_profile_profile__display_name
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__display_name
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__display_name
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__display_name
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__draft
+msgid "Draft"
+msgstr "Brouillon"
+
+#. module: social_consent
+#: model:ir.model.constraint,message:social_consent.constraint_social_consent_answer_unique_answer
+msgid "Duplicate answer for the same item."
+msgstr "Réponse en double pour le même élément."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "E.g.: I have read and accept the club rules."
+msgstr "Ex. : J'ai lu et j'accepte le règlement du club."
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_follower_ids
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnés (Partenaires)"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__gate_id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__gate_id
+msgid "Gate"
+msgstr "Gate"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_form
+msgid "Gate Items"
+msgstr "Éléments de la gate"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__has_message
+msgid "Has Message"
+msgstr "A un message"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Help text shown under the condition."
+msgstr "Texte d'aide affiché sous la condition."
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__hint
+msgid "Hint"
+msgstr "Indice"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Hint (optional)"
+msgstr "Indice (optionnel)"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_club_social_profile_profile__id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__id
+msgid "ID"
+msgstr "ID"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si coché, de nouveaux messages demandent votre attention."
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__message_has_error
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si coché, certains messages ont une erreur de livraison."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Inactive"
+msgstr "Inactive"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Intro text"
+msgstr "Texte d'introduction"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__intro_text
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_form
+msgid "Introduction"
+msgstr "Introduction"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_is_follower
+msgid "Is Follower"
+msgstr "Est un abonné"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__item_id
+msgid "Item"
+msgstr "Élément"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__item_type
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__item_type
+msgid "Item Type"
+msgstr "Type d'élément"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__item_ids
+msgid "Items"
+msgstr "Éléments"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__item_text
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__text
+msgid "Label / Question"
+msgstr "Étiquette / Question"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__write_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__write_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__write_uid
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__write_uid
+msgid "Last Updated by"
+msgstr "Dernière modification par"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__write_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__write_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__write_date
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__write_date
+msgid "Last Updated on"
+msgstr "Dernière modification le"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/controllers/my_consent.py:0
+msgid "Le texte de la condition est obligatoire."
+msgstr "Le texte de la condition est obligatoire."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Mark Under Review"
+msgstr "Marquer en révision"
+
+#. module: social_consent
+#: model:ir.model,name:social_consent.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr "Profil social du membre"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_has_error
+msgid "Message Delivery error"
+msgstr "Erreur d'envoi du message"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_ids
+msgid "Messages"
+msgstr "Messages"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__min_delay_hours
+msgid "Minimum Review Delay (hours)"
+msgstr "Délai minimum de révision (heures)"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Minimum delay before approval (hours)"
+msgstr "Délai minimum avant approbation (heures)"
+
+#. module: social_consent
+#: model:ir.actions.act_window,name:social_consent.action_consent_gate
+msgid "My Consent Gate"
+msgstr "Ma gate de consentement"
+
+#. module: social_consent
+#: model:ir.actions.act_window,name:social_consent.action_my_sent_requests
+msgid "My Consent Requests (Sent)"
+msgstr "Mes demandes de consentement (envoyées)"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_my_gate
+msgid "My Gate"
+msgstr "Ma gate"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "My consent gate"
+msgstr "Ma gate de consentement"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "My consents"
+msgstr "Mes consentements"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "My contact request"
+msgstr "Ma demande de contact"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "My sent requests"
+msgstr "Mes demandes envoyées"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "No pending requests."
+msgstr "Aucune demande en attente."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "No request in this category."
+msgstr "Aucune demande dans cette catégorie."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Not yet created"
+msgstr "Pas encore créée"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Note (optional)"
+msgstr "Note (optionnelle)"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__reviewer_note
+msgid "Note from owner"
+msgstr "Note du propriétaire"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Note from the profile owner"
+msgstr "Note du propriétaire du profil"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Nombre d'actions"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_has_error_counter
+msgid "Number of errors"
+msgstr "Nombre d'erreurs"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Nombre de messages nécessitant une action"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Nombre de messages avec des erreurs d'envoi"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "Only draft requests can be submitted."
+msgstr "Seules les demandes en brouillon peuvent être soumises."
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "Only the profile owner or a moderator can perform this action."
+msgstr "Seul le propriétaire du profil ou un modérateur peut effectuer cette action."
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_gate_item__item_type__question
+msgid "Open Question"
+msgstr "Question ouverte"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_gate_item__hint
+msgid "Optional guidance shown below the item."
+msgstr "Indication facultative affichée sous l'élément."
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_gate__min_delay_hours
+msgid "Owner cannot approve sooner than this after submission."
+msgstr "Le propriétaire ne peut pas approuver avant ce délai après la soumission."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Owner's Note"
+msgstr "Note du propriétaire"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Pending"
+msgstr "En attente"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__pending_count
+msgid "Pending Count"
+msgstr "Nombre en attente"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__profile_id
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__profile_id
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "Profile"
+msgstr "Profil"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "Profile of"
+msgstr "Profil de"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Question"
+msgstr "Question"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Reason (optional)"
+msgstr "Motif (optionnel)"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Received requests"
+msgstr "Demandes reçues"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Reject"
+msgstr "Rejeter"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__rejected
+msgid "Rejected"
+msgstr "Rejetée"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_answer__request_id
+msgid "Request"
+msgstr "Demande"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "Request must be in submitted state."
+msgstr "La demande doit être à l'état soumise."
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "Request must be submitted or under review."
+msgstr "La demande doit être soumise ou en révision."
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__requester_id
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Requester"
+msgstr "Demandeur"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__request_ids
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_form
+msgid "Requests"
+msgstr "Demandes"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_inbox
+msgid "Requests Inbox"
+msgstr "Boîte de réception des demandes"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate__require_all_checks
+msgid "Require all acknowledgements"
+msgstr "Exiger tous les engagements"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__required
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Required"
+msgstr "Obligatoire"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Reviewable"
+msgstr "Révisable"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__reviewed_at
+msgid "Reviewed At"
+msgstr "Révisée le"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Erreur d'envoi SMS"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Save"
+msgstr "Enregistrer"
+
+#. module: social_consent
+#: model:ir.ui.menu,name:social_consent.menu_consent_sent
+msgid "Sent Requests"
+msgstr "Demandes envoyées"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_gate_item__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_gate__intro_text
+msgid "Shown to the visitor before they fill in the gate."
+msgstr "Affiché au visiteur avant qu'il remplisse la gate."
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__state
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "State"
+msgstr "État"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Status:"
+msgstr "Statut :"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Submit"
+msgstr "Soumettre"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "Submit my request"
+msgstr "Soumettre ma demande"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__submitted
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Submitted"
+msgstr "Soumise"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__submitted_at
+msgid "Submitted At"
+msgstr "Soumis le"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "Submitted on"
+msgstr "Soumis le"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_gate_form
+msgid "Tell visitors what you expect before they contact you…"
+msgstr "Indiquez aux visiteurs ce que vous attendez avant qu'ils vous contactent…"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Text <span class=\"text-danger\">*</span>"
+msgstr "Texte <span class=\"text-danger\">*</span>"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "The minimum review delay of %(hours)d hour(s) has not elapsed yet."
+msgstr "Le délai minimum de révision de %(hours)d heure(s) n'est pas encore écoulé."
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "This request cannot be withdrawn."
+msgstr "Cette demande ne peut pas être retirée."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "This text is shown to the visitor before they fill out the form."
+msgstr "Ce texte est affiché au visiteur avant qu'il remplisse le formulaire."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "To the profile of"
+msgstr "Vers le profil de"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "Toutes"
+msgstr "Toutes"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__can_review
+msgid "True once the minimum delay has elapsed."
+msgstr "Vrai une fois que le délai minimum est écoulé."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid "Type"
+msgstr "Type"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__under_review
+msgid "Under Review"
+msgstr "En révision"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+msgid "Under review"
+msgstr "En révision"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "View"
+msgstr "Voir"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_gate
+msgid "View my request"
+msgstr "Voir ma demande"
+
+#. module: social_consent
+#: model:ir.model.fields,field_description:social_consent.field_social_consent_request__website_message_ids
+msgid "Website Messages"
+msgstr "Messages du site web"
+
+#. module: social_consent
+#: model:ir.model.fields,help:social_consent.field_social_consent_request__website_message_ids
+msgid "Website communication history"
+msgstr "Historique de communication du site web"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+msgid ""
+"When the gate is active, members wishing to contact you\n"
+"                            must first fill out and submit this form."
+msgstr ""
+"Quand la gate est active, les membres souhaitant vous contacter\n"
+"                            doivent d'abord remplir et soumettre ce formulaire."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.view_consent_request_form
+msgid "Withdraw"
+msgstr "Retirer"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Withdraw my request"
+msgstr "Retirer ma demande"
+
+#. module: social_consent
+#: model:ir.model.fields.selection,name:social_consent.selection__social_consent_request__state__withdrawn
+msgid "Withdrawn"
+msgstr "Retirée"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "You already have an active request for this profile."
+msgstr "Vous avez déjà une demande active pour ce profil."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid ""
+"You can approve or reject this request once\n"
+"                                the minimum delay of"
+msgstr ""
+"Vous pourrez approuver ou rejeter cette demande une fois que\n"
+"                                le délai minimum de"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "You can only submit your own request."
+msgstr "Vous ne pouvez soumettre que votre propre demande."
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "You can only withdraw your own request."
+msgstr "Vous ne pouvez retirer que votre propre demande."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "You don't have a gate yet."
+msgstr "Vous n'avez pas encore de gate."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "You haven't sent any consent request yet."
+msgstr "Vous n'avez encore envoyé aucune demande de consentement."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "You haven't sent any request yet."
+msgstr "Vous n'avez encore envoyé aucune demande."
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "You must answer all required items. Missing: %(item)s"
+msgstr "Vous devez répondre à tous les éléments obligatoires. Manquant : %(item)s"
+
+#. module: social_consent
+#. odoo-python
+#: code:addons/social_consent/models/request.py:0
+msgid "You must tick: %(item)s"
+msgstr "Vous devez cocher : %(item)s"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "Your answers"
+msgstr "Vos réponses"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_home_consent
+msgid "consent_count"
+msgstr "consent_count"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "hour(s) has elapsed."
+msgstr "heure(s) sera écoulé."
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "item(s)"
+msgstr "élément(s)"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_consent
+msgid "request(s)"
+msgstr "demande(s)"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "— submitted on"
+msgstr "— soumise le"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_my_gate
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_received_requests
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_sent_requests
+msgid "← Back"
+msgstr "← Retour"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "✓ Acknowledged"
+msgstr "✓ Reconnu"
+
+#. module: social_consent
+#: model_terms:ir.ui.view,arch_db:social_consent.portal_request
+msgid "✗ Not ticked"
+msgstr "✗ Non coché"

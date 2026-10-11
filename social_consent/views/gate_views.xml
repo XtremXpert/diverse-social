@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Gate ─────────────────────────────────────────────────────────────── -->
+
+    <record id="view_consent_gate_form" model="ir.ui.view">
+        <field name="name">social_consent.gate.form</field>
+        <field name="model">social_consent.gate</field>
+        <field name="arch" type="xml">
+            <form string="Consent Gate">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="profile_id"/>
+                        <h1><field name="profile_id"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="min_delay_hours"/>
+                            <field name="require_all_checks"/>
+                        </group>
+                        <group>
+                            <field name="pending_count"/>
+                        </group>
+                    </group>
+                    <group string="Introduction">
+                        <field name="intro_text" nolabel="1" placeholder="Tell visitors what you expect before they contact you…"/>
+                    </group>
+                    <notebook>
+                        <page string="Gate Items" name="items">
+                            <field name="item_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="item_type"/>
+                                    <field name="text"/>
+                                    <field name="required"/>
+                                    <field name="hint"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Requests" name="requests">
+                            <field name="request_ids">
+                                <list>
+                                    <field name="requester_id"/>
+                                    <field name="state"/>
+                                    <field name="submitted_at"/>
+                                    <field name="reviewed_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_consent_gate_list" model="ir.ui.view">
+        <field name="name">social_consent.gate.list</field>
+        <field name="model">social_consent.gate</field>
+        <field name="arch" type="xml">
+            <list string="Consent Gates">
+                <field name="profile_id"/>
+                <field name="is_active"/>
+                <field name="min_delay_hours"/>
+                <field name="pending_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_consent_gate" model="ir.actions.act_window">
+        <field name="name">My Consent Gate</field>
+        <field name="res_model">social_consent.gate</field>
+        <field name="view_mode">form,list</field>
+        <field name="domain">[('profile_id.user_id', '=', uid)]</field>
+        <field name="context">{'default_profile_id': False}</field>
+    </record>
+
+    <record id="action_consent_gate_admin" model="ir.actions.act_window">
+        <field name="name">Consent Gates</field>
+        <field name="res_model">social_consent.gate</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id,group_id/id,operation,domain
+access_negotiation_moderator,social_negotiation.negotiation moderator,social_negotiation.negotiation,social_base.group_social_moderator,crud,
+access_negotiation_admin,social_negotiation.negotiation admin,social_negotiation.negotiation,social_base.group_social_admin,crud,
+access_item_moderator,social_negotiation.item moderator,social_negotiation.item,social_base.group_social_moderator,crud,
+access_social_negotiation_negotiation_system,social_negotiation.negotiation system,social_negotiation.negotiation,base.group_system,cru,
+access_social_negotiation_item_system,social_negotiation.item system,social_negotiation.item,base.group_system,cru,
+rule_negotiation_participants,Negotiation: participants only,social_negotiation.negotiation,social_base.group_social_user,cru,"['|', ('initiator_id', '=', user.id), ('partner_id', '=', user.id)]"
+rule_item_participants,Negotiation Item: participants only,social_negotiation.item,social_base.group_social_user,cru,"['|', ('negotiation_id.initiator_id', '=', user.id), ('negotiation_id.partner_id', '=', user.id)]"

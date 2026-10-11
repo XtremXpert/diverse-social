@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!-- Bloc ressources locales, partagé entre le guide et l'auto-évaluation.
+         Attend `resource_groups` dans le contexte de rendu. -->
+    <template id="health_resources_block" name="Coin Santé — Ressources locales">
+        <t t-if="resource_groups">
+            <h2 class="h4 mt-4 mb-1" id="ressources">Où agir près de chez toi</h2>
+            <p class="small text-muted mb-3">
+                Dépistage, PrEP, vaccination, soutien : des ressources concrètes au Québec.
+            </p>
+            <t t-foreach="resource_groups" t-as="rgroup">
+                <div class="mb-3">
+                    <div class="text-uppercase small text-muted fw-semibold mb-1" t-out="rgroup['label']"/>
+                    <div class="row g-2">
+                        <t t-foreach="rgroup['resources']" t-as="res">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <div class="fw-semibold">
+                                        <t t-if="res.website">
+                                            <a t-att-href="res.website" target="_blank" rel="noopener" t-out="res.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-out="res.name"/>
+                                        </t>
+                                    </div>
+                                    <div class="small text-muted">
+                                        <t t-if="res.region"><span t-out="res.region"/></t>
+                                        <t t-if="res.region and res.phone"> · </t>
+                                        <t t-if="res.phone"><span t-out="res.phone"/></t>
+                                    </div>
+                                    <div t-if="res.rdr_notes" class="small mt-1" t-out="res.rdr_notes"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="coin_sante_page" name="Coin Santé">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Coin Santé</t>
+            <div id="wrap" class="oe_structure">
+                <section class="s_text_block pt40 pb24">
+                    <div class="container" style="max-width:900px;">
+
+                        <h1 class="mb-2">💚 Coin Santé</h1>
+                        <p class="lead text-muted">
+                            Réduction des risques — sans jugement, sans statut, sans donnée personnelle.
+                            On parle de <strong>pratiques et de risques</strong>, jamais de personnes.
+                        </p>
+
+                        <!-- Disclaimer -->
+                        <div class="alert alert-info" role="status">
+                            <strong>Info :</strong> cet outil est <strong>éducatif</strong> et vise la
+                            réduction des risques. Il ne remplace pas un avis médical, un diagnostic ni un
+                            dépistage. Pour toute question de santé, consulte un professionnel ou une
+                            clinique de dépistage.
+                        </div>
+
+                        <!-- Lien vers l'auto-évaluation anonyme -->
+                        <div class="card border-primary mb-4">
+                            <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <div>
+                                    <div class="fw-semibold">Auto-évaluation anonyme</div>
+                                    <div class="small text-muted">
+                                        Coche les pratiques envisagées, obtiens un résumé personnalisé.
+                                        Rien n'est enregistré ni transmis.
+                                    </div>
+                                </div>
+                                <a href="/sante/auto-evaluation" class="btn btn-primary">Commencer</a>
+                            </div>
+                        </div>
+
+                        <!-- Guide par pratique -->
+                        <t t-if="guide">
+                            <h2 class="h4 mt-4 mb-3">Par pratique</h2>
+                            <t t-foreach="guide" t-as="row">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h3 class="h5 mb-1" t-out="row['practice'].name"/>
+                                        <p t-if="row['practice'].description" class="text-muted small" t-out="row['practice'].description"/>
+
+                                        <t t-if="row['risks']">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm align-middle mb-2">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Infection à considérer</th>
+                                                            <th>Risque</th>
+                                                            <th>Note</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="row['risks']" t-as="risk">
+                                                            <tr>
+                                                                <td t-out="risk.infection_id.name"/>
+                                                                <td>
+                                                                    <span t-attf-class="badge rounded-pill #{level_class.get(risk.level, 'bg-secondary')}" t-out="level_labels.get(risk.level, risk.level)"/>
+                                                                </td>
+                                                                <td class="small text-muted" t-out="risk.note or ''"/>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </t>
+
+                                        <t t-if="row['preventions']">
+                                            <div class="small">
+                                                <strong>Réduire le risque :</strong>
+                                                <t t-foreach="row['preventions']" t-as="prev">
+                                                    <span class="badge bg-light text-dark border me-1" t-out="prev.name"/>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <p class="text-muted">Le contenu du guide sera bientôt disponible.</p>
+                        </t>
+
+                        <!-- Mesures transversales -->
+                        <t t-if="transversal">
+                            <h2 class="h4 mt-4 mb-3">Mesures qui protègent largement</h2>
+                            <div class="row g-3">
+                                <t t-foreach="transversal" t-as="prev">
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 h-100">
+                                            <div class="fw-semibold" t-out="prev.name"/>
+                                            <div class="small text-muted" t-out="prev.description or ''"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <t t-call="social_health_awareness.health_resources_block"/>
+
+                        <hr class="my-4"/>
+                        <p class="text-muted small">
+                            La conversation santé se fait entre partenaires. Cette page informe, elle ne
+                            juge pas et n'enregistre rien.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="coin_sante_autoeval_page" name="Coin Santé — Auto-évaluation">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Auto-évaluation — Coin Santé</t>
+            <div id="wrap" class="oe_structure">
+                <section class="s_text_block pt40 pb24">
+                    <div class="container" style="max-width:900px;">
+
+                        <p class="mb-2">
+                            <a href="/sante" class="text-muted small">← Retour au Coin Santé</a>
+                        </p>
+                        <h1 class="mb-2">Auto-évaluation anonyme</h1>
+                        <p class="lead text-muted">
+                            Coche les pratiques que tu envisages : tu obtiens un résumé des risques
+                            à considérer, des moyens de les réduire et des suggestions de dépistage.
+                        </p>
+
+                        <!-- Garanties d'anonymat -->
+                        <div class="alert alert-success" role="status">
+                            <strong>100 % anonyme :</strong> le calcul se fait dans ton navigateur.
+                            Tes réponses ne sont <strong>jamais transmises ni enregistrées</strong> —
+                            ferme la page et il n'en reste rien.
+                        </div>
+
+                        <!-- Disclaimer -->
+                        <div class="alert alert-info" role="status">
+                            <strong>Info :</strong> cet outil est <strong>éducatif</strong> et vise la
+                            réduction des risques. Il ne remplace pas un avis médical, un diagnostic ni un
+                            dépistage. Pour toute question de santé, consulte un professionnel ou une
+                            clinique de dépistage.
+                        </div>
+
+                        <div id="coin_sante_autoeval" t-att-data-payload="payload_json">
+
+                            <!-- Sélection des pratiques -->
+                            <h2 class="h4 mt-4 mb-3">1. Les pratiques envisagées</h2>
+                            <t t-foreach="practice_groups" t-as="group">
+                                <div class="mb-3">
+                                    <div class="text-uppercase small text-muted fw-semibold mb-1" t-out="group['label']"/>
+                                    <div class="row g-2">
+                                        <t t-foreach="group['practices']" t-as="practice">
+                                            <div class="col-md-6">
+                                                <label class="border rounded p-2 d-flex align-items-start gap-2 w-100 mb-0" style="cursor:pointer;">
+                                                    <input type="checkbox" class="form-check-input mt-1 o_autoeval_practice" t-att-value="practice.id"/>
+                                                    <span>
+                                                        <span class="fw-semibold" t-out="practice.name"/>
+                                                        <span t-if="practice.description" class="d-block small text-muted" t-out="practice.description"/>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <div class="d-flex align-items-center gap-3 mt-3 mb-4">
+                                <button type="button" class="btn btn-outline-secondary btn-sm o_autoeval_clear">
+                                    Tout effacer
+                                </button>
+                                <span class="small text-muted o_autoeval_count"/>
+                            </div>
+
+                            <!-- Résumé (rempli côté client) -->
+                            <div class="o_autoeval_results d-none">
+                                <h2 class="h4 mt-4 mb-3">2. Ton résumé</h2>
+                                <div class="o_autoeval_infections mb-4"/>
+                                <div class="o_autoeval_preventions mb-4"/>
+                                <div class="o_autoeval_screening mb-4"/>
+                            </div>
+                            <div class="o_autoeval_empty text-muted">
+                                <em>Coche au moins une pratique pour voir ton résumé.</em>
+                            </div>
+
+                        </div>
+
+                        <t t-call="social_health_awareness.health_resources_block"/>
+
+                        <hr class="my-4"/>
+                        <p class="text-muted small">
+                            On parle de pratiques et de risques, jamais de personnes ni de statuts.
+                            La conversation santé se fait entre partenaires — cette page informe,
+                            elle ne juge pas et n'enregistre rien.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Affiche imprimable pour le coin santé physique (événements).
+         Page volontairement autonome (pas de website.layout) : propre à
+         l'impression, sans en-tête ni pied de page du site. -->
+    <template id="coin_sante_affiche_page" name="Coin Santé — Affiche QR">
+        <html lang="fr">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="robots" content="noindex"/>
+                <title>Coin Santé — Affiche</title>
+                <style>
+                    body { font-family: sans-serif; text-align: center; margin: 0; }
+                    .cs-noprint { display: flex; justify-content: space-between;
+                                  align-items: center; padding: 12px 16px;
+                                  background: #f5f5f5; }
+                    .cs-noprint button { padding: 6px 16px; cursor: pointer; }
+                    .cs-sheet { max-width: 620px; margin: 0 auto; padding: 40px 24px; }
+                    .cs-emoji { font-size: 64px; }
+                    h1 { font-size: 52px; margin: 8px 0; }
+                    .cs-tagline { font-size: 22px; color: #444; }
+                    .cs-sheet img { margin: 24px 0; }
+                    .cs-url { font-size: 18px; color: #444; }
+                    .cs-promise { font-size: 22px; font-weight: bold; margin-top: 16px; }
+                    .cs-hint { font-size: 17px; color: #444; }
+                    @media print { .cs-noprint { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="cs-noprint">
+                    <a href="/sante">← Retour au Coin Santé</a>
+                    <button onclick="window.print()">🖨️ Imprimer</button>
+                </div>
+                <div class="cs-sheet">
+                    <div class="cs-emoji">💚</div>
+                    <h1>Coin Santé</h1>
+                    <p class="cs-tagline">Réduction des risques — sans jugement, sans statut.</p>
+                    <img t-att-src="qr_src" alt="QR code vers le Coin Santé" width="300" height="300"/>
+                    <p class="cs-url" t-out="sante_url"/>
+                    <p class="cs-promise">
+                        100 % anonyme : rien n'est enregistré, aucune connexion requise.
+                    </p>
+                    <p class="cs-hint">
+                        Scanne pour le guide des pratiques, l'auto-évaluation anonyme
+                        et les ressources locales (dépistage, PrEP, vaccination).
+                    </p>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <!-- Carte Coin Santé sur la page Sécurité (/safety) : voisinage
+         thématique — réduction des risques ↔ sécurité personnelle. -->
+    <template id="portal_safety_coin_sante" inherit_id="social_safety.portal_safety_page" name="Safety — Coin Santé">
+        <xpath expr="//div[hasclass('o_portal_wrap')]//div[hasclass('container')]" position="inside">
+            <div class="card mb-4">
+                <div class="card-header fw-bold" style="background:#1a1a2e; color:white;">
+                    💚 Coin Santé
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Guide de réduction des risques et auto-évaluation
+                        <strong>100 % anonyme</strong> — rien n'est enregistré,
+                        aucun statut, aucun jugement.
+                    </p>
+                    <a href="/sante" class="btn btn-outline-secondary">Visiter le Coin Santé</a>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Rappel discret au bas de la liste des négociations : la conversation
+         santé entre partenaires s'appuie sur le Coin Santé, sans jamais rien
+         y stocker. -->
+    <template id="portal_negotiation_coin_sante" inherit_id="social_negotiation.portal_my_negotiations" name="Négociations — Coin Santé">
+        <xpath expr="//div[hasclass('container')]" position="inside">
+            <p class="text-muted small mt-4">
+                💚 Parler santé avec un·e partenaire ? Le
+                <a href="/sante">Coin Santé</a> offre un guide de réduction des
+                risques et une auto-évaluation anonymes — rien n'y est enregistré.
+            </p>
+        </xpath>
+    </template>
+
+    <!-- Entrée dans le portail membre (/my) -->
+    </odoo>
