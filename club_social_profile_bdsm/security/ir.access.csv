@@ -1,0 +1,11 @@
+id,name,model_id,group_id/id,operation,domain
+access_bdsm_kink_admin,club_social_profile_bdsm.kink admin,club_social_profile_bdsm.kink,social_base.group_social_admin,crud,
+access_bdsm_kink_system,club_social_profile_bdsm.kink system,club_social_profile_bdsm.kink,base.group_system,crud,
+access_bdsm_kink_level_user,club_social_profile_bdsm.kink_level user,club_social_profile_bdsm.kink_level,social_base.group_social_user,crud,
+access_bdsm_kink_level_admin,club_social_profile_bdsm.kink_level admin,club_social_profile_bdsm.kink_level,social_base.group_social_admin,crud,
+access_bdsm_kink_level_system,club_social_profile_bdsm.kink_level system,club_social_profile_bdsm.kink_level,base.group_system,crud,
+access_bdsm_kink_request_admin,club_social_profile_bdsm.kink_request admin,club_social_profile_bdsm.kink_request,social_base.group_social_admin,crud,
+access_bdsm_kink_request_system,club_social_profile_bdsm.kink_request system,club_social_profile_bdsm.kink_request,base.group_system,crud,
+bdsm_kink_user_rule,BDSM Kink: Lecture membres,club_social_profile_bdsm.kink,social_base.group_social_user,r,"[(1, '=', 1)]"
+bdsm_kink_request_user_rule,BDSM Kink Request: Mes demandes,club_social_profile_bdsm.kink_request,social_base.group_social_user,cr,"[('requester_id', '=', user.id)]"
+bdsm_kink_request_moderator_rule,BDSM Kink Request: Moderator Access,club_social_profile_bdsm.kink_request,social_base.group_social_moderator,ru,"[(1, '=', 1)]"

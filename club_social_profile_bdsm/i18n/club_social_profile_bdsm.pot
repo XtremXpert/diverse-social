@@ -1,0 +1,541 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* club_social_profile_bdsm
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-20 13:49+0000\n"
+"PO-Revision-Date: 2026-05-20 13:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_my_home_bdsm
+msgid "/my/profile/bdsm"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<option value=\"\">— Choose —</option>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<option value=\"\">— Unspecified —</option>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_profile_compat_inject
+msgid ""
+"<span id=\"sn_compat_score\" style=\"font-size:1.3rem; font-weight:bold; "
+"color:#e94560;\">—</span>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<strong>Add from catalog</strong>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<strong>My interests / kinks</strong>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid ""
+"<strong>Privacy:</strong> This information is only shared with\n"
+"                    members whose connection request you have accepted."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<strong>Role and experience</strong>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "<strong>Suggest a new kink</strong>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__active
+msgid "Active"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Add"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_request_list
+msgid "Approve"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_request__state__approved
+msgid "Approved"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.ui.menu,name:club_social_profile_bdsm.menu_bdsm_root
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_csp_profile_bdsm_form
+msgid "BDSM"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model,name:club_social_profile_bdsm.model_club_social_profile_bdsm_kink
+msgid "BDSM Kink / Interest"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:website.menu,name:club_social_profile_bdsm.menu_social_profile_bdsm
+msgid "BDSM Profile"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__bdsm_role
+msgid "BDSM Role"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "BDSM role"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__create_uid
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__create_uid
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__create_date
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__create_date
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_level__level__curieux
+msgid "Curious"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__curieux
+msgid "Curious (beginner)"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__description
+msgid "Description"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Description (optional)"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__description
+msgid "Description / Context"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_form
+msgid "Description..."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__display_name
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__display_name
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__display_name
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__dominant
+msgid "Dominant"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__experience
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Experience"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__experience__experimente
+msgid "Experienced (5+ years)"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_level__level__expert
+msgid "Expert"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__hard_limits
+msgid "Hard Limits"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid ""
+"Hard limits\n"
+"                                    <span class=\"text-muted small ms-1\">(hard limits)</span>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_csp_profile_bdsm_form
+msgid "Hard limits..."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__id
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__id
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__id
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__id
+msgid "ID"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid ""
+"If you don't find what you're looking for in the catalog,\n"
+"                            submit a request to the moderators."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model,name:club_social_profile_bdsm.model_club_social_profile_bdsm_kink_level
+msgid "Interest Level per Kink"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__profile_count
+msgid "Interested Members"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_profile_public_bdsm_inject
+msgid "Interests"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__experience__intermediate
+msgid "Intermediate (1–5 years)"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__kink_id
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__kink_id
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_form
+msgid "Kink"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model,name:club_social_profile_bdsm.model_club_social_profile_bdsm_kink_request
+msgid "Kink Addition Request"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__kink_level_ids
+msgid "Kink Interests"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.actions.act_window,name:club_social_profile_bdsm.action_bdsm_kink_requests
+#: model:ir.ui.menu,name:club_social_profile_bdsm.menu_bdsm_kink_requests
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_request_list
+msgid "Kink Requests"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Kink name *"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Kink name is required."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.actions.act_window,name:club_social_profile_bdsm.action_bdsm_kinks
+#: model:ir.ui.menu,name:club_social_profile_bdsm.menu_bdsm_kinks
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_list
+msgid "Kinks"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__write_uid
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__write_uid
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__write_date
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__write_date
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__level
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Level"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_csp_profile_bdsm_form
+msgid "Limits"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_profile_public_bdsm_inject
+msgid "Manage my BDSM preferences →"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__masochiste
+msgid "Masochist"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__maitre
+msgid "Master / Mistress"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model,name:club_social_profile_bdsm.model_club_social_profile_profile
+msgid "Member Social Profile"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_my_home_bdsm
+msgid "My BDSM profile"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink__name
+msgid "Name"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid ""
+"Negotiable limits\n"
+"                                    <span class=\"text-muted small ms-1\">(soft limits)</span>"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__experience__nouveau
+msgid "New (< 1 year)"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "No interests added yet."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.constraint,message:club_social_profile_bdsm.constraint_club_social_profile_bdsm_kink_level_unique_profile_kink
+msgid "One interest level per kink and profile."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__autre
+msgid "Other"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_request__state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/models/kink.py:0
+msgid "Please provide a rejection reason."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__processed_by
+msgid "Processed By"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_level__profile_id
+msgid "Profile"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_bdsm_kink_request_list
+msgid "Reject"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_request__state__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__rejection_reason
+msgid "Rejection Reason"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Remove"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__name
+msgid "Requested Kink"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__requester_id
+msgid "Requester"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__sadique
+msgid "Sadist"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Save"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__esclave
+msgid "Slave"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_profile__soft_limits
+msgid "Soft Limits"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.view_csp_profile_bdsm_form
+msgid "Soft limits..."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_level__level__soft
+msgid "Soft yes"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__spectateur
+msgid "Spectator"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,field_description:club_social_profile_bdsm.field_club_social_profile_bdsm_kink_request__state
+msgid "State"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__soumis
+msgid "Submissive"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Submit request"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_profile__bdsm_role__switch
+msgid "Switch"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "What you absolutely refuse…"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "What you accept with prior negotiation…"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,help:club_social_profile_bdsm.field_club_social_profile_profile__soft_limits
+msgid "What you do with prior negotiation"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model:ir.model.fields,help:club_social_profile_bdsm.field_club_social_profile_profile__hard_limits
+msgid "What you never do"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#. odoo-python
+#: code:addons/club_social_profile_bdsm/controllers/portal.py:0
+#: model:ir.model.fields.selection,name:club_social_profile_bdsm.selection__club_social_profile_bdsm_kink_level__level__oui
+msgid "Yes"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_bdsm_profile
+msgid "Your request has been submitted to the moderators."
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_profile_public_bdsm_inject
+msgid "⛓️ BDSM Profile"
+msgstr ""
+
+#. module: club_social_profile_bdsm
+#: model_terms:ir.ui.view,arch_db:club_social_profile_bdsm.portal_profile_compat_inject
+msgid "💘 BDSM compatibility"
+msgstr ""

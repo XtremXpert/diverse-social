@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extension de la vue profil avec les champs BDSM -->
+        <record id="view_csp_profile_bdsm_form" model="ir.ui.view">
+            <field name="name">club_social_profile.profile.form.bdsm</field>
+            <field name="model">club_social_profile.profile</field>
+            <field name="inherit_id" ref="club_social_profile.view_csp_profile_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="BDSM">
+                        <group>
+                            <group>
+                                <field name="bdsm_role"/>
+                                <field name="experience"/>
+                            </group>
+                        </group>
+                        <group string="Limits">
+                            <field name="soft_limits" nolabel="1" placeholder="Soft limits..."/>
+                            <field name="hard_limits" nolabel="1" placeholder="Hard limits..."/>
+                        </group>
+                        <field name="kink_level_ids">
+                            <list editable="bottom">
+                                <field name="kink_id"/>
+                                <field name="level"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <!-- Vue liste des kinks -->
+        <record id="view_bdsm_kink_list" model="ir.ui.view">
+            <field name="name">club_social_profile_bdsm.kink.list</field>
+            <field name="model">club_social_profile_bdsm.kink</field>
+            <field name="arch" type="xml">
+                <list string="Kinks" default_order="name">
+                    <field name="name"/>
+                    <field name="active"/>
+                    <field name="profile_count"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_bdsm_kink_form" model="ir.ui.view">
+            <field name="name">club_social_profile_bdsm.kink.form</field>
+            <field name="model">club_social_profile_bdsm.kink</field>
+            <field name="arch" type="xml">
+                <form string="Kink">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                            <field name="profile_count" readonly="1"/>
+                        </group>
+                        <field name="description" nolabel="1" placeholder="Description..."/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bdsm_kinks" model="ir.actions.act_window">
+            <field name="name">Kinks</field>
+            <field name="res_model">club_social_profile_bdsm.kink</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Vue des demandes de kinks -->
+        <record id="view_bdsm_kink_request_list" model="ir.ui.view">
+            <field name="name">club_social_profile_bdsm.kink_request.list</field>
+            <field name="model">club_social_profile_bdsm.kink_request</field>
+            <field name="arch" type="xml">
+                <list string="Kink Requests" default_order="create_date desc">
+                    <field name="name"/>
+                    <field name="requester_id"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            invisible="state != 'pending'"
+                            groups="social_base.group_social_moderator"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="state != 'pending'"
+                            groups="social_base.group_social_moderator"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_bdsm_kink_requests" model="ir.actions.act_window">
+            <field name="name">Kink Requests</field>
+            <field name="res_model">club_social_profile_bdsm.kink_request</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'pending')]</field>
+        </record>
+
+        <menuitem id="menu_bdsm_root" name="BDSM" parent="social_base.menu_social_base_root" sequence="60"/>
+        <menuitem id="menu_bdsm_kinks" name="Kinks" parent="menu_bdsm_root" sequence="10" action="action_bdsm_kinks"/>
+        <menuitem id="menu_bdsm_kink_requests" name="Kink Requests" parent="menu_bdsm_root" sequence="20"
+                  action="action_bdsm_kink_requests"
+                  groups="social_base.group_social_moderator"/>
+
+    </data>
+</odoo>
