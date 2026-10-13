@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo noupdate="0">
+
+    <!-- Groupe « flag » assignable aux utilisateurs portail. Volontairement
+         sans category_id : il apparaît comme une simple case à cocher dans
+         la fiche utilisateur (Odoo 19) et peut être posé sur un portail. -->
+    <record id="group_event_portal_organiser" model="res.groups">
+        <field name="name">Organisateur portail (événements)</field>
+        <field name="comment">Membres portail autorisés à créer et gérer leurs propres
+            événements depuis le portail/site, sans accès au backend.</field>
+    </record>
+
+    <!-- Un membre ne voit que ses propres demandes ; les modérateurs voient tout. -->
+    </odoo>

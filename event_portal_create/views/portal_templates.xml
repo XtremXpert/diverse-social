@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!-- ══ Entrée « Mon compte » (réservée aux organisateurs) ═══════════════ -->
+    <!-- ══ Devenir organisateur (demande) ═══════════════════════════════════ -->
+    <template id="portal_become_organiser" name="Devenir organisateur">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Devenir organisateur</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width:720px;">
+                    <h2 class="mb-3" style="color:#1a1a2e;">🎪 Devenir organisateur</h2>
+
+                    <t t-if="is_organiser">
+                        <div class="alert alert-success">
+                            Tu es déjà organisateur.
+                            <a href="/my/events">Gérer mes événements →</a>
+                        </div>
+                    </t>
+                    <t t-elif="has_pending or submitted">
+                        <div class="alert alert-info">
+                            Ta demande a bien été envoyée. Un modérateur la traitera
+                            bientôt — tu recevras l'accès « Mes événements » une fois
+                            approuvée.
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <p class="text-muted">
+                            Organiser un événement te permet de créer et gérer tes
+                            propres soirées depuis le portail. Explique en quelques mots
+                            ton projet ; un modérateur validera ta demande.
+                        </p>
+                        <t t-if="error">
+                            <div class="alert alert-danger">
+                                Impossible d'envoyer la demande (déjà organisateur ou
+                                demande déjà en attente).
+                            </div>
+                        </t>
+                        <form action="/my/become-organiser/submit" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Ta motivation</label>
+                                <textarea name="motivation" class="form-control" rows="4" placeholder="Le type d'événements que tu veux organiser…"/>
+                            </div>
+                            <button type="submit" class="btn" style="background:#e94560;color:white;">
+                                Envoyer ma demande
+                            </button>
+                        </form>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Liste « Mes événements » ═════════════════════════════════════════ -->
+    <template id="portal_my_events" name="Mes événements">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">Mes événements</t>
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h3 class="mb-0">📅 Mes événements</h3>
+                        <a href="/my/events/new" class="btn btn-primary">+ Nouvel événement</a>
+                    </div>
+
+                    <t t-if="events">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Début</th>
+                                        <th>Fin</th>
+                                        <th>Visibilité</th>
+                                        <th>Inscrits</th>
+                                        <th>Statut</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="events" t-as="event">
+                                        <tr>
+                                            <td>
+                                                <a t-attf-href="/my/events/#{event.id}" t-out="event.name"/>
+                                            </td>
+                                            <td><span t-field="event.date_begin" t-options="{&quot;widget&quot;: &quot;datetime&quot;}"/></td>
+                                            <td><span t-field="event.date_end" t-options="{&quot;widget&quot;: &quot;datetime&quot;}"/></td>
+                                            <td>
+                                                <t t-if="event.social_visibility == 'circles'">Cercles</t>
+                                                <t t-else="">Tous les membres</t>
+                                            </td>
+                                            <td>
+                                                <t t-out="event.seats_taken"/>
+                                                <t t-if="event.seats_limited"> / <t t-out="event.seats_max"/></t>
+                                            </td>
+                                            <td>
+                                                <span t-if="event.website_published" class="badge rounded-pill bg-success">Publié</span>
+                                                <span t-else="" class="badge rounded-pill bg-secondary">Brouillon</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <a t-attf-href="/my/events/#{event.id}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                                <a t-if="event.website_published" t-attf-href="/event/#{event.id}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="text-center text-muted py-5">
+                            <div style="font-size:3rem;" class="mb-2">📅</div>
+                            <p>Vous n'avez pas encore d'événement.</p>
+                            <a href="/my/events/new" class="btn btn-primary">Créer mon premier événement</a>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══ Formulaire (création + édition partagé) ══════════════════════════ -->
+    <template id="portal_event_form" name="Formulaire événement">
+        <t t-call="portal.portal_layout">
+            <t t-set="head_title">
+                <t t-if="event">Modifier l'événement</t>
+                <t t-else="">Nouvel événement</t>
+            </t>
+            <div class="o_portal_wrap">
+                <div class="container py-4" style="max-width:760px;">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h3 class="mb-0">
+                            <t t-if="event">✏️ Modifier l'événement</t>
+                            <t t-else="">📅 Nouvel événement</t>
+                        </h3>
+                        <a href="/my/events" class="btn btn-link">← Retour</a>
+                    </div>
+
+                    <div t-if="error" class="alert alert-danger" role="alert">
+                        <t t-out="error"/>
+                    </div>
+
+                    <form t-attf-action="#{event and '/my/events/%d/save' % event.id or '/my/events/new/submit'}" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nom de l'événement *</label>
+                            <input type="text" name="name" class="form-control" required="required" t-att-value="form.get('name') or (event and event.name) or ''"/>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Début *</label>
+                                <input type="datetime-local" name="date_begin" class="form-control" required="required" t-att-value="form.get('date_begin') or (event and fmt_dt(event.date_begin)) or ''"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fin *</label>
+                                <input type="datetime-local" name="date_end" class="form-control" required="required" t-att-value="form.get('date_end') or (event and fmt_dt(event.date_end)) or ''"/>
+                            </div>
+                        </div>
+                        <p class="text-muted small">Fuseau horaire : <t t-out="tz"/></p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="4" t-out="form.get('description') or (event and event.description) or ''"/>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Visibilité</label>
+                                <select name="social_visibility" class="form-select" id="epc_visibility">
+                                    <t t-set="cur_vis" t-value="form.get('social_visibility') or (event and event.social_visibility) or 'members'"/>
+                                    <t t-foreach="visibilities" t-as="vis">
+                                        <option t-att-value="vis[0]" t-att-selected="vis[0] == cur_vis and 'selected' or None">
+                                            <t t-out="vis[1]"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Places (0 = illimité)</label>
+                                <input type="number" name="seats_max" class="form-control" min="0" t-att-value="form.get('seats_max') or (event and event.seats_limited and event.seats_max) or ''"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="epc_circles">
+                            <label class="form-label">Cercles autorisés (visibilité « Cercles spécifiques »)</label>
+                            <t t-if="circles">
+                                <t t-set="cur_circles" t-value="event and event.allowed_circle_ids.ids or []"/>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <t t-foreach="circles" t-as="circle">
+                                        <div class="form-check">
+                                            <input type="checkbox" name="circle_ids" class="form-check-input" t-att-value="circle.id" t-att-checked="circle.id in cur_circles and 'checked' or None"/>
+                                            <label class="form-check-label" t-out="circle.name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted small mb-0">Vous n'avez pas encore de cercle. Créez-en dans « Mes cercles ».</p>
+                            </t>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <a href="/my/events" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+
+                    <!-- Actions sur un événement existant -->
+                    <t t-if="event">
+                        <hr/>
+                        <div class="d-flex gap-2 align-items-center">
+                            <t t-if="not event.website_published">
+                                <form t-attf-action="/my/events/#{event.id}/publish" method="post" class="m-0">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="publish" value="1"/>
+                                    <button type="submit" class="btn btn-success">Publier</button>
+                                </form>
+                            </t>
+                            <t t-else="">
+                                <form t-attf-action="/my/events/#{event.id}/publish" method="post" class="m-0">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="publish" value="0"/>
+                                    <button type="submit" class="btn btn-outline-warning">Dépublier</button>
+                                </form>
+                                <a t-attf-href="/event/#{event.id}" class="btn btn-outline-primary">Voir la page publique</a>
+                            </t>
+                            <t t-if="event.seats_taken == 0">
+                                <form t-attf-action="/my/events/#{event.id}/delete" method="post" class="m-0 ms-auto" onsubmit="return confirm('Supprimer cet événement ?');">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+                                </form>
+                            </t>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

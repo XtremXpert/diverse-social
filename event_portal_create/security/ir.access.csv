@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+access_event_portal_organiser_event,event.event portal organiser (read),event.event,event_portal_create.group_event_portal_organiser,r,
+access_event_portal_organiser_registration,event.registration portal organiser (read),event.registration,event_portal_create.group_event_portal_organiser,r,
+access_event_portal_organiser_circle,social_circles.circle portal organiser (read),social_circles.circle,event_portal_create.group_event_portal_organiser,r,
+access_organiser_request_system,organiser.request system,event_portal_create.organiser_request,base.group_system,crud,
+rule_organiser_request_own,Organiser request: own,event_portal_create.organiser_request,social_base.group_social_user,cr,"[('user_id', '=', user.id)]"
+rule_organiser_request_moderator,Organiser request: moderators see all,event_portal_create.organiser_request,social_base.group_social_moderator,crud,"[(1, '=', 1)]"
