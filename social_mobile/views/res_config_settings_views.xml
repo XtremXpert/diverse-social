@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_social_mobile" model="ir.ui.view">
+        <field name="name">res.config.settings social mobile</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='user_default_rights']" position="after">
+                <block title="Application mobile" id="social_mobile">
+                    <setting id="social_mobile_install" string="Installation"
+                             help="Lien App Store affiché en QR code par les membres pour faire installer l'application.">
+                        <field name="social_mobile_install_url" placeholder="https://apps.apple.com/…"/>
+                    </setting>
+                    <setting id="social_mobile_membership" string="Adhésion des nouveaux membres"
+                             help="Adhésion activée au parrainage dans l'application (accès immédiat au réseau).">
+                        <field name="social_mobile_membership_type_id"/>
+                    </setting>
+                    <setting id="social_mobile_keys" string="Clés de l'application"
+                             help="Durée de validité ; l'application les renouvelle avant l'échéance.">
+                        <field name="social_mobile_key_days"/>
+                    </setting>
+                    <setting id="social_mobile_review" string="Examen App Store"
+                             help="Code qui ouvre le compte de démonstration à la place du parrainage. Videz-le une fois l'application approuvée.">
+                        <field name="social_mobile_review_user_id"/>
+                        <field name="social_mobile_review_code" password="True"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
