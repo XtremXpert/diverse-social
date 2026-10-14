@@ -87,6 +87,9 @@ class TestEnrollment(HttpCase):
         self.assertEqual(vouching.sponsor_id, self.sponsor)
         self.assertEqual(vouching.state, 'active')
         self.assertEqual(vouching.statement, "Rencontré au club")
+        Connection = self.env['club_social_profile.connection'].sudo()
+        self.assertTrue(Connection.is_connected(self.sponsor, newcomer) and Connection.is_connected(newcomer, self.sponsor),
+                        "parrain et filleul sont connectés : ils peuvent s'écrire")
 
         self.assertTrue(newcomer.name.startswith("Nouveau membre"), "jamais un nom tiré du courriel")
         self.assertNotIn('nouveau', newcomer.name.lower().replace('nouveau membre', ''))

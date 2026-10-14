@@ -207,6 +207,13 @@ class SocialMobileEnrollment(models.Model):
             'membership_type_id': self._membership_type().id,
         })
         membership.action_activate()  # accorde l'accès au réseau (_sync_social_access)
+        # Le parrain et son filleul sont connectés d'office : sans cela, la politique de contact
+        # empêcherait le nouveau membre, qui ne connaît encore personne, d'écrire à son parrain.
+        Connection = self.env['club_social_profile.connection'].sudo()
+        now = fields.Datetime.now()
+        for user, other in ((sponsor, newcomer), (newcomer, sponsor)):
+            Connection.create({'user_id': user.id, 'connected_user_id': other.id, 'connection_type': 'friend',
+                               'state': 'accepted', 'accepted_date': now})
         self.env['social_privacy.consent'].sudo().record_consent(
             newcomer, enrollment.policy_version_id, source='api')
         enrollment.write({'state': 'sponsored', 'sponsor_id': sponsor.id, 'user_id': newcomer.id})
