@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_purge_positions" model="ir.cron">
+        <field name="name">Grille de proximité : effacer les positions de plus de 7 jours</field>
+        <field name="model_id" ref="model_social_nearby_position"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_purge()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
