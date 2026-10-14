@@ -1,0 +1,5 @@
+id,name,model_id,group_id/id,operation,domain
+access_social_relation_member_read,Mes relations,social_relation.relation,social_base.group_social_user,r,"[('member_ids.user_id', '=', user.id)]"
+access_social_relation_moderator,Relations (modération),social_relation.relation,social_base.group_social_moderator,crud,
+access_social_relation_member_line_read,Membres de mes relations,social_relation.member,social_base.group_social_user,r,"[('relation_id.member_ids.user_id', '=', user.id)]"
+access_social_relation_member_line_moderator,Membres des relations (modération),social_relation.member,social_base.group_social_moderator,crud,
