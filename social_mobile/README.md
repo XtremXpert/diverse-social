@@ -13,6 +13,8 @@ API de l'application mobile (iOS) du réseau social : inscription par QR code et
    - crée le parrainage (`social_reputation.vouching`, actif) au nom du parrain : la **chaîne de confiance** s'applique ;
    - crée et active l'adhésion réglée dans les paramètres (par défaut « Membre régulier ») : l'accès au réseau
      est **immédiat**, accordé par `club_membership._sync_social_access()` ;
+   - connecte le parrain et le nouveau membre (connexion acceptée dans les deux sens), pour qu'ils puissent
+     s'écrire dès le départ ;
    - enregistre le consentement (`social_privacy`, source « API / Mobile ») s'il existe une politique en vigueur.
 4. L'application du nouveau venu, qui interroge Odoo, reçoit **une seule fois** sa clé API. L'inscription,
    et donc le courriel qu'elle portait, est alors effacée.
