@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="social_mobile_device_view_list" model="ir.ui.view">
+        <field name="name">social_mobile.device.list</field>
+        <field name="model">social_mobile.device</field>
+        <field name="arch" type="xml">
+            <list string="Appareils mobiles" create="0">
+                <field name="user_id"/>
+                <field name="environment"/>
+                <field name="last_seen"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="social_mobile_device_action" model="ir.actions.act_window">
+        <field name="name">Appareils mobiles</field>
+        <field name="res_model">social_mobile.device</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+    <menuitem id="menu_social_mobile_devices" name="Appareils mobiles"
+              parent="social_reputation.menu_reputation_root" sequence="96"
+              action="social_mobile_device_action"
+              groups="base.group_system"/>
+</odoo>

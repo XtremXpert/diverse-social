@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_social_mobile_push" model="ir.ui.view">
+        <field name="name">res.config.settings social mobile push</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="social_mobile.res_config_settings_view_form_social_mobile"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='social_mobile']" position="inside">
+                <setting id="social_mobile_push_apns" string="Notifications iPhone (APNs)"
+                         help="Clé créée dans Apple Developer → Certificates, Identifiers &amp; Profiles → Keys (service Apple Push Notifications).">
+                    <div class="content-group">
+                        <div class="row mt8"><label for="social_mobile_push_team_id" class="col-lg-4 o_light_label"/><field name="social_mobile_push_team_id"/></div>
+                        <div class="row"><label for="social_mobile_push_key_id" class="col-lg-4 o_light_label"/><field name="social_mobile_push_key_id"/></div>
+                        <div class="row"><label for="social_mobile_push_bundle_id" class="col-lg-4 o_light_label"/><field name="social_mobile_push_bundle_id"/></div>
+                        <div class="row"><label for="social_mobile_push_apns_key" class="col-lg-4 o_light_label"/><field name="social_mobile_push_apns_key" password="True"/></div>
+                    </div>
+                </setting>
+                <setting id="social_mobile_push_sender" help="Recommandé : décoché. L'écran verrouillé est souvent vu par d'autres.">
+                    <field name="social_mobile_push_show_sender"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>
