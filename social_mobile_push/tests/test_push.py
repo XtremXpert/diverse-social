@@ -6,7 +6,7 @@ import jwt
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import HttpCase, new_test_user, tagged
 
 from odoo.addons.social_mobile_push.models import apns
@@ -191,17 +191,30 @@ class TestPush(HttpCase):
         self.assertEqual(apns.provider_token('T', 'K', self.pem, now=1_000_000 + 600), first)
         self.assertNotEqual(apns.provider_token('T', 'K', self.pem, now=1_000_000 + 46 * 60), first)
 
+    def send_test(self, device, user, **vals):
+        action = device.with_user(user).action_send_test()
+        self.assertEqual(action['res_model'], 'social_mobile.test_push')
+        Wizard = self.env['social_mobile.test_push'].with_user(user).with_context(action['context'])
+        return Wizard.create(vals).action_send()
+
     def test_admin_test_notification(self):
         device = self.env['social_mobile.device'].sudo().search([('token', '=', TOKEN_B)])
-        action = device.with_user(self.admin).action_send_test()
+        action = self.send_test(device, self.admin)
         self.assertEqual(action['params']['type'], 'success')
         self.assertEqual((self.sent[0]['token'], self.sent[0]['environment']), (TOKEN_B, 'sandbox'))
-        self.assertEqual(self.sent[0]['payload']['aps']['alert']['body'], "Notification d'essai")
+        self.assertEqual(self.sent[0]['payload']['aps']['alert'], {'title': "Diverse-Cité", 'body': "Notification d'essai"})
+        # Texte modifiable.
+        self.send_test(device, self.admin, title="Essai", body="Bonjour de l'équipe")
+        self.assertEqual(self.sent[1]['payload']['aps']['alert'], {'title': "Essai", 'body': "Bonjour de l'équipe"})
+        with self.assertRaises(ValidationError):
+            self.send_test(device, self.admin, body="x" * 500)
         # Jeton périmé : l'appareil est retiré, et l'admin le sait.
         self.responses = [(410, 'Unregistered')]
-        self.assertEqual(device.with_user(self.admin).action_send_test()['params']['type'], 'warning')
+        self.assertEqual(self.send_test(device, self.admin)['params']['type'], 'warning')
         self.assertFalse(device.exists())
         # Réservé aux administrateurs système.
         device = self.env['social_mobile.device'].sudo().search([('token', '=', TOKEN_A)])
         with self.assertRaises(AccessError):
             device.with_user(self.a).action_send_test()
+        with self.assertRaises(AccessError):
+            device.with_user(self.a)._send_test("Essai", "Essai")

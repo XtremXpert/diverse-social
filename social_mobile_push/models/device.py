@@ -51,16 +51,32 @@ class SocialMobileDevice(models.Model):
     # ── Essai ────────────────────────────────────────────────────────────────
 
     def action_send_test(self):
-        """Envoie aussitôt une notification d'essai à cet appareil et dit ce qu'Apple a répondu."""
+        """Ouvre l'assistant d'envoi d'une notification d'essai à cet appareil."""
         self.ensure_one()
+        self._check_system()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _("Notification d'essai"),
+            'res_model': 'social_mobile.test_push',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_device_id': self.id},
+        }
+
+    def _check_system(self):
         if not self.env.user.has_group('base.group_system'):
             raise AccessError(_("Réservé aux administrateurs."))
+
+    def _send_test(self, title, body):
+        """Envoie aussitôt la notification à cet appareil et dit ce qu'Apple a répondu."""
+        self.ensure_one()
+        self._check_system()
         Queue = self.env['social_mobile.push_queue'].sudo()
         config = Queue._config()
         if not config:
             raise UserError(_("La clé APNs n'est pas réglée : voir Application mobile → Configuration → Paramètres."))
         device = self.sudo()
-        payload = {'aps': {'alert': {'title': "Diverse-Cité", 'body': _("Notification d'essai")}, 'sound': 'default'}}
+        payload = {'aps': {'alert': {'title': title, 'body': body}, 'sound': 'default'}}
         with Queue._http_client() as client:
             outcome = Queue._deliver(client, device, config, payload, None)
         if outcome == 'ok' and device.exists():
@@ -73,4 +89,5 @@ class SocialMobileDevice(models.Model):
         else:
             kind, message = 'danger', _("Apple est injoignable pour l'instant. Réessayez plus tard.")
         return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                'params': {'title': _("Notification d'essai"), 'message': message, 'type': kind, 'sticky': kind != 'success'}}
+                'params': {'title': _("Notification d'essai"), 'message': message, 'type': kind,
+                           'sticky': kind != 'success', 'next': {'type': 'ir.actions.act_window_close'}}}

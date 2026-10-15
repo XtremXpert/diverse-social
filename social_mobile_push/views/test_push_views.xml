@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="social_mobile_test_push_view_form" model="ir.ui.view">
+        <field name="name">social_mobile.test_push.form</field>
+        <field name="model">social_mobile.test_push</field>
+        <field name="arch" type="xml">
+            <form string="Notification d'essai">
+                <group>
+                    <field name="user_id"/>
+                    <field name="title"/>
+                    <field name="body" placeholder="Texte affiché sur l'écran verrouillé"/>
+                </group>
+                <div class="text-muted">
+                    Envoyée aussitôt à cet appareil seulement. L'écran verrouillé est vu par d'autres :
+                    restez discret.
+                </div>
+                <footer>
+                    <button name="action_send" type="object" string="Envoyer" class="btn-primary"/>
+                    <button special="cancel" string="Annuler"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
