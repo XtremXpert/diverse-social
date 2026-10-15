@@ -1,4 +1,7 @@
+import base64
 import json
+
+from odoo.tools.misc import file_open
 
 from odoo.tests import HttpCase, new_test_user, tagged
 
@@ -109,3 +112,56 @@ class TestMobileChat(HttpCase):
         self.assertEqual(self.call('POST', '/chats', self.a, {'user_id': self.a.id}).status_code, 403)
         outsider = new_test_user(self.env, login='hors.chat@example.com', groups='base.group_portal')
         self.assertEqual(self.call('GET', '/chats', outsider).status_code, 403)
+
+    # ── Messages vocaux ──────────────────────────────────────────────────────
+
+    def voice_data(self):
+        with file_open('social_mobile_chat/tests/data/voice.m4a', 'rb') as f:
+            return f.read()
+
+    def send_voice(self, cid, user, data):
+        return self.call('POST', f'/chats/{cid}/voice', user, {'data': base64.b64encode(data).decode()})
+
+    def test_voice_message(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        data = self.voice_data()
+        res = self.send_voice(cid, self.a, data)
+        self.assertEqual(res.status_code, 200, res.text)
+        voice = res.json()['message']['voice']
+        self.assertEqual(voice['mimetype'], 'audio/mp4')
+        # Comme un message vocal de Discuss : pièce jointe marquée vocale, dans la conversation.
+        attachment = self.env['ir.attachment'].sudo().browse(voice['attachment_id'])
+        self.assertTrue(attachment.voice_ids)
+        self.assertEqual((attachment.res_model, attachment.res_id), ('discuss.channel', cid))
+        # B le voit et le télécharge ; la notification est en file.
+        message = self.call('GET', f'/chats/{cid}/messages', self.b).json()['messages'][-1]
+        self.assertEqual((message['voice']['attachment_id'], message['attachment_count']), (attachment.id, 0))
+        self.assertEqual(self.call('GET', '/chats', self.b).json()['chats'][0]['last_message']['voice']['attachment_id'],
+                         attachment.id)
+        got = self.call('GET', f"/chats/{cid}/attachments/{attachment.id}", self.b)
+        self.assertEqual((got.status_code, got.headers['Content-Type'], got.content), (200, 'audio/mp4', data))
+        if 'social_mobile.push_queue' in self.env:
+            self.assertTrue(self.env['social_mobile.push_queue'].sudo().search([('user_id', '=', self.b.id)]))
+
+    def test_voice_access(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        att_id = self.send_voice(cid, self.a, self.voice_data()).json()['message']['voice']['attachment_id']
+        # Hors de la conversation : 404, sans dire si elle existe.
+        self.assertEqual(self.call('GET', f'/chats/{cid}/attachments/{att_id}', self.c).status_code, 404)
+        self.assertEqual(self.send_voice(cid, self.c, self.voice_data()).status_code, 404)
+        # Pièce jointe d'une autre conversation, demandée par la sienne : 404.
+        other = self.env['discuss.channel'].sudo().create({'name': 'ailleurs', 'channel_type': 'channel'})
+        foreign = self.env['ir.attachment'].sudo().create({'name': 'x.m4a', 'raw': b'secret',
+                                                           'res_model': 'discuss.channel', 'res_id': other.id})
+        self.assertEqual(self.call('GET', f'/chats/{cid}/attachments/{foreign.id}', self.b).status_code, 404)
+        self.assertEqual(self.call('GET', f'/chats/{cid}/attachments/999999', self.b).status_code, 404)
+        # Bloqué : refusé, comme un message texte.
+        self.env['social_safety.block'].sudo().create({'blocker_id': self.b.id, 'blocked_id': self.a.id})
+        self.assertEqual(self.send_voice(cid, self.a, self.voice_data()).status_code, 403)
+
+    def test_voice_validation(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        self.assertEqual(self.send_voice(cid, self.a, b'pas du tout un fichier audio').status_code, 403)
+        self.assertEqual(self.send_voice(cid, self.a, b'\0\0\0\x1cftyp' + b'\0' * (3 * 1024 * 1024)).status_code, 403)
+        self.assertEqual(self.call('POST', f'/chats/{cid}/voice', self.a, {'data': '%%%'}).status_code, 400)
+        self.assertEqual(self.call('POST', f'/chats/{cid}/voice', self.a, {}).status_code, 400)
