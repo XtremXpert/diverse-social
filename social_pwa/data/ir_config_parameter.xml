@@ -20,6 +20,13 @@
             <field name="value">Prévisions et alertes météo régionales</field>
         </record>
 
+        <!-- Home screen icons: `meteo` (camouflage) or `marque` (Diverse-Cité seal,
+             static/src/img/marque/). -->
+        <record id="param_icon_set" model="ir.config_parameter">
+            <field name="key">social_pwa.icon_set</field>
+            <field name="value">meteo</field>
+        </record>
+
         <record id="param_theme_color" model="ir.config_parameter">
             <field name="key">social_pwa.theme_color</field>
             <field name="value">#5fa8d3</field>
