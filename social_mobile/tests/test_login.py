@@ -206,3 +206,12 @@ class TestLogin(HttpCase):
         self.assertEqual(res.json()['step'], 'totp')
         res = self.verify(challenge, self.totp_now())
         self.assertEqual(res.status_code, 200, res.text)
+
+    # ── Menu ─────────────────────────────────────────────────────────────────
+
+    def test_menu_visible_to_system_admins(self):
+        """L'administrateur système voit le menu même hors du groupe d'administration sociale."""
+        system = new_test_user(self.env, login='systeme@example.com', groups='base.group_system')
+        self.assertFalse(system.has_group('social_base.group_social_admin'))
+        root = self.env.ref('social_mobile.menu_social_mobile_root')
+        self.assertIn(root.id, self.env['ir.ui.menu'].with_user(system)._visible_menu_ids())
