@@ -1,3 +1,4 @@
 id,name,model_id,group_id/id,operation,domain
 access_social_mobile_enrollment_admin,Inscriptions mobiles,social_mobile.enrollment,social_base.group_social_admin,rd,
 access_social_mobile_enrollment_system,Inscriptions mobiles (système),social_mobile.enrollment,base.group_system,rd,
+access_social_mobile_login_system,Connexions mobiles (système),social_mobile.login,base.group_system,r,

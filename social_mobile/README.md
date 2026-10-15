@@ -1,6 +1,7 @@
 # Social Mobile
 
-API de l'application mobile (iOS) du réseau social : inscription par QR code et parrainage en personne.
+API de l'application mobile (iOS) du réseau social : inscription par QR code et parrainage en personne, ou
+connexion d'un compte existant.
 
 ## Parcours d'inscription
 
@@ -25,6 +26,24 @@ déjà un compte (ce serait révéler qui est membre) : le parrain l'apprend en 
 **Qui peut parrainer :** un membre du réseau (`group_social_user`) avec une adhésion active, au moins un parrain
 actif et un profil non banni. Les administrateurs en sont exemptés pour amorcer la chaîne.
 
+## Compte existant
+
+Un membre qui a déjà un compte choisit « J'ai déjà un compte », accepte la politique en vigueur, saisit son
+courriel, puis au choix :
+
+- **code par courriel** : 6 chiffres, valables 10 minutes, 5 essais ;
+- **mot de passe** du site (connexion Odoo, avec son délai après échecs ; une clé API n'est pas acceptée).
+
+Si la **double authentification** (application d'authentification) est activée sur le compte, son code est
+demandé ensuite, **dans les deux cas** : le courriel seul ne la contourne pas. Si elle est exigée par courriel
+(`auth_totp_mail`), le code de l'application en tient lieu.
+
+Le compte doit avoir un **parrain actif** enregistré (administrateurs exemptés) et ne pas être banni ; sinon
+l'application affiche « Contactez un administrateur du club ». Odoo ne dit jamais si un courriel a un compte :
+la demande de code reçoit la même réponse dans tous les cas, le courriel ne part qu'au titulaire d'un compte (le
+code, ou la raison du refus), et un mauvais mot de passe répond comme une adresse inconnue. Le consentement à la
+politique en vigueur est enregistré s'il manquait.
+
 ## Authentification
 
 `Authorization: Bearer <clé>` : clé API de portée `social_mobile`, valable 180 jours par défaut (réglable).
@@ -34,7 +53,7 @@ Elle n'ouvre que `/api/social/v1` ; une clé `rpc` n'y donne pas accès, et elle
 
 Réponses JSON. Erreurs : `{"error": {"code", "message"}}`.
 
-### Publics (nouveau venu)
+### Publics (nouveau venu, compte existant)
 
 | Méthode | Chemin | Corps / en-têtes | Réponse |
 |---|---|---|---|
@@ -42,6 +61,10 @@ Réponses JSON. Erreurs : `{"error": {"code", "message"}}`.
 | `GET` | `/enroll/<id>` | `X-Enrollment-Secret: <poll_secret>` | `{"state": "pending"}`, puis une seule fois `{"state": "active", "key", "expires_at", "user_id"}` ; `404` inconnue, échue ou déjà remise |
 | `DELETE` | `/enroll/<id>` | `X-Enrollment-Secret` | Annule une inscription en attente |
 | `POST` | `/enroll/review` | `{"code"}` | Examen App Store : clé du compte de démonstration si le code réglé dans Odoo correspond ; `404` sinon |
+
+| `POST` | `/login/code` | `{"email", "device_name", "consent": true}` | `202 {"state": "code_required", "step": "email", "login_id", "login_secret", "expires_at"}`, que le courriel ait un compte ou non ; `429` trop de connexions en cours |
+| `POST` | `/login/password` | `{"email", "password", "device_name", "consent": true}` | `200 {"state": "active", "key", "expires_at", "user_id"}` ; `202` comme ci-dessus si un code est exigé (`step` : `totp` ou `email`) ; `401` courriel ou mot de passe incorrect ; `403` compte refusé (raison dans `message`) |
+| `POST` | `/login/<login_id>` | `X-Login-Secret`, `{"code", "device_name", "consent": true}` | `200` clé comme ci-dessus ; `202 {"step": "totp"}` si la double authentification est exigée après le code courriel (même `login_id`) ; `401` code incorrect ; `403` compte refusé ; `404` échu ou essais épuisés |
 
 **QR code du nouveau venu :** JSON `{"v": 1, "k": "enroll", "id": <enrollment_id>, "c": <code>}`, où
 `code = HMAC-SHA256(qr_secret, str(floor(unix_time / period)))` en hexadécimal, tronqué à 10 caractères.
