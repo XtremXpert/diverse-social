@@ -188,7 +188,7 @@ class SocialMobileEnrollment(models.Model):
             raise UserError(refusal)
         Users = self.env['res.users'].sudo().with_context(active_test=False)
         if Users.search_count([('login', '=ilike', like_escape(enrollment.email))], limit=1):
-            raise UserError(_("Ce courriel a déjà un compte. La personne doit se connecter avec son compte existant."))
+            raise UserError(_("Ce courriel a déjà un compte : la personne doit choisir « J'ai déjà un compte » dans l'application."))
 
         portal = self.env.ref('base.group_portal')
         # Nom neutre : le début du courriel est souvent un vrai nom (« jean.tremblay »), et c'est

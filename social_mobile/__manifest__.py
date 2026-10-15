@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile',
-    'version': '20.0.1.1.0',
+    'version': '20.0.1.2.0',
     'category': 'Social',
     'summary': "API de l'application mobile : inscription par QR code et parrainage en personne",
     'description': """

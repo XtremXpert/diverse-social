@@ -9,4 +9,14 @@
         <field name="interval_type">hours</field>
         <field name="active">True</field>
     </record>
+
+    <record id="cron_purge_logins" model="ir.cron">
+        <field name="name">Application mobile : effacer les connexions échues</field>
+        <field name="model_id" ref="model_social_mobile_login"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_purge()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
 </odoo>

@@ -11,7 +11,7 @@ import hmac
 import json
 
 from odoo import http
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessDenied, UserError, ValidationError
 from odoo.http import request
 
 from ..models.enrollment import PERIOD
@@ -109,6 +109,90 @@ class SocialMobileApi(http.Controller):
             return error(404, 'not_found', "Code inconnu.")
         key, expiration = request.env['res.users.apikeys'].with_user(user)._social_mobile_generate('Examen App Store')
         return json_response({'state': 'active', 'key': key, 'expires_at': iso(expiration), 'user_id': user.id})
+
+    # ── Compte existant (publique) ───────────────────────────────────────────
+
+    def _login_success(self, user, body):
+        """Fin commune des connexions : compte admissible, consentement, clé."""
+        refusal = user._social_mobile_login_refusal()
+        if refusal:
+            return error(403, 'refused', refusal)
+        Consent = request.env['social_privacy.consent'].sudo()
+        if not Consent.has_valid_consent(user):
+            Consent.record_consent(user, request.env['social_mobile.enrollment']._current_policy(), source='api')
+        name = (body.get('device_name') or 'Application mobile')[:64]
+        key, expiration = request.env['res.users.apikeys'].with_user(user)._social_mobile_generate(name)
+        return json_response({'state': 'active', 'key': key, 'expires_at': iso(expiration), 'user_id': user.id})
+
+    def _login_body(self):
+        """Corps d'une étape de connexion : JSON, avec le consentement à la politique en vigueur
+        (l'application l'affiche avant le courriel, comme à l'inscription)."""
+        body = json_body()
+        if body is None:
+            return None, error(400, 'invalid_json', "Corps JSON attendu.")
+        if not request.env['social_mobile.enrollment']._current_policy():
+            return None, error(503, 'no_policy', "Aucune politique de confidentialité en vigueur.")
+        if body.get('consent') is not True:
+            return None, error(400, 'consent_required', "Le consentement à la politique de confidentialité est requis.")
+        return body, None
+
+    def _login_challenge(self, login, secret):
+        return json_response({
+            'state': 'code_required',
+            'step': login.step,
+            'login_id': login.uuid,
+            'login_secret': secret,
+            'expires_at': iso(login.expires_at),
+        }, status=202)
+
+    @http.route(f'{API}/login/code', methods=['POST'], **PUBLIC)
+    def login_code(self):
+        """Envoie un code au courriel d'un compte existant. Même réponse que le compte existe ou non."""
+        body, err = self._login_body()
+        if err:
+            return err
+        try:
+            login, secret = request.env['social_mobile.login']._api_request_code(
+                body.get('email'), body.get('device_name'), client=request.httprequest.remote_addr)
+        except ValidationError as e:
+            return error(400, 'invalid', str(e))
+        except UserError as e:
+            return error(429, 'refused', str(e))
+        return self._login_challenge(login, secret)
+
+    @http.route(f'{API}/login/password', methods=['POST'], **PUBLIC)
+    def login_password(self):
+        body, err = self._login_body()
+        if err:
+            return err
+        try:
+            user, login, secret = request.env['social_mobile.login']._api_password(
+                body.get('email'), body.get('password'), body.get('device_name'),
+                client=request.httprequest.remote_addr)
+        except AccessDenied:
+            return error(401, 'invalid_credentials', "Courriel ou mot de passe incorrect.")
+        except UserError as e:
+            return error(409, 'refused', str(e))
+        if login:
+            return self._login_challenge(login, secret)
+        return self._login_success(user, body)
+
+    @http.route(f'{API}/login/<string:login_id>', methods=['POST'], **PUBLIC)
+    def login_verify(self, login_id):
+        body, err = self._login_body()
+        if err:
+            return err
+        secret = request.httprequest.headers.get('X-Login-Secret', '')
+        login = request.env['social_mobile.login']._api_find(login_id, secret)
+        if not login:
+            return error(404, 'not_found', "Code échu : recommencez la connexion.")
+        result = login._api_verify(str(body.get('code') or ''))
+        if result is None:
+            return error(401, 'invalid_code', "Code incorrect.")
+        if result == 'totp':
+            return json_response({'state': 'code_required', 'step': 'totp', 'login_id': login.uuid,
+                                  'expires_at': iso(login.expires_at)}, status=202)
+        return self._login_success(result, body)
 
     # ── Parrainage ───────────────────────────────────────────────────────────
 

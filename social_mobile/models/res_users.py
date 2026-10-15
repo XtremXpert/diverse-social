@@ -24,3 +24,21 @@ class ResUsers(models.Model):
         if profile and profile.is_banned:
             return _("Votre compte est suspendu.")
         return None
+
+    def _social_mobile_login_refusal(self):
+        """Raison pour laquelle ce compte existant ne peut pas ouvrir l'application, ou ``None``.
+
+        Il lui faut un parrain actif enregistré, comme à tout membre entré par le parrainage.
+        Les administrateurs en sont exemptés. Ne s'appelle qu'une fois l'identité prouvée : le
+        message révèle que le compte existe."""
+        self.ensure_one()
+        profile = self.env['club_social_profile.profile'].sudo().search([('user_id', '=', self.id)], limit=1)
+        if profile and profile.is_banned:
+            return _("Votre compte est suspendu.")
+        if self.has_group('base.group_system'):
+            return None
+        if not self.env['social_reputation.vouching'].sudo().search_count(
+                [('newcomer_id', '=', self.id), ('state', '=', 'active')], limit=1):
+            return _("Votre compte n'a pas de parrain enregistré : l'application ne peut pas l'ouvrir. "
+                     "Contactez un administrateur du club.")
+        return None
