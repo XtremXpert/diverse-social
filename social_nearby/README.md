@@ -18,7 +18,7 @@ Grille de proximité de l'application mobile.
 Mode activé par le membre pour une durée **qu'il choisit** (1 à 12 heures, 3 par défaut), puis arrêté de lui-même.
 Pendant ce temps :
 
-- sa tuile porte `"meet": true`, passe **en tête de la grille** et reste « là maintenant » (`last_seen: now`) ;
+- sa tuile porte `"meet": true`, passe **en tête de la grille** ; son activité (`last_seen`) reste la vraie : en arrière-plan, l'iPhone ne signale qu'un déplacement important, « là maintenant » serait parfois faux ;
 - l'application signale ses déplacements **même fermée** (changements de position importants d'iOS, environ
   500 m), et seulement pendant ce mode ; hors de ce mode, la position n'est envoyée qu'application ouverte.
 

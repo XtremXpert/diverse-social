@@ -171,12 +171,12 @@ class TestNearby(HttpCase):
         until = fields.Datetime.to_datetime(res.json()['meet_until'][:19].replace('T', ' '))
         self.assertAlmostEqual((until - fields.Datetime.now()).total_seconds(), 6 * 3600, delta=60)
 
-        # Qui veut rencontrer passe en tête, même plus loin, et reste « là maintenant ».
+        # Qui veut rencontrer passe en tête, même plus loin ; son activité reste la vraie.
         position = self.Position.sudo().search([('user_id', '=', far.id)])
         position.seen_at = fields.Datetime.now() - datetime.timedelta(hours=2)
         people = self.grid()['people']
         self.assertEqual([p['user_id'] for p in people], [far.id, near.id])
-        self.assertEqual((people[0]['meet'], people[0]['last_seen']), (True, 'now'))
+        self.assertEqual((people[0]['meet'], people[0]['last_seen']), (True, 'today'))
         self.assertFalse(people[1]['meet'])
         self.assertEqual(self.call('GET', '/nearby', far).json()['meet_until'][:16], res.json()['meet_until'][:16])
 

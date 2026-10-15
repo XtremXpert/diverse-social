@@ -1,6 +1,6 @@
 {
     'name': 'Social Nearby',
-    'version': '20.0.1.1.0',
+    'version': '20.0.1.1.1',
     'category': 'Social',
     'summary': "Grille de proximité de l'application mobile, sans jamais stocker de position exacte",
     'description': """

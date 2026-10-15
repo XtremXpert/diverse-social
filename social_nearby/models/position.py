@@ -194,7 +194,7 @@ class SocialNearbyPosition(models.Model):
             'distance': bucket(km),
             # Qui veut rencontrer est « là maintenant » : son téléphone signale chaque déplacement,
             # et s'il ne bouge pas, sa case reste juste.
-            'last_seen': 'now' if position._meeting() else self._last_seen_label(position.seen_at),
+            'last_seen': self._last_seen_label(position.seen_at),
             'meet': position._meeting(),
             'availability': profile.availability or None,
             'detailed': detailed,
