@@ -129,6 +129,20 @@ class TestLogin(HttpCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json()['error']['code'], 'consent_required')
 
+    def test_login_differs_from_email(self):
+        """Compte à l'identifiant libre : retrouvé par son adresse courriel, s'il est le seul."""
+        user = new_test_user(self.env, login='pseudo-libre', email='Libre <libre@example.com>',
+                             password='Mot-de-passe-1', groups='base.group_portal')
+        self.env['social_reputation.vouching'].with_user(self.admin).sudo().vouch_for(user)
+        challenge = self.request_code('libre@example.com')
+        res = self.verify(challenge, self.mailed_code('libre@example.com'))
+        self.assertEqual((res.status_code, res.json().get('user_id')), (200, user.id), res.text)
+        res = self.password('libre@example.com', 'Mot-de-passe-1')
+        self.assertEqual((res.status_code, res.json().get('user_id')), (200, user.id), res.text)
+        # Deux comptes avec la même adresse : aucun n'est choisi.
+        new_test_user(self.env, login='autre-libre', email='libre@example.com', groups='base.group_portal')
+        self.assertEqual(self.password('libre@example.com', 'Mot-de-passe-1').status_code, 401)
+
     # ── Mot de passe ─────────────────────────────────────────────────────────
 
     def password(self, email, password):
