@@ -186,6 +186,8 @@ class TestNearby(HttpCase):
         self.assertEqual([p['user_id'] for p in people], [near.id, far.id])
         self.assertEqual((people[1]['meet'], people[1]['last_seen']), (False, 'today'))
         self.assertIsNone(self.grid()['meet_until'])
+        self.Position._cron_purge()
+        self.assertFalse(position.meet_until, "échéance passée effacée")
 
         self.call('POST', '/meet', far, {'active': True})
         self.assertIsNone(self.call('POST', '/meet', far, {'active': False}).json()['meet_until'])

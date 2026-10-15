@@ -104,8 +104,10 @@ class SocialNearbyPosition(models.Model):
 
     @api.model
     def _cron_purge(self):
-        limit = fields.Datetime.now() - datetime.timedelta(days=STALE_DAYS)
-        self.sudo().search([('seen_at', '<', limit)]).unlink()
+        now = fields.Datetime.now()
+        self.sudo().search([('seen_at', '<', now - datetime.timedelta(days=STALE_DAYS))]).unlink()
+        # Échéance passée du mode « Je veux rencontrer » : rien n'en reste.
+        self.sudo().search([('meet_until', '<=', now)]).meet_until = False
 
     # ── Grille ───────────────────────────────────────────────────────────────
 

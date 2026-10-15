@@ -19,6 +19,7 @@ Mode activé par le membre pour une durée **qu'il choisit** (1 à 12 heures, 3 
 Pendant ce temps :
 
 - sa tuile porte `"meet": true`, passe **en tête de la grille** et reste « là maintenant » (`last_seen: now`) ;
+- l'échéance est effacée par la purge horaire une fois passée ;
 - l'application signale ses déplacements **même fermée** (changements de position importants d'iOS, environ
   500 m), et seulement pendant ce mode ; hors de ce mode, la position n'est envoyée qu'application ouverte.
 
