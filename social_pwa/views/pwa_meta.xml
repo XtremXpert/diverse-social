@@ -9,13 +9,14 @@
             <t t-set="_pwa_get" t-value="request.env['ir.config_parameter'].sudo().get_str"/>
             <t t-set="_pwa_theme" t-value="_pwa_get('social_pwa.theme_color', '#5fa8d3')"/>
             <t t-set="_pwa_title" t-value="_pwa_get('social_pwa.app_short_name', 'Météo')"/>
+            <t t-set="_pwa_icons" t-value="'/social_pwa/static/src/img/marque' if _pwa_get('social_pwa.icon_set', 'meteo') == 'marque' else '/social_pwa/static/src/img'"/>
 
             <link rel="manifest" href="/manifest.webmanifest"/>
             <meta name="theme-color" t-att-content="_pwa_theme"/>
 
             <!-- iOS / Safari standalone-mode hints. PWA install on iOS is
                  driven by these meta tags, not the manifest. -->
-            <link rel="apple-touch-icon" href="/social_pwa/static/src/img/apple-touch-icon.png"/>
+            <link rel="apple-touch-icon" t-attf-href="{{ _pwa_icons }}/apple-touch-icon.png"/>
             <meta name="apple-mobile-web-app-capable" content="yes"/>
             <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
             <meta name="apple-mobile-web-app-title" t-att-content="_pwa_title"/>

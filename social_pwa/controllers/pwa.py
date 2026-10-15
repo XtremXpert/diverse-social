@@ -7,6 +7,16 @@ from odoo.tools.misc import file_path
 
 _logger = logging.getLogger(__name__)
 
+ICON_DIRS = {
+    'meteo': '/social_pwa/static/src/img',
+    'marque': '/social_pwa/static/src/img/marque',
+}
+
+
+def icon_dir(get):
+    """Icon folder for `social_pwa.icon_set`: `meteo` (camouflage, default) or `marque`."""
+    return ICON_DIRS.get(get('social_pwa.icon_set', 'meteo'), ICON_DIRS['meteo'])
+
 
 class PwaController(Controller):
 
@@ -20,6 +30,7 @@ class PwaController(Controller):
         require either a bump in app_name or a cache flush.
         """
         get = request.env['ir.config_parameter'].sudo().get_str
+        icons = icon_dir(get)
         payload = {
             'name': get('social_pwa.app_name', 'MétéoMédia'),
             'short_name': get('social_pwa.app_short_name', 'Météo'),
@@ -32,19 +43,19 @@ class PwaController(Controller):
             'background_color': get('social_pwa.background_color', '#ffffff'),
             'icons': [
                 {
-                    'src': '/social_pwa/static/src/img/icon-192.png',
+                    'src': f'{icons}/icon-192.png',
                     'sizes': '192x192',
                     'type': 'image/png',
                     'purpose': 'any',
                 },
                 {
-                    'src': '/social_pwa/static/src/img/icon-512.png',
+                    'src': f'{icons}/icon-512.png',
                     'sizes': '512x512',
                     'type': 'image/png',
                     'purpose': 'any',
                 },
                 {
-                    'src': '/social_pwa/static/src/img/icon-maskable-512.png',
+                    'src': f'{icons}/icon-maskable-512.png',
                     'sizes': '512x512',
                     'type': 'image/png',
                     'purpose': 'maskable',

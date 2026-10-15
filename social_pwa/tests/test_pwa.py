@@ -36,6 +36,29 @@ class TestPwaManifest(HttpCase):
         self.assertEqual(data['name'], 'CustomApp')
         self.assertEqual(data['theme_color'], '#123456')
 
+    def test_manifest_icons_default_to_camouflage(self):
+        data = json.loads(self.url_open('/manifest.webmanifest').text)
+        srcs = [icon['src'] for icon in data['icons']]
+        self.assertIn('/social_pwa/static/src/img/icon-192.png', srcs)
+        self.assertFalse(any('/marque/' in src for src in srcs))
+
+    def test_manifest_icons_switch_to_brand(self):
+        self.env['ir.config_parameter'].sudo().set_str('social_pwa.icon_set', 'marque')
+        data = json.loads(self.url_open('/manifest.webmanifest').text)
+        for icon in data['icons']:
+            self.assertTrue(icon['src'].startswith('/social_pwa/static/src/img/marque/'))
+            self.assertEqual(self.url_open(icon['src']).status_code, 200)
+
+    def test_unknown_icon_set_falls_back_to_camouflage(self):
+        self.env['ir.config_parameter'].sudo().set_str('social_pwa.icon_set', 'inconnu')
+        data = json.loads(self.url_open('/manifest.webmanifest').text)
+        self.assertFalse(any('/marque/' in icon['src'] for icon in data['icons']))
+
+    def test_apple_touch_icon_follows_icon_set(self):
+        self.env['ir.config_parameter'].sudo().set_str('social_pwa.icon_set', 'marque')
+        html = self.url_open('/web/login').text
+        self.assertIn('/social_pwa/static/src/img/marque/apple-touch-icon.png', html)
+
 
 @tagged('social_pwa', 'pwa')
 class TestPwaServiceWorker(HttpCase):

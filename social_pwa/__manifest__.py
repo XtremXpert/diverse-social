@@ -1,6 +1,6 @@
 {
     'name': 'Social PWA',
-    'version': '20.0.2.0.0',
+    'version': '20.0.2.1.0',
     'category': 'Social',
     'summary': 'Progressive Web App: installable home screen icon, offline shell, generic-payload push',
     'description': """
