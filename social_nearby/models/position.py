@@ -12,6 +12,10 @@ DEFAULT_RADIUS_KM = 50
 MAX_RADIUS_KM = 200
 MAX_RESULTS = 100
 STALE_DAYS = 7
+# Durée du mode « Je veux rencontrer », choisie par le membre : l'application suit alors la
+# position en arrière-plan, jamais plus de MAX_MEET_HOURS heures d'affilée.
+DEFAULT_MEET_HOURS = 3
+MAX_MEET_HOURS = 12
 # Paliers de distance affichés : (borne supérieure en km, libellé).
 DISTANCE_BUCKETS = [
     (1, "< 1 km"), (2, "1–2 km"), (5, "2–5 km"), (10, "5–10 km"),
@@ -54,6 +58,8 @@ class SocialNearbyPosition(models.Model):
     cell_lat = fields.Float(digits=(9, 6), readonly=True, index=True)
     cell_lon = fields.Float(digits=(9, 6), readonly=True, index=True)
     seen_at = fields.Datetime(readonly=True, index=True)
+    # Mode « Je veux rencontrer » : visible des autres jusqu'à cette échéance.
+    meet_until = fields.Datetime("Veut rencontrer jusqu'à", readonly=True)
 
     _user_uniq = models.Constraint('UNIQUE(user_id)', "Une seule position par membre.")
 
@@ -74,6 +80,23 @@ class SocialNearbyPosition(models.Model):
         else:
             position = self.sudo().create(dict(vals, user_id=self.env.uid))
         return position
+
+    @api.model
+    def _api_meet(self, active, hours=DEFAULT_MEET_HOURS):
+        """Active (pour ``hours`` heures, à compter de maintenant) ou arrête le mode « Je veux
+        rencontrer » du membre courant. Retourne l'échéance, ou ``False``. Exige une position."""
+        if active and not (isinstance(hours, int) and not isinstance(hours, bool) and 1 <= hours <= MAX_MEET_HOURS):
+            raise ValidationError(_("Durée invalide : de 1 à %s heures.", MAX_MEET_HOURS))
+        position = self.sudo().search([('user_id', '=', self.env.uid)], limit=1)
+        if not position:
+            return None
+        until = fields.Datetime.now() + datetime.timedelta(hours=hours) if active else False
+        position.meet_until = until
+        return until
+
+    def _meeting(self):
+        self.ensure_one()
+        return bool(self.meet_until and self.meet_until > fields.Datetime.now())
 
     @api.model
     def _api_forget(self):
@@ -133,7 +156,7 @@ class SocialNearbyPosition(models.Model):
             if km > radius_km:
                 continue
             people.append((km, position, profile))
-        people.sort(key=lambda item: (item[0], -item[1].seen_at.timestamp()))
+        people.sort(key=lambda item: (not item[1]._meeting(), item[0], -item[1].seen_at.timestamp()))
         people = people[:limit]
 
         distances = {position.user_id.id: km for km, position, _profile in people}
@@ -148,6 +171,7 @@ class SocialNearbyPosition(models.Model):
         relations.sort(key=lambda item: item[0])
 
         return {
+            'meet_until': me.meet_until if me._meeting() else None,
             'people': [self._person_payload(viewer, km, position, profile) for km, position, profile in people],
             'relations': [{
                 'id': relation.id,
@@ -168,7 +192,10 @@ class SocialNearbyPosition(models.Model):
             'user_id': user.id,
             'name': profile._display_name_for_user(user),
             'distance': bucket(km),
-            'last_seen': self._last_seen_label(position.seen_at),
+            # Qui veut rencontrer est « là maintenant » : son téléphone signale chaque déplacement,
+            # et s'il ne bouge pas, sa case reste juste.
+            'last_seen': 'now' if position._meeting() else self._last_seen_label(position.seen_at),
+            'meet': position._meeting(),
             'availability': profile.availability or None,
             'detailed': detailed,
             'has_photo': bool(detailed and profile.profile_image),

@@ -149,3 +149,44 @@ class TestNearby(HttpCase):
         outsider = new_test_user(self.env, login='hors.grille@example.com', groups='base.group_portal')
         self.assertEqual(self.call('POST', '/position', outsider, {'latitude': 45.5, 'longitude': -73.5}).status_code, 403)
         self.assertEqual(self.call('GET', '/nearby', outsider).status_code, 403)
+
+    # ── Je veux rencontrer ───────────────────────────────────────────────────
+
+    def test_meet_mode(self):
+        near = self._make_member('rencontre.proche@example.com')
+        far = self._make_member('rencontre.loin@example.com')
+        self.assertEqual(self.call('POST', '/meet', near, {'active': True}).status_code, 409, "sans position")
+        self.at(self.viewer, MONTREAL)
+        self.at(far, offset(MONTREAL, north_m=8000))
+        self.at(near, offset(MONTREAL, north_m=200))
+        self.assertEqual(self.call('POST', '/meet', far, {'active': 'oui'}).status_code, 400)
+
+        for hours in (0, 13, 2.5, '3'):
+            self.assertEqual(self.call('POST', '/meet', far, {'active': True, 'hours': hours}).status_code, 400, hours)
+        res = self.call('POST', '/meet', far, {'active': True})
+        until = fields.Datetime.to_datetime(res.json()['meet_until'][:19].replace('T', ' '))
+        self.assertAlmostEqual((until - fields.Datetime.now()).total_seconds(), 3 * 3600, delta=60, msg="3 h par défaut")
+        res = self.call('POST', '/meet', far, {'active': True, 'hours': 6})
+        self.assertEqual(res.status_code, 200, res.text)
+        until = fields.Datetime.to_datetime(res.json()['meet_until'][:19].replace('T', ' '))
+        self.assertAlmostEqual((until - fields.Datetime.now()).total_seconds(), 6 * 3600, delta=60)
+
+        # Qui veut rencontrer passe en tête, même plus loin, et reste « là maintenant ».
+        position = self.Position.sudo().search([('user_id', '=', far.id)])
+        position.seen_at = fields.Datetime.now() - datetime.timedelta(hours=2)
+        people = self.grid()['people']
+        self.assertEqual([p['user_id'] for p in people], [far.id, near.id])
+        self.assertEqual((people[0]['meet'], people[0]['last_seen']), (True, 'now'))
+        self.assertFalse(people[1]['meet'])
+        self.assertEqual(self.call('GET', '/nearby', far).json()['meet_until'][:16], res.json()['meet_until'][:16])
+
+        # Échu après trois heures : plus signalé ni en tête.
+        position.meet_until = fields.Datetime.now() - datetime.timedelta(seconds=1)
+        people = self.grid()['people']
+        self.assertEqual([p['user_id'] for p in people], [near.id, far.id])
+        self.assertEqual((people[1]['meet'], people[1]['last_seen']), (False, 'today'))
+        self.assertIsNone(self.grid()['meet_until'])
+
+        self.call('POST', '/meet', far, {'active': True})
+        self.assertIsNone(self.call('POST', '/meet', far, {'active': False}).json()['meet_until'])
+        self.assertFalse(position.meet_until)

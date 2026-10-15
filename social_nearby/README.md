@@ -13,6 +13,15 @@ Grille de proximité de l'application mobile.
 - L'activité est donnée par paliers aussi (`now` < 15 min, `today`, `week`), jamais l'heure exacte.
 - **Réciprocité :** pour voir la grille, il faut partager sa propre position.
 
+## Je veux rencontrer
+
+Mode activé par le membre pour une durée **qu'il choisit** (1 à 12 heures, 3 par défaut), puis arrêté de lui-même.
+Pendant ce temps :
+
+- sa tuile porte `"meet": true`, passe **en tête de la grille** et reste « là maintenant » (`last_seen: now`) ;
+- l'application signale ses déplacements **même fermée** (changements de position importants d'iOS, environ
+  500 m), et seulement pendant ce mode ; hors de ce mode, la position n'est envoyée qu'application ouverte.
+
 ## Qui apparaît
 
 Un membre du réseau qui partage sa position depuis moins de 7 jours, dans le rayon demandé (50 km par défaut,
@@ -35,8 +44,9 @@ tuile, à la distance du membre le plus proche.
 |---|---|---|---|
 | `POST` | `/position` | `{"latitude", "longitude"}` | `{"shared": true}` |
 | `DELETE` | `/position` | | `{"shared": false}` |
-| `GET` | `/nearby?radius_km=50` | | `{"people": [...], "relations": [...]}` ; `409 no_position` si je ne partage pas ma position |
+| `GET` | `/nearby?radius_km=50` | | `{"meet_until", "people": [...], "relations": [...]}` (`meet_until` : mon mode « Je veux rencontrer », ou `null`) ; `409 no_position` si je ne partage pas ma position |
+| `POST` | `/meet` | `{"active": true, "hours": 3}` ou `{"active": false}` | `{"meet_until"}` (ou `null`) ; `400` durée hors de 1–12 ; `409 no_position` sans position |
 | `GET` | `/users/<id>/photo` | | Photo de profil, si le profil la montre au visiteur |
 
-Tuile d'une personne : `{"user_id", "name", "distance", "last_seen", "availability", "detailed", "has_photo",
+Tuile d'une personne : `{"user_id", "name", "distance", "last_seen", "meet", "availability", "detailed", "has_photo",
 "age"?, "gender"?, "orientation"?}`. Tuile d'une relation : `{"id", "name", "distance", "has_image", "member_ids"}`.
