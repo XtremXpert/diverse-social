@@ -20,8 +20,8 @@
         <field name="context">{'active_test': False}</field>
     </record>
 
-    <menuitem id="menu_social_mobile_devices" name="Appareils mobiles"
-              parent="social_reputation.menu_reputation_root" sequence="96"
+    <menuitem id="menu_social_mobile_devices" name="Appareils"
+              parent="social_mobile.menu_social_mobile_root" sequence="20"
               action="social_mobile_device_action"
               groups="base.group_system"/>
 </odoo>
