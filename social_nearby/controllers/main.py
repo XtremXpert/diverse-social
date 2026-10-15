@@ -5,7 +5,8 @@ from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
-from odoo.addons.social_mobile.controllers.main import API, ROUTE, error, json_body, json_response
+from odoo.addons.social_nearby.models.position import DEFAULT_MEET_HOURS
+from odoo.addons.social_mobile.controllers.main import API, ROUTE, error, iso, json_body, json_response
 
 
 class SocialNearbyApi(http.Controller):
@@ -45,7 +46,24 @@ class SocialNearbyApi(http.Controller):
         grid = request.env['social_nearby.position']._api_grid(request.env.user, radius_km=radius)
         if grid is None:
             return error(409, 'no_position', "Partagez votre position pour voir la grille.")
-        return json_response(grid)
+        return json_response(dict(grid, meet_until=iso(grid['meet_until'])))
+
+    @http.route(f'{API}/meet', methods=['POST'], **ROUTE)
+    def meet(self):
+        """Mode « Je veux rencontrer » : ``{"active": true, "hours": 3}`` (1 à 12 heures, 3 par
+        défaut), ``{"active": false}`` pour l'arrêter."""
+        if err := self._member_or_error():
+            return err
+        body = json_body()
+        if body is None or not isinstance(body.get('active'), bool):
+            return error(400, 'invalid', "Corps attendu : {\"active\": true|false, \"hours\": 1–12}.")
+        try:
+            until = request.env['social_nearby.position']._api_meet(body['active'], body.get('hours', DEFAULT_MEET_HOURS))
+        except ValidationError as e:
+            return error(400, 'invalid', str(e))
+        if until is None:
+            return error(409, 'no_position', "Partagez votre position pour activer ce mode.")
+        return json_response({'meet_until': iso(until) if until else None})
 
     @http.route(f'{API}/users/<int:user_id>/photo', methods=['GET'], **ROUTE)
     def user_photo(self, user_id):
