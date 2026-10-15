@@ -108,7 +108,10 @@ class SocialMobileLogin(models.Model):
         if not email or not password:
             raise AccessDenied()
         Users = self.env['res.users'].sudo()
-        auth_info = Users._login({'type': 'password', 'login': email, 'password': password},
+        # Identifiant du compte trouvé par courriel (il peut différer) ; sinon le courriel, qui
+        # échoue comme un mauvais mot de passe.
+        login = self._find_user(email).login or email
+        auth_info = Users._login({'type': 'password', 'login': login, 'password': password},
                                  user_agent_env={'interactive': True})
         user = Users.browse(auth_info['uid'])
         mfa = user._mfa_type()
@@ -128,8 +131,14 @@ class SocialMobileLogin(models.Model):
 
     @api.model
     def _find_user(self, email):
+        """Compte actif dont l'identifiant est ``email`` ; sinon celui dont c'est l'adresse
+        courriel (comptes administrateurs ou importés, à l'identifiant libre), s'il est le seul."""
         Users = self.env['res.users'].sudo()
-        return Users.search(Users._get_login_domain(email), order=Users._get_login_order(), limit=1)
+        user = Users.search(Users._get_login_domain(email), order=Users._get_login_order(), limit=1)
+        if user:
+            return user
+        users = Users.search([('partner_id.email_normalized', '=', email)], limit=2)
+        return users if len(users) == 1 else Users.browse()
 
     def _send_mail(self, code, refusal):
         self.ensure_one()
