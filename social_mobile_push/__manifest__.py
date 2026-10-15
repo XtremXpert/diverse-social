@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Push',
-    'version': '20.0.1.2.0',
+    'version': '20.0.1.3.0',
     'category': 'Social / Communication',
     'summary': "Notifications iPhone natives (APNs) de l'application mobile",
     'description': """
@@ -25,6 +25,7 @@ Les copies de la base (staging) sont neutralisées : clé APNs effacée, apparei
         'data/cron.xml',
         'views/res_config_settings_views.xml',
         'views/device_views.xml',
+        'views/test_push_views.xml',
     ],
     'installable': True,
 }

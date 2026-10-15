@@ -9,7 +9,7 @@
                 <field name="environment"/>
                 <field name="last_seen"/>
                 <field name="active" widget="boolean_toggle"/>
-                <button name="action_send_test" type="object" string="Notification d'essai" icon="fa-bell"
+                <button name="action_send_test" type="object" string="Notification d'essai…" icon="fa-bell"
                         groups="base.group_system"/>
             </list>
         </field>
