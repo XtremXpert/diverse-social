@@ -35,6 +35,9 @@ Paramètres → Application mobile → Notifications iPhone : identifiant d'équ
 du fichier `AuthKey_XXXXXXXXXX.p8` (Apple Developer → Keys, service « Apple Push Notifications ») et identifiant
 de l'application (`com.diversecite.app`). Sans clé, rien ne part.
 
+**Essai :** Application mobile → Appareils, bouton « Notification d'essai » sur la ligne d'un iPhone
+(administrateurs système). L'envoi est immédiat, sans passer par la file, et le résultat d'Apple s'affiche.
+
 **Copies de la base :** `data/neutralize.sql` efface la clé et désactive les appareils, pour qu'un staging restauré
 depuis la production n'envoie jamais rien aux iPhone des vrais membres.
 

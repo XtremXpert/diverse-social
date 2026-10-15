@@ -1,7 +1,7 @@
 import re
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 TOKEN_RE = re.compile(r'^[0-9a-f]{64,200}$')
 
@@ -47,3 +47,30 @@ class SocialMobileDevice(models.Model):
         if token:
             domain.append(('token', '=', (token or '').strip().lower()))
         self.sudo().with_context(active_test=False).search(domain).unlink()
+
+    # ── Essai ────────────────────────────────────────────────────────────────
+
+    def action_send_test(self):
+        """Envoie aussitôt une notification d'essai à cet appareil et dit ce qu'Apple a répondu."""
+        self.ensure_one()
+        if not self.env.user.has_group('base.group_system'):
+            raise AccessError(_("Réservé aux administrateurs."))
+        Queue = self.env['social_mobile.push_queue'].sudo()
+        config = Queue._config()
+        if not config:
+            raise UserError(_("La clé APNs n'est pas réglée : voir Application mobile → Configuration → Paramètres."))
+        device = self.sudo()
+        payload = {'aps': {'alert': {'title': "Diverse-Cité", 'body': _("Notification d'essai")}, 'sound': 'default'}}
+        with Queue._http_client() as client:
+            outcome = Queue._deliver(client, device, config, payload, None)
+        if outcome == 'ok' and device.exists():
+            kind, message = 'success', _("Envoyée : elle devrait apparaître sur l'iPhone dans quelques secondes.")
+        elif outcome == 'ok':
+            kind, message = 'warning', _("Apple ne reconnaît plus ce jeton : l'appareil a été retiré. "
+                                         "Rouvrez l'application sur l'iPhone pour le réenregistrer.")
+        elif outcome == 'stop':
+            kind, message = 'danger', _("Apple refuse la configuration : vérifiez l'équipe, la clé et le bundle.")
+        else:
+            kind, message = 'danger', _("Apple est injoignable pour l'instant. Réessayez plus tard.")
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': _("Notification d'essai"), 'message': message, 'type': kind, 'sticky': kind != 'success'}}
