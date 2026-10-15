@@ -26,8 +26,10 @@
         </field>
     </record>
 
-    <menuitem id="menu_social_mobile_enrollments" name="Inscriptions mobiles"
-              parent="social_reputation.menu_reputation_root" sequence="95"
-              action="social_mobile_enrollment_action"
+    <menuitem id="menu_social_mobile_root" name="Application mobile" sequence="96"
+              web_icon="social_mobile,static/description/icon.png"
               groups="social_base.group_social_admin"/>
+    <menuitem id="menu_social_mobile_enrollments" name="Inscriptions en attente"
+              parent="menu_social_mobile_root" sequence="10"
+              action="social_mobile_enrollment_action"/>
 </odoo>

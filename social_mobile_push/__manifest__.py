@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Push',
-    'version': '20.0.1.0.0',
+    'version': '20.0.1.1.0',
     'category': 'Social / Communication',
     'summary': "Notifications iPhone natives (APNs) de l'application mobile",
     'description': """
