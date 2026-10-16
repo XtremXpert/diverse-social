@@ -8,6 +8,8 @@ Bouton « Appeler » du portail qui lance un appel vidéo par le Discuss natif d
 - Le bouton est actif seulement si la personne est en ligne (`im_status` à `online`). Sinon, il est grisé.
 - La route `/discuss-call/<user_id>` crée ou retrouve la conversation privée Discuss entre les deux membres, puis redirige vers `/discuss/channel/<id>`, où l'appel se lance.
 - L'appelé reçoit une notification d'appel entrant par le bus (`social_calling/incoming_call`), avec le fournisseur `discuss`. Le service d'appel entrant de `social_calling` affiche la sonnerie; « Répondre » ouvre le canal.
+- Sur toutes les pages du site, l'invitation native de Discuss (appel lancé depuis l'application mobile, par exemple) permet aussi de répondre. Odoo démarre l'objet d'appel avant ses services sur le site, et « Répondre » y plantait (`pttExtService` vide); `static/src/js/rtc_frontend_patch.js` rebranche ces services.
+- Le micro doit être autorisé dans le navigateur avant de répondre, sinon Discuss rejoint l'appel micro coupé.
 
 ## Configuration
 
