@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- La variante Jitsi est retirée (modèles, crons et séquence partent seuls à la
+         mise à jour). Ces paramètres système, eux, survivraient : noupdate pour la
+         rétention, créé à la main pour le serveur Jitsi. -->
+    <delete model="ir.config_parameter" search="[('key', 'in', ['social_calling.retention_days', 'social_calling.jitsi_server'])]"/>
+</odoo>

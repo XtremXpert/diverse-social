@@ -1,6 +1,6 @@
 # Appels Discuss
 
-Bouton « Appeler » du portail qui lance un appel vidéo par le Discuss natif d'Odoo (WebRTC) entre deux membres. Le module a été conçu comme variante A/B de l'appel Jitsi de `social_calling`.
+Bouton « Appeler » du portail qui lance un appel vidéo par le Discuss natif d'Odoo (WebRTC) entre deux membres. C'est le seul chemin d'appel du portail depuis le retrait de Jitsi.
 
 ## Fonctionnement
 

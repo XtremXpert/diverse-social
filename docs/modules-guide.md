@@ -532,34 +532,15 @@ Barrière obligatoire 18+ avant accès au réseau social.
 
 ## 19. Appels vidéo/audio
 
-**Module :** `social_calling`
+**Modules :** `social_calling_discuss`, `social_calling`
 
-Appels 1-à-1 et salles de groupe via Jitsi Meet.
+Appels entre membres par Discuss natif (WebRTC), relayés par le SFU d'Odoo quand il est configuré
+(*Paramètres → Discuss → RTC Server URL*). Jitsi a été retiré.
 
-### Sessions (`social_calling.session`)
-- Types de salle : `direct` (1-à-1) ou `group` (2-20 participants)
-- Types d'appel : `video` ou `audio only`
-- États : `ringing` → `connected` → `ended` / `missed` / `declined`
-- Nom de salle et mot de passe générés aléatoirement (`secrets.token_urlsafe`)
-- Serveur Jitsi configurable (défaut : `meet.jit.si`, recommandé : serveur privé)
-- Durée calculée automatiquement
-
-### Sécurité
-- Vérification au moment de la création : impossible si un blocage existe
-- Impossible de se définir comme un autre utilisateur (sauf admin)
-- Salle de groupe : hôte ajouté automatiquement aux participants
-
-### Salle de groupe
-- Max 20 participants par défaut (configurable)
-- Invitation en temps réel via `bus.bus` (`social_calling/room_invite`)
-- Fermeture automatique quand le dernier participant quitte
-
-### Cron
-- Marque les appels sans réponse comme `missed` après 2 minutes
-
-### Portail
-- Page des appels (`/my/calls`)
-- Bouton d'appel sur les profils
+- `social_calling_discuss` : bouton « Appeler » du profil, route `/discuss-call/<user_id>` (conversation
+  privée Discuss, blocage mutuel vérifié), sonnerie chez l'appelé par le bus (`social_calling/incoming_call`).
+- `social_calling` : service portail de présence et fenêtre d'appel entrant (sonnerie, Répondre, Refuser),
+  type de notification « Appel manqué ».
 
 ---
 
