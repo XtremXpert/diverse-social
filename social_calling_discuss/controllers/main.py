@@ -4,12 +4,12 @@ from odoo.exceptions import AccessDenied
 
 
 class DiscussCalling(http.Controller):
-    """Variante A/B : lance un appel via Discuss natif (WebRTC + coturn).
+    """Variante A/B : lance un appel via Discuss natif (WebRTC).
 
     Crée/récupère le DM Discuss entre les deux membres et redirige vers la vue
     de canal Discuss publique (/discuss/channel/<id>), où l'appel vidéo se
-    lance nativement. Le média passe en P2P via les serveurs ICE configurés
-    (mail.ice.server → notre coturn)."""
+    lance nativement. Le média passe en direct entre les navigateurs, ou par
+    le SFU d'Odoo quand il est configuré."""
 
     @http.route(['/discuss-call/<int:user_id>'], type='http', auth='user', website=True)
     def discuss_call_start(self, user_id, **kw):

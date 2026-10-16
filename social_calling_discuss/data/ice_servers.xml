@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Serveurs ICE pour Discuss RTC : notre coturn (TURN/STUN).
-         noupdate : créés une fois, éditables ensuite.
-         Le compte TURN (identifiant et mot de passe) ne doit jamais être versionné :
-         le renseigner après l'installation dans Paramètres → Discuss → serveurs ICE,
-         depuis l'entrée Vaultwarden « coturn rke01 — compte TURN (diverse) ». -->
-    <data noupdate="1">
-        <record id="ice_stun_diverse" model="mail.ice.server">
-            <field name="server_type">stun</field>
-            <field name="uri">66.70.177.199:3478</field>
-        </record>
-        <record id="ice_turn_diverse" model="mail.ice.server">
-            <field name="server_type">turn</field>
-            <field name="uri">66.70.177.199:3478</field>
-        </record>
-    </data>
+    <!-- coturn est retiré : les appels passeront par le SFU d'Odoo, qui a sa propre
+         IP publique (UDP et TCP), sans relais TURN. On supprime les serveurs ICE
+         que ce module créait autrefois (STUN et TURN sur 66.70.177.199:3478).
+         Sans serveur ICE configuré, Discuss se rabat sur ses serveurs STUN par défaut. -->
+    <delete model="mail.ice.server" search="[('uri', 'in', ['66.70.177.199:3478', 'stun:66.70.177.199:3478', 'turn:66.70.177.199:3478'])]"/>
 </odoo>
