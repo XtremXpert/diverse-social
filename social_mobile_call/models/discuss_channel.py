@@ -73,7 +73,8 @@ class DiscussChannel(models.Model):
         if not discuss.get_sfu_url(self.env):
             raise CallUnavailable(_("Les appels ne sont pas disponibles pour le moment."))
         # with_user : la session est créée par le membre (create_uid identifie son jeton SFU).
-        member_user = member.with_user(user).sudo()
+        # mobile_call_actor_uid : pas de notification « fin de sonnerie » vers ses propres iPhone.
+        member_user = member.with_user(user).with_context(mobile_call_actor_uid=user.id).sudo()
         member_user._rtc_join_call()
         session = member_user.rtc_session_ids[:1]
         ice_servers = self.env['mail.ice.server'].sudo()._get_ice_servers()
@@ -112,5 +113,5 @@ class DiscussChannel(models.Model):
 
     def _mobile_call_decline(self, user):
         channel, member = self._mobile_call_member(user)
-        channel._rtc_cancel_invitations(member_ids=member.ids)
+        channel.with_context(mobile_call_actor_uid=user.id)._rtc_cancel_invitations(member_ids=member.ids)
         return channel._mobile_call_state(user)

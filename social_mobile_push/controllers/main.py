@@ -10,12 +10,14 @@ class SocialMobilePushApi(http.Controller):
 
     @http.route(f'{API}/devices', methods=['POST'], **ROUTE)
     def register(self):
-        """``{"token", "environment": "production"|"sandbox"}`` : à chaque lancement de l'app."""
+        """``{"token", "environment": "production"|"sandbox", "kind": "alert"|"voip"}`` : à chaque
+        lancement de l'app. ``voip`` : jeton PushKit, pour faire sonner les appels."""
         body = json_body()
         if body is None:
             return error(400, 'invalid_json', "Corps JSON attendu.")
         try:
-            request.env['social_mobile.device']._api_register(body.get('token'), body.get('environment') or 'production')
+            request.env['social_mobile.device']._api_register(
+                body.get('token'), body.get('environment') or 'production', body.get('kind') or 'alert')
         except ValidationError as e:
             return error(400, 'invalid', str(e))
         return json_response({'registered': True})

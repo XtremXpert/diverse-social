@@ -37,16 +37,22 @@ def forget_token(team_id, key_id, private_key):
         _token_cache.pop((team_id, key_id, hash(private_key)), None)
 
 
-def post(client, environment, device_token, topic, provider_jwt, payload, collapse_id=None):
-    """Envoie une notification. Retourne ``(statut HTTP, raison Apple ou None)``."""
+def post(client, environment, device_token, topic, provider_jwt, payload, collapse_id=None,
+         push_type='alert', expiration=None):
+    """Envoie une notification. Retourne ``(statut HTTP, raison Apple ou None)``.
+
+    ``push_type='voip'`` : appel entrant (PushKit), sur le sujet ``<bundle>.voip``. ``expiration``
+    (horodatage Unix) : Apple abandonne la notification au-delà, au lieu de la remettre en retard."""
     headers = {
         'authorization': f'bearer {provider_jwt}',
         'apns-topic': topic,
-        'apns-push-type': 'alert',
+        'apns-push-type': push_type,
         'apns-priority': '10',
     }
     if collapse_id:
         headers['apns-collapse-id'] = collapse_id[:64]
+    if expiration is not None:
+        headers['apns-expiration'] = str(int(expiration))
     response = client.post(f"{HOSTS[environment]}/3/device/{device_token}",
                            content=json.dumps(payload, ensure_ascii=False).encode(), headers=headers)
     reason = None

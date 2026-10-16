@@ -48,7 +48,7 @@ Dépendance Python : `httpx[http2]` (Apple n'accepte que HTTP/2).
 
 | Méthode | Chemin | Corps |
 |---|---|---|
-| `POST` | `/devices` | `{"token", "environment": "production"\|"sandbox"}` — à chaque lancement ; un jeton déjà connu est réattribué au compte courant |
+| `POST` | `/devices` | `{"token", "environment": "production"\|"sandbox", "kind": "alert"\|"voip"}` — à chaque lancement ; un jeton déjà connu est réattribué au compte courant. `voip` : jeton PushKit, qui sert seulement à faire sonner les appels (`social_mobile_call`) ; il ne reçoit jamais de notification de message et n'a pas de notification d'essai |
 | `DELETE` | `/devices` | `{"token"}` — déconnexion de l'app (sans jeton : tous mes appareils) |
 
 Contenu d'une notification : `aps.alert`, `aps.badge`, `aps.thread-id` (`chat-<id>`), et `chat_id` ou `relation_id`

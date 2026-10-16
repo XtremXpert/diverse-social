@@ -13,6 +13,13 @@ Appels audio de l'application mobile, par-dessus les appels Discuss et le SFU d'
   l'en empêche quand un canal SFU existe déjà, sinon un membre arrivé par le site n'entendrait pas l'application. Odoo
   libère le canal SFU quand le dernier participant raccroche.
 - **Sonnerie :** lancer un appel fait sonner les autres membres, comme Discuss (`call.ringing` dans la conversation).
+- **Sonnerie, application fermée :** chaque invitation part aussitôt en notification VoIP (`kind: voip` de
+  `social_mobile_push`, sujet `<bundle>.voip`) : `{"type": "call", "event": "ring", "call_id", "chat_id", "caller"}`.
+  L'iPhone affiche l'appel entrant (CallKit). Quand l'invitation tombe (appel rejoint ou refusé ailleurs, appelant
+  qui raccroche), `"event": "end"` avec le même `call_id` arrête la sonnerie. iOS exige qu'une notification VoIP
+  affiche un appel : rien ne part vers l'iPhone qui vient lui-même de répondre ou de refuser. `caller` vaut
+  « Diverse-Cité », ou le pseudonyme avec « Nommer l'expéditeur ». Pas de sonnerie dans une conversation en
+  sourdine. Apple abandonne la notification au bout de 30 s plutôt que de la remettre en retard.
   Rejoindre ou refuser arrête la sonnerie ; refuser ne coupe pas l'appel des autres.
 - **Blocage :** pas d'appel entre deux personnes dont l'une a bloqué l'autre (`403`). Hors de la conversation : `404`.
 - **Maintien :** Odoo efface une session restée 75 s sans nouvelles. L'application la maintient (`ping`) toutes les
