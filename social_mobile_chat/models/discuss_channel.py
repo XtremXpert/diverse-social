@@ -6,6 +6,9 @@ from odoo.tools import html2plaintext, plaintext2html
 
 PAGE_SIZE = 50
 MAX_BODY = 4000
+# Message vocal de l'application : AAC dans un conteneur MP4 (.m4a), ~0,25 Mo par minute à 32 kb/s.
+VOICE_MIMETYPE = 'audio/mp4'
+MAX_VOICE_BYTES = 3 * 1024 * 1024
 
 
 def iso(value):
@@ -79,6 +82,9 @@ class DiscussChannel(models.Model):
     @api.model
     def _mobile_message(self, message, user, Profile):
         author = message.author_id.user_ids[:1]
+        # sudo : pièces jointes d'un message déjà lisible par le membre (vérifié par l'appelant).
+        attachments = message.sudo().attachment_ids
+        voice = attachments.filtered('voice_ids')[:1]
         return {
             'id': message.id,
             'author_user_id': author.id or None,
@@ -86,6 +92,10 @@ class DiscussChannel(models.Model):
             'is_mine': message.author_id == user.partner_id,
             'body': (html2plaintext(message.body or '') or '').strip(),
             'date': iso(message.date),
+            # Message vocal (de l'application ou de Discuss) : à télécharger par /attachments/<id>.
+            'voice': {'attachment_id': voice.id, 'mimetype': voice.mimetype} if voice else None,
+            # Autres pièces jointes (images, fichiers envoyés depuis le site) : pas encore affichées.
+            'attachment_count': len(attachments - voice),
         }
 
     def _mobile_messages(self, user, before=None, after=None, limit=PAGE_SIZE):
@@ -119,6 +129,40 @@ class DiscussChannel(models.Model):
         if member:
             member._mark_as_read(message.id)
         return self._mobile_message(message, user, self.env['club_social_profile.profile'].sudo())
+
+    def _mobile_post_voice(self, user, data):
+        """Envoie un message vocal (.m4a) au nom de ``user``, comme le fait Discuss : pièce jointe
+        marquée vocale, contrôle de blocage et notification compris."""
+        channel = self._mobile_check_member(user)
+        if not data:
+            raise UserError(_("Message vocal vide."))
+        if len(data) > MAX_VOICE_BYTES:
+            raise UserError(_("Message vocal trop long."))
+        # Conteneur MP4 : « ftyp » à l'octet 4. Le type annoncé par l'appareil ne fait pas foi.
+        if data[4:8] != b'ftyp':
+            raise UserError(_("Format audio non pris en charge."))
+        message = channel.with_user(user).sudo().message_post(
+            body='', message_type='comment', subtype_xmlid='mail.mt_comment',
+            attachments=[('Message vocal.m4a', data, {'voice': True})])
+        message.sudo().attachment_ids.mimetype = VOICE_MIMETYPE
+        member = channel.channel_member_ids.filtered(lambda m: m.partner_id == user.partner_id)[:1]
+        if member:
+            member._mark_as_read(message.id)
+        return self._mobile_message(message, user, self.env['club_social_profile.profile'].sudo())
+
+    def _mobile_attachment(self, user, attachment_id):
+        """Pièce jointe d'un message de cette conversation : ``(contenu, type)``. AccessError si
+        l'utilisateur n'en est pas membre ou si la pièce jointe appartient à une autre conversation."""
+        channel = self._mobile_check_member(user)
+        attachment = self.env['ir.attachment'].sudo().browse(int(attachment_id)).exists()
+        message = self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'), ('res_id', '=', channel.id),
+            ('attachment_ids', 'in', attachment.ids),
+        ], limit=1) if attachment else False
+        if not message or attachment.res_model != 'discuss.channel' or attachment.res_id != channel.id:
+            raise AccessError(_("Pièce jointe introuvable."))
+        # ``raw`` est un BinaryValue (fichier du filestore) : bytes() en lit le contenu.
+        return bytes(attachment.raw or b''), attachment.mimetype or 'application/octet-stream'
 
     def _mobile_mark_read(self, user, last_message_id):
         channel = self._mobile_check_member(user)

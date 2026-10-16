@@ -1,4 +1,7 @@
 """Messagerie dans l'API mobile (/api/social/v1/chats). Contrat : README.md du module."""
+import base64
+import binascii
+
 from odoo import http
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
@@ -73,6 +76,35 @@ class SocialMobileChatApi(http.Controller):
         if body is None:
             return error(400, 'invalid_json', "Corps JSON attendu.")
         return self._run(lambda: json_response({'message': channel._mobile_post(request.env.user, body.get('body'))}))
+
+    @http.route(f'{API}/chats/<int:channel_id>/voice', methods=['POST'], **ROUTE)
+    def post_voice(self, channel_id):
+        """Message vocal : ``{"data": "<m4a en base64>"}``."""
+        channel = self._channel(channel_id)
+        if not channel:
+            return error(404, 'not_found', "Conversation introuvable.")
+        body = json_body()
+        if body is None or not isinstance(body.get('data'), str):
+            return error(400, 'invalid_json', "Corps JSON attendu : {\"data\": base64}.")
+        try:
+            data = base64.b64decode(body['data'], validate=True)
+        except (binascii.Error, ValueError):
+            return error(400, 'invalid', "Audio illisible (base64 attendu).")
+        return self._run(lambda: json_response({'message': channel._mobile_post_voice(request.env.user, data)}))
+
+    @http.route(f'{API}/chats/<int:channel_id>/attachments/<int:attachment_id>', methods=['GET'], **ROUTE)
+    def attachment(self, channel_id, attachment_id):
+        """Contenu d'une pièce jointe de la conversation (message vocal)."""
+        channel = self._channel(channel_id)
+        if not channel:
+            return error(404, 'not_found', "Conversation introuvable.")
+
+        def run():
+            data, mimetype = channel._mobile_attachment(request.env.user, attachment_id)
+            return request.make_response(data, headers=[
+                ('Content-Type', mimetype), ('Content-Length', str(len(data))),
+                ('Cache-Control', 'private, max-age=86400'), ('X-Content-Type-Options', 'nosniff')])
+        return self._run(run)
 
     @http.route(f'{API}/chats/<int:channel_id>/read', methods=['POST'], **ROUTE)
     def mark_read(self, channel_id):
