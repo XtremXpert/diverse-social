@@ -1,6 +1,6 @@
 {
     'name': 'Social Calling — Discuss',
-    'version': '20.0.1.0.2',
+    'version': '20.0.1.0.3',
     'category': 'Social / Communication',
     'summary': "Appels entre membres par Discuss natif (WebRTC)",
     'author': 'Bemade',
@@ -14,6 +14,11 @@
         'data/ice_servers.xml',
         'views/call_button.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'social_calling_discuss/static/src/js/rtc_frontend_patch.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,
