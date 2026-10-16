@@ -6,11 +6,12 @@
         <field name="arch" type="xml">
             <list string="Appareils mobiles" create="0">
                 <field name="user_id"/>
+                <field name="kind"/>
                 <field name="environment"/>
                 <field name="last_seen"/>
                 <field name="active" widget="boolean_toggle"/>
                 <button name="action_send_test" type="object" string="Notification d'essai…" icon="fa-bell"
-                        groups="base.group_system"/>
+                        groups="base.group_system" invisible="kind == 'voip'"/>
             </list>
         </field>
     </record>

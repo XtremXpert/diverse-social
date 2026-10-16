@@ -6,8 +6,14 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 TOKEN_RE = re.compile(r'^[0-9a-f]{64,200}$')
 
 
+KINDS = ('alert', 'voip')
+
+
 class SocialMobileDevice(models.Model):
-    """iPhone qui reçoit les notifications d'un membre (jeton APNs)."""
+    """iPhone qui reçoit les notifications d'un membre (jeton APNs).
+
+    Un même iPhone a deux jetons : ``alert`` pour les notifications, ``voip`` (PushKit) pour faire
+    sonner les appels. Ce sont deux enregistrements : un jeton refusé par Apple n'emporte pas l'autre."""
     _name = 'social_mobile.device'
     _description = "Appareil mobile (notifications)"
     _order = 'last_seen desc'
@@ -17,13 +23,15 @@ class SocialMobileDevice(models.Model):
     token = fields.Char(required=True, readonly=True, copy=False, groups='base.group_system')
     environment = fields.Selection([('production', "Production"), ('sandbox', "Développement")],
                                    required=True, default='production', readonly=True)
+    kind = fields.Selection([('alert', "Notifications"), ('voip', "Appels")],
+                            required=True, default='alert', readonly=True, index=True)
     last_seen = fields.Datetime(readonly=True)
     active = fields.Boolean(default=True)
 
     _token_uniq = models.Constraint('UNIQUE(token)', "Ce jeton d'appareil est déjà enregistré.")
 
     @api.model
-    def _api_register(self, token, environment):
+    def _api_register(self, token, environment, kind='alert'):
         """Enregistre l'iPhone de l'utilisateur courant. Un jeton déjà connu (même téléphone,
         autre compte) est réattribué : les notifications d'un membre n'arrivent jamais chez un autre."""
         token = (token or '').strip().lower()
@@ -31,8 +39,11 @@ class SocialMobileDevice(models.Model):
             raise ValidationError(_("Jeton d'appareil invalide."))
         if environment not in ('production', 'sandbox'):
             raise ValidationError(_("Environnement invalide."))
+        if kind not in KINDS:
+            raise ValidationError(_("Type de jeton invalide."))
         Device = self.sudo().with_context(active_test=False)
-        vals = {'user_id': self.env.uid, 'environment': environment, 'last_seen': fields.Datetime.now(), 'active': True}
+        vals = {'user_id': self.env.uid, 'environment': environment, 'kind': kind,
+                'last_seen': fields.Datetime.now(), 'active': True}
         device = Device.search([('token', '=', token)], limit=1)
         if device:
             device.write(vals)
@@ -54,6 +65,8 @@ class SocialMobileDevice(models.Model):
         """Ouvre l'assistant d'envoi d'une notification d'essai à cet appareil."""
         self.ensure_one()
         self._check_system()
+        if self.kind == 'voip':
+            raise UserError(_("Ce jeton sert à faire sonner les appels : l'essai se fait sur le jeton « Notifications »."))
         return {
             'type': 'ir.actions.act_window',
             'name': _("Notification d'essai"),
@@ -71,6 +84,8 @@ class SocialMobileDevice(models.Model):
         """Envoie aussitôt la notification à cet appareil et dit ce qu'Apple a répondu."""
         self.ensure_one()
         self._check_system()
+        if self.kind == 'voip':
+            raise UserError(_("Ce jeton sert à faire sonner les appels : l'essai se fait sur le jeton « Notifications »."))
         Queue = self.env['social_mobile.push_queue'].sudo()
         config = Queue._config()
         if not config:

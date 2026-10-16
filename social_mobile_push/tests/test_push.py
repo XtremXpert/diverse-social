@@ -180,7 +180,14 @@ class TestPush(HttpCase):
         self.assertEqual(self.call('POST', '/devices', self.c, {'token': 'pas-un-jeton'}).status_code, 400)
         self.assertEqual(self.call('POST', '/devices', self.c, {'token': 'c' * 64, 'environment': 'sandbox'}).status_code, 200)
         self.assertEqual(Device.search([('user_id', '=', self.c.id)]).environment, 'sandbox')
+        self.assertEqual(self.call('POST', '/devices', self.c, {'token': 'd' * 64, 'kind': 'voip'}).status_code, 200)
+        self.assertEqual(self.call('POST', '/devices', self.c, {'token': 'e' * 64, 'kind': 'fax'}).status_code, 400)
+        self.assertEqual(sorted(Device.search([('user_id', '=', self.c.id)]).mapped('kind')), ['alert', 'voip'],
+                         "deux jetons pour un iPhone : notifications et appels")
+        self.dispatch()
+        self.assertFalse([s for s in self.sent if s['token'] == 'd' * 64], "jamais de notification sur le jeton VoIP")
         self.call('DELETE', '/devices', self.c, {'token': 'c' * 64})
+        self.call('DELETE', '/devices', self.c, {'token': 'd' * 64})
         self.assertFalse(Device.search([('user_id', '=', self.c.id)]))
         # Suppression du compte : ses iPhone ne reçoivent plus rien.
         self.assertEqual(self.call('DELETE', '/me', self.a).status_code, 200)

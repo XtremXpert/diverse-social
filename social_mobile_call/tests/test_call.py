@@ -32,8 +32,10 @@ def fake_sfu(*_args, **_kwargs):
     return FakeSfuResponse()
 
 
-@tagged('post_install', '-at_install')
-class TestMobileCall(HttpCase):
+class MobileCallCase(HttpCase):
+    """Deux membres reliés (A, B) et un troisième (C), une conversation entre A et B, un SFU simulé."""
+    REQUESTS_GET = REQUESTS_GET
+    fake_sfu = staticmethod(fake_sfu)
 
     @classmethod
     def setUpClass(cls):
@@ -85,6 +87,10 @@ class TestMobileCall(HttpCase):
 
     def member(self, user):
         return self.channel.channel_member_ids.filtered(lambda m: m.partner_id == user.partner_id)
+
+
+@tagged('post_install', '-at_install')
+class TestMobileCall(MobileCallCase):
 
     def test_join_through_sfu(self):
         res = self.join(self.a)

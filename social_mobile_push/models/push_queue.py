@@ -112,9 +112,10 @@ class SocialMobilePushQueue(models.Model):
         return httpx.Client(http2=True, timeout=10.0)
 
     @api.model
-    def _send(self, client, environment, token, topic, provider_jwt, payload, collapse_id):
-        """Point d'appel unique vers Apple (remplacé dans les tests)."""
-        return apns.post(client, environment, token, topic, provider_jwt, payload, collapse_id)
+    def _send(self, client, environment, token, topic, provider_jwt, payload, collapse_id, **options):
+        """Point d'appel unique vers Apple (remplacé dans les tests). ``options`` : ``push_type``,
+        ``expiration`` (appels)."""
+        return apns.post(client, environment, token, topic, provider_jwt, payload, collapse_id, **options)
 
     @api.model
     def _cron_dispatch(self):
@@ -137,7 +138,7 @@ class SocialMobilePushQueue(models.Model):
                 payload = row._payload(config)
                 collapse = 'chat-%s' % row.channel_id.id if row.channel_id else None
                 retry = False
-                for device in Device.search([('user_id', '=', row.user_id.id)]):
+                for device in Device.search([('user_id', '=', row.user_id.id), ('kind', '=', 'alert')]):
                     outcome = row._deliver(client, device, config, payload, collapse)
                     if outcome == 'stop':
                         return  # configuration refusée par Apple : on garde la file pour plus tard
@@ -147,11 +148,15 @@ class SocialMobilePushQueue(models.Model):
                 else:
                     row.state = 'done'
 
-    def _deliver(self, client, device, config, payload, collapse):
-        """Envoie à un appareil. Retourne ``'ok'``, ``'retry'`` ou ``'stop'``."""
+    def _deliver(self, client, device, config, payload, collapse, **options):
+        """Envoie à un appareil. Retourne ``'ok'``, ``'retry'`` ou ``'stop'``.
+
+        Un appareil ``voip`` reçoit sur le sujet ``<bundle>.voip`` ; ``options`` passe à ``_send``."""
+        topic = config['topic'] + ('.voip' if device.kind == 'voip' else '')
+
         def attempt(environment):
             provider_jwt = apns.provider_token(config['team_id'], config['key_id'], config['key'])
-            return self._send(client, environment, device.token, config['topic'], provider_jwt, payload, collapse)
+            return self._send(client, environment, device.token, topic, provider_jwt, payload, collapse, **options)
 
         try:
             status, reason = attempt(device.environment)
