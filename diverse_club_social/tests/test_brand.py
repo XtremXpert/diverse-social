@@ -33,8 +33,24 @@ class TestBrand(TransactionCase):
         website_logo = hooks._read_image_b64(*hooks._WEBSITE_LOGO_REL_PATH)
         self.assertNotEqual(bytes(company_logo), bytes(website_logo))
         self.assertFalse(hooks._differs(self.company.logo, company_logo))
-        for website in self.env['website'].search([]):
-            self.assertFalse(hooks._differs(website.logo, website_logo))
+        self.assertFalse(hooks._differs(hooks._diverse_websites(self.env).logo, website_logo))
+
+    def test_setup_leaves_other_websites_alone(self):
+        main = hooks._diverse_websites(self.env)
+        self.assertEqual(main, self.env.ref('base.default_website'))
+        other = self.env['website'].create({'name': 'Skyline', 'domain': 'https://ww2.diverse.test'})
+        menus = self.env['website.menu'].search([('website_id', '=', other.id)])
+        self.assertTrue(menus, "Le site de test doit avoir ses propres menus")
+        state = {m.id: (m.group_ids.ids, m.with_context(lang='fr_CA').name) for m in menus}
+        langs = other.language_ids.ids
+        logo = bytes(other.logo or b'')
+        hooks._apply_diverse_setup(self.env)
+        self.assertEqual(other.name, 'Skyline')
+        self.assertEqual(bytes(other.logo or b''), logo)
+        self.assertEqual(other.language_ids.ids, langs)
+        self.assertEqual(
+            {m.id: (m.group_ids.ids, m.with_context(lang='fr_CA').name) for m in menus}, state)
+        self.assertEqual(main.name, 'Diverse-Cité')
 
     def test_apply_logo_is_idempotent(self):
         hooks._apply_logo(self.env)
