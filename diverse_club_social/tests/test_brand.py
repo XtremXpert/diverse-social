@@ -62,10 +62,21 @@ class TestBrand(TransactionCase):
         company_write.assert_not_called()
         website_write.assert_not_called()
 
-    def test_notification_has_company_logo(self):
-        hooks._apply_logo(self.env)
-        self.assertFalse(self.company.uses_default_logo)
-        logo_src = '/logo.png?company=%s' % self.company.id
-        self.assertIn(logo_src, self._sent_body('mail.mt_note'))
-        # Les messages de discussion n'ont pas d'en-tête Odoo : le logo y est quand même.
-        self.assertIn(logo_src, self._sent_body('mail.mt_comment'))
+    def test_notification_has_seal_without_name(self):
+        seal = '/diverse_club_social/static/src/img/marque/sceau-courriel.png'
+        for subtype in ('mail.mt_note', 'mail.mt_comment'):
+            body = self._sent_body(subtype)
+            # Les messages de discussion n'ont pas d'en-tête Odoo : le sceau y est quand même.
+            self.assertIn(seal, body)
+            self.assertNotIn('/logo.png?company=', body)
+
+    def test_light_layout_has_seal_without_name(self):
+        message = self.record.with_context(mail_notify_force_send=False).message_post(
+            body='Test', partner_ids=self.partner.ids,
+            message_type='comment', subtype_xmlid='mail.mt_comment',
+            mail_auto_delete=False, email_layout_xmlid='mail.mail_notification_light',
+        )
+        mail = self.env['mail.mail'].sudo().search([('mail_message_id', '=', message.id)])
+        body = str(mail.body_html)
+        self.assertIn('/diverse_club_social/static/src/img/marque/sceau-courriel.png', body)
+        self.assertNotIn('/logo.png?company=', body)

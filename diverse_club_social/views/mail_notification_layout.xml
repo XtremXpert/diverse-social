@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!--
-        Logo de la société en tête des notifications.
+        Sceau Diverse-Cité, sans le nom, en tête des notifications.
 
-        Odoo 20 n'affiche le logo que dans mail.mail_notification_light : les
-        notifications ordinaires (messages, notes, suivi) arrivent sans aucune
-        image de marque. On l'ajoute au-dessus de l'en-tête, aligné à droite
-        et à 48 px comme dans la mise en page légère, pour toutes les
-        notifications, y compris les messages de discussion qui n'ont pas
-        d'en-tête.
+        Discrétion : un courriel du réseau ne doit pas afficher « Diverse-Cité »
+        en gros dans la boîte d'un membre. Le sceau seul (static/src/img/marque/
+        sceau-courriel.png, celui de l'en-tête du site) remplace donc le logo de
+        la société, qui porte le nom, et l'attribut alt reste vide.
+
+        - mail_notification_layout : Odoo 20 n'y affiche aucun logo. On ajoute
+          le sceau au-dessus de l'en-tête, aligné à droite à 48 px comme dans
+          la mise en page légère, y compris pour les messages de discussion
+          qui n'ont pas d'en-tête.
+        - mail_notification_light : on remplace le logo de la société.
     -->
     <template id="mail_notification_layout_logo"
               inherit_id="mail.mail_notification_layout">
         <xpath expr="//t[@t-call='mail.notification_preview']" position="after">
-            <div t-if="company and not company.uses_default_logo"
-                 style="max-width: 900px; width: 100%; text-align: right; padding-bottom: 8px;">
-                <img t-att-src="'/logo.png?company=%s' % company.id"
-                     style="padding: 0px; margin: 0px; height: 48px;"
-                     t-att-alt="'%s' % company.name"/>
+            <div style="max-width: 900px; width: 100%; text-align: right; padding-bottom: 8px;">
+                <img src="/diverse_club_social/static/src/img/marque/sceau-courriel.png"
+                     style="padding: 0px; margin: 0px; height: 48px;" alt=""/>
             </div>
+        </xpath>
+    </template>
+
+    <template id="mail_notification_light_logo"
+              inherit_id="mail.mail_notification_light">
+        <xpath expr="//img[contains(@t-att-src, '/logo.png')]" position="attributes">
+            <attribute name="t-att-src"/>
+            <attribute name="src">/diverse_club_social/static/src/img/marque/sceau-courriel.png</attribute>
+            <attribute name="t-att-alt"/>
+            <attribute name="alt"></attribute>
         </xpath>
     </template>
 </odoo>
