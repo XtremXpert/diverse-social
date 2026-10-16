@@ -4,12 +4,16 @@ Five concerns, all idempotent and re-run on every upgrade via
 migrations/<version>/post-migrate.py:
 
 1. Activate French (Canada) and make it the default for new users
-   + every website in the DB (with English kept as alternate).
+   + the Diverse-Cité website (with English kept as alternate).
 2. Translate the website navigation menus to French.
 3. Restrict member-only menus to group_social_user so anonymous
    visitors don't see — and click into — login redirects.
 4. Apply the Diverse-Cité seal to res.company + website + favicon
    from static/src/img/marque/.
+
+Website-level steps only touch the Diverse-Cité site (base.default_website,
+see _diverse_websites): the other sites of the DB — e.g. Skyline on
+ww2.diverse-cite.com — keep their own name, languages, menus and images.
 """
 import base64
 from odoo.tools.binary import BinaryBytes
@@ -115,16 +119,25 @@ def _ensure_fr_ca(env):
         company.partner_id.sudo().write({'lang': 'fr_CA'})
 
 
-# ── 2. Website language config (per-website, not just website_id=1) ────
+def _diverse_websites(env):
+    """The website(s) the setup applies to: the Diverse-Cité site only.
+
+    It is base.default_website (website 1); fall back on the oldest site
+    if that xmlid is gone. Every other website is left alone."""
+    website = env.ref('base.default_website', raise_if_not_found=False)
+    return website or env['website'].search([], order='id', limit=1)
+
+
+# ── 2. Website language config ─────────────────────────────────────────
 
 def _configure_websites(env):
-    """For every website: fr_CA + en_US enabled, fr_CA default,
+    """For the Diverse-Cité website: fr_CA + en_US enabled, fr_CA default,
     name 'Diverse-Cité' (overrides Odoo's default 'My Website')."""
     fr = env['res.lang'].search([('code', '=', 'fr_CA')], limit=1)
     en = env['res.lang'].search([('code', '=', 'en_US')], limit=1)
     if not fr or not en:
         return
-    for website in env['website'].search([]):
+    for website in _diverse_websites(env):
         vals = {}
         target_langs = {fr.id, en.id}
         if set(website.language_ids.ids) != target_langs:
@@ -148,7 +161,7 @@ def _translate_menus(env):
     by their English name because they share a URL with a child.
     """
     Menu = env['website.menu']
-    menus = Menu.search([('website_id', '!=', False)])
+    menus = Menu.search([('website_id', 'in', _diverse_websites(env).ids)])
     changed = 0
     for m in menus:
         en_name = m.with_context(lang='en_US').name or ''
@@ -170,8 +183,7 @@ def _restrict_member_menus(env):
     """Add group_social_user to every website.menu whose URL isn't public.
 
     Idempotent: re-running adds the group only where it's missing.
-    Applies to all websites in the DB (not just website_id=1) so a
-    future multi-site setup inherits the same gating.
+    Applies to the Diverse-Cité website only (see _diverse_websites).
     """
     group = env.ref('social_base.group_social_user', raise_if_not_found=False)
     if not group:
@@ -179,7 +191,7 @@ def _restrict_member_menus(env):
         return
     Menu = env['website.menu']
     menus = Menu.search([
-        ('website_id', '!=', False),
+        ('website_id', 'in', _diverse_websites(env).ids),
         ('url', '!=', False),
     ])
     changed = 0
@@ -208,7 +220,7 @@ def _open_contact_menu(env):
         _logger.warning("group_social_user not found, skipping contact menu opening")
         return
     menus = env['website.menu'].search([
-        ('website_id', '!=', False),
+        ('website_id', 'in', _diverse_websites(env).ids),
         ('url', '=', '/contactus'),
     ])
     changed = 0
@@ -267,7 +279,7 @@ def _apply_logo(env):
         return
     # web_favicon adds res.company.favicon; guard for setups without it.
     company_has_favicon = 'favicon' in env['res.company']._fields
-    for company in env['res.company'].search([]):
+    for company in _diverse_websites(env).company_id:
         vals = {}
         if _differs(company.logo, company_logo):
             vals['logo'] = company_logo
@@ -283,7 +295,7 @@ def _apply_logo(env):
         favicon_vals = {'favicon': favicon}
         env['website']._handle_favicon(favicon_vals)
         website_favicon = favicon_vals['favicon']
-    for website in env['website'].search([]):
+    for website in _diverse_websites(env):
         vals = {}
         if _differs(website.logo, website_logo):
             vals['logo'] = website_logo
@@ -316,7 +328,7 @@ def _ensure_website_menu_root(env):
     _restrict_member_menus leaves them public.
     """
     Menu = env['website.menu']
-    for website in env['website'].search([]):
+    for website in _diverse_websites(env):
         if website.menu_id:
             continue  # nav root resolves → nothing to repair
         if not Menu.search_count([('website_id', '=', website.id)]):
@@ -366,7 +378,7 @@ def _ensure_account_container(env):
     bug fixed by [[_ensure_website_menu_root]] (migration 1.0.6). Placed right
     after 'My Network'. Idempotent."""
     Menu = env['website.menu']
-    for website in env['website'].search([]):
+    for website in _diverse_websites(env):
         root = website.menu_id
         if not root:
             continue  # _ensure_website_menu_root must repair the root first
@@ -394,7 +406,7 @@ def _reorganize_nav(env):
     Excludes top-level containers that share a leaf's URL (e.g. the Community
     container historically carries url='/discover') via parent_id != root."""
     Menu = env['website.menu']
-    for website in env['website'].search([]):
+    for website in _diverse_websites(env):
         root = website.menu_id
         if not root:
             continue
