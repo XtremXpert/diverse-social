@@ -1,8 +1,8 @@
 {
     'name': 'Social Calling',
-    'version': '20.0.1.0.0',
+    'version': '20.0.2.0.0',
     'category': 'Social / Communication',
-    'summary': 'One-to-one video and audio calls via Jitsi Meet integration',
+    'summary': "Sonnerie d'appel entrant et présence sur le portail",
     'author': 'Bemade',
     'license': 'LGPL-3',
     'depends': [
@@ -12,8 +12,7 @@
         'portal',
     ],
     'data': [
-        'security/ir.access.csv',
-        'data/ir_sequence.xml',
+        'data/cleanup.xml',
         'views/incoming_call.xml',
     ],
     'installable': True,

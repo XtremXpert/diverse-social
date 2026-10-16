@@ -4,7 +4,7 @@ from odoo.exceptions import AccessDenied
 
 
 class DiscussCalling(http.Controller):
-    """Variante A/B : lance un appel via Discuss natif (WebRTC).
+    """Lance un appel via Discuss natif (WebRTC).
 
     Crée/récupère le DM Discuss entre les deux membres et redirige vers la vue
     de canal Discuss publique (/discuss/channel/<id>), où l'appel vidéo se
@@ -18,7 +18,7 @@ class DiscussCalling(http.Controller):
         if not callee.exists() or callee.id == user.id or not callee.partner_id:
             return request.redirect('/my/messages')
 
-        # Blocage mutuel (même règle que le module Jitsi).
+        # Blocage mutuel.
         Block = request.env['social_safety.block'].sudo()
         if Block.search([
             '|', '&', ('blocker_id', '=', user.id), ('blocked_id', '=', callee.id),
@@ -33,8 +33,8 @@ class DiscussCalling(http.Controller):
         # comme membre, donc l'ir.rule laissera ensuite ouvrir /discuss/channel/<id>.
         channel = request.env['discuss.channel'].sudo()._get_or_create_chat([callee.partner_id.id])
 
-        # Sonnerie chez l'appelé : on réutilise l'infra d'appel entrant du module
-        # Jitsi (service incoming_call.js chargé globalement sur le portail). La
+        # Sonnerie chez l'appelé : service incoming_call.js de social_calling,
+        # chargé globalement sur le portail. La
         # page Discuss publique n'embarque pas le client Discuss complet qui
         # écouterait les invitations RTC → sans ça, l'appelé ne saurait jamais
         # qu'on l'appelle. provider='discuss' : « Répondre » ouvre le canal,

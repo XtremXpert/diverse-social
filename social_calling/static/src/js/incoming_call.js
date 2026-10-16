@@ -21,7 +21,6 @@
 import { registry } from "@web/core/registry";
 
 const TOPIC = "social_calling/incoming_call";
-const ACTION_URL = "/my/calls/action";
 
 // ── Sonnerie (WebAudio, pas de fichier média à charger) ─────────────────────
 let audioCtx = null;
@@ -67,28 +66,13 @@ function dismiss() {
     if (overlayEl) { overlayEl.remove(); overlayEl = null; }
 }
 
-function decline(sessionId) {
-    // POST form-encoded avec le jeton CSRF exposé par Odoo côté frontend.
-    const body = new URLSearchParams();
-    body.set("session_id", sessionId);
-    body.set("action", "decline");
-    body.set("csrf_token", (window.odoo && window.odoo.csrf_token) || "");
-    fetch(ACTION_URL, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-    }).catch(() => {});
-    dismiss();
-}
-
 function accept(roomUrl) {
     stopRing();
     window.location.href = roomUrl;
 }
 
 // Déduplication : marque une session comme déjà traitée (répondue/refusée) pour
-// que le rejeu de la notif par le bus (à la reconnexion sur la page salle) ne
+// que le rejeu de la notif par le bus (à la reconnexion sur la page Discuss) ne
 // fasse pas réapparaître/resonner l'overlay.
 function handledKey(sid) { return "sc_call_handled_" + sid; }
 function isHandled(sid) {
@@ -99,9 +83,7 @@ function markHandled(sid) {
 }
 
 function showIncoming(payload) {
-    // Jamais d'appel entrant si on est déjà dans une salle d'appel, ni pour une
-    // session déjà traitée (anti-rejeu du bus).
-    if (window.location.pathname.indexOf("/my/calls/room/") === 0) return;
+    // Jamais d'appel entrant pour une session déjà traitée (anti-rejeu du bus).
     if (isHandled(payload.session_id)) return;
 
     // Une seule fenêtre à la fois : un nouvel appel remplace l'ancien.
@@ -129,19 +111,13 @@ function showIncoming(payload) {
     });
     overlayEl.querySelector(".sc-decline").addEventListener("click", () => {
         markHandled(payload.session_id);
-        // Variante Discuss (A/B) : pas de social_calling.session côté serveur, donc
-        // pas de POST /my/calls/action — on ferme simplement l'overlay.
-        if (payload.provider === "discuss") {
-            dismiss();
-        } else {
-            decline(payload.session_id);
-        }
+        // Aucune session serveur à refuser : l'appel vit dans le canal Discuss.
+        dismiss();
     });
 
     startRing();
 
-    // Auto-fermeture après 60 s si l'utilisateur n'agit pas (le cron serveur
-    // passera la session en « missed » de son côté).
+    // Auto-fermeture après 60 s si l'utilisateur n'agit pas.
     overlayEl.dataset.sid = String(payload.session_id);
     setTimeout(() => {
         if (overlayEl && overlayEl.dataset.sid === String(payload.session_id)) dismiss();
@@ -163,14 +139,6 @@ const socialCallingService = {
         // Appels entrants : le serveur _sendone vers callee.partner_id, dont le
         // canal est auto-abonné côté serveur pour l'utilisateur connecté.
         bus_service.subscribe(TOPIC, (payload) => { if (payload) showIncoming(payload); });
-
-        // Messages de chat en temps réel : relayés à la page salle via un
-        // CustomEvent (le panneau de chat n'a pas accès au bus_service lui-même).
-        bus_service.subscribe("social_calling/chat", (payload) => {
-            if (payload) {
-                document.dispatchEvent(new CustomEvent("sc:chat", { detail: payload }));
-            }
-        });
 
         // Marqueur de disponibilité pour les tests E2E (sans effet fonctionnel).
         document.documentElement.dataset.scIncomingReady = "1";

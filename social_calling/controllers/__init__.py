@@ -1,3 +1,2 @@
-# social_calling n'expose plus de routes : le portail Jitsi (/my/calls, /my/rooms)
-# a été retiré. La messagerie/appels vivent dans Discuss. Ce module conserve le
-# service de sonnerie (incoming_call.js), le modèle et les crons.
+# social_calling n'expose pas de routes : les appels vivent dans Discuss
+# (social_calling_discuss). Ce module garde la sonnerie du portail.
