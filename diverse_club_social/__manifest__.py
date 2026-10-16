@@ -1,6 +1,6 @@
 {
     'name': 'Diverse — Club Social',
-    'version': '20.0.1.0.18',
+    'version': '20.0.1.0.19',
     'category': 'Social',
     'summary': 'Leaf module for www.diverse-cite.com — assembles all social modules with site-specific config',
     'author': 'Bemade',
@@ -76,6 +76,7 @@
         'data/website_pages.xml',
         'data/view_names_fr.xml',
         'views/email_digest_template.xml',
+        'views/mail_notification_layout.xml',
         'views/menus.xml',
         'views/community_hub.xml',
         'views/partners_page.xml',

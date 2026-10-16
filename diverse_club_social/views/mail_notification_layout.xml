@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Logo de la société en tête des notifications.
+
+        Odoo 20 n'affiche le logo que dans mail.mail_notification_light : les
+        notifications ordinaires (messages, notes, suivi) arrivent sans aucune
+        image de marque. On l'ajoute au-dessus de l'en-tête, aligné à droite
+        et à 48 px comme dans la mise en page légère, pour toutes les
+        notifications, y compris les messages de discussion qui n'ont pas
+        d'en-tête.
+    -->
+    <template id="mail_notification_layout_logo"
+              inherit_id="mail.mail_notification_layout">
+        <xpath expr="//t[@t-call='mail.notification_preview']" position="after">
+            <div t-if="company and not company.uses_default_logo"
+                 style="max-width: 900px; width: 100%; text-align: right; padding-bottom: 8px;">
+                <img t-att-src="'/logo.png?company=%s' % company.id"
+                     style="padding: 0px; margin: 0px; height: 48px;"
+                     t-att-alt="'%s' % company.name"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

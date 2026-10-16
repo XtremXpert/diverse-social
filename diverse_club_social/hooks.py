@@ -8,8 +8,8 @@ migrations/<version>/post-migrate.py:
 2. Translate the website navigation menus to French.
 3. Restrict member-only menus to group_social_user so anonymous
    visitors don't see — and click into — login redirects.
-4. Apply the diverse-cite logo to res.company + website + favicon
-   from theme_diverse_cite/static/src/img/.
+4. Apply the Diverse-Cité seal to res.company + website + favicon
+   from static/src/img/marque/.
 """
 import base64
 from odoo.tools.binary import BinaryBytes
@@ -222,14 +222,16 @@ def _open_contact_menu(env):
 
 # ── 5. Logo + favicon ──────────────────────────────────────────────────
 
-# Resolved relative to this hooks.py at install time. The image files
-# live in theme_diverse_cite (a sibling module brought in via the
-# diverse_club_social manifest depends).
-# logo_medallion = transparent circular cutout — works on any nav bg.
-# logo.png (with wordmark + grey backplate) is kept in the repo for
-# wider placements (emails, share images) but not auto-applied.
-_LOGO_REL_PATH = ('..', 'theme_diverse_cite', 'static', 'src', 'img', 'logo_medallion.png')
-_FAVICON_REL_PATH = ('..', 'theme_diverse_cite', 'static', 'src', 'img', 'favicon-32.png')
+# Resolved relative to this hooks.py. Same files as the ones set on
+# www.diverse-cite.com, so the byte comparison makes a re-run a no-op.
+# - logo-societe : sceau noir et or + « Diverse-Cité » sur fond clair.
+#   res.company.logo feeds the email layouts, the backend and the PDF
+#   reports, all on white.
+# - logo-site : sceau seul, round like the old medallion so the header
+#   menu keeps its width.
+_COMPANY_LOGO_REL_PATH = ('static', 'src', 'img', 'marque', 'logo-societe.png')
+_WEBSITE_LOGO_REL_PATH = ('static', 'src', 'img', 'marque', 'logo-site.png')
+_FAVICON_REL_PATH = ('static', 'src', 'img', 'marque', 'favicon.png')
 
 
 def _differs(current, new):
@@ -238,8 +240,8 @@ def _differs(current, new):
 
 
 def _read_image_b64(*path_parts):
-    """Return base64-encoded bytes of a file relative to addons/diverse_club_social/.
-    Returns None if the file is missing (theme module removed)."""
+    """Return the raw bytes of a file relative to addons/diverse_club_social/.
+    Returns None if the file is missing."""
     full = os.path.join(_HERE, *path_parts)
     if not os.path.exists(full):
         return None
@@ -250,34 +252,42 @@ def _read_image_b64(*path_parts):
 
 def _apply_logo(env):
     """Set res.company.logo/favicon, website.logo and website.favicon from
-    theme_diverse_cite image files. Idempotent: skips when the target
-    already holds the same bytes.
+    static/src/img/marque/. Idempotent: skips when the target already holds
+    the same bytes.
 
     res.company.favicon matters because web_favicon (OCA) serves the
     *company* favicon whenever the render context has no website_id
     (i.e. the backend / web client). Without it the backend keeps the
     randomized default Odoo favicon."""
-    logo = _read_image_b64(*_LOGO_REL_PATH)
+    company_logo = _read_image_b64(*_COMPANY_LOGO_REL_PATH)
+    website_logo = _read_image_b64(*_WEBSITE_LOGO_REL_PATH)
     favicon = _read_image_b64(*_FAVICON_REL_PATH)
-    if not logo:
-        _logger.warning("logo.png not found, skipping logo application")
+    if not (company_logo and website_logo):
+        _logger.warning("Brand logos not found, skipping logo application")
         return
     # web_favicon adds res.company.favicon; guard for setups without it.
     company_has_favicon = 'favicon' in env['res.company']._fields
     for company in env['res.company'].search([]):
         vals = {}
-        if _differs(company.logo, logo):
-            vals['logo'] = logo
+        if _differs(company.logo, company_logo):
+            vals['logo'] = company_logo
         if favicon and company_has_favicon and _differs(company.favicon, favicon):
             vals['favicon'] = favicon
         if vals:
             company.write(vals)
             _logger.info("Set logo/favicon on res.company %s: %s", company.id, list(vals))
+    # website.write() re-encodes the favicon as a 256 px ICO: compare against
+    # that stored form, otherwise every run rewrites it.
+    website_favicon = None
+    if favicon:
+        favicon_vals = {'favicon': favicon}
+        env['website']._handle_favicon(favicon_vals)
+        website_favicon = favicon_vals['favicon']
     for website in env['website'].search([]):
         vals = {}
-        if _differs(website.logo, logo):
-            vals['logo'] = logo
-        if favicon and _differs(website.favicon, favicon):
+        if _differs(website.logo, website_logo):
+            vals['logo'] = website_logo
+        if website_favicon and _differs(website.favicon, website_favicon):
             vals['favicon'] = favicon
         if vals:
             website.write(vals)
