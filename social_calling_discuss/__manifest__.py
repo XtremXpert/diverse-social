@@ -1,6 +1,6 @@
 {
     'name': 'Social Calling — Discuss (A/B)',
-    'version': '20.0.1.0.0',
+    'version': '20.0.1.0.1',
     'category': 'Social / Communication',
     'summary': "Variante d'appel via Discuss natif (WebRTC) — pour test A/B vs Jitsi",
     'author': 'Bemade',
