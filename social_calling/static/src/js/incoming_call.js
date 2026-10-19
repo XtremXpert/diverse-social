@@ -18,6 +18,7 @@
  * fermeture du websocket, donc im_status reste exact.
  */
 
+import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
 
 const TOPIC = "social_calling/incoming_call";
@@ -111,7 +112,11 @@ function showIncoming(payload) {
     });
     overlayEl.querySelector(".sc-decline").addEventListener("click", () => {
         markHandled(payload.session_id);
-        // Aucune session serveur à refuser : l'appel vit dans le canal Discuss.
+        // Appel Discuss : refuser comme Discuss, pour que l'appelant sache qu'on ne viendra pas
+        // (à deux, son appel se termine alors, voir social_calling_discuss).
+        if (payload.provider === "discuss" && payload.channel_id) {
+            rpc("/mail/rtc/channel/leave_call", { channel_id: payload.channel_id }).catch(() => {});
+        }
         dismiss();
     });
 
