@@ -1,17 +1,19 @@
 {
     'name': 'Social Mobile Push',
-    'version': '20.0.1.4.0',
+    'version': '20.0.1.5.0',
     'category': 'Social / Communication',
-    'summary': "Notifications iPhone natives (APNs) de l'application mobile",
+    'summary': "Notifications natives de l'application mobile : iPhone (APNs) et Android (FCM)",
     'description': """
-Notifications iPhone natives, envoyées directement à Apple (APNs, jeton .p8) :
+Notifications natives, envoyées directement à Apple (APNs, jeton .p8) pour les iPhone et à Google
+(Firebase Cloud Messaging, compte de service) pour les téléphones Android :
 
 * nouveau message dans une conversation à deux ou de relation ;
 * invitation dans une relation, proposition à approuver.
 
 Contenu discret par défaut (« Nouveau message », sans nom ni texte). Envoi par une file d'attente
 traitée par une tâche planifiée déclenchée aussitôt : l'envoi ne ralentit jamais la requête.
-Les copies de la base (staging) sont neutralisées : clé APNs effacée, appareils désactivés.
+Les copies de la base (staging) sont neutralisées : clé APNs et compte Firebase effacés, appareils
+désactivés.
 """,
     'author': 'Bemade',
     'license': 'LGPL-3',
