@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Call',
-    'version': '20.0.1.1.0',
+    'version': '20.0.1.2.0',
     'category': 'Social / Communication',
     'summary': "Appels audio Discuss dans l'application mobile, par le SFU d'Odoo",
     'description': """
@@ -16,6 +16,7 @@ API d'appel de l'application mobile, par-dessus les appels Discuss :
     'depends': [
         'social_mobile_chat',
         'social_mobile_push',
+        'social_calling_discuss',  # fin de l'appel quand il ne reste qu'une personne
     ],
     'data': [],
     'installable': True,

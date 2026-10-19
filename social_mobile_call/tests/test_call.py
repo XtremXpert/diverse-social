@@ -150,7 +150,7 @@ class TestMobileCall(MobileCallCase):
         res = self.call('POST', f'/chats/{self.chat_id}/call/decline', self.b, {})
         self.assertEqual(res.status_code, 200, res.text)
         self.assertFalse(res.json()['call']['ringing'])
-        self.assertTrue(res.json()['call']['active'], "refuser ne coupe pas l'appel de l'autre")
+        self.assertFalse(res.json()['call']['active'], "à deux, l'appelant n'attend plus personne")
 
     def test_refusals(self):
         self.assertEqual(self.join(self.c).status_code, 404, "hors de la conversation : introuvable")

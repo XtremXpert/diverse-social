@@ -83,7 +83,7 @@ class TestCallRinging(MobileCallCase):
         self.pushes()
         self.call('POST', f'/chats/{self.chat_id}/call/decline', self.b, {})
         self.assertEqual(self.pushes(), [], "pas de notification vers l'iPhone qui a refusé")
-        self.assertTrue(self.channel.rtc_session_ids, "l'appelant reste en ligne")
+        self.assertFalse(self.channel.rtc_session_ids, "à deux, l'appel se termine chez l'appelant")
 
     def test_sender_name_and_mute(self):
         self.env['ir.config_parameter'].sudo().search([('key', '=', 'social_mobile_push.show_sender')]).value = 'True'
