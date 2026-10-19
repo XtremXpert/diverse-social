@@ -68,6 +68,33 @@ class TestCallEndAlone(TransactionCase):
         self.assertEqual(self.in_call(self.group), self.a.partner_id,
                          "trois personnes impliquées : la dernière n'est pas raccrochée")
 
+    def bus_payloads(self, notification_type):
+        self.env.cr.precommit.run()
+        messages = [json.loads(m) for m in self.env['bus.bus'].sudo().search([]).mapped('message')]
+        return [m['payload'] for m in messages if m['type'] == notification_type]
+
+    def test_group_call_asks_last_person(self):
+        self.join(self.group, self.a)
+        self.join(self.group, self.b)
+        self.leave(self.group, self.c)
+        session_a = self.member(self.group, self.a).rtc_session_ids
+        self.assertFalse(self.group._social_call_alone_prompt(session_a), "B est encore là")
+        self.bus_payloads('social_calling_discuss/alone')
+        self.env['bus.bus'].sudo().search([]).unlink()
+        self.leave(self.group, self.b)
+        self.assertEqual(self.bus_payloads('social_calling_discuss/alone'),
+                         [{'sessionId': session_a.id, 'channelId': self.group.id, 'timeout': 30}])
+        self.assertTrue(self.group._social_call_alone_prompt(session_a))
+        self.assertEqual(self.group._social_call_involved_count(), 3)
+
+    def test_two_person_call_never_asks(self):
+        self.join(self.chat, self.a)
+        self.join(self.chat, self.b)
+        self.env.cr.precommit.run()
+        self.env['bus.bus'].sudo().search([]).unlink()
+        self.leave(self.chat, self.b)
+        self.assertEqual(self.bus_payloads('social_calling_discuss/alone'), [])
+
     def test_expired_session_ends_two_person_call(self):
         self.join(self.chat, self.a)
         self.join(self.chat, self.b)
@@ -85,7 +112,4 @@ class TestCallEndAlone(TransactionCase):
         self.env.cr.precommit.run()
         self.env['bus.bus'].sudo().search([]).unlink()
         self.leave(self.chat, self.b)
-        self.env.cr.precommit.run()
-        messages = [json.loads(m) for m in self.env['bus.bus'].sudo().search([]).mapped('message')]
-        ended_alone = [m['payload'] for m in messages if m['type'] == 'social_calling_discuss/ended_alone']
-        self.assertEqual(ended_alone, [{'sessionId': session_a.id}])
+        self.assertEqual(self.bus_payloads('social_calling_discuss/ended_alone'), [{'sessionId': session_a.id}])

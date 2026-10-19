@@ -2,6 +2,7 @@ from odoo import _, models
 from odoo.exceptions import UserError
 
 from odoo.addons.mail.tools import discuss
+from odoo.addons.social_calling_discuss.models.discuss_channel import ALONE_PROMPT_SECONDS
 
 
 class CallUnavailable(UserError):
@@ -44,6 +45,7 @@ class DiscussChannel(models.Model):
         channel, member = self._mobile_call_member(user)
         Profile = self.env['club_social_profile.profile'].sudo()
         participants = []
+        own_session = channel.rtc_session_ids.filtered(lambda s: s.channel_member_id == member)
         for session in channel.rtc_session_ids:
             other = session.partner_id.user_ids[:1]
             participants.append({
@@ -52,7 +54,15 @@ class DiscussChannel(models.Model):
                 'is_self': session.channel_member_id == member,
                 'is_muted': session.is_muted,
             })
-        return dict(channel._mobile_call_summary(user), participants=participants)
+        return dict(
+            channel._mobile_call_summary(user),
+            participants=participants,
+            # Fin de l'appel quand il ne reste qu'une personne (social_calling_discuss) : à deux
+            # au plus, le serveur raccroche ; au-delà, l'application demande si l'on reste.
+            involved_count=channel._social_call_involved_count(),
+            alone_prompt=channel._social_call_alone_prompt(own_session),
+            alone_timeout=ALONE_PROMPT_SECONDS,
+        )
 
     def _mobile_call_session(self, user, session_id):
         channel, member = self._mobile_call_member(user)

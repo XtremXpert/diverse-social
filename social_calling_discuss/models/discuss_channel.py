@@ -2,6 +2,8 @@ from odoo import models
 
 # Au plus ce nombre de personnes impliquées : la dernière personne seule est raccrochée.
 ALONE_HANGUP_MAX_INVOLVED = 2
+# Au-delà : on lui demande si elle reste, et l'appel se termine sans réponse après ce délai.
+ALONE_PROMPT_SECONDS = 30
 
 
 class DiscussChannel(models.Model):
@@ -9,9 +11,10 @@ class DiscussChannel(models.Model):
 
     Odoo laisse la dernière personne seule dans l'appel jusqu'à ce qu'elle raccroche. Quand
     l'appel n'a jamais impliqué plus de deux personnes (participants et invités), il n'y a
-    plus personne à attendre : le serveur termine sa session. On ne vérifie qu'au départ de
-    quelqu'un (session fermée ou expirée, invitation refusée ou annulée), jamais pendant
-    qu'un membre rejoint l'appel."""
+    plus personne à attendre : le serveur termine sa session. Sinon (appel de groupe), on lui
+    demande si elle reste : le site et l'application raccrochent sans réponse après
+    ``ALONE_PROMPT_SECONDS``. On ne vérifie qu'au départ de quelqu'un (session fermée ou
+    expirée, invitation refusée ou annulée), jamais pendant qu'un membre rejoint l'appel."""
     _inherit = 'discuss.channel'
 
     def _social_call_open_history(self):
@@ -27,19 +30,42 @@ class DiscussChannel(models.Model):
             if history:
                 history.involved_member_ids = [(4, member.id) for member in channel_members]
 
+    def _social_call_involved_count(self):
+        history = self._social_call_open_history()
+        return len(history.involved_member_ids) if history else 0
+
+    def _social_call_alone_session(self):
+        """La session de la dernière personne de l'appel, si plus personne n'est attendu."""
+        self.ensure_one()
+        Session = self.env['discuss.channel.rtc.session'].sudo()
+        Member = self.env['discuss.channel.member'].sudo()
+        sessions = Session.search([('channel_id', '=', self.id)])
+        if len(sessions) != 1:
+            return Session
+        if Member.search_count([('channel_id', '=', self.id), ('rtc_inviting_session_id', '!=', False)]):
+            return Session
+        return sessions
+
+    def _social_call_alone_prompt(self, session):
+        """Vrai quand ``session`` est seule dans un appel de groupe : on lui demande si elle reste."""
+        self.ensure_one()
+        return (bool(session) and self._social_call_alone_session() == session
+                and self._social_call_involved_count() > ALONE_HANGUP_MAX_INVOLVED)
+
     def _social_call_check_alone(self):
         if self.env.context.get('social_call_joining') or self.env.context.get('social_call_checking'):
             return
-        Session = self.env['discuss.channel.rtc.session'].sudo()
-        Member = self.env['discuss.channel.member'].sudo()
         for channel in self:
-            sessions = Session.search([('channel_id', '=', channel.id)])
-            if len(sessions) != 1:
+            sessions = channel._social_call_alone_session()
+            involved = channel._social_call_involved_count() if sessions else 0
+            if not involved:
                 continue
-            if Member.search_count([('channel_id', '=', channel.id), ('rtc_inviting_session_id', '!=', False)]):
-                continue
-            history = channel._social_call_open_history()
-            if not history or len(history.involved_member_ids) > ALONE_HANGUP_MAX_INVOLVED:
+            if involved > ALONE_HANGUP_MAX_INVOLVED:
+                sessions._bus_send('social_calling_discuss/alone', {
+                    'sessionId': sessions.id,
+                    'channelId': channel.id,
+                    'timeout': ALONE_PROMPT_SECONDS,
+                })
                 continue
             # Avant la fin de session : le site remplace l'avertissement d'Odoo
             # (« déconnecté par le serveur ») par un message normal.
