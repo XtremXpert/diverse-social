@@ -38,7 +38,7 @@ class DiscussCalling(http.Controller):
         # page Discuss publique n'embarque pas le client Discuss complet qui
         # écouterait les invitations RTC → sans ça, l'appelé ne saurait jamais
         # qu'on l'appelle. provider='discuss' : « Répondre » ouvre le canal,
-        # « Refuser » ferme juste l'overlay (pas de session serveur à décliner).
+        # « Refuser » refuse l'invitation Discuss du canal (channel_id).
         request.env['bus.bus']._sendone(
             callee.partner_id,
             'social_calling/incoming_call',
@@ -48,6 +48,7 @@ class DiscussCalling(http.Controller):
                 'call_type': 'video',
                 'room_url': '/discuss/channel/%s' % channel.id,
                 'provider': 'discuss',
+                'channel_id': channel.id,
             },
         )
         return request.redirect('/discuss/channel/%s' % channel.id)

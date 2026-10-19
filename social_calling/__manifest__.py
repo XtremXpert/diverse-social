@@ -1,6 +1,6 @@
 {
     'name': 'Social Calling',
-    'version': '20.0.2.0.0',
+    'version': '20.0.2.0.1',
     'category': 'Social / Communication',
     'summary': "Sonnerie d'appel entrant et présence sur le portail",
     'author': 'Bemade',

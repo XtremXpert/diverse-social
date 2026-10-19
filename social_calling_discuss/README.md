@@ -31,7 +31,7 @@ Le module ne configure aucun serveur ICE. Les anciens serveurs STUN et TURN vers
 - Un blocage dans un sens ou dans l'autre (`social_safety.block`) refuse l'appel.
 - Un appel vers soi-même, ou vers un utilisateur inexistant ou sans contact, renvoie à `/my/messages`.
 - La conversation est créée en `sudo`, car les membres sont des utilisateurs portail. L'utilisateur courant reste membre du canal.
-- « Refuser » ferme seulement la sonnerie : aucune session serveur n'est enregistrée.
+- « Refuser » refuse l'invitation Discuss (`/mail/rtc/channel/leave_call`, grâce au `channel_id` de la notification), comme le bouton de Discuss : l'appelant sait qu'on ne viendra pas.
 
 ## Dépendances et tests
 
