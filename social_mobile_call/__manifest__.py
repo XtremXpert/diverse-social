@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Call',
-    'version': '20.0.1.3.0',
+    'version': '20.0.1.4.0',
     'category': 'Social / Communication',
     'summary': "Appels audio Discuss dans l'application mobile, par le SFU d'Odoo",
     'description': """

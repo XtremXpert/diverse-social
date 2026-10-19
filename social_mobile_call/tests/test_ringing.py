@@ -1,4 +1,5 @@
 import contextlib
+import json
 from unittest.mock import patch
 
 from odoo import fields
@@ -38,7 +39,15 @@ class TestCallRinging(MobileCallCase):
         def send_now(channel, device_ids, payload, config):
             channel.env['social_mobile.push_queue']._mobile_call_send(device_ids, payload, config)
 
+        self.fcm_sent = []
+
+        def fake_send_fcm(model, client, project_id, token, message):
+            self.fcm_sent.append(message)
+            return 200, None
+
         self.startPatcher(patch.object(Queue, '_send', fake_send))
+        self.startPatcher(patch.object(Queue, '_send_fcm', fake_send_fcm))
+        self.startPatcher(patch.object(Queue, '_fcm_access_token', lambda model, client, config: 'acces'))
         self.startPatcher(patch.object(Queue, '_http_client', lambda model: contextlib.nullcontext()))
         self.startPatcher(patch.object(Channel, '_mobile_call_push_schedule', send_now))
         self.startPatcher(patch('odoo.addons.social_mobile_push.models.apns.provider_token', lambda *a, **k: 'jwt'))
@@ -102,3 +111,19 @@ class TestCallRinging(MobileCallCase):
         self.env['ir.config_parameter'].sudo().search([('key', '=', 'social_mobile_push.apns_key')]).unlink()
         self.join(self.a)
         self.assertEqual(self.pushes(), [])
+
+    def test_ring_on_android(self):
+        """Android : un seul jeton FCM, qui fait aussi sonner les appels (message à haute priorité)."""
+        account = {'project_id': 'p', 'client_email': 'fcm@p.iam.gserviceaccount.com', 'private_key': 'cle'}
+        self.env['ir.config_parameter'].sudo().set_str('social_mobile_push.fcm_service_account', json.dumps(account))
+        android = 'cAndroid:APA91b' + 'Xy_-' * 40
+        self.env['social_mobile.device'].with_user(self.b)._api_register(android, 'production', 'alert', 'fcm')
+        self.join(self.a)
+        self.assertEqual([p['token'] for p in self.pushes()], [VOIP['b']], "l'iPhone sonne toujours")
+        [message] = self.fcm_sent
+        self.assertEqual(message['token'], android)
+        self.assertEqual(message['android'], {'priority': 'HIGH', 'ttl': '30s'})
+        data = message['data']
+        self.assertEqual((data['type'], data['event'], data['chat_id']), ('call', 'ring', str(self.chat_id)))
+        self.assertEqual(data['caller'], "Diverse-Cité", "discret par défaut")
+        self.assertNotIn('aps', data)

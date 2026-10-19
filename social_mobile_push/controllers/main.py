@@ -1,4 +1,4 @@
-"""Enregistrement des iPhone pour les notifications (/api/social/v1/devices)."""
+"""Enregistrement des téléphones pour les notifications (/api/social/v1/devices)."""
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
@@ -10,14 +10,16 @@ class SocialMobilePushApi(http.Controller):
 
     @http.route(f'{API}/devices', methods=['POST'], **ROUTE)
     def register(self):
-        """``{"token", "environment": "production"|"sandbox", "kind": "alert"|"voip"}`` : à chaque
-        lancement de l'app. ``voip`` : jeton PushKit, pour faire sonner les appels."""
+        """``{"token", "environment": "production"|"sandbox", "kind": "alert"|"voip",
+        "platform": "apns"|"fcm"}`` : à chaque lancement de l'app. ``voip`` : jeton PushKit, pour faire
+        sonner les appels. ``fcm`` : jeton Android (un seul, ``alert``, qui sert aussi aux appels)."""
         body = json_body()
         if body is None:
             return error(400, 'invalid_json', "Corps JSON attendu.")
         try:
             request.env['social_mobile.device']._api_register(
-                body.get('token'), body.get('environment') or 'production', body.get('kind') or 'alert')
+                body.get('token'), body.get('environment') or 'production', body.get('kind') or 'alert',
+                body.get('platform') or 'apns')
         except ValidationError as e:
             return error(400, 'invalid', str(e))
         return json_response({'registered': True})

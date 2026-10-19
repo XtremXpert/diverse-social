@@ -4,16 +4,18 @@ from unittest.mock import patch
 
 import jwt
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import HttpCase, new_test_user, tagged
 
-from odoo.addons.social_mobile_push.models import apns
+from odoo.addons.social_mobile_push.models import apns, fcm
 
 API = '/api/social/v1'
 TOKEN_A = 'a' * 64
 TOKEN_B = 'b' * 64
+# Jeton FCM : casse mêlée, deux-points ; il ne doit jamais être mis en minuscules.
+FCM_B = 'dQw4w9WgXcQ:APA91bH' + 'Ab_-' * 40
 
 
 @tagged('post_install', '-at_install')
@@ -38,6 +40,16 @@ class TestPush(HttpCase):
         Device = cls.env['social_mobile.device']
         Device.with_user(cls.a)._api_register(TOKEN_A, 'production')
         Device.with_user(cls.b)._api_register(TOKEN_B, 'sandbox')
+        rsa_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        cls.rsa_public_key = rsa_key.public_key()
+        cls.service_account = {
+            'type': 'service_account', 'project_id': 'diverse-cite-test', 'private_key_id': 'kid123',
+            'private_key': rsa_key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
+                                                 serialization.NoEncryption()).decode(),
+            'client_email': 'fcm@diverse-cite-test.iam.gserviceaccount.com',
+            'token_uri': 'https://oauth2.googleapis.com/token',
+        }
+        ICP.set_str('social_mobile_push.fcm_service_account', json.dumps(cls.service_account))
 
     @classmethod
     def _make_member(cls, login):
@@ -62,7 +74,21 @@ class TestPush(HttpCase):
                               'payload': payload, 'collapse': collapse_id})
             return self.responses.pop(0) if self.responses else (200, None)
 
+        self.fcm_sent = []
+        self.fcm_responses = []
+        self.access_tokens = 0
+
+        def fake_send_fcm(model, client, project_id, token, message):
+            self.fcm_sent.append({'project': project_id, 'access': token, 'message': message})
+            return self.fcm_responses.pop(0) if self.fcm_responses else (200, None)
+
+        def fake_access_token(model, client, config):
+            self.access_tokens += 1
+            return 'acces-%s' % self.access_tokens
+
         self.startPatcher(patch.object(Queue, '_send', fake_send))
+        self.startPatcher(patch.object(Queue, '_send_fcm', fake_send_fcm))
+        self.startPatcher(patch.object(Queue, '_fcm_access_token', fake_access_token))
         self.startPatcher(patch.object(Queue, '_http_client', lambda model: contextlib.nullcontext()))
 
     def dispatch(self):
@@ -225,3 +251,122 @@ class TestPush(HttpCase):
             device.with_user(self.a).action_send_test()
         with self.assertRaises(AccessError):
             device.with_user(self.a)._send_test("Essai", "Essai")
+
+    # ── Android (FCM) ───────────────────────────────────────────────────────
+
+    def register_android(self, user, token=FCM_B):
+        return self.env['social_mobile.device'].with_user(user)._api_register(token, 'production', 'alert', 'fcm')
+
+    def test_android_message_is_a_discreet_data_message(self):
+        device = self.register_android(self.b)
+        self.assertEqual((device.token, device.platform), (FCM_B, 'fcm'), "jeton gardé tel quel")
+        channel = self.chat()
+        channel._mobile_post(self.a, "Message très privé")
+        self.dispatch()
+        self.assertEqual([p['token'] for p in self.sent], [TOKEN_B], "l'iPhone de B reçoit toujours le sien")
+        [push] = self.fcm_sent
+        self.assertEqual(push['project'], 'diverse-cite-test')
+        message = push['message']
+        self.assertEqual(message['token'], FCM_B)
+        self.assertNotIn('notification', message, "données seulement : l'application affiche la notification")
+        self.assertEqual(message['android']['priority'], 'HIGH')
+        self.assertEqual(message['android']['collapse_key'], 'chat-%s' % channel.id)
+        data = message['data']
+        self.assertEqual((data['type'], data['kind'], data['body']), ('alert', 'message', "Nouveau message"))
+        self.assertEqual((data['chat_id'], data['badge']), (str(channel.id), '1'))
+        self.assertTrue(all(isinstance(v, str) for v in data.values()), "FCM n'accepte que du texte")
+        self.assertNotIn("privé", json.dumps(message), "jamais le contenu du message")
+
+    def test_android_token_rules(self):
+        Device = self.env['social_mobile.device']
+        with self.assertRaises(ValidationError):
+            Device.with_user(self.c)._api_register('court', 'production', 'alert', 'fcm')
+        with self.assertRaises(ValidationError):
+            Device.with_user(self.c)._api_register(FCM_B, 'production', 'voip', 'fcm')
+        with self.assertRaises(ValidationError):
+            Device.with_user(self.c)._api_register(FCM_B, 'production', 'alert', 'windows')
+        self.assertEqual(self.call('POST', '/devices', self.c, {'token': FCM_B, 'platform': 'fcm'}).status_code, 200)
+        device = Device.sudo().search([('user_id', '=', self.c.id)])
+        self.assertEqual((device.token, device.platform, device.environment), (FCM_B, 'fcm', 'production'))
+        self.call('DELETE', '/devices', self.c, {'token': FCM_B})
+        self.assertFalse(device.exists(), "retiré avec son jeton exact")
+
+    def test_google_responses(self):
+        device = self.register_android(self.b)
+        channel = self.chat()
+        # Jeton d'accès refusé : on en demande un autre et on réessaie.
+        self.fcm_responses = [(401, 'UNAUTHENTICATED'), (200, None)]
+        channel._mobile_post(self.a, "un")
+        self.dispatch()
+        self.assertEqual([p['access'] for p in self.fcm_sent], ['acces-1', 'acces-2'])
+        # Panne passagère : nouvel essai plus tard.
+        self.fcm_sent.clear()
+        self.fcm_responses = [(503, None)]
+        channel._mobile_post(self.a, "deux")
+        self.dispatch()
+        row = self.env['social_mobile.push_queue'].sudo().search([('user_id', '=', self.b.id), ('state', '=', 'pending')])
+        self.assertEqual(row.attempts, 1)
+        row.unlink()
+        # Application désinstallée : l'appareil est retiré.
+        self.fcm_responses = [(404, 'UNREGISTERED')]
+        channel._mobile_post(self.a, "trois")
+        self.dispatch()
+        self.assertFalse(device.exists())
+
+    def test_without_firebase_android_gets_nothing(self):
+        self.register_android(self.b)
+        self.env['ir.config_parameter'].sudo().set_str('social_mobile_push.fcm_service_account', '')
+        self.chat()._mobile_post(self.a, "un")
+        self.dispatch()
+        self.assertEqual(self.fcm_sent, [])
+        self.assertEqual([p['token'] for p in self.sent], [TOKEN_B])
+        # Firebase seul (pas de clé Apple) : Android reçoit, l'iPhone non.
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_str('social_mobile_push.fcm_service_account', json.dumps(self.service_account))
+        ICP.set_str('social_mobile_push.apns_key', '')
+        self.sent.clear()
+        self.chat()._mobile_post(self.a, "deux")
+        self.dispatch()
+        self.assertEqual(self.sent, [])
+        self.assertEqual(len(self.fcm_sent), 1)
+
+    def test_service_account_assertion_and_token_cache(self):
+        account = fcm.parse_service_account(json.dumps(self.service_account))
+        claims = jwt.decode(fcm.assertion(account), self.rsa_public_key, algorithms=['RS256'],
+                            audience='https://oauth2.googleapis.com/token')
+        self.assertEqual(claims['iss'], 'fcm@diverse-cite-test.iam.gserviceaccount.com')
+        self.assertEqual(claims['scope'], 'https://www.googleapis.com/auth/firebase.messaging')
+        self.assertEqual(claims['exp'] - claims['iat'], 3600)
+        self.assertIsNone(fcm.parse_service_account('{"project_id": "x"}'), "compte incomplet")
+        self.assertIsNone(fcm.parse_service_account('pas du json'))
+
+        class Response:
+            status_code = 200
+
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return {'access_token': 'ya29.jeton', 'expires_in': 3600}
+
+        class Client:
+            calls = 0
+
+            def post(self, url, data=None, **kwargs):
+                Client.calls += 1
+                return Response()
+
+        fcm.forget_token(account)
+        client = Client()
+        self.assertEqual(fcm.access_token(client, account, now=1_000_000), 'ya29.jeton')
+        self.assertEqual(fcm.access_token(client, account, now=1_000_000 + 600), 'ya29.jeton')
+        self.assertEqual(Client.calls, 1, "jeton réutilisé")
+        fcm.access_token(client, account, now=1_000_000 + 3400)
+        self.assertEqual(Client.calls, 2, "renouvelé cinq minutes avant l'échéance")
+        fcm.forget_token(account)
+
+    def test_admin_test_notification_on_android(self):
+        device = self.register_android(self.b)
+        action = self.send_test(device, self.admin)
+        self.assertEqual(action['params']['type'], 'success')
+        self.assertEqual(self.fcm_sent[0]['message']['data'], {'type': 'alert', 'title': "Diverse-Cité", 'body': "Notification d'essai"})

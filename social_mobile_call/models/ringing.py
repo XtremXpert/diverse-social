@@ -1,4 +1,5 @@
-"""Sonnerie des appels sur l'iPhone, application fermée (PushKit puis CallKit).
+"""Sonnerie des appels sur le téléphone, application fermée : iPhone (PushKit puis CallKit) et
+Android (message FCM à haute priorité, puis écran d'appel entrant).
 
 Odoo invite les autres membres quand un appel commence (``rtc_inviting_session_id``) et annule
 l'invitation quand l'appel est rejoint, refusé ou terminé. Chaque invitation part en notification
@@ -6,8 +7,9 @@ VoIP « ring » vers les iPhone de l'invité, chaque annulation en « end » : l
 retire l'appel entrant. iOS exige qu'une notification VoIP affiche un appel ; on n'en envoie donc
 jamais pour rien (pas de « end » vers l'iPhone qui vient lui-même de répondre ou de refuser).
 
-L'envoi part après la validation de la transaction (``postcommit``), directement vers Apple : une
-sonnerie ne peut pas attendre la tâche planifiée. Apple l'abandonne au-delà de ``RING_TTL``.
+L'envoi part après la validation de la transaction (``postcommit``), directement vers Apple ou
+Google : une sonnerie ne peut pas attendre la tâche planifiée. Ils l'abandonnent au-delà de
+``RING_TTL``. Sur Android, le jeton FCM unique du téléphone reçoit aussi les sonneries.
 """
 import logging
 import time
@@ -64,11 +66,13 @@ class DiscussChannel(models.Model):
         return str(uuid.uuid5(uuid.NAMESPACE_URL, f'diverse-call:{self.env.cr.dbname}:{session_id}'))
 
     def _mobile_call_push(self, event, members, session):
-        """Notification VoIP ``ring`` ou ``end`` vers les iPhone des membres donnés."""
+        """Notification ``ring`` ou ``end`` vers les téléphones des membres donnés (VoIP sur iPhone,
+        FCM sur Android)."""
         self.ensure_one()
         Queue = self.env['social_mobile.push_queue'].sudo()
         config = Queue._config()
-        if not config:
+        fcm_config = Queue._fcm_config()
+        if not config and not fcm_config:
             return
         now = fields.Datetime.now()
         if event == 'ring':
@@ -76,7 +80,13 @@ class DiscussChannel(models.Model):
             members = members.filtered(lambda m: not (m.mute_until_dt and m.mute_until_dt > now))
         users = members.partner_id.user_ids.filtered(
             lambda u: u.active and u.has_group('social_base.group_social_user'))
-        devices = self.env['social_mobile.device'].sudo().search([('user_id', 'in', users.ids), ('kind', '=', 'voip')])
+        kinds = []
+        if config:
+            kinds.append(('kind', '=', 'voip'))
+        if fcm_config:
+            kinds.append(('platform', '=', 'fcm'))
+        domain = [('user_id', 'in', users.ids)] + (['|'] if len(kinds) == 2 else []) + kinds
+        devices = self.env['social_mobile.device'].sudo().search(domain)
         if not devices:
             return
         payload = {
@@ -87,7 +97,7 @@ class DiscussChannel(models.Model):
             'chat_id': self.id,
         }
         if event == 'ring':
-            payload['caller'] = self._mobile_call_caller_name(session, config)
+            payload['caller'] = self._mobile_call_caller_name(session, config or fcm_config)
         self._mobile_call_push_schedule(devices.ids, payload, config)
 
     def _mobile_call_caller_name(self, session, config):
@@ -123,8 +133,18 @@ class SocialMobilePushQueue(models.Model):
         if not devices:
             return
         expiration = time.time() + RING_TTL
+        fcm_config = self._fcm_config()
+        # FCM : valeurs en texte, sans la partie propre à Apple.
+        data = {key: str(value) for key, value in payload.items() if key != 'aps'}
         with self._http_client() as client:
             for device in devices:
-                outcome = self._deliver(client, device, config, payload, None, push_type='voip', expiration=expiration)
+                if device.platform == 'fcm':
+                    if not fcm_config:
+                        continue
+                    outcome = self._deliver_fcm(client, device, fcm_config, data, ttl=RING_TTL)
+                elif config:
+                    outcome = self._deliver(client, device, config, payload, None, push_type='voip', expiration=expiration)
+                else:
+                    continue
                 if outcome == 'stop':
                     return
