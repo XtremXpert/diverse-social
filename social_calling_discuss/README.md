@@ -19,7 +19,7 @@ Odoo laisse la dernière personne seule dans l'appel jusqu'à ce qu'elle raccroc
 - Au départ de quelqu'un (raccrocher, session expirée au bout de 75 s sans nouvelles, invitation refusée ou annulée), s'il ne reste qu'une session et plus aucune invitation, le serveur ferme cette session. Ça vaut pour le site, le portail et l'application mobile.
 - Rien n'est vérifié pendant qu'un membre rejoint l'appel : répondre, ou reprendre l'appel sur un autre appareil, ferme un instant une invitation ou une session sans que personne soit parti.
 - Le site affiche « Appel terminé : il ne restait que vous. » au lieu de l'avertissement d'Odoo (« Disconnected from the call by the server »), grâce au message `social_calling_discuss/ended_alone` envoyé juste avant.
-- Au-delà de deux personnes impliquées (appel de groupe), la dernière personne reste dans l'appel.
+- Au-delà de deux personnes impliquées (appel de groupe), le serveur ne raccroche pas : il demande à la dernière personne si elle reste (`social_calling_discuss/alone`, avec un délai de 30 s). Le site affiche « Vous êtes seul dans l'appel » avec **Raccrocher** et **Rester**, et raccroche sans réponse au bout du délai, sauf si quelqu'un est revenu. L'application mobile reçoit la même question par l'état de l'appel (`alone_prompt`, `alone_timeout`, `involved_count`, ajoutés par `social_mobile_call`).
 
 ## Configuration
 
@@ -35,4 +35,4 @@ Le module ne configure aucun serveur ICE. Les anciens serveurs STUN et TURN vers
 
 ## Dépendances et tests
 
-Dépend de `social_calling` (service d'appel entrant, bus), `mail` et `club_social_profile`. `tests/test_call_end_alone.py` couvre la fin de l'appel à deux (raccrocher, refuser, session expirée), la réponse et le changement d'appareil qui ne coupent rien, et l'appel de groupe.
+Dépend de `social_calling` (service d'appel entrant, bus), `mail` et `club_social_profile`. `tests/test_call_end_alone.py` couvre la fin de l'appel à deux (raccrocher, refuser, session expirée), la réponse et le changement d'appareil qui ne coupent rien, et l'appel de groupe (question posée à la dernière personne).

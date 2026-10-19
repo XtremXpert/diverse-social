@@ -133,6 +133,9 @@ class TestMobileCall(MobileCallCase):
         sid = self.join(self.a).json()['session_id']
         ping = self.call('POST', f'/chats/{self.chat_id}/call/ping', self.a, {'session_id': sid})
         self.assertEqual(ping.status_code, 200, ping.text)
+        call = ping.json()['call']
+        self.assertEqual((call['involved_count'], call['alone_prompt'], call['alone_timeout']), (2, False, 30),
+                         "à deux : le serveur raccroche lui-même, l'application ne demande rien")
         muted = self.call('POST', f'/chats/{self.chat_id}/call/mute', self.a, {'session_id': sid, 'muted': True})
         self.assertTrue(muted.json()['call']['participants'][0]['is_muted'])
         self.assertEqual(self.call('POST', f'/chats/{self.chat_id}/call/ping', self.b, {'session_id': sid}).status_code,

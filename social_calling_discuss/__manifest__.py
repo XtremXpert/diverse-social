@@ -1,6 +1,6 @@
 {
     'name': 'Social Calling — Discuss',
-    'version': '20.0.1.1.0',
+    'version': '20.0.1.2.0',
     'category': 'Social / Communication',
     'summary': "Appels entre membres par Discuss natif (WebRTC)",
     'author': 'Bemade',

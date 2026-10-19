@@ -38,7 +38,10 @@ Appels audio de l'application mobile, par-dessus les appels Discuss et le SFU d'
 | `POST` | `/chats/<id>/call/leave` | `{"session_id"}` | `{"call"}` |
 | `POST` | `/chats/<id>/call/decline` | | `{"call"}` |
 
-Appel : `{"active", "participant_count", "ringing", "participants": [{"session_id", "name", "is_self", "is_muted"}]}`.
+Appel : `{"active", "participant_count", "ringing", "participants": [{"session_id", "name", "is_self", "is_muted"}], "involved_count", "alone_prompt", "alone_timeout"}`.
+`alone_prompt` est vrai quand l'application est seule dans un appel de groupe (plus de deux personnes impliquées, voir
+`social_calling_discuss`) : elle demande si l'on reste et raccroche sans réponse après `alone_timeout` secondes. À deux,
+le serveur termine lui-même l'appel de la dernière personne (le maintien répond alors 410).
 La conversation (`/chats`, `/chats/<id>`) porte aussi `"call": {"active", "participant_count", "ringing"}`.
 
 Avec `server`, l'application ouvre un WebSocket vers le SFU (`url` en `wss://`), envoie
