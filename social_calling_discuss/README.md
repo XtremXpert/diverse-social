@@ -11,6 +11,16 @@ Bouton « Appeler » du portail qui lance un appel vidéo par le Discuss natif d
 - Sur toutes les pages du site, l'invitation native de Discuss (appel lancé depuis l'application mobile, par exemple) permet aussi de répondre. Odoo démarre l'objet d'appel avant ses services sur le site, et « Répondre » y plantait (`pttExtService` vide); `static/src/js/rtc_frontend_patch.js` rebranche ces services.
 - Le micro doit être autorisé dans le navigateur avant de répondre, sinon Discuss rejoint l'appel micro coupé.
 
+## Fin de l'appel quand il ne reste qu'une personne
+
+Odoo laisse la dernière personne seule dans l'appel jusqu'à ce qu'elle raccroche. Le module termine l'appel à sa place quand il n'a jamais impliqué plus de deux personnes :
+
+- L'historique d'appel (`discuss.call.history`) retient les membres impliqués : ceux qui ont rejoint l'appel et ceux qui y ont été invités.
+- Au départ de quelqu'un (raccrocher, session expirée au bout de 75 s sans nouvelles, invitation refusée ou annulée), s'il ne reste qu'une session et plus aucune invitation, le serveur ferme cette session. Ça vaut pour le site, le portail et l'application mobile.
+- Rien n'est vérifié pendant qu'un membre rejoint l'appel : répondre, ou reprendre l'appel sur un autre appareil, ferme un instant une invitation ou une session sans que personne soit parti.
+- Le site affiche « Appel terminé : il ne restait que vous. » au lieu de l'avertissement d'Odoo (« Disconnected from the call by the server »), grâce au message `social_calling_discuss/ended_alone` envoyé juste avant.
+- Au-delà de deux personnes impliquées (appel de groupe), la dernière personne reste dans l'appel.
+
 ## Configuration
 
 Le module ne configure aucun serveur ICE. Les anciens serveurs STUN et TURN vers coturn (`66.70.177.199:3478`) sont supprimés à la mise à jour : coturn est retiré au profit du SFU d'Odoo (*Paramètres → Discuss → RTC Server URL*), qui a sa propre IP publique. Sans serveur ICE, Discuss utilise ses serveurs STUN par défaut.
@@ -21,8 +31,8 @@ Le module ne configure aucun serveur ICE. Les anciens serveurs STUN et TURN vers
 - Un blocage dans un sens ou dans l'autre (`social_safety.block`) refuse l'appel.
 - Un appel vers soi-même, ou vers un utilisateur inexistant ou sans contact, renvoie à `/my/messages`.
 - La conversation est créée en `sudo`, car les membres sont des utilisateurs portail. L'utilisateur courant reste membre du canal.
-- « Refuser » ferme seulement la sonnerie : aucune session serveur n'est enregistrée.
+- « Refuser » refuse l'invitation Discuss (`/mail/rtc/channel/leave_call`, grâce au `channel_id` de la notification), comme le bouton de Discuss : l'appelant sait qu'on ne viendra pas.
 
 ## Dépendances et tests
 
-Dépend de `social_calling` (service d'appel entrant, bus), `mail` et `club_social_profile`. Le module n'a pas de tests.
+Dépend de `social_calling` (service d'appel entrant, bus), `mail` et `club_social_profile`. `tests/test_call_end_alone.py` couvre la fin de l'appel à deux (raccrocher, refuser, session expirée), la réponse et le changement d'appareil qui ne coupent rien, et l'appel de groupe.

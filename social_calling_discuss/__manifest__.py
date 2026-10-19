@@ -1,6 +1,6 @@
 {
     'name': 'Social Calling — Discuss',
-    'version': '20.0.1.0.3',
+    'version': '20.0.1.1.0',
     'category': 'Social / Communication',
     'summary': "Appels entre membres par Discuss natif (WebRTC)",
     'author': 'Bemade',
@@ -17,6 +17,10 @@
     'assets': {
         'web.assets_frontend': [
             'social_calling_discuss/static/src/js/rtc_frontend_patch.js',
+            'social_calling_discuss/static/src/js/call_end_alone.js',
+        ],
+        'web.assets_backend': [
+            'social_calling_discuss/static/src/js/call_end_alone.js',
         ],
     },
     'installable': True,
