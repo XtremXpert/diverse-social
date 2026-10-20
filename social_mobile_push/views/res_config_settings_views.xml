@@ -19,6 +19,7 @@
                          help="Projet Firebase de l'application Android : clé d'un compte de service (Firebase Cloud Messaging).">
                     <div class="content-group">
                         <div class="row mt8"><label for="social_mobile_push_fcm_service_account" class="col-lg-4 o_light_label"/><field name="social_mobile_push_fcm_service_account" password="True"/></div>
+                        <div class="row"><label for="social_mobile_push_fcm_file" class="col-lg-4 o_light_label"/><field name="social_mobile_push_fcm_file" accept=".json,application/json"/></div>
                     </div>
                 </setting>
                 <setting id="social_mobile_push_sender" help="Recommandé : décoché. L'écran verrouillé est souvent vu par d'autres.">

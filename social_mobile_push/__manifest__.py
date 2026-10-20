@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Push',
-    'version': '20.0.1.5.0',
+    'version': '20.0.1.5.1',
     'category': 'Social / Communication',
     'summary': "Notifications natives de l'application mobile : iPhone (APNs) et Android (FCM)",
     'description': """
