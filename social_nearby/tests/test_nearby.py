@@ -4,7 +4,7 @@ import json
 from odoo import fields
 from odoo.tests import HttpCase, new_test_user, tagged
 
-from odoo.addons.social_nearby.models.position import distance_km, snap
+from odoo.addons.social_nearby.models.position import AREA_DEG, area, distance_km, snap
 
 API = '/api/social/v1'
 MONTREAL = (45.50170, -73.56730)
@@ -190,3 +190,21 @@ class TestNearby(HttpCase):
         self.call('POST', '/meet', far, {'active': True})
         self.assertIsNone(self.call('POST', '/meet', far, {'active': False}).json()['meet_until'])
         self.assertFalse(position.meet_until)
+
+    def test_map_area_is_coarse(self):
+        """Carte : chacun est montré dans une zone d'environ 2 km, jamais dans sa case de 550 m."""
+        a = self._make_member('carte.a@example.com')
+        b = self._make_member('carte.b@example.com')
+        self.at(self.viewer, MONTREAL)
+        # Deux cases de 550 m différentes, dans la même zone de 0,02°.
+        base = snap(*MONTREAL, AREA_DEG)
+        self.at(a, offset(base, north_m=-600, east_m=-600))
+        self.at(b, offset(base, north_m=600, east_m=600))
+        tiles = {p['user_id']: p for p in self.grid()['people']}
+        cell_a = self.Position.sudo().search([('user_id', '=', a.id)])
+        cell_b = self.Position.sudo().search([('user_id', '=', b.id)])
+        self.assertNotEqual((cell_a.cell_lat, cell_a.cell_lon), (cell_b.cell_lat, cell_b.cell_lon))
+        self.assertEqual(tiles[a.id]['area'], tiles[b.id]['area'], "même quartier, même zone")
+        self.assertEqual(tiles[a.id]['area'], {'latitude': base[0], 'longitude': base[1], 'radius_m': 1500})
+        self.assertEqual(area(cell_a.cell_lat, cell_a.cell_lon), tiles[a.id]['area'])
+        self.assertNotIn(str(cell_a.cell_lat), json.dumps(tiles[a.id]), "la case ne sort jamais")

@@ -10,6 +10,9 @@ Grille de proximité de l'application mobile.
   l'est aussi après 7 jours sans nouvelles.
 - Les distances sont données **par paliers** (« < 1 km », « 1–2 km », « 2–5 km », « 5–10 km », « 10–25 km »,
   « 25–50 km »…), calculées entre cases : la trilatération ne peut pas descendre sous la taille d'une case.
+- **Carte :** chaque membre visible a une zone floue (`area`) : le centre d'une case grossière de 0,02°
+  (≈ 2,2 km) qui contient sa case, et un rayon de 1,5 km à dessiner. On voit le quartier, pas la rue ; deux membres
+  d'un même quartier ont la même zone. La case de 550 m ne sort jamais.
 - L'activité est donnée par paliers aussi (`now` < 15 min, `today`, `week`), jamais l'heure exacte.
 - **Réciprocité :** pour voir la grille, il faut partager sa propre position.
 
@@ -49,4 +52,4 @@ tuile, à la distance du membre le plus proche.
 | `GET` | `/users/<id>/photo` | | Photo de profil, si le profil la montre au visiteur |
 
 Tuile d'une personne : `{"user_id", "name", "distance", "last_seen", "meet", "availability", "detailed", "has_photo",
-"age"?, "gender"?, "orientation"?}`. Tuile d'une relation : `{"id", "name", "distance", "has_image", "member_ids"}`.
+"area": {"latitude", "longitude", "radius_m"}, "age"?, "gender"?, "orientation"?}`. Tuile d'une relation : `{"id", "name", "distance", "has_image", "member_ids"}`.
