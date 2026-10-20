@@ -18,6 +18,11 @@ Grille de proximité de l'application mobile.
 
 ## Je veux rencontrer
 
+**Lieu choisi :** en activant le mode, le membre peut indiquer où il veut rencontrer (`latitude`,
+`longitude`), à 50 km au plus de sa position. Ce lieu **coexiste** avec la position réelle (grille, distances,
+réciprocité) : Odoo garde sa case de 550 m, la montre aux membres qui le voient déjà (`meet_spot`, rayon 300 m)
+avec sa distance par paliers (`meet_distance`), et l'efface à l'arrêt ou à l'échéance du mode.
+
 Mode activé par le membre pour une durée **qu'il choisit** (1 à 12 heures, 3 par défaut), puis arrêté de lui-même.
 Pendant ce temps :
 
@@ -47,9 +52,9 @@ tuile, à la distance du membre le plus proche.
 |---|---|---|---|
 | `POST` | `/position` | `{"latitude", "longitude"}` | `{"shared": true}` |
 | `DELETE` | `/position` | | `{"shared": false}` |
-| `GET` | `/nearby?radius_km=50` | | `{"meet_until", "people": [...], "relations": [...]}` (`meet_until` : mon mode « Je veux rencontrer », ou `null`) ; `409 no_position` si je ne partage pas ma position |
-| `POST` | `/meet` | `{"active": true, "hours": 3}` ou `{"active": false}` | `{"meet_until"}` (ou `null`) ; `400` durée hors de 1–12 ; `409 no_position` sans position |
+| `GET` | `/nearby?radius_km=50` | | `{"meet_until", "meet_spot", "people": [...], "relations": [...]}` (`meet_until` : mon mode « Je veux rencontrer », ou `null` ; `meet_spot` : mon lieu choisi, ou `null`) ; `409 no_position` si je ne partage pas ma position |
+| `POST` | `/meet` | `{"active": true, "hours": 3, "latitude"?, "longitude"?}` ou `{"active": false}` | `{"meet_until", "meet_spot"}` (ou `null`) ; `400` durée hors de 1–12, lieu invalide ou à plus de 50 km ; `409 no_position` sans position |
 | `GET` | `/users/<id>/photo` | | Photo de profil, si le profil la montre au visiteur |
 
 Tuile d'une personne : `{"user_id", "name", "distance", "last_seen", "meet", "availability", "detailed", "has_photo",
-"area": {"latitude", "longitude", "radius_m"}, "age"?, "gender"?, "orientation"?}`. Tuile d'une relation : `{"id", "name", "distance", "has_image", "member_ids"}`.
+"area": {"latitude", "longitude", "radius_m"}, "meet_spot"?, "meet_distance"?, "age"?, "gender"?, "orientation"?}`. Tuile d'une relation : `{"id", "name", "distance", "has_image", "member_ids"}`.

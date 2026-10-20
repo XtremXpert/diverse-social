@@ -20,6 +20,10 @@ MAX_MEET_HOURS = 12
 # voit le quartier, pas la rue ; deux membres d'un même quartier ont la même zone.
 AREA_DEG = 0.02
 AREA_RADIUS_M = 1500
+# Lieu de rencontre choisi pendant « Je veux rencontrer » : sa case de 550 m (rayon dessiné ~300 m),
+# à 50 km au plus de la position réelle.
+MEET_SPOT_RADIUS_M = 300
+MEET_SPOT_MAX_KM = 50
 # Paliers de distance affichés : (borne supérieure en km, libellé).
 DISTANCE_BUCKETS = [
     (1, "< 1 km"), (2, "1–2 km"), (5, "2–5 km"), (10, "5–10 km"),
@@ -71,6 +75,9 @@ class SocialNearbyPosition(models.Model):
     seen_at = fields.Datetime(readonly=True, index=True)
     # Mode « Je veux rencontrer » : visible des autres jusqu'à cette échéance.
     meet_until = fields.Datetime("Veut rencontrer jusqu'à", readonly=True)
+    # Lieu où le membre veut rencontrer (case de 550 m), s'il en a choisi un autre que sa position.
+    meet_lat = fields.Float(digits=(9, 6), readonly=True)
+    meet_lon = fields.Float(digits=(9, 6), readonly=True)
 
     _user_uniq = models.Constraint('UNIQUE(user_id)', "Une seule position par membre.")
 
@@ -93,17 +100,38 @@ class SocialNearbyPosition(models.Model):
         return position
 
     @api.model
-    def _api_meet(self, active, hours=DEFAULT_MEET_HOURS):
+    def _api_meet(self, active, hours=DEFAULT_MEET_HOURS, latitude=None, longitude=None):
         """Active (pour ``hours`` heures, à compter de maintenant) ou arrête le mode « Je veux
-        rencontrer » du membre courant. Retourne l'échéance, ou ``False``. Exige une position."""
+        rencontrer » du membre courant. Retourne l'échéance, ou ``False``. Exige une position.
+
+        ``latitude`` et ``longitude`` : lieu où le membre veut rencontrer, s'il n'est pas là où il se
+        trouve ; gardé arrondi à sa case de 550 m, effacé à l'arrêt ou à l'échéance."""
         if active and not (isinstance(hours, int) and not isinstance(hours, bool) and 1 <= hours <= MAX_MEET_HOURS):
             raise ValidationError(_("Durée invalide : de 1 à %s heures.", MAX_MEET_HOURS))
         position = self.sudo().search([('user_id', '=', self.env.uid)], limit=1)
         if not position:
             return None
+        spot = (0.0, 0.0)
+        if active and (latitude is not None or longitude is not None):
+            try:
+                latitude, longitude = float(latitude), float(longitude)
+            except (TypeError, ValueError):
+                raise ValidationError(_("Lieu de rencontre invalide.")) from None
+            if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+                raise ValidationError(_("Lieu de rencontre hors limites."))
+            spot = snap(latitude, longitude)
+            if distance_km(position.cell_lat, position.cell_lon, *spot) > MEET_SPOT_MAX_KM:
+                raise ValidationError(_("Le lieu de rencontre doit être à %s km au plus de vous.", MEET_SPOT_MAX_KM))
         until = fields.Datetime.now() + datetime.timedelta(hours=hours) if active else False
-        position.meet_until = until
+        position.write({'meet_until': until, 'meet_lat': spot[0], 'meet_lon': spot[1]})
         return until
+
+    def _meet_spot(self):
+        """Lieu de rencontre choisi, tant que le mode dure : centre de sa case et rayon à dessiner."""
+        self.ensure_one()
+        if not self._meeting() or not (self.meet_lat or self.meet_lon):
+            return None
+        return {'latitude': self.meet_lat, 'longitude': self.meet_lon, 'radius_m': MEET_SPOT_RADIUS_M}
 
     def _meeting(self):
         self.ensure_one()
@@ -183,7 +211,8 @@ class SocialNearbyPosition(models.Model):
 
         return {
             'meet_until': me.meet_until if me._meeting() else None,
-            'people': [self._person_payload(viewer, km, position, profile) for km, position, profile in people],
+            'meet_spot': me._meet_spot(),
+            'people': [self._person_payload(viewer, km, position, profile, me) for km, position, profile in people],
             'relations': [{
                 'id': relation.id,
                 'name': relation.name,
@@ -194,7 +223,7 @@ class SocialNearbyPosition(models.Model):
         }
 
     @api.model
-    def _person_payload(self, viewer, km, position, profile):
+    def _person_payload(self, viewer, km, position, profile, me=None):
         """Tuile de la grille. Les informations détaillées (âge, genre, orientation, photo) ne
         sont données que si le profil les montre à ``viewer`` (cercles, connexions…)."""
         user = position.user_id
@@ -213,6 +242,12 @@ class SocialNearbyPosition(models.Model):
             # Carte : zone floue d'environ 2 km, jamais la case.
             'area': area(position.cell_lat, position.cell_lon),
         }
+        spot = position._meet_spot()
+        if spot:
+            # Où il veut rencontrer, s'il l'a choisi : la case, et sa distance depuis ma case.
+            payload['meet_spot'] = spot
+            if me:
+                payload['meet_distance'] = bucket(distance_km(me.cell_lat, me.cell_lon, spot['latitude'], spot['longitude']))
         if detailed:
             payload.update({
                 'age': profile.age or None,

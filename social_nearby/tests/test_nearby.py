@@ -208,3 +208,33 @@ class TestNearby(HttpCase):
         self.assertEqual(tiles[a.id]['area'], {'latitude': base[0], 'longitude': base[1], 'radius_m': 1500})
         self.assertEqual(area(cell_a.cell_lat, cell_a.cell_lon), tiles[a.id]['area'])
         self.assertNotIn(str(cell_a.cell_lat), json.dumps(tiles[a.id]), "la case ne sort jamais")
+
+    def test_meet_spot_elsewhere(self):
+        """Lieu de rencontre choisi ailleurs : il coexiste avec la position réelle, le temps du mode."""
+        sam = self._make_member('lieu.sam@example.com')
+        self.at(self.viewer, MONTREAL)
+        self.at(sam, offset(MONTREAL, north_m=300))
+        bar = offset(MONTREAL, north_m=6000, east_m=1000)
+        self.assertEqual(self.call('POST', '/meet', sam, {'active': True, 'latitude': 'nord'}).status_code, 400)
+        self.assertEqual(self.call('POST', '/meet', sam, {'active': True, 'latitude': QUEBEC[0], 'longitude': QUEBEC[1]}).status_code,
+                         400, "à plus de 50 km de sa position")
+        res = self.call('POST', '/meet', sam, {'active': True, 'hours': 2, 'latitude': bar[0], 'longitude': bar[1]})
+        self.assertEqual(res.status_code, 200, res.text)
+        cell = snap(*bar)
+        self.assertEqual(res.json()['meet_spot'], {'latitude': cell[0], 'longitude': cell[1], 'radius_m': 300})
+        tile = next(p for p in self.grid()['people'] if p['user_id'] == sam.id)
+        self.assertEqual(tile['distance'], "< 1 km", "la position réelle reste")
+        self.assertEqual(tile['meet_spot'], {'latitude': cell[0], 'longitude': cell[1], 'radius_m': 300})
+        self.assertEqual(tile['meet_distance'], "5–10 km")
+        self.assertEqual(self.call('GET', '/nearby', sam).json()['meet_spot']['latitude'], cell[0], "je vois mon lieu")
+        # « Ici » : plus de lieu choisi.
+        self.call('POST', '/meet', sam, {'active': True, 'hours': 2})
+        tile = next(p for p in self.grid()['people'] if p['user_id'] == sam.id)
+        self.assertNotIn('meet_spot', tile)
+        # Le lieu ne survit ni à l'arrêt ni à l'échéance.
+        self.call('POST', '/meet', sam, {'active': True, 'latitude': bar[0], 'longitude': bar[1]})
+        position = self.Position.sudo().search([('user_id', '=', sam.id)])
+        position.meet_until = fields.Datetime.now() - datetime.timedelta(seconds=1)
+        self.assertNotIn('meet_spot', next(p for p in self.grid()['people'] if p['user_id'] == sam.id))
+        self.call('POST', '/meet', sam, {'active': False})
+        self.assertEqual((position.meet_lat, position.meet_lon), (0.0, 0.0))
