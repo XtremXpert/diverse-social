@@ -1,4 +1,6 @@
-from odoo import fields, models
+from odoo import _, api, fields, models
+
+from . import fcm
 
 
 class ResConfigSettings(models.TransientModel):
@@ -16,6 +18,29 @@ class ResConfigSettings(models.TransientModel):
         groups='base.group_system',
         help="Contenu du fichier JSON de la clé du compte de service (console Firebase → Paramètres du projet "
              "→ Comptes de service → Générer une nouvelle clé privée).")
+    # Téléversement du même fichier JSON : son contenu passe dans le champ ci-dessus, puis le fichier
+    # est oublié (rien ne reste dans l'enregistrement temporaire des réglages).
+    social_mobile_push_fcm_file = fields.Binary(
+        "Fichier du compte de service", attachment=False, groups='base.group_system')
     social_mobile_push_show_sender = fields.Boolean(
         "Nommer l'expéditeur", config_parameter='social_mobile_push.show_sender',
         help="Décoché (recommandé) : « Nouveau message », sans nom, même sur l'écran verrouillé.")
+
+    @api.onchange('social_mobile_push_fcm_file')
+    def _onchange_social_mobile_push_fcm_file(self):
+        if not self.social_mobile_push_fcm_file:
+            return None
+        data = self.social_mobile_push_fcm_file.content
+        self.social_mobile_push_fcm_file = False
+        try:
+            text = data.decode('utf-8')
+        except UnicodeDecodeError:
+            text = ''
+        if not fcm.parse_service_account(text):
+            return {'warning': {
+                'title': _("Fichier refusé"),
+                'message': _("Ce n'est pas la clé JSON d'un compte de service Firebase "
+                             "(project_id, client_email et private_key attendus)."),
+            }}
+        self.social_mobile_push_fcm_service_account = text
+        return None

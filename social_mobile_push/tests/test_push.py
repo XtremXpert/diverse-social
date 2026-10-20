@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import HttpCase, new_test_user, tagged
+from odoo.tools import BinaryBytes
 
 from odoo.addons.social_mobile_push.models import apns, fcm
 
@@ -370,3 +371,24 @@ class TestPush(HttpCase):
         action = self.send_test(device, self.admin)
         self.assertEqual(action['params']['type'], 'success')
         self.assertEqual(self.fcm_sent[0]['message']['data'], {'type': 'alert', 'title': "Diverse-Cité", 'body': "Notification d'essai"})
+
+    def test_service_account_file_upload(self):
+        """Le fichier JSON téléversé remplit le champ du compte de service, puis il est oublié."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_str('social_mobile_push.fcm_service_account', '')
+        text = json.dumps(self.service_account)
+        settings = self.env['res.config.settings'].new({
+            'social_mobile_push_fcm_file': BinaryBytes(text.encode(), filename='diverse-cite-firebase.json'),
+        })
+        self.assertIsNone(settings._onchange_social_mobile_push_fcm_file())
+        self.assertEqual(settings.social_mobile_push_fcm_service_account, text)
+        self.assertFalse(settings.social_mobile_push_fcm_file)
+
+        # Un autre fichier (la clé Apple, un google-services.json…) est refusé, le réglage reste.
+        settings = self.env['res.config.settings'].new({
+            'social_mobile_push_fcm_service_account': text,
+            'social_mobile_push_fcm_file': BinaryBytes(b'{"project_info": {}}'),
+        })
+        self.assertIn('warning', settings._onchange_social_mobile_push_fcm_file())
+        self.assertEqual(settings.social_mobile_push_fcm_service_account, text)
+        self.assertFalse(settings.social_mobile_push_fcm_file)
