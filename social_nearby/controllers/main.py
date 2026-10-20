@@ -51,19 +51,23 @@ class SocialNearbyApi(http.Controller):
     @http.route(f'{API}/meet', methods=['POST'], **ROUTE)
     def meet(self):
         """Mode « Je veux rencontrer » : ``{"active": true, "hours": 3}`` (1 à 12 heures, 3 par
-        défaut), ``{"active": false}`` pour l'arrêter."""
+        défaut), avec ``"latitude"`` et ``"longitude"`` pour un lieu de rencontre choisi ailleurs ;
+        ``{"active": false}`` pour l'arrêter."""
         if err := self._member_or_error():
             return err
         body = json_body()
         if body is None or not isinstance(body.get('active'), bool):
             return error(400, 'invalid', "Corps attendu : {\"active\": true|false, \"hours\": 1–12}.")
         try:
-            until = request.env['social_nearby.position']._api_meet(body['active'], body.get('hours', DEFAULT_MEET_HOURS))
+            until = request.env['social_nearby.position']._api_meet(
+                body['active'], body.get('hours', DEFAULT_MEET_HOURS), body.get('latitude'), body.get('longitude'))
         except ValidationError as e:
             return error(400, 'invalid', str(e))
         if until is None:
             return error(409, 'no_position', "Partagez votre position pour activer ce mode.")
-        return json_response({'meet_until': iso(until) if until else None})
+        spot = request.env['social_nearby.position'].sudo().search(
+            [('user_id', '=', request.env.uid)], limit=1)._meet_spot() if until else None
+        return json_response({'meet_until': iso(until) if until else None, 'meet_spot': spot})
 
     @http.route(f'{API}/users/<int:user_id>/photo', methods=['GET'], **ROUTE)
     def user_photo(self, user_id):
