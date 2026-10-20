@@ -16,6 +16,10 @@ STALE_DAYS = 7
 # position en arrière-plan, jamais plus de MAX_MEET_HOURS heures d'affilée.
 DEFAULT_MEET_HOURS = 3
 MAX_MEET_HOURS = 12
+# Zone de la carte : une case grossière de 0,02° (≈ 2,2 km), qui contient la case du membre. On
+# voit le quartier, pas la rue ; deux membres d'un même quartier ont la même zone.
+AREA_DEG = 0.02
+AREA_RADIUS_M = 1500
 # Paliers de distance affichés : (borne supérieure en km, libellé).
 DISTANCE_BUCKETS = [
     (1, "< 1 km"), (2, "1–2 km"), (5, "2–5 km"), (10, "5–10 km"),
@@ -23,12 +27,19 @@ DISTANCE_BUCKETS = [
 ]
 
 
-def snap(latitude, longitude):
+def snap(latitude, longitude, size=CELL_DEG):
     """Centre de la case qui contient le point : la seule position qu'Odoo conserve."""
-    lat = (math.floor(latitude / CELL_DEG) + 0.5) * CELL_DEG
-    lon_step = CELL_DEG / max(math.cos(math.radians(lat)), 0.01)
+    lat = (math.floor(latitude / size) + 0.5) * size
+    lon_step = size / max(math.cos(math.radians(lat)), 0.01)
     lon = (math.floor(longitude / lon_step) + 0.5) * lon_step
     return round(lat, 6), round(((lon + 180) % 360) - 180, 6)
+
+
+def area(cell_lat, cell_lon):
+    """Zone floue d'un membre sur la carte : centre de la case de 0,02° qui contient sa case, et
+    rayon à dessiner. La case de 550 m, elle, ne sort jamais."""
+    lat, lon = snap(cell_lat, cell_lon, AREA_DEG)
+    return {'latitude': lat, 'longitude': lon, 'radius_m': AREA_RADIUS_M}
 
 
 def distance_km(lat1, lon1, lat2, lon2):
@@ -199,6 +210,8 @@ class SocialNearbyPosition(models.Model):
             'availability': profile.availability or None,
             'detailed': detailed,
             'has_photo': bool(detailed and profile.profile_image),
+            # Carte : zone floue d'environ 2 km, jamais la case.
+            'area': area(position.cell_lat, position.cell_lon),
         }
         if detailed:
             payload.update({
