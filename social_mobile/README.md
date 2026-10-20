@@ -79,6 +79,25 @@ Un code reste accepté pendant environ deux minutes (période en cours et trois 
 | `POST` | `/sponsor/preview` | `{"enrollment_id", "code"}` | `{"email", "device_name", "can_sponsor", "refusal"}` ; `404` QR code échu |
 | `POST` | `/sponsor/confirm` | `{"enrollment_id", "code", "statement"?}` | `{"newcomer": {"id", "name"}}` ; `409` refus (parrain non admissible, courriel déjà inscrit, déjà parrainé par un autre). Idempotent pour le même parrain |
 | `POST` | `/token/renew` | `{"device_name"}` | Nouvelle clé ; l'ancienne reste valable 24 heures |
+| `GET` | `/profile` | | `{"profile": {…}, "options": {…}, "onboarding_done", "adult_age"}` (voir ci-dessous) |
+| `POST` | `/profile` | champs à modifier | Même réponse que `GET` ; `422` valeur refusée (année de naissance de moins de 18 ans, choix inconnu…) |
+| `POST` | `/profile/photo` | `{"data": "<jpeg ou png en base64>"}` | `{"has_photo": true}` ; `400` base64 illisible ou plus de 10 Mo ; `422` pas une image |
+| `POST` | `/profile/complete` | | `{"onboarding_done": true}` ; `422 birth_year_required` sans année de naissance d'adulte |
+
+## Accueil dans l'application
+
+Un compte créé par parrainage a un profil vide, marqué « non terminé » (`onboarding_done` faux) : la grille
+À proximité ne le montre pas. L'application l'impose donc dès que `/me` le dit, avant les onglets, avec les trois
+étapes de `/onboarding` sur le site : **photo** (facultative), **à propos de moi** (pronoms, présentation, année
+de naissance, ville, région, genre, orientation, citation), **préférences** (visibilité, disponibilité,
+recherche, langues, résumé par courriel). Seule l'**année de naissance** est obligatoire (18 ans ou plus) ;
+`/profile/complete` la vérifie et marque le profil terminé, qui ne s'écrit jamais par `/profile`.
+
+`profile` : `pronouns`, `bio`, `birth_year`, `city`, `region`, `quote`, `gender`, `orientation`,
+`availability`, `visibility` (valeur ou `null`), `digest_email_enabled`, `looking_for_ids`, `language_ids`,
+`has_photo`. `options` : pour `gender`, `orientation`, `availability`, `visibility`, une liste
+`{"value", "label"}` ; pour `looking_for_ids` et `language_ids`, une liste `{"id", "name"}`. Les libellés sont
+dans la langue du membre. `POST /profile` n'écrit que les champs reçus.
 
 ## Examen App Store
 

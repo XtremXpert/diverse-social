@@ -6,6 +6,8 @@ Deux familles de routes sous /api/social/v1 :
 * authentifiées par « Authorization: Bearer <clé> », clé API de portée « social_mobile ».
   Une clé « rpc » n'y donne pas accès, et une clé « social_mobile » n'ouvre pas /json/2.
 """
+import base64
+import binascii
 import datetime
 import hmac
 import json
@@ -265,6 +267,57 @@ class SocialMobileApi(http.Controller):
         request.env['res.users.apikeys']._social_mobile_revoke_all()
         user._deactivate_portal_user()
         return json_response({'deleted': True})
+
+    # ── Profil (accueil dans l'application) ──────────────────────────────────
+
+    def _profile(self):
+        return request.env['club_social_profile.profile'].sudo().get_or_create_for_user(request.env.user)
+
+    @http.route(f'{API}/profile', methods=['GET'], **ROUTE)
+    def profile(self):
+        return json_response(self._profile()._mobile_payload())
+
+    @http.route(f'{API}/profile', methods=['POST'], **ROUTE)
+    def update_profile(self):
+        """Modifie les champs reçus ; les autres restent tels quels."""
+        body = json_body()
+        if body is None:
+            return error(400, 'invalid_json', "Corps JSON attendu.")
+        profile = self._profile()
+        try:
+            profile._mobile_update(body)
+        except (UserError, ValidationError) as e:
+            return error(422, 'invalid', str(e))
+        return json_response(profile._mobile_payload())
+
+    @http.route(f'{API}/profile/photo', methods=['POST'], **ROUTE)
+    def update_photo(self):
+        """Photo de profil : ``{"data": "<jpeg ou png en base64>"}``."""
+        body = json_body()
+        if body is None or not isinstance(body.get('data'), str):
+            return error(400, 'invalid_json', "Corps JSON attendu : {\"data\": base64}.")
+        try:
+            data = base64.b64decode(body['data'], validate=True)
+        except (binascii.Error, ValueError):
+            return error(400, 'invalid', "Image illisible (base64 attendu).")
+        if not data or len(data) > 10 * 1024 * 1024:
+            return error(400, 'invalid', "Image vide ou trop lourde (10 Mo au plus).")
+        profile = self._profile()
+        try:
+            profile._mobile_set_photo(data)
+        except (UserError, ValidationError) as e:
+            return error(422, 'invalid', str(e))
+        return json_response({'has_photo': bool(profile.profile_image)})
+
+    @http.route(f'{API}/profile/complete', methods=['POST'], **ROUTE)
+    def complete_profile(self):
+        """Fin de l'accueil : le membre apparaît dans la grille. Exige l'année de naissance."""
+        profile = self._profile()
+        try:
+            profile._mobile_complete()
+        except (UserError, ValidationError) as e:
+            return error(422, 'birth_year_required', str(e))
+        return json_response({'onboarding_done': True})
 
     @http.route(f'{API}/token/renew', methods=['POST'], **ROUTE)
     def renew_token(self):
