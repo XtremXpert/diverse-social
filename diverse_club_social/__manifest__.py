@@ -1,6 +1,6 @@
 {
     'name': 'Diverse — Club Social',
-    'version': '20.0.1.0.21',
+    'version': '20.0.1.0.22',
     'category': 'Social',
     'summary': 'Leaf module for www.diverse-cite.com — assembles all social modules with site-specific config',
     'author': 'Bemade',
@@ -53,6 +53,8 @@
         'social_help',
         # Messagerie Discuss (carte /my + entrée nav)
         'social_messaging_discuss',
+        # Conversation de groupe de chaque groupe
+        'social_group_discuss',
         # Website (homepage override)
         'website',
         'website_sale',

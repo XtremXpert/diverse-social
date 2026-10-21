@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Page d'un groupe : accès à sa conversation pour ses membres. -->
+    <template id="portal_group_detail_conversation" inherit_id="social_group.portal_group_detail">
+        <xpath expr="//form[@t-attf-action='/groups/#{group.id}/leave']" position="before">
+            <a t-if="group.sudo().channel_id" t-attf-href="/discuss/channel/#{group.sudo().channel_id.id}"
+               class="btn btn-primary btn-sm me-2">Conversation du groupe</a>
+        </xpath>
+    </template>
+</odoo>
