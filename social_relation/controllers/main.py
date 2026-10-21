@@ -5,6 +5,7 @@ import binascii
 from odoo import http
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
+from odoo.tools import BinaryBytes
 
 from odoo.addons.social_mobile.controllers.main import API, ROUTE, error, json_body, json_response
 
@@ -71,7 +72,7 @@ class SocialRelationApi(http.Controller):
                 return error(400, 'invalid_image', "Image illisible.")
             if len(image) > MAX_IMAGE_BYTES:
                 return error(413, 'image_too_large', "Image trop lourde (5 Mo au plus).")
-            vals['image_1920'] = base64.b64encode(image)
+            vals['image_1920'] = BinaryBytes(image)
 
         def run():
             relation.action_update(vals)
@@ -83,8 +84,10 @@ class SocialRelationApi(http.Controller):
         relation = request.env['social_relation.relation'].sudo().browse(relation_id).exists()
         if not relation or not relation._visible_to(request.env.user) or not relation.image_512:
             return error(404, 'not_found', "Image introuvable.")
-        return request.make_response(base64.b64decode(relation.image_512), headers=[
-            ('Content-Type', 'image/png'), ('Cache-Control', 'private, max-age=300')])
+        # Odoo 20 : un champ image est un BinaryValue (octets bruts), plus du base64.
+        image = relation.image_512
+        return request.make_response(image.content, headers=[
+            ('Content-Type', image.mimetype or 'image/png'), ('Cache-Control', 'private, max-age=300')])
 
     @http.route(f'{API}/relations/<int:relation_id>/invite', methods=['POST'], **ROUTE)
     def invite(self, relation_id):

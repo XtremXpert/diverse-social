@@ -1,6 +1,6 @@
 {
     'name': 'Social Relations',
-    'version': '20.0.1.0.0',
+    'version': '20.0.1.0.1',
     'category': 'Social',
     'summary': "Relations de deux personnes ou plus (couple, trouple, polycule), chacune avec son profil",
     'description': """
