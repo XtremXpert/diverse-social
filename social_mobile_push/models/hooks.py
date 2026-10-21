@@ -11,12 +11,14 @@ class DiscussChannel(models.Model):
         return message
 
     def _mobile_push_new_message(self, message):
-        """Notifie les autres membres d'une conversation mobile (à deux ou de relation)."""
+        """Notifie les autres membres d'une conversation mobile (à deux, de relation ou de groupe).
+
+        Les canaux Discuss (``channel``), souvent nombreux, se lisent dans l'application sans
+        notification, comme sur le site."""
         Queue = self.env['social_mobile.push_queue']
         for channel in self.sudo():
-            is_mobile = channel.channel_type == 'chat' or (channel.channel_type == 'group' and channel._mobile_relation())
-            if not is_mobile:
-                continue  # autres canaux Discuss : jamais de notification mobile
+            if channel.channel_type not in ('chat', 'group'):
+                continue  # canaux Discuss : jamais de notification mobile
             author = message.author_id.user_ids[:1]
             recipients = channel.channel_member_ids.partner_id.filtered(
                 lambda p: p != message.author_id).user_ids

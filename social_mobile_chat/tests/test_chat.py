@@ -3,6 +3,7 @@ import json
 
 from odoo.tools.misc import file_open
 
+from odoo import Command
 from odoo.tests import HttpCase, new_test_user, tagged
 
 API = '/api/social/v1'
@@ -104,6 +105,32 @@ class TestMobileChat(HttpCase):
         # Quitter la relation retire de sa conversation.
         relation.with_user(self.c).action_leave()
         self.assertEqual(self.call('GET', f'/chats/{cid}/messages', self.c).status_code, 404)
+
+    def _discuss_channel(self, channel_type, members, name=''):
+        return self.env['discuss.channel'].sudo().create({
+            'name': name, 'channel_type': channel_type,
+            'channel_member_ids': [Command.create({'partner_id': u.partner_id.id}) for u in members],
+        })
+
+    def test_group_conversation_and_channel(self):
+        # Groupe créé dans Discuss (sans relation) : listé, titré par les pseudonymes, ouvert à l'écriture.
+        group = self._discuss_channel('group', self.a | self.b | self.c)
+        chats = self.call('GET', '/chats', self.c).json()['chats']
+        self.assertEqual([(c['id'], c['kind']) for c in chats], [(group.id, 'group')])
+        self.assertEqual(chats[0]['title'], "A, B", "pseudonymes des autres membres, jamais les vrais noms")
+        sent = self.call('POST', f'/chats/{group.id}/messages', self.c, {'body': 'Bonjour le groupe'})
+        self.assertEqual(sent.status_code, 200, sent.text)
+        self.assertEqual(self.call('GET', '/chats/unread', self.a).json()['unread'], 1)
+        group.name = "Les trois"
+        self.assertEqual(self.call('GET', '/chats', self.a).json()['chats'][0]['title'], "Les trois")
+
+        # Canal Discuss : listé pour ses membres seulement.
+        channel = self._discuss_channel('channel', self.a | self.b, name="Bénévoles")
+        self.assertIn(channel.id, [c['id'] for c in self.call('GET', '/chats', self.a).json()['chats']])
+        self.assertNotIn(channel.id, [c['id'] for c in self.call('GET', '/chats', self.c).json()['chats']])
+        self.assertEqual(self.call('GET', f'/chats/{channel.id}/messages', self.c).status_code, 404)
+        messages = self.call('GET', f'/chats/{channel.id}/messages', self.b)
+        self.assertEqual(messages.status_code, 200, messages.text)
 
     def test_validation(self):
         cid = self.open_chat(self.a, self.b).json()['chat']['id']

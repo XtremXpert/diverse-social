@@ -1,6 +1,6 @@
 {
     'name': 'Social Mobile Chat',
-    'version': '20.0.1.2.0',
+    'version': '20.0.1.3.0',
     'category': 'Social / Communication',
     'summary': "Messagerie Discuss dans l'application mobile : conversations privées et de relation",
     'description': """

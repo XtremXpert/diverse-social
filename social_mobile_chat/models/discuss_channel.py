@@ -29,6 +29,9 @@ MAX_IMAGE_SIDE = 4096
 THUMB_SIDE = 512
 
 
+# Conversations visibles dans l'application : chats à deux, groupes (dont les relations) et canaux.
+MOBILE_TYPES = ('chat', 'group', 'channel')
+
 def iso(value):
     return value.replace(tzinfo=datetime.UTC).isoformat() if value else None
 
@@ -36,8 +39,8 @@ def iso(value):
 class DiscussChannel(models.Model):
     """Messagerie de l'application mobile.
 
-    Les conversations de l'application sont les chats à deux et les conversations de relation
-    (``social_relation``). Toutes les lectures se font en sudo, mais toujours après avoir vérifié
+    Les conversations de l'application sont les chats à deux, les conversations de relation
+    (``social_relation``) et les conversations de groupe et canaux Discuss dont le membre fait partie. Toutes les lectures se font en sudo, mais toujours après avoir vérifié
     que l'utilisateur courant est membre du canal ; les envois passent par ``message_post`` avec
     l'utilisateur courant, donc par le contrôle de blocage de ``social_messaging_discuss``."""
     _inherit = 'discuss.channel'
@@ -49,8 +52,9 @@ class DiscussChannel(models.Model):
             ('channel_id', '!=', False), ('state', '=', 'active'),
             ('member_ids', 'any', [('user_id', '=', user.id), ('state', '=', 'accepted')]),
         ]).channel_id
+        # Chats à deux, groupes et canaux Discuss : seulement ceux dont le membre fait partie.
         chats = self.sudo().search([
-            ('channel_type', '=', 'chat'),
+            ('channel_type', 'in', MOBILE_TYPES),
             ('channel_member_ids.partner_id', '=', user.partner_id.id),
         ])
         return (chats | relation_channels).sorted(lambda c: c.last_interest_dt or c.create_date, reverse=True)
@@ -59,7 +63,7 @@ class DiscussChannel(models.Model):
         """Le canal, en sudo, si ``user`` en est membre et que c'est une conversation mobile."""
         self.ensure_one()
         channel = self.sudo()
-        if channel.channel_type not in ('chat', 'group') or user.partner_id not in channel.channel_member_ids.partner_id:
+        if channel.channel_type not in MOBILE_TYPES or user.partner_id not in channel.channel_member_ids.partner_id:
             raise AccessError(_("Conversation introuvable."))
         return channel
 
@@ -76,7 +80,6 @@ class DiscussChannel(models.Model):
         ], order='id desc', limit=1)
         payload = {
             'id': channel.id,
-            'kind': 'chat' if channel.channel_type == 'chat' else 'relation',
             'unread': member.message_unread_counter if member else 0,
             'last_message': self._mobile_message(last, user, Profile) if last else None,
             'last_activity': iso(channel.last_interest_dt or channel.create_date),
@@ -84,16 +87,27 @@ class DiscussChannel(models.Model):
         if channel.channel_type == 'chat':
             other = channel.channel_member_ids.partner_id.filtered(lambda p: p != user.partner_id).user_ids[:1]
             payload.update({
+                'kind': 'chat',
                 'title': Profile._display_name_for_user(other) if other else channel.name,
                 'other_user_id': other.id or None,
                 'relation_id': None,
             })
-        else:
-            relation = channel._mobile_relation()
+        elif relation := channel._mobile_relation():
             payload.update({
+                'kind': 'relation',
                 'title': relation.name or channel.name,
                 'other_user_id': None,
-                'relation_id': relation.id or None,
+                'relation_id': relation.id,
+            })
+        else:
+            # Groupe ou canal Discuss : son nom, sinon les pseudonymes des autres membres.
+            others = channel.channel_member_ids.partner_id.filtered(lambda p: p != user.partner_id).user_ids
+            names = [Profile._display_name_for_user(u) for u in others[:4]]
+            payload.update({
+                'kind': 'group',
+                'title': channel.name or ", ".join(names) + ("…" if len(others) > 4 else ""),
+                'other_user_id': None,
+                'relation_id': None,
             })
         return payload
 
