@@ -31,11 +31,22 @@ Messagerie de l'application mobile, par-dessus Discuss et `social_messaging_disc
 | `GET` | `/chats/<id>/messages` | `before`, `after`, `limit` (50, 200 max) | `{"messages": [...]}` du plus ancien au plus récent |
 | `POST` | `/chats/<id>/messages` | `{"body"}` | `{"message"}` ; `403` si bloqué ou vide |
 | `POST` | `/chats/<id>/voice` | `{"data"}` : `.m4a` en base64 | `{"message"}` ; `403` si bloqué, trop long ou format refusé |
-| `GET` | `/chats/<id>/attachments/<att_id>` | | Contenu de la pièce jointe (`Content-Type` d'origine) |
+| `POST` | `/chats/<id>/attachments` | `{"data", "name", "body"?}` : fichier en base64, légende facultative | `{"message"}` ; `403` si bloqué, vide, de plus de 15 Mo, d'un type refusé (SVG, HTML, JavaScript, XML) ou image illisible |
+| `GET` | `/chats/<id>/attachments/<att_id>` | `thumb=1` : miniature JPEG de 512 px au plus d'une image | Contenu de la pièce jointe (`Content-Type` d'origine) |
 | `POST` | `/chats/<id>/read` | `{"last_message_id"}` | Marque comme lu jusqu'à ce message |
 | `GET` | `/chats/unread` | | `{"unread"}` : total des non-lus |
 
 Conversation : `{"id", "kind": "chat"|"relation", "title", "other_user_id", "relation_id", "unread",
-"last_message", "last_activity"}`. Message : `{"id", "author_user_id", "author_name", "is_mine", "body", "date", "voice", "attachment_count"}`, où
+"last_message", "last_activity"}`. Message : `{"id", "author_user_id", "author_name", "is_mine", "body", "date", "voice", "attachments", "attachment_count"}`, où
 `voice` vaut `{"attachment_id", "mimetype"}` pour un message vocal, sinon `null`.
 Une conversation dont on n'est pas membre répond `404`, sans dire si elle existe.
+
+## Photos et fichiers
+
+Un message porte `attachments` : `[{"id", "name", "mimetype", "size", "is_image"}]`, ses pièces jointes autres
+que le message vocal, qu'elles viennent de l'application ou de Discuss sur le site (`attachment_count` reste
+pour les versions installées). Le type d'un fichier envoyé vient de son contenu, jamais de l'appareil. Une
+photo (JPEG, PNG, WebP) est redressée d'après son orientation EXIF, réduite à 4096 px et **réenregistrée sans
+métadonnées** : une photo de téléphone porte sa position GPS exacte, alors que l'application ne montre jamais
+qu'une zone d'environ 2 km. SVG, HTML, JavaScript et XML sont refusés : ouverts dans Discuss, ils exécuteraient du
+code chez les autres membres (l'envoi se fait en sudo, le garde-fou SVG d'Odoo ne joue pas).
