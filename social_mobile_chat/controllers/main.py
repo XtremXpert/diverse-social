@@ -92,15 +92,32 @@ class SocialMobileChatApi(http.Controller):
             return error(400, 'invalid', "Audio illisible (base64 attendu).")
         return self._run(lambda: json_response({'message': channel._mobile_post_voice(request.env.user, data)}))
 
+    @http.route(f'{API}/chats/<int:channel_id>/attachments', methods=['POST'], **ROUTE)
+    def post_attachment(self, channel_id):
+        """Photo ou fichier : ``{"data": base64, "name": "photo.jpg", "body"?: légende}``."""
+        channel = self._channel(channel_id)
+        if not channel:
+            return error(404, 'not_found', "Conversation introuvable.")
+        body = json_body()
+        if body is None or not isinstance(body.get('data'), str):
+            return error(400, 'invalid_json', "Corps JSON attendu : {\"data\": base64, \"name\"}.")
+        try:
+            data = base64.b64decode(body['data'], validate=True)
+        except (binascii.Error, ValueError):
+            return error(400, 'invalid', "Fichier illisible (base64 attendu).")
+        name = body.get('name') if isinstance(body.get('name'), str) else ''
+        caption = body.get('body') if isinstance(body.get('body'), str) else None
+        return self._run(lambda: json_response({'message': channel._mobile_post_file(request.env.user, name, data, caption)}))
+
     @http.route(f'{API}/chats/<int:channel_id>/attachments/<int:attachment_id>', methods=['GET'], **ROUTE)
-    def attachment(self, channel_id, attachment_id):
-        """Contenu d'une pièce jointe de la conversation (message vocal)."""
+    def attachment(self, channel_id, attachment_id, thumb=None):
+        """Contenu d'une pièce jointe de la conversation ; ``?thumb=1`` : miniature d'une image."""
         channel = self._channel(channel_id)
         if not channel:
             return error(404, 'not_found', "Conversation introuvable.")
 
         def run():
-            data, mimetype = channel._mobile_attachment(request.env.user, attachment_id)
+            data, mimetype = channel._mobile_attachment(request.env.user, attachment_id, thumb=thumb in ('1', 'true'))
             return request.make_response(data, headers=[
                 ('Content-Type', mimetype), ('Content-Length', str(len(data))),
                 ('Cache-Control', 'private, max-age=86400'), ('X-Content-Type-Options', 'nosniff')])

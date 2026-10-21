@@ -165,3 +165,106 @@ class TestMobileChat(HttpCase):
         self.assertEqual(self.send_voice(cid, self.a, b'\0\0\0\x1cftyp' + b'\0' * (3 * 1024 * 1024)).status_code, 403)
         self.assertEqual(self.call('POST', f'/chats/{cid}/voice', self.a, {'data': '%%%'}).status_code, 400)
         self.assertEqual(self.call('POST', f'/chats/{cid}/voice', self.a, {}).status_code, 400)
+
+    # ── Photos et fichiers ──────────────────────────────────────────────────
+
+    def _photo_with_gps(self):
+        """JPEG 300 × 200 couché (orientation EXIF 6) avec une position GPS : ce que donne un téléphone."""
+        import io
+        from PIL import Image
+        image = Image.new('RGB', (300, 200), (200, 30, 60))
+        exif = Image.Exif()
+        exif[0x0112] = 6  # Orientation : à tourner de 90°
+        exif[0x8825] = {1: 'N', 2: (45.0, 30.0, 0.0), 3: 'W', 4: (73.0, 34.0, 0.0)}  # GPSInfo
+        out = io.BytesIO()
+        image.save(out, 'JPEG', exif=exif)
+        return out.getvalue()
+
+    def test_photo_is_sent_upright_and_without_location(self):
+        import io
+        from PIL import Image
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        data = self._photo_with_gps()
+        self.assertIn(b'Exif', data[:200])
+        res = self.call('POST', f'/chats/{cid}/attachments', self.a,
+                        {'data': base64.b64encode(data).decode(), 'name': 'IMG_0001.jpg', 'body': "Regarde !"})
+        self.assertEqual(res.status_code, 200, res.text)
+        message = res.json()['message']
+        self.assertEqual(message['body'], "Regarde !")
+        [attachment] = message['attachments']
+        self.assertEqual((attachment['name'], attachment['mimetype'], attachment['is_image']), ('IMG_0001.jpg', 'image/jpeg', True))
+        self.assertEqual(message['attachment_count'], 1, "ancien champ, pour les versions installées")
+
+        stored = self.call('GET', f"/chats/{cid}/attachments/{attachment['id']}", self.b)
+        self.assertEqual(stored.status_code, 200)
+        with Image.open(io.BytesIO(stored.content)) as image:
+            self.assertEqual(image.size, (200, 300), "redressée d'après l'orientation EXIF")
+            exif = image.getexif()
+            self.assertNotIn(0x8825, exif, "aucune position GPS")
+            self.assertNotIn(0x0112, exif)
+
+        thumb = self.call('GET', f"/chats/{cid}/attachments/{attachment['id']}?thumb=1", self.b)
+        self.assertEqual(thumb.headers['Content-Type'], 'image/jpeg')
+        with Image.open(io.BytesIO(thumb.content)) as image:
+            self.assertLessEqual(max(image.size), 512)
+
+        listed = self.call('GET', f'/chats/{cid}/messages', self.b).json()['messages'][-1]
+        self.assertEqual(listed['attachments'][0]['id'], attachment['id'])
+
+    def test_file_is_sent_as_is(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        pdf = b'%PDF-1.4\n1 0 obj << >> endobj\ntrailer << >>\n%%EOF\n'
+        res = self.call('POST', f'/chats/{cid}/attachments', self.a, {'data': base64.b64encode(pdf).decode(), 'name': 'menu.pdf'})
+        self.assertEqual(res.status_code, 200, res.text)
+        [attachment] = res.json()['message']['attachments']
+        self.assertEqual((attachment['mimetype'], attachment['is_image'], attachment['size']), ('application/pdf', False, len(pdf)))
+        got = self.call('GET', f"/chats/{cid}/attachments/{attachment['id']}?thumb=1", self.b)
+        self.assertEqual(got.content, pdf, "pas de miniature pour un fichier : l'original")
+
+    def test_dangerous_and_invalid_files_are_refused(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        svg = b'<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'
+        html = b'<!DOCTYPE html><html><body><script>alert(1)</script></body></html>'
+        for data, name in ((svg, 'joli.svg'), (svg, 'joli.png'), (html, 'page.txt'), (b'texte', 'page.html')):
+            res = self.call('POST', f'/chats/{cid}/attachments', self.a, {'data': base64.b64encode(data).decode(), 'name': name})
+            self.assertEqual(res.status_code, 403, f"{name} accepté")
+        self.assertEqual(self.call('POST', f'/chats/{cid}/attachments', self.a, {'data': 'pas du base64 !'}).status_code, 400)
+        self.assertEqual(self.call('POST', f'/chats/{cid}/attachments', self.a, {'data': ''}).status_code, 403)
+        big = base64.b64encode(b'0' * (15 * 1024 * 1024 + 1)).decode()
+        self.assertEqual(self.call('POST', f'/chats/{cid}/attachments', self.a, {'data': big, 'name': 'gros.bin'}).status_code, 403)
+        broken = b'\xff\xd8\xff\xe0' + b'\x00' * 64  # en-tête JPEG, image illisible
+        self.assertEqual(self.call('POST', f'/chats/{cid}/attachments', self.a,
+                                   {'data': base64.b64encode(broken).decode(), 'name': 'x.jpg'}).status_code, 403)
+        self.assertFalse(self.call('GET', f'/chats/{cid}/messages', self.b).json()['messages'])
+
+    def test_attachments_stay_in_their_conversation(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        res = self.call('POST', f'/chats/{cid}/attachments', self.a,
+                        {'data': base64.b64encode(self._photo_with_gps()).decode(), 'name': 'p.jpg'})
+        attachment_id = res.json()['message']['attachments'][0]['id']
+        self.assertEqual(self.call('GET', f'/chats/{cid}/attachments/{attachment_id}', self.c).status_code, 404, "pas membre")
+        self.assertEqual(self.call('POST', f'/chats/{cid}/attachments', self.c,
+                                   {'data': base64.b64encode(b'%PDF-1.4').decode(), 'name': 'x.pdf'}).status_code, 404)
+        # Une autre conversation de B ne donne pas accès à cette pièce jointe.
+        Connection = self.env['club_social_profile.connection'].sudo()
+        Connection.create({'user_id': self.b.id, 'connected_user_id': self.c.id, 'state': 'accepted'})
+        Connection.create({'user_id': self.c.id, 'connected_user_id': self.b.id, 'state': 'accepted'})
+        other = self.open_chat(self.b, self.c).json()['chat']['id']
+        self.assertEqual(self.call('GET', f'/chats/{other}/attachments/{attachment_id}', self.b).status_code, 404)
+
+    def test_image_sent_from_the_website_is_listed(self):
+        cid = self.open_chat(self.a, self.b).json()['chat']['id']
+        channel = self.env['discuss.channel'].browse(cid)
+        # Comme Discuss sur le site : la pièce jointe est créée par son auteur, puis jointe au message.
+        attachment = self.env['ir.attachment'].with_user(self.b).sudo().create({
+            'name': 'site.png', 'raw': base64.b64decode(
+                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='),
+            'res_model': 'discuss.channel', 'res_id': cid,
+        })
+        # Le site joint l'image par ses jetons d'accès ; ici, directement au message publié.
+        message = channel.with_user(self.b).sudo().message_post(
+            body='', message_type='comment', subtype_xmlid='mail.mt_comment')
+        message.sudo().attachment_ids = [(4, attachment.id)]
+        listed = self.call('GET', f'/chats/{cid}/messages', self.a).json()['messages'][-1]
+        self.assertEqual([(a['name'], a['is_image']) for a in listed['attachments']], [('site.png', True)])
+        self.assertIsNone(listed['voice'])

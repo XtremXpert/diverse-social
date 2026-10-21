@@ -1,14 +1,32 @@
 import datetime
+import io
+import os
+
+from PIL import Image, ImageOps
 
 from odoo import _, api, models
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import html2plaintext, plaintext2html
+from odoo.tools.mimetypes import guess_mimetype
 
 PAGE_SIZE = 50
 MAX_BODY = 4000
 # Message vocal de l'application : AAC dans un conteneur MP4 (.m4a), ~0,25 Mo par minute à 32 kb/s.
 VOICE_MIMETYPE = 'audio/mp4'
 MAX_VOICE_BYTES = 3 * 1024 * 1024
+# Pièce jointe envoyée de l'application (photo, document).
+MAX_FILE_BYTES = 15 * 1024 * 1024
+# Jamais acceptés d'un membre : ouverts dans Discuss sur le site, ils exécuteraient du code chez les
+# autres (le garde-fou SVG d'Odoo ne joue pas ici : l'envoi se fait en sudo).
+FORBIDDEN_MIMETYPES = {
+    'image/svg+xml', 'text/html', 'application/xhtml+xml', 'text/javascript', 'application/javascript',
+    'application/x-javascript', 'text/xml', 'application/xml',
+}
+FORBIDDEN_EXTENSIONS = {'.svg', '.svgz', '.html', '.htm', '.xhtml', '.js', '.mjs', '.xml'}
+# Photos réenregistrées sans métadonnées (EXIF : position GPS exacte, appareil, date).
+CLEANED_IMAGES = {'image/jpeg': 'JPEG', 'image/png': 'PNG', 'image/webp': 'WEBP'}
+MAX_IMAGE_SIDE = 4096
+THUMB_SIDE = 512
 
 
 def iso(value):
@@ -94,8 +112,21 @@ class DiscussChannel(models.Model):
             'date': iso(message.date),
             # Message vocal (de l'application ou de Discuss) : à télécharger par /attachments/<id>.
             'voice': {'attachment_id': voice.id, 'mimetype': voice.mimetype} if voice else None,
-            # Autres pièces jointes (images, fichiers envoyés depuis le site) : pas encore affichées.
+            # Photos et fichiers (de l'application ou du site) : /attachments/<id>, ?thumb=1 pour une image.
+            'attachments': [self._mobile_attachment_payload(a) for a in attachments - voice],
+            # Ancien champ, gardé pour les versions installées de l'application.
             'attachment_count': len(attachments - voice),
+        }
+
+    @api.model
+    def _mobile_attachment_payload(self, attachment):
+        mimetype = attachment.mimetype or 'application/octet-stream'
+        return {
+            'id': attachment.id,
+            'name': attachment.name or '',
+            'mimetype': mimetype,
+            'size': attachment.file_size or 0,
+            'is_image': mimetype.startswith('image/') and mimetype not in FORBIDDEN_MIMETYPES,
         }
 
     def _mobile_messages(self, user, before=None, after=None, limit=PAGE_SIZE):
@@ -150,9 +181,52 @@ class DiscussChannel(models.Model):
             member._mark_as_read(message.id)
         return self._mobile_message(message, user, self.env['club_social_profile.profile'].sudo())
 
-    def _mobile_attachment(self, user, attachment_id):
-        """Pièce jointe d'un message de cette conversation : ``(contenu, type)``. AccessError si
-        l'utilisateur n'en est pas membre ou si la pièce jointe appartient à une autre conversation."""
+    def _mobile_post_file(self, user, name, data, body=None):
+        """Envoie une photo ou un fichier au nom de ``user``, avec une légende facultative. Le type
+        vient du contenu (jamais de l'appareil) ; une photo est réenregistrée sans métadonnées."""
+        channel = self._mobile_check_member(user)
+        if not data:
+            raise UserError(_("Fichier vide."))
+        if len(data) > MAX_FILE_BYTES:
+            raise UserError(_("Fichier trop lourd (%(max)s Mo au plus).", max=MAX_FILE_BYTES // (1024 * 1024)))
+        name = os.path.basename((name or '').strip())[:120] or _("Fichier")
+        mimetype = guess_mimetype(data, default='application/octet-stream')
+        if mimetype in FORBIDDEN_MIMETYPES or os.path.splitext(name)[1].lower() in FORBIDDEN_EXTENSIONS:
+            raise UserError(_("Ce type de fichier n'est pas accepté."))
+        if mimetype in CLEANED_IMAGES:
+            data = self._mobile_clean_image(data, CLEANED_IMAGES[mimetype])
+        body = (body or '').strip()
+        if len(body) > MAX_BODY:
+            raise UserError(_("Message trop long (%(max)s caractères au plus).", max=MAX_BODY))
+        message = channel.with_user(user).sudo().message_post(
+            body=plaintext2html(body) if body else '', message_type='comment', subtype_xmlid='mail.mt_comment',
+            attachments=[(name, data)])
+        message.sudo().attachment_ids.mimetype = mimetype
+        member = channel.channel_member_ids.filtered(lambda m: m.partner_id == user.partner_id)[:1]
+        if member:
+            member._mark_as_read(message.id)
+        return self._mobile_message(message, user, self.env['club_social_profile.profile'].sudo())
+
+    @api.model
+    def _mobile_clean_image(self, data, image_format):
+        """Photo redressée (orientation EXIF), réduite à 4096 px, réenregistrée sans métadonnées."""
+        try:
+            with Image.open(io.BytesIO(data)) as source:
+                image = ImageOps.exif_transpose(source)
+                image.thumbnail((MAX_IMAGE_SIDE, MAX_IMAGE_SIDE))
+                if image_format == 'JPEG' and image.mode not in ('RGB', 'L'):
+                    image = image.convert('RGB')
+                out = io.BytesIO()
+                # Sans « exif=… » ni « pnginfo=… » : aucune métadonnée n'est recopiée.
+                image.save(out, image_format, **({'quality': 90} if image_format in ('JPEG', 'WEBP') else {}))
+                return out.getvalue()
+        except (OSError, ValueError, Image.DecompressionBombError) as e:
+            raise UserError(_("Image illisible.")) from e
+
+    def _mobile_attachment(self, user, attachment_id, thumb=False):
+        """Pièce jointe d'un message de cette conversation : ``(contenu, type)`` ; ``thumb`` : une
+        miniature JPEG de 512 px au plus pour une image. AccessError si l'utilisateur n'en est pas
+        membre ou si la pièce jointe appartient à une autre conversation."""
         channel = self._mobile_check_member(user)
         attachment = self.env['ir.attachment'].sudo().browse(int(attachment_id)).exists()
         message = self.env['mail.message'].sudo().search([
@@ -162,7 +236,18 @@ class DiscussChannel(models.Model):
         if not message or attachment.res_model != 'discuss.channel' or attachment.res_id != channel.id:
             raise AccessError(_("Pièce jointe introuvable."))
         # ``raw`` est un BinaryValue (fichier du filestore) : bytes() en lit le contenu.
-        return bytes(attachment.raw or b''), attachment.mimetype or 'application/octet-stream'
+        data, mimetype = bytes(attachment.raw or b''), attachment.mimetype or 'application/octet-stream'
+        if thumb and mimetype.startswith('image/') and mimetype not in FORBIDDEN_MIMETYPES:
+            try:
+                with Image.open(io.BytesIO(data)) as source:
+                    image = ImageOps.exif_transpose(source)
+                    image.thumbnail((THUMB_SIDE, THUMB_SIDE))
+                    out = io.BytesIO()
+                    image.convert('RGB').save(out, 'JPEG', quality=80)
+                    return out.getvalue(), 'image/jpeg'
+            except (OSError, ValueError, Image.DecompressionBombError):
+                pass  # image illisible : l'original, tel quel
+        return data, mimetype
 
     def _mobile_mark_read(self, user, last_message_id):
         channel = self._mobile_check_member(user)
