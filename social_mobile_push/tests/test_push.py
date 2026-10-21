@@ -6,6 +6,7 @@ import jwt
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
+from odoo import Command
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import HttpCase, new_test_user, tagged
 from odoo.tools import BinaryBytes
@@ -116,6 +117,19 @@ class TestPush(HttpCase):
         claims = jwt.decode(push['jwt'], self.public_key, algorithms=['ES256'])
         self.assertEqual(claims['iss'], 'TEAM123456')
         self.assertEqual(jwt.get_unverified_header(push['jwt'])['kid'], 'KEY1234567')
+
+    def test_group_notifies_but_channel_does_not(self):
+        Channel = self.env['discuss.channel'].sudo()
+        members = [Command.create({'partner_id': u.partner_id.id}) for u in self.a | self.b]
+        group = Channel.create({'name': '', 'channel_type': 'group', 'channel_member_ids': members})
+        group._mobile_post(self.a, "au groupe")
+        self.dispatch()
+        self.assertEqual([p['token'] for p in self.sent], [TOKEN_B])
+        self.sent.clear()
+        channel = Channel.create({'name': 'Bénévoles', 'channel_type': 'channel', 'channel_member_ids': members})
+        channel._mobile_post(self.a, "au canal")
+        self.dispatch()
+        self.assertEqual(self.sent, [], "canal Discuss : lu dans l'application, sans notification")
 
     def test_burst_gives_one_notification(self):
         channel = self.chat()
