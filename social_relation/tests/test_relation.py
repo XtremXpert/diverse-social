@@ -176,3 +176,18 @@ class TestRelation(HttpCase):
         self.assertEqual(self.call('GET', f'/users/{self.a.id}/relations', self.d).json()['relations'][0]['id'], rid)
         # Un non-membre ne peut rien modifier.
         self.assertEqual(self.call('POST', f'/relations/{rid}/invite', self.d, {'user_id': self.d.id}).status_code, 404)
+
+    def test_api_image(self):
+        """Image d'une relation : envoyée en base64, rendue en octets (Odoo 20)."""
+        import base64
+        import io
+        from PIL import Image
+        relation = self._couple(self.a, self.b)
+        buffer = io.BytesIO()
+        Image.new('RGB', (80, 60), (20, 120, 200)).save(buffer, 'JPEG')
+        res = self.call('PATCH', f'/relations/{relation.id}', self.a, {'image_base64': base64.b64encode(buffer.getvalue()).decode()})
+        self.assertEqual(res.status_code, 200, res.text)
+        res = self.call('GET', f'/relations/{relation.id}/image', self.b)
+        self.assertEqual(res.status_code, 200, res.text)
+        with Image.open(io.BytesIO(res.content)) as image:
+            self.assertEqual(image.size, (80, 60))

@@ -1,3 +1,4 @@
+import base64
 import datetime
 import json
 
@@ -238,3 +239,19 @@ class TestNearby(HttpCase):
         self.assertNotIn('meet_spot', next(p for p in self.grid()['people'] if p['user_id'] == sam.id))
         self.call('POST', '/meet', sam, {'active': False})
         self.assertEqual((position.meet_lat, position.meet_lon), (0.0, 0.0))
+
+    def test_member_photo(self):
+        """La photo d'un membre se télécharge telle qu'enregistrée (Odoo 20 : octets bruts)."""
+        import io
+        from PIL import Image
+        other = self._make_member('photo.nearby@example.com')
+        buffer = io.BytesIO()
+        Image.new('RGB', (64, 64), (200, 30, 60)).save(buffer, 'PNG')
+        self.env['club_social_profile.profile'].sudo().search([('user_id', '=', other.id)]).write(
+            {'profile_image': base64.b64encode(buffer.getvalue()).decode()})
+        res = self.call('GET', f'/users/{other.id}/photo', self.viewer)
+        self.assertEqual(res.status_code, 200, res.text)
+        with Image.open(io.BytesIO(res.content)) as image:
+            self.assertEqual(image.size, (64, 64))
+        self.assertTrue(res.headers['Content-Type'].startswith('image/'))
+        self.assertEqual(self.call('GET', f'/users/{self.viewer.id}/photo', other).status_code, 404, "sans photo")

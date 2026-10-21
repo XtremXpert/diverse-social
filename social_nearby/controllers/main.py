@@ -80,5 +80,7 @@ class SocialNearbyApi(http.Controller):
                 or request.env['social_safety.block'].is_blocked(viewer, profile.user_id)
                 or not profile.can_see_detailed_info(viewer)):
             return error(404, 'not_found', "Photo introuvable.")
-        return request.make_response(base64.b64decode(profile.profile_image), headers=[
-            ('Content-Type', 'image/png'), ('Cache-Control', 'private, max-age=300')])
+        # Odoo 20 : un champ image est un BinaryValue (octets bruts), plus du base64.
+        image = profile.profile_image
+        return request.make_response(image.content, headers=[
+            ('Content-Type', image.mimetype or 'image/png'), ('Cache-Control', 'private, max-age=300')])
