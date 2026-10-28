@@ -328,3 +328,47 @@ class SocialMobileApi(http.Controller):
         header = request.httprequest.headers.get('Authorization', '')
         Keys._social_mobile_retire(header.split(' ', 1)[-1].strip())
         return json_response({'key': key, 'expires_at': iso(expiration)})
+
+
+# Niveau d'intérêt FetLife -> kink_level : Into=oui, Curious=curieux, Soft limit=soft.
+_FETLIFE_LEVELS = {'into': 'oui', 'curious': 'curieux', 'curious about': 'curieux',
+                  'soft limit': 'soft', 'expert': 'expert'}
+
+
+class SocialMobileImport(http.Controller):
+    """Import ponctuel des données propres du membre (pont FetLife via extension ou WebView).
+
+    Session web classique (auth='user') : l'usager est connecté sur le site dans son navigateur.
+    """
+
+    @http.route(f'{API}/import/fetlife', auth='user', type='http', methods=['POST'], csrf=False)
+    def import_fetlife(self):
+        body = json_body()
+        if body is None or not isinstance(body.get('kinks', []), list):
+            return error(400, 'invalid', 'Corps attendu : {"kinks": [{"name", "level"}], "fetlife_url"}.')
+        Profile = request.env['club_social_profile.profile'].sudo()
+        profile = Profile.get_or_create_for_user(request.env.user)
+        Kink = request.env['club_social_profile_bdsm.kink'].sudo()
+        Level = request.env['club_social_profile_bdsm.kink_level'].sudo()
+        url = (body.get('fetlife_url') or '').strip()
+        if url.startswith('https://fetlife.com/') and not profile.fetlife_url:
+            profile.fetlife_url = url
+        matched, skipped, unmatched = [], 0, []
+        for item in body['kinks'][:200]:
+            name = str(item.get('name') or '').strip()
+            if not name:
+                continue
+            kink = Kink.search([('name', 'ilike', name)], limit=1)
+            if not kink:
+                unmatched.append(name)
+                continue
+            if kink in profile.kink_level_ids.kink_id:
+                skipped += 1
+                continue
+            Level.create({
+                'profile_id': profile.id,
+                'kink_id': kink.id,
+                'level': _FETLIFE_LEVELS.get(str(item.get('level', '')).lower(), 'curieux'),
+            })
+            matched.append(name)
+        return json_response({'matched': matched, 'skipped': skipped, 'unmatched': unmatched})

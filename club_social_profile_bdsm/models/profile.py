@@ -27,6 +27,7 @@ class ClubSocialProfileBdsm(models.Model):
     soft_limits = fields.Text(string='Soft Limits', help='What you do with prior negotiation')
     hard_limits = fields.Text(string='Hard Limits', help='What you never do')
 
+    fetlife_url = fields.Char("Profil FetLife", help="Lien vers le profil FetLife vérifié du membre.")
     kink_level_ids = fields.One2many(
         'club_social_profile_bdsm.kink_level', 'profile_id', string='Kink Interests',
     )
