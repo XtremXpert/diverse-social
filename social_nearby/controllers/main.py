@@ -79,6 +79,76 @@ class SocialNearbyApi(http.Controller):
         return json_response({'meet_until': iso(until) if until else None, 'meet_spot': spot,
                               'meet_start_at': iso(position.meet_start_at) if position.meet_start_at else None})
 
+    @http.route(f'{API}/meets', methods=['GET'], **ROUTE)
+    def meets_list(self):
+        """Rencontres proposées visibles pour le membre (les siennes et celles de son audience)."""
+        if err := self._member_or_error():
+            return err
+        meets = request.env['social_nearby.meet']._api_list()
+        return json_response({'meets': [dict(m, start_at=iso(m['start_at']), until=iso(m['until']))
+                                      for m in meets]})
+
+    @http.route(f'{API}/meets', methods=['POST'], **ROUTE)
+    def meets_create(self):
+        """Proposer une rencontre : ``{"start": "<ISO>", "hours": 3, "latitude":…, "longitude":…,
+        "audience": "connections"|"nearby"}``."""
+        if err := self._member_or_error():
+            return err
+        body = json_body()
+        if body is None or not body.get('start'):
+            return error(400, 'invalid', 'Corps attendu : {"start": "<ISO>"}.')
+        try:
+            start_at = fields.Datetime.from_string(body['start'])
+        except ValueError:
+            return error(400, 'invalid', 'Date de début invalide (format ISO attendu).')
+        try:
+            meet = request.env['social_nearby.meet']._api_create(
+                start_at, body.get('hours', DEFAULT_MEET_HOURS), body.get('latitude'),
+                body.get('longitude'), body.get('audience', 'connections'))
+        except ValidationError as e:
+            return error(400, 'invalid', str(e))
+        if meet is None:
+            return error(409, 'no_position', 'Partagez votre position pour proposer une rencontre.')
+        return json_response(meet._as_dict() | {'start_at': iso(meet.start_at), 'until': iso(meet.until)})
+
+    @http.route(f'{API}/meets/<int:meet_id>/reply', methods=['POST'], **ROUTE)
+    def meets_reply(self, meet_id):
+        """Demander à rejoindre une rencontre proposée (en attente d'approbation)."""
+        if err := self._member_or_error():
+            return err
+        meet = request.env['social_nearby.meet'].sudo().browse(meet_id)
+        try:
+            reply = request.env['social_nearby.meet.reply']._api_reply(meet)
+        except ValidationError as e:
+            return error(404, 'not_found', str(e))
+        return json_response({'state': reply.state})
+
+    @http.route(f'{API}/meets/<int:meet_id>/cancel', methods=['POST'], **ROUTE)
+    def meets_cancel(self, meet_id):
+        """Annuler sa propre rencontre proposée."""
+        if err := self._member_or_error():
+            return err
+        meet = request.env['social_nearby.meet'].sudo().browse(meet_id)
+        try:
+            meet._api_cancel()
+        except ValidationError as e:
+            return error(403, 'forbidden', str(e))
+        return json_response({'state': meet.state})
+
+    @http.route(f'{API}/meets/replies/<int:reply_id>', methods=['POST'], **ROUTE)
+    def meets_answer(self, reply_id):
+        """Le proposant accepte (``{"accept": true}``) ou refuse une réponse ; accepter confirme
+        la rencontre."""
+        if err := self._member_or_error():
+            return err
+        body = json_body() or {}
+        reply = request.env['social_nearby.meet.reply'].sudo().browse(reply_id)
+        try:
+            reply._api_answer(bool(body.get('accept')))
+        except ValidationError as e:
+            return error(403, 'forbidden', str(e))
+        return json_response({'state': reply.state, 'meet_state': reply.meet_id.state})
+
     @http.route(f'{API}/users/<int:user_id>/photo', methods=['GET'], **ROUTE)
     def user_photo(self, user_id):
         """Photo de profil, seulement si le profil montre ses informations détaillées au demandeur."""
