@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Clubs libertins et donjons du Québec : contacts tagués SAFE ZONE, liés à des
+         social_nearby.safe_zone (positions approximatives au centre-ville — à affiner). -->
+    <data noupdate="1">
+        <record id="partner_category_safe_zone" model="res.partner.category">
+            <field name="name">SAFE ZONE</field>
+        </record>
+
+        <record id="sz_contact_orage" model="res.partner">
+            <field name="name">Club L'Orage</field>
+            <field name="street">6336 boulevard Saint-Laurent</field>
+            <field name="city">Montréal</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_orage" model="social_nearby.safe_zone">
+            <field name="name">Club L'Orage</field>
+            <field name="partner_id" ref="sz_contact_orage"/>
+            <field name="cell_lat">45.5252</field>
+            <field name="cell_lon">-73.5834</field>
+        </record>
+
+        <record id="sz_contact_eudoxia" model="res.partner">
+            <field name="name">Eudoxia</field>
+            <field name="city">Montréal</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_eudoxia" model="social_nearby.safe_zone">
+            <field name="name">Eudoxia</field>
+            <field name="partner_id" ref="sz_contact_eudoxia"/>
+            <field name="cell_lat">45.5267</field>
+            <field name="cell_lon">-73.5878</field>
+        </record>
+
+        <record id="sz_contact_astral" model="res.partner">
+            <field name="name">Dongeon Astral</field>
+            <field name="city">Montréal</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_astral" model="social_nearby.safe_zone">
+            <field name="name">Dongeon Astral</field>
+            <field name="partner_id" ref="sz_contact_astral"/>
+            <field name="cell_lat">45.5321</field>
+            <field name="cell_lon">-73.5902</field>
+        </record>
+
+        <record id="sz_contact_frenchkiss" model="res.partner">
+            <field name="name">Club French Kiss</field>
+            <field name="city">Longueuil</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_frenchkiss" model="social_nearby.safe_zone">
+            <field name="name">Club French Kiss</field>
+            <field name="partner_id" ref="sz_contact_frenchkiss"/>
+            <field name="cell_lat">45.5312</field>
+            <field name="cell_lon">-73.5180</field>
+        </record>
+
+        <record id="sz_contact_entrenous" model="res.partner">
+            <field name="name">Club Entre Nous</field>
+            <field name="city">Laval</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_entrenous" model="social_nearby.safe_zone">
+            <field name="name">Club Entre Nous</field>
+            <field name="partner_id" ref="sz_contact_entrenous"/>
+            <field name="cell_lat">45.6066</field>
+            <field name="cell_lon">-73.7125</field>
+        </record>
+
+        <record id="sz_contact_vertigo" model="res.partner">
+            <field name="name">Le Vertigo</field>
+            <field name="city">Québec</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_vertigo" model="social_nearby.safe_zone">
+            <field name="name">Le Vertigo</field>
+            <field name="partner_id" ref="sz_contact_vertigo"/>
+            <field name="cell_lat">46.8139</field>
+            <field name="cell_lon">-71.2080</field>
+        </record>
+
+        <record id="sz_contact_select" model="res.partner">
+            <field name="name">Club Privé Le Sélect</field>
+            <field name="city">Sorel-Tracy</field>
+            <field name="state_id" ref="base.state_ca_qc"/>
+            <field name="country_id" ref="base.ca"/>
+            <field name="category_id" eval="[(4, ref('partner_category_safe_zone'))]"/>
+        </record>
+        <record id="sz_select" model="social_nearby.safe_zone">
+            <field name="name">Club Privé Le Sélect</field>
+            <field name="partner_id" ref="sz_contact_select"/>
+            <field name="cell_lat">46.0434</field>
+            <field name="cell_lon">-73.1131</field>
+        </record>
+    </data>
+</odoo>
