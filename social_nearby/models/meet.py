@@ -125,7 +125,7 @@ class SocialNearbyMeet(models.Model):
             'attendee_count': len(self._attendees()),
             'mine': self.user_id.id == self.env.uid,
             'replies': [
-                {'user_id': r.user_id.id, 'state': r.state}
+                {'id': r.id, 'user_id': r.user_id.id, 'state': r.state}
                 for r in self.reply_ids if r.user_id.id == self.env.uid or self.user_id.id == self.env.uid
             ],
         }

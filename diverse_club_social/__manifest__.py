@@ -70,6 +70,7 @@
         'web_favicon',
     ],
     'data': [
+        'data/safe_zones.xml',
         'security/ir.access.csv',
         'data/res_config_data.xml',
         'data/ir_cron.xml',
