@@ -10,6 +10,7 @@
         'club_base',
         # Core social primitives
         'social_base',
+        'social_essence',
         'social_feed',
         'social_story',
         'social_gallery',
