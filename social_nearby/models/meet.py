@@ -36,8 +36,8 @@ class SocialNearbyMeet(models.Model):
     reply_ids = fields.One2many('social_nearby.meet.reply', 'meet_id', "Réponses")
     safe_zone_id = fields.Many2one('social_nearby.safe_zone', "Safe Zone", readonly=True,
                                    ondelete='set null')
-    # A meet proposed by a relation (couple): all its accepted members already attend.
-    relation_id = fields.Many2one('social_relation.relation', "Au nom de la relation",
+    # A meet proposed by a relation (couple, trouple, group): all its accepted members already attend.
+    relation_id = fields.Many2one('social_relation.relation', "Au nom de la relation (couple, trouple, groupe)",
                                   readonly=True, ondelete='set null')
 
     @api.model
