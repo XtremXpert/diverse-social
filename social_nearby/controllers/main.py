@@ -1,7 +1,7 @@
 """Grille de proximité dans l'API mobile (/api/social/v1). Contrat : README.md du module."""
 import base64
 
-from odoo import http
+from odoo import fields, http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
@@ -51,7 +51,8 @@ class SocialNearbyApi(http.Controller):
     @http.route(f'{API}/meet', methods=['POST'], **ROUTE)
     def meet(self):
         """Mode « Je veux rencontrer » : ``{"active": true, "hours": 3}`` (1 à 12 heures, 3 par
-        défaut), avec ``"latitude"`` et ``"longitude"`` pour un lieu de rencontre choisi ailleurs ;
+        défaut), ``"start"`` (ISO) pour une date et heure de début planifiées au lieu de maintenant,
+        ``"latitude"`` et ``"longitude"`` pour un lieu de rencontre choisi ailleurs ;
         ``{"active": false}`` pour l'arrêter."""
         if err := self._member_or_error():
             return err
@@ -59,15 +60,24 @@ class SocialNearbyApi(http.Controller):
         if body is None or not isinstance(body.get('active'), bool):
             return error(400, 'invalid', "Corps attendu : {\"active\": true|false, \"hours\": 1–12}.")
         try:
+            start_at = None
+            if body.get('start'):
+                try:
+                    start_at = fields.Datetime.from_string(body['start'])
+                except ValueError:
+                    return error(400, 'invalid', "Date de début invalide (format ISO attendu).")
             until = request.env['social_nearby.position']._api_meet(
-                body['active'], body.get('hours', DEFAULT_MEET_HOURS), body.get('latitude'), body.get('longitude'))
+                body['active'], body.get('hours', DEFAULT_MEET_HOURS), body.get('latitude'),
+                body.get('longitude'), start_at=start_at)
         except ValidationError as e:
             return error(400, 'invalid', str(e))
         if until is None:
             return error(409, 'no_position', "Partagez votre position pour activer ce mode.")
-        spot = request.env['social_nearby.position'].sudo().search(
-            [('user_id', '=', request.env.uid)], limit=1)._meet_spot() if until else None
-        return json_response({'meet_until': iso(until) if until else None, 'meet_spot': spot})
+        position = request.env['social_nearby.position'].sudo().search(
+            [('user_id', '=', request.env.uid)], limit=1)
+        spot = position._meet_spot() if until else None
+        return json_response({'meet_until': iso(until) if until else None, 'meet_spot': spot,
+                              'meet_start_at': iso(position.meet_start_at) if position.meet_start_at else None})
 
     @http.route(f'{API}/users/<int:user_id>/photo', methods=['GET'], **ROUTE)
     def user_photo(self, user_id):
