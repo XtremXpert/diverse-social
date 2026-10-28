@@ -346,6 +346,9 @@ class SocialMobileImport(http.Controller):
         body = json_body()
         if body is None or not isinstance(body.get('kinks', []), list):
             return error(400, 'invalid', 'Corps attendu : {"kinks": [{"name", "level"}], "fetlife_url"}.')
+        # FetLife events fetched by the bridge: v1 counts them only — a proper sync
+        # (suggestions to organizers, RSVP mirror) lands with the events bridge spec.
+        events_received = len(body.get('events', []))
         Profile = request.env['club_social_profile.profile'].sudo()
         profile = Profile.get_or_create_for_user(request.env.user)
         Kink = request.env['club_social_profile_bdsm.kink'].sudo()
@@ -376,4 +379,5 @@ class SocialMobileImport(http.Controller):
                 'level': _FETLIFE_LEVELS.get(str(item.get('level', '')).lower(), 'curieux'),
             })
             matched.append(name)
-        return json_response({'matched': matched, 'skipped': skipped, 'created': created})
+        return json_response({'matched': matched, 'skipped': skipped, 'created': created,
+                              'events_received': events_received})
