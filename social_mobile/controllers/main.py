@@ -358,7 +358,12 @@ class SocialMobileImport(http.Controller):
             name = str(item.get('name') or '').strip()
             if not name:
                 continue
+            # Match in the member's language first, then EN and FR (names are translatable).
             kink = Kink.search([('name', 'ilike', name)], limit=1)
+            for lang in ('en_US', 'fr_FR'):
+                if kink:
+                    break
+                kink = Kink.with_context(lang=lang).search([('name', 'ilike', name)], limit=1)
             if not kink:
                 unmatched.append(name)
                 continue
