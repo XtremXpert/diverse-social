@@ -75,6 +75,8 @@ class SocialNearbyPosition(models.Model):
     seen_at = fields.Datetime(readonly=True, index=True)
     # Mode « Je veux rencontrer » : visible des autres jusqu'à cette échéance.
     meet_until = fields.Datetime("Veut rencontrer jusqu'à", readonly=True)
+    # Date et heure de début choisies pour la rencontre ; vide = visible dès l'activation.
+    meet_start_at = fields.Datetime("Veut rencontrer à partir de", readonly=True)
     # Lieu où le membre veut rencontrer (case de 550 m), s'il en a choisi un autre que sa position.
     meet_lat = fields.Float(digits=(9, 6), readonly=True)
     meet_lon = fields.Float(digits=(9, 6), readonly=True)
@@ -100,7 +102,7 @@ class SocialNearbyPosition(models.Model):
         return position
 
     @api.model
-    def _api_meet(self, active, hours=DEFAULT_MEET_HOURS, latitude=None, longitude=None):
+    def _api_meet(self, active, hours=DEFAULT_MEET_HOURS, latitude=None, longitude=None, start_at=None):
         """Active (pour ``hours`` heures, à compter de maintenant) ou arrête le mode « Je veux
         rencontrer » du membre courant. Retourne l'échéance, ou ``False``. Exige une position.
 
@@ -108,6 +110,10 @@ class SocialNearbyPosition(models.Model):
         trouve ; gardé arrondi à sa case de 550 m, effacé à l'arrêt ou à l'échéance."""
         if active and not (isinstance(hours, int) and not isinstance(hours, bool) and 1 <= hours <= MAX_MEET_HOURS):
             raise ValidationError(_("Durée invalide : de 1 à %s heures.", MAX_MEET_HOURS))
+        if active and start_at is not None:
+            now = fields.Datetime.now()
+            if not (now <= start_at <= now + datetime.timedelta(days=14)):
+                raise ValidationError(_("La date de début doit être entre maintenant et dans 14 jours."))
         position = self.sudo().search([('user_id', '=', self.env.uid)], limit=1)
         if not position:
             return None
@@ -122,8 +128,9 @@ class SocialNearbyPosition(models.Model):
             spot = snap(latitude, longitude)
             if distance_km(position.cell_lat, position.cell_lon, *spot) > MEET_SPOT_MAX_KM:
                 raise ValidationError(_("Le lieu de rencontre doit être à %s km au plus de vous.", MEET_SPOT_MAX_KM))
-        until = fields.Datetime.now() + datetime.timedelta(hours=hours) if active else False
-        position.write({'meet_until': until, 'meet_lat': spot[0], 'meet_lon': spot[1]})
+        start = start_at if (active and start_at) else (fields.Datetime.now() if active else False)
+        until = start + datetime.timedelta(hours=hours) if active else False
+        position.write({'meet_start_at': start, 'meet_until': until, 'meet_lat': spot[0], 'meet_lon': spot[1]})
         return until
 
     def _meet_spot(self):
@@ -134,8 +141,18 @@ class SocialNearbyPosition(models.Model):
         return {'latitude': self.meet_lat, 'longitude': self.meet_lon, 'radius_m': MEET_SPOT_RADIUS_M}
 
     def _meeting(self):
+        """Vrai tant que la fenêtre de rencontre est ouverte (début passé, fin pas atteinte)."""
         self.ensure_one()
-        return bool(self.meet_until and self.meet_until > fields.Datetime.now())
+        now = fields.Datetime.now()
+        return bool(self.meet_until and self.meet_until > now
+                    and (not self.meet_start_at or self.meet_start_at <= now))
+
+    def _meeting_planned(self):
+        """Vrai quand une rencontre est planifiée mais sa fenêtre n'est pas encore ouverte."""
+        self.ensure_one()
+        now = fields.Datetime.now()
+        return bool(self.meet_start_at and self.meet_until
+                    and self.meet_start_at > now and self.meet_until > now)
 
     @api.model
     def _api_forget(self):
@@ -210,7 +227,8 @@ class SocialNearbyPosition(models.Model):
         relations.sort(key=lambda item: item[0])
 
         return {
-            'meet_until': me.meet_until if me._meeting() else None,
+            'meet_until': me.meet_until if me._meeting() or me._meeting_planned() else None,
+            'meet_start_at': me.meet_start_at if me._meeting_planned() else None,
             'meet_spot': me._meet_spot(),
             'people': [self._person_payload(viewer, km, position, profile, me) for km, position, profile in people],
             'relations': [{
