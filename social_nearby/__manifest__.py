@@ -18,6 +18,7 @@
         'social_mobile',
         'social_relation',
         'social_safety',
+        'social_relation',
     ],
     'data': [
         'security/ir.access.csv',

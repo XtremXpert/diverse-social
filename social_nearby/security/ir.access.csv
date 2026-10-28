@@ -3,3 +3,4 @@ access_social_nearby_position_own,Ma position (grille),social_nearby.position,ba
 access_social_nearby_position_own_internal,Ma position (grille),social_nearby.position,base.group_user,rd,"[('user_id', '=', user.id)]"
 access_social_nearby_meet_member,Mes rencontres,social_nearby.meet,base.group_user,c,"[('user_id', '=', user.id)]"
 access_social_nearby_meet_reply_member,Mes réponses,social_nearby.meet.reply,base.group_user,c,"[('user_id', '=', user.id)]"
+access_social_nearby_safe_zone_user,Safe Zones (lecture),social_nearby.safe_zone,base.group_user,r,"[]"

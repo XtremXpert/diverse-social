@@ -34,10 +34,15 @@ class SocialNearbyMeet(models.Model):
         ('nearby', 'Membres à proximité'),
     ], default='connections', required=True)
     reply_ids = fields.One2many('social_nearby.meet.reply', 'meet_id', "Réponses")
+    safe_zone_id = fields.Many2one('social_nearby.safe_zone', "Safe Zone", readonly=True,
+                                   ondelete='set null')
+    # A meet proposed by a relation (couple): all its accepted members already attend.
+    relation_id = fields.Many2one('social_relation.relation', "Au nom de la relation",
+                                  readonly=True, ondelete='set null')
 
     @api.model
     def _api_create(self, start_at, hours=DEFAULT_MEET_HOURS, latitude=None, longitude=None,
-                    audience='connections'):
+                    audience='connections', safe_zone_id=None, relation_id=None):
         """Create a proposed meet for the current member. Returns the record."""
         if not (isinstance(hours, int) and not isinstance(hours, bool) and 1 <= hours <= MAX_MEET_HOURS):
             raise ValidationError(_("Durée invalide : de 1 à %s heures.", MAX_MEET_HOURS))
@@ -50,6 +55,12 @@ class SocialNearbyMeet(models.Model):
             [('user_id', '=', self.env.uid)], limit=1)
         if not position:
             return None
+        relation = None
+        if relation_id:
+            relation = self.env['social_relation.relation'].sudo().browse(relation_id)
+            if self.env.user not in relation.accepted_user_ids:
+                raise ValidationError(_("Vous ne faites pas partie de cette relation."))
+        safe_zone = self.env['social_nearby.safe_zone'].sudo().browse(safe_zone_id) if safe_zone_id else self.env['social_nearby.safe_zone']
         spot = (position.cell_lat, position.cell_lon)
         if latitude is not None or longitude is not None:
             try:
@@ -66,9 +77,11 @@ class SocialNearbyMeet(models.Model):
             'user_id': self.env.uid,
             'start_at': start_at,
             'until': start_at + datetime.timedelta(hours=hours),
-            'cell_lat': spot[0],
-            'cell_lon': spot[1],
+            'cell_lat': safe_zone.cell_lat if safe_zone else spot[0],
+            'cell_lon': safe_zone.cell_lon if safe_zone else spot[1],
             'audience': audience,
+            'safe_zone_id': safe_zone.id or False,
+            'relation_id': relation.id if relation else False,
         })
 
     def _visible_to(self, user):
@@ -106,12 +119,23 @@ class SocialNearbyMeet(models.Model):
             'until': self.until,
             'spot': {'latitude': self.cell_lat, 'longitude': self.cell_lon},
             'audience': self.audience,
+            'safe_zone': {'id': self.safe_zone_id.id, 'name': self.safe_zone_id.name}
+                         if self.safe_zone_id else None,
+            'attendee_user_ids': self._attendees().ids,
+            'attendee_count': len(self._attendees()),
             'mine': self.user_id.id == self.env.uid,
             'replies': [
                 {'user_id': r.user_id.id, 'state': r.state}
                 for r in self.reply_ids if r.user_id.id == self.env.uid or self.user_id.id == self.env.uid
             ],
         }
+
+    def _attendees(self):
+        """Proposer, accepted members of the relation (a couple attends together), and
+        members whose reply was accepted."""
+        self.ensure_one()
+        users = self.user_id | self.relation_id.accepted_user_ids
+        return users | self.reply_ids.filtered(lambda r: r.state == 'accepted').user_id
 
     def _api_cancel(self):
         self.ensure_one()

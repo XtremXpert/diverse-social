@@ -88,6 +88,13 @@ class SocialNearbyApi(http.Controller):
         return json_response({'meets': [dict(m, start_at=iso(m['start_at']), until=iso(m['until']))
                                       for m in meets]})
 
+    @http.route(f'{API}/safe_zones', methods=['GET'], **ROUTE)
+    def safe_zones(self):
+        """Safe Zones actives (lieux physiques de rencontre nommés)."""
+        if err := self._member_or_error():
+            return err
+        return json_response({'safe_zones': request.env['social_nearby.safe_zone']._api_list()})
+
     @http.route(f'{API}/meets', methods=['POST'], **ROUTE)
     def meets_create(self):
         """Proposer une rencontre : ``{"start": "<ISO>", "hours": 3, "latitude":…, "longitude":…,
@@ -104,7 +111,8 @@ class SocialNearbyApi(http.Controller):
         try:
             meet = request.env['social_nearby.meet']._api_create(
                 start_at, body.get('hours', DEFAULT_MEET_HOURS), body.get('latitude'),
-                body.get('longitude'), body.get('audience', 'connections'))
+                body.get('longitude'), body.get('audience', 'connections'),
+                safe_zone_id=body.get('safe_zone_id'), relation_id=body.get('relation_id'))
         except ValidationError as e:
             return error(400, 'invalid', str(e))
         if meet is None:
