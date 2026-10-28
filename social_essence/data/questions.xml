@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Jeu de départ du questionnaire essence. Le catalogue est administrable : le club
+         peut ajouter, reformuler ou retirer des questions sans release. -->
+    <data noupdate="1">
+        <!-- Place sur l'application : léger, posé pendant l'enrôlement -->
+        <record id="q_place_rencontrer" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">10</field>
+            <field name="name">Rencontrer des gens de la communauté</field>
+        </record>
+        <record id="q_place_socialiser" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">20</field>
+            <field name="name">Socialiser, discuter, me faire un réseau</field>
+        </record>
+        <record id="q_place_explorer" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">30</field>
+            <field name="name">Explorer, découvrir sans engagement</field>
+        </record>
+        <record id="q_place_solo" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">40</field>
+            <field name="name">J'y viens en solo</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_place_couple" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">50</field>
+            <field name="name">J'y viens en couple / avec ma relation</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_place_discretion" model="social_essence.question">
+            <field name="section">place</field><field name="sequence">60</field>
+            <field name="name">La discrétion est primordiale pour moi</field>
+        </record>
+
+        <!-- Libertinage : avec qui et comment -->
+        <record id="q_lib_echangisme" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">10</field>
+            <field name="name">Échangisme (échange de partenaires)</field>
+        </record>
+        <record id="q_lib_melangisme" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">20</field>
+            <field name="name">Mélangisme (plaisirs partagés sans échange)</field>
+        </record>
+        <record id="q_lib_trio" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">30</field>
+            <field name="name">Triolisme</field>
+        </record>
+        <record id="q_lib_voyeur" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">40</field>
+            <field name="name">Voyeurisme (regarder)</field>
+        </record>
+        <record id="q_lib_exhib" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">50</field>
+            <field name="name">Exhibitionnisme (être vu·e)</field>
+        </record>
+        <record id="q_lib_gang" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">60</field>
+            <field name="name">Jeu de groupe</field>
+        </record>
+        <record id="q_lib_mmf" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">70</field>
+            <field name="name">Rencontres avec deux hommes ou plus</field>
+        </record>
+        <record id="q_lib_ff" model="social_essence.question">
+            <field name="section">libertinage</field><field name="sequence">80</field>
+            <field name="name">Rencontres entre femmes</field>
+        </record>
+
+        <!-- BDSM : ce qu'on aime + position de plaisir -->
+        <record id="q_bdsm_dom" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">10</field>
+            <field name="name">Dominant·e (prendre le contrôle)</field>
+        </record>
+        <record id="q_bdsm_sub" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">20</field>
+            <field name="name">Soumis·e (céder le contrôle)</field>
+        </record>
+        <record id="q_bdsm_switch" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">30</field>
+            <field name="name">Switch (les deux, selon la personne)</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_bdsm_bondage" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">40</field>
+            <field name="name">Bondage</field>
+        </record>
+        <record id="q_bdsm_impact" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">50</field>
+            <field name="name">Impact play (fessée, fouet…)</field>
+        </record>
+        <record id="q_bdsm_pet" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">60</field>
+            <field name="name">Pet play (puppy, kitten…)</field>
+        </record>
+        <record id="q_bdsm_ddlg" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">70</field>
+            <field name="name">Dynamiques de soin (care, littles)</field>
+        </record>
+        <record id="q_bdsm_wax" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">80</field>
+            <field name="name">Jeu sensoriel (cire, glace, privations)</field>
+        </record>
+        <record id="q_bdsm_humil" model="social_essence.question">
+            <field name="section">bdsm</field><field name="sequence">90</field>
+            <field name="name">Humiliation / dégradation</field>
+        </record>
+
+        <!-- Identité et préférences -->
+        <record id="q_lgbt_het" model="social_essence.question">
+            <field name="section">lgbt</field><field name="sequence">10</field>
+            <field name="name">Attiré·e par les hommes cis</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_lgbt_fem" model="social_essence.question">
+            <field name="section">lgbt</field><field name="sequence">20</field>
+            <field name="name">Attiré·e par les femmes cis</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_lgbt_trans" model="social_essence.question">
+            <field name="section">lgbt</field><field name="sequence">30</field>
+            <field name="name">Attiré·e par les personnes trans / non binaires</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_lgbt_bi" model="social_essence.question">
+            <field name="section">lgbt</field><field name="sequence">40</field>
+            <field name="name">Je m'identifie bi / pansexuel·le</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+        <record id="q_lgbt_queer" model="social_essence.question">
+            <field name="section">lgbt</field><field name="sequence">50</field>
+            <field name="name">Je m'identifie queer / fluide</field>
+            <field name="allow_detail" eval="False"/>
+        </record>
+    </data>
+</odoo>
