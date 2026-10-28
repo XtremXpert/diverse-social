@@ -3,7 +3,8 @@ import datetime
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-from .position import DEFAULT_MEET_HOURS, MAX_MEET_HOURS, MEET_SPOT_MAX_KM, snap
+from .position import (DEFAULT_MEET_HOURS, MAX_MEET_HOURS, MEET_SPOT_MAX_KM,
+                         distance_km, snap)
 
 # How far ahead a proposed meet can be scheduled.
 MAX_MEET_DAYS_AHEAD = 14
