@@ -353,7 +353,7 @@ class SocialMobileImport(http.Controller):
         url = (body.get('fetlife_url') or '').strip()
         if url.startswith('https://fetlife.com/') and not profile.fetlife_url:
             profile.fetlife_url = url
-        matched, skipped, unmatched = [], 0, []
+        matched, skipped, created = [], 0, []
         for item in body['kinks'][:200]:
             name = str(item.get('name') or '').strip()
             if not name:
@@ -365,8 +365,8 @@ class SocialMobileImport(http.Controller):
                     break
                 kink = Kink.with_context(lang=lang).search([('name', 'ilike', name)], limit=1)
             if not kink:
-                unmatched.append(name)
-                continue
+                kink = Kink.create({'name': name, 'imported_fetlife': True})
+                created.append(name)
             if kink in profile.kink_level_ids.kink_id:
                 skipped += 1
                 continue
@@ -376,4 +376,4 @@ class SocialMobileImport(http.Controller):
                 'level': _FETLIFE_LEVELS.get(str(item.get('level', '')).lower(), 'curieux'),
             })
             matched.append(name)
-        return json_response({'matched': matched, 'skipped': skipped, 'unmatched': unmatched})
+        return json_response({'matched': matched, 'skipped': skipped, 'created': created})

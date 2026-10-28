@@ -10,6 +10,8 @@ class ClubSocialKink(models.Model):
     name = fields.Char(required=True, translate=True)
     description = fields.Text()
     active = fields.Boolean(default=True)
+    # Created from a member's FetLife import — flagged so admins can rename or translate it.
+    imported_fetlife = fields.Boolean("Importé de FetLife", default=False, index=True)
     profile_count = fields.Integer(compute='_compute_profile_count', string='Interested Members')
 
     def _compute_profile_count(self):
