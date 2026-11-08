@@ -17,6 +17,7 @@
         'social_group',
         'social_notifications',
         # Discovery & connections
+        'social_nearby',
         'social_circles',
         'social_discovery',
         'social_search',
