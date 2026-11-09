@@ -200,20 +200,33 @@ class ClubMembership(models.Model):
             if rec.end_date and rec.start_date and rec.end_date < rec.start_date:
                 raise ValidationError(_("End date must be after start date."))
 
-    @api.constrains('partner_id', 'state')
+    @api.constrains('partner_id', 'membership_type_id', 'state')
     def _check_unique_active(self):
-        if self.env.context.get('no_check_unique_active'):
-            return
+        """Une seule adhésion active par membre et par type.
+
+        La règle porte sur le couple (membre, type), pas sur le membre seul :
+        c'est exactement la clé que `club_membership_sale` utilise pour refuser
+        un doublon à la confirmation d'une commande (« Avoid duplicate pending
+        memberships for same partner + type + order »). Une contrainte plus
+        large interdisait d'activer un essai et un abonnement régulier achetés
+        ensemble — cas que le module de vente crée volontairement.
+        """
         for rec in self:
             if rec.state == 'active':
                 duplicate = self.search([
                     ('partner_id', '=', rec.partner_id.id),
+                    ('membership_type_id', '=', rec.membership_type_id.id),
                     ('state', '=', 'active'),
                     ('id', '!=', rec.id),
                 ], limit=1)
                 if duplicate:
                     raise ValidationError(
-                        _("Member \"%s\" already has an active membership.", rec.partner_id.name)
+                        _(
+                            "Member \"%(partner)s\" already has an active \"%(type)s\" "
+                            "membership.",
+                            partner=rec.partner_id.name,
+                            type=rec.membership_type_id.name,
+                        )
                     )
 
     # ── Helpers ──────────────────────────────────────────────────────────────

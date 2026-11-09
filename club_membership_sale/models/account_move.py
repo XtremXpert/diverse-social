@@ -1,6 +1,7 @@
 import logging
 
 from odoo import models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -43,7 +44,16 @@ class AccountMove(models.Model):
                     "Membership #%s activated after payment of invoice %s",
                     membership.id, self.name,
                 )
+            except ValidationError as exc:
+                # Cas métier, pas panne : l'adhésion reste en attente et le
+                # message dit pourquoi. Un traceback ici faisait passer un
+                # doublon attendu pour une erreur applicative dans chaque
+                # journal de test.
+                _logger.warning(
+                    "Membership #%s left pending after invoice %s: %s",
+                    membership.id, self.name, exc,
+                )
             except Exception:
                 _logger.exception(
-                    "Error while activating membership #%s", membership.id
+                    "Unexpected error while activating membership #%s", membership.id
                 )
