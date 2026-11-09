@@ -1,6 +1,6 @@
 {
     "name": "Social — Inviter (fiche + courriel)",
-    "version": "20.0.1.0.0",
+    "version": "20.0.1.1.0",
     "category": "Social / Communication",
     "summary": "Inviter à un groupe/cercle depuis une fiche ou par courriel, "
                "avec interception des membres existants",
