@@ -163,8 +163,9 @@ class TestClubMembership(TransactionCase):
     def test_two_active_memberships_keep_access_on_cancel_one(self):
         m1 = self._make_membership(self.partner_alice)
         m1.action_activate()
-        # Manually create a second active (bypass unique constraint for test)
-        m2 = self.Membership.sudo().with_context(no_check_unique_active=True).create({
+        # Deuxième active d'un AUTRE type : permise par la contrainte, qui
+        # porte sur le couple (membre, type) — plus besoin de la contourner.
+        m2 = self.Membership.sudo().create({
             'partner_id': self.partner_alice.id,
             'membership_type_id': self.type_trial.id,
             'state': 'active',
@@ -242,6 +243,21 @@ class TestClubMembership(TransactionCase):
         m2 = self._make_membership(self.partner_alice)
         with self.assertRaises(ValidationError):
             m2.action_activate()
+
+    def test_two_types_active_together(self):
+        """Deux types différents peuvent être actifs en même temps.
+
+        Cas réel : un membre achète un essai et un abonnement régulier dans la
+        même commande. `club_membership_sale` crée volontairement les deux
+        adhésions, et les active ensemble au paiement — la contrainte porte donc
+        sur le couple (membre, type), pas sur le membre seul.
+        """
+        m1 = self._make_membership(self.partner_alice, self.type_regular)
+        m1.action_activate()
+        m2 = self._make_membership(self.partner_alice, self.type_trial)
+        m2.action_activate()
+        self.assertEqual(m1.state, 'active')
+        self.assertEqual(m2.state, 'active')
 
     # ── res.partner computed fields ───────────────────────────────────────────
 
