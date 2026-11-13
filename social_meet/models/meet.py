@@ -254,9 +254,12 @@ class SocialMeet(models.Model):
             audience = audience or 'nearby'
         else:
             if isinstance(date_start, str):
+                # L'app envoie de l'ISO 8601 (« 2026-11-20T20:00:00Z ») ; Odoo stocke du
+                # naïf UTC. fields.Datetime.to_datetime refuse le T et le fuseau.
+                raw = date_start.strip().replace('Z', '+00:00')
                 try:
-                    start = fields.Datetime.to_datetime(date_start)
-                except (TypeError, ValueError):
+                    start = datetime.datetime.fromisoformat(raw)
+                except ValueError:
                     raise ValidationError(_("Date de début invalide (format ISO attendu)."))
                 if start.tzinfo:
                     start = start.astimezone(datetime.timezone.utc).replace(tzinfo=None)

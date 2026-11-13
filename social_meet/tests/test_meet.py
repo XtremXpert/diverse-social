@@ -175,3 +175,13 @@ class TestSocialMeet(TransactionCase):
         meet.invalidate_recordset()
         self.env['social_meet.meet']._cron_expire()
         self.assertFalse(channel.active)
+
+    def test_api_create_accepts_iso_string(self):
+        # _api_create exige une position partagée (il borne aussi le lieu choisi).
+        self.env['social_nearby.position'].sudo().create({
+            'user_id': self.host.id, 'cell_lat': 45.5019, 'cell_lon': -73.5674})
+        start = (fields.Datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        meet = self.env['social_meet.meet'].with_user(self.host).sudo()._api_create(
+            start, hours=3, kind='planned', audience='connections')
+        self.assertEqual(meet.kind, 'planned')
+        self.assertTrue(meet.date_start)
