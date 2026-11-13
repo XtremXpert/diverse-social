@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_social_meet_user,social_meet.meet user,model_social_meet_meet,social_base.group_social_user,1,1,1,0
+access_social_meet_participant_user,social_meet.participant user,model_social_meet_participant,social_base.group_social_user,1,1,1,0
