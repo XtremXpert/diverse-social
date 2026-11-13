@@ -132,3 +132,19 @@ class SocialMeetApi(http.Controller):
             return error(403, 'forbidden', "Seul l'hôte annule la rencontre.")
         meet.action_cancel()
         return json_response(self._payload(meet))
+
+    @http.route(f'{API}/meets/<int:meet_id>/publish', methods=['POST'], **ROUTE)
+    def meets_publish(self, meet_id, **_kw):
+        """Créer l'événement Odoo qui porte une rencontre planifiée (brouillon)."""
+        if err := self._member_or_error():
+            return err
+        meet = self._visible_meet(meet_id)
+        if meet is None:
+            return error(404, 'not_found', "Rencontre introuvable.")
+        if meet.host_user_id != request.env.user:
+            return error(403, 'forbidden', "Seul l'hôte publie la rencontre.")
+        try:
+            meet._api_publish()
+        except ValidationError as exc:
+            return error(400, 'invalid', str(exc))
+        return json_response(self._payload(meet))

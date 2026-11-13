@@ -61,9 +61,11 @@ class SocialMeet(models.Model):
         ('nearby', 'Membres à proximité'),
         ('connections', 'Mes connexions'),
         ('circles', 'Un de mes cercles'),
+        ('members', 'Tous les membres'),
         ('invited', 'Invités seulement'),
     ], default='nearby', required=True,
-        help="« À proximité » demande que le membre partage sa zone.")
+        help="« À proximité » demande que le membre partage sa zone ; « Tous les membres » est réservé "
+             "aux activités ouvertes (organisateur validé).")
     seats_max = fields.Integer(
         "Places", default=0,
         help="0 = sans limite. L'hôte compte comme participant.")
@@ -152,6 +154,8 @@ class SocialMeet(models.Model):
             circles = self.env['social_circles.circle'].sudo().search(
                 [('member_ids', 'in', self.host_user_id.id)])
             return any(user in circle.member_ids for circle in circles)
+        if self.audience == 'members':
+            return user.has_group('social_base.group_social_user')
         # nearby : il faut partager sa zone, comme pour la grille.
         return bool(self.env['social_nearby.position'].sudo().search_count(
             [('user_id', '=', user.id)]))
@@ -314,6 +318,49 @@ class SocialMeet(models.Model):
         for meet in self:
             meet.write({'state': 'cancelled'})
         return True
+
+    # ── Enrobage event.event (rencontre planifiée) ───────────────────────────
+
+    def _event_name(self):
+        self.ensure_one()
+        if self.safe_zone_id:
+            return self.safe_zone_id.name
+        if self.relation_id:
+            return _("Rencontre — %(relation)s", relation=self.relation_id.name)
+        return _("Rencontre")
+
+    def _api_publish(self):
+        """Crée l'événement Odoo qui porte la rencontre planifiée (idempotent).
+
+        L'événement reste en brouillon : la page web et la billetterie sont gérées
+        par le portail d'événements, la visibilité de la rencontre restant tenue
+        par ``social_meet``.
+        """
+        self.ensure_one()
+        if self.kind != 'planned':
+            raise ValidationError(_(
+                "Seule une rencontre planifiée se publie en événement."))
+        if self.event_id:
+            return self.event_id
+        Event = self.env['event.event'].sudo()
+        values = {
+            'name': self._event_name(),
+            'date_begin': self.date_start,
+            'date_end': self.date_end,
+            'user_id': self.host_user_id.id,
+            'organizer_id': self.host_user_id.partner_id.id,
+        }
+        if self.seats_max:
+            values['seats_max'] = self.seats_max
+        if 'website_published' in Event._fields:
+            values['website_published'] = False
+        if 'organizer_user_id' in Event._fields:
+            values['organizer_user_id'] = self.host_user_id.id
+        if 'social_visibility' in Event._fields and self.audience == 'members':
+            values['social_visibility'] = 'members'
+        event = Event.create(values)
+        self.write({'event_id': event.id})
+        return event
 
     @api.model
     def _cron_expire(self):

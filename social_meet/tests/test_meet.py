@@ -130,3 +130,21 @@ class TestSocialMeet(TransactionCase):
         self.assertEqual(data['participant_count'], 1)
         self.assertEqual(len(data['participants']), 1)
         self.assertIsNone(data['event_id'])
+
+    def test_publish_creates_event(self):
+        start = fields.Datetime.now() + datetime.timedelta(days=3)
+        meet = self._create_meet(
+            kind='planned', date_start=start,
+            date_end=start + datetime.timedelta(hours=3),
+            audience='members', seats_max=6)
+        event = meet._api_publish()
+        self.assertEqual(meet.event_id, event)
+        self.assertEqual(event.date_begin, meet.date_start)
+        self.assertEqual(event.seats_max, 6)
+        # idempotent : publier deux fois ne crée pas un second événement
+        self.assertEqual(meet._api_publish(), event)
+
+    def test_publish_refuses_now_meet(self):
+        meet = self._create_meet()
+        with self.assertRaises(ValidationError):
+            meet._api_publish()
