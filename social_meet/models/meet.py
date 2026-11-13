@@ -280,6 +280,7 @@ class SocialMeet(models.Model):
         })
         self.env['social_meet.participant'].sudo().create({
             'meet_id': meet.id, 'user_id': self.env.uid, 'role': 'host'})
+        meet._create_channel()
         meet._sync_full_state()
         return meet
 
@@ -299,6 +300,7 @@ class SocialMeet(models.Model):
         else:
             participant = self.env['social_meet.participant'].sudo().create({
                 'meet_id': self.id, 'user_id': user.id, 'role': 'guest'})
+        self._channel_add(user)
         self._sync_full_state()
         return participant
 
@@ -311,15 +313,46 @@ class SocialMeet(models.Model):
         participant = self.participant_ids.filtered(lambda p: p.user_id == user)
         if participant:
             participant.sudo().write({'state': 'left'})
+            self._channel_remove(user)
             self._sync_full_state()
         return participant
 
     def action_cancel(self):
         for meet in self:
             meet.write({'state': 'cancelled'})
+        self._channel_close()
         return True
 
     # ── Enrobage event.event (rencontre planifiée) ───────────────────────────
+
+    def _create_channel(self):
+        """Crée (une fois) le fil de discussion de la rencontre, hôte inclus."""
+        self.ensure_one()
+        if self.channel_id:
+            return self.channel_id
+        channel = self.env['discuss.channel'].sudo().create({
+            'name': self._event_name(),
+            'channel_type': 'group',
+        })
+        channel._add_members(users=self.host_user_id, post_joined_message=False)
+        self.write({'channel_id': channel.id})
+        return channel
+
+    def _channel_add(self, user):
+        self.ensure_one()
+        if self.channel_id:
+            self.channel_id._add_members(users=user, post_joined_message=False)
+
+    def _channel_remove(self, user):
+        self.ensure_one()
+        member = self.channel_id.channel_member_ids.filtered(
+            lambda m: m.partner_id == user.partner_id)
+        member.sudo().unlink()
+
+    def _channel_close(self):
+        for meet in self:
+            if meet.channel_id:
+                meet.channel_id.sudo().active = False
 
     def _event_name(self):
         self.ensure_one()
@@ -371,6 +404,7 @@ class SocialMeet(models.Model):
             ('state', 'in', ('open', 'full')),
         ])
         expired.write({'state': 'expired'})
+        expired._channel_close()
         return len(expired)
 
 

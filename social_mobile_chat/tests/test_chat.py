@@ -1,9 +1,10 @@
 import base64
+import datetime
 import json
 
 from odoo.tools.misc import file_open
 
-from odoo import Command
+from odoo import Command, fields
 from odoo.tests import HttpCase, new_test_user, tagged
 
 API = '/api/social/v1'
@@ -295,3 +296,20 @@ class TestMobileChat(HttpCase):
         listed = self.call('GET', f'/chats/{cid}/messages', self.a).json()['messages'][-1]
         self.assertEqual([(a['name'], a['is_image']) for a in listed['attachments']], [('site.png', True)])
         self.assertIsNone(listed['voice'])
+
+    def test_meet_channel_kind(self):
+        """Un canal de rencontre est exposé avec kind « meet » (si social_meet est installé)."""
+        if 'social_meet.meet' not in self.env:
+            self.skipTest("social_meet absent de cette base de test")
+        now = fields.Datetime.now()
+        meet = self.env['social_meet.meet'].sudo().create({
+            'kind': 'now',
+            'host_user_id': self.a.id,
+            'date_start': now,
+            'date_end': now + datetime.timedelta(hours=3),
+            'audience': 'members',
+        })
+        channel = meet._create_channel()
+        payload = channel._mobile_payload(self.a)
+        self.assertEqual(payload['kind'], 'meet')
+        self.assertEqual(payload['title'], meet._event_name())

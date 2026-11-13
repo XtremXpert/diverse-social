@@ -70,6 +70,12 @@ class DiscussChannel(models.Model):
     def _mobile_relation(self):
         return self.env['social_relation.relation'].sudo().search([('channel_id', '=', self.id)], limit=1)
 
+    def _mobile_meet(self):
+        """Rencontre portée par ce canal, si le module social_meet est installé."""
+        if 'social_meet.meet' not in self.env:
+            return self.env['discuss.channel']
+        return self.env['social_meet.meet'].sudo().search([('channel_id', '=', self.id)], limit=1)
+
     def _mobile_payload(self, user):
         """Résumé d'une conversation pour la liste : titre, dernier message, non-lus."""
         channel = self._mobile_check_member(user)
@@ -98,6 +104,13 @@ class DiscussChannel(models.Model):
                 'title': relation.name or channel.name,
                 'other_user_id': None,
                 'relation_id': relation.id,
+            })
+        elif meet := channel._mobile_meet():
+            payload.update({
+                'kind': 'meet',
+                'title': meet._event_name() or channel.name,
+                'other_user_id': None,
+                'relation_id': None,
             })
         else:
             # Groupe ou canal Discuss : son nom, sinon les pseudonymes des autres membres.

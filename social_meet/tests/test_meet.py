@@ -148,3 +148,30 @@ class TestSocialMeet(TransactionCase):
         meet = self._create_meet()
         with self.assertRaises(ValidationError):
             meet._api_publish()
+
+    def test_channel_created_once(self):
+        meet = self._create_meet()
+        channel = meet._create_channel()
+        self.assertEqual(meet.channel_id, channel)
+        self.assertIn(self.host.partner_id, channel.channel_member_ids.partner_id)
+        self.assertEqual(meet._create_channel(), channel)
+
+    def test_join_and_leave_move_channel_members(self):
+        meet = self._create_meet()
+        meet._create_channel()
+        self._invite(meet, self.guest)
+        meet._api_join(self.guest)
+        self.assertIn(self.guest.partner_id, meet.channel_id.channel_member_ids.partner_id)
+        meet._api_leave(self.guest)
+        self.assertNotIn(self.guest.partner_id, meet.channel_id.channel_member_ids.partner_id)
+
+    def test_expire_archives_channel(self):
+        meet = self._create_meet()
+        channel = meet._create_channel()
+        past = fields.Datetime.now() - datetime.timedelta(hours=4)
+        self.env.cr.execute(
+            "UPDATE social_meet_meet SET date_start = %s, date_end = %s WHERE id = %s",
+            (past, past + datetime.timedelta(hours=3), meet.id))
+        meet.invalidate_recordset()
+        self.env['social_meet.meet']._cron_expire()
+        self.assertFalse(channel.active)
