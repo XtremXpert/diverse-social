@@ -109,3 +109,24 @@ class TestSocialMeet(TransactionCase):
             'meet_id': meet.id, 'user_id': self.host.id, 'role': 'host'})
         with self.assertRaises(ValidationError):
             meet._api_leave(self.host)
+
+    def test_api_list_only_visible(self):
+        meet = self._create_meet()  # audience « invités »
+        self._invite(meet, self.guest)
+        self.assertIn(meet, self.env['social_meet.meet']._api_list(self.host))
+        self.assertIn(meet, self.env['social_meet.meet']._api_list(self.guest))
+        stranger = self.env['res.users'].create({
+            'name': 'Étranger', 'login': 'stranger_meet@example.com'})
+        self.assertNotIn(meet, self.env['social_meet.meet']._api_list(stranger))
+
+    def test_as_dict_flags(self):
+        meet = self._create_meet()
+        self.env['social_meet.participant'].sudo().create({
+            'meet_id': meet.id, 'user_id': self.host.id, 'role': 'host'})
+        data = meet._as_dict(self.host)
+        self.assertEqual(data['kind'], 'now')
+        self.assertTrue(data['is_host'])
+        self.assertTrue(data['joined'])
+        self.assertEqual(data['participant_count'], 1)
+        self.assertEqual(len(data['participants']), 1)
+        self.assertIsNone(data['event_id'])

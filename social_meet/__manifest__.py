@@ -23,6 +23,7 @@ Contrat : ``docs/spec-rencontres.md`` du dépôt diverse-odoo.
     'depends': [
         'mail',
         'event',
+        'social_mobile',
         'social_base',
         'social_circles',
         'social_safety',

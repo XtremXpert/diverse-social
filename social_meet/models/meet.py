@@ -160,6 +160,51 @@ class SocialMeet(models.Model):
         self.ensure_one()
         return self.participant_ids.filtered(lambda p: p.state == 'joined')
 
+    def _as_dict(self, user=None):
+        """Représentation API d'une rencontre (dates converties par le contrôleur)."""
+        self.ensure_one()
+        user = user or self.env.user
+        self_participant = self.participant_ids.filtered(lambda p: p.user_id == user)
+        return {
+            'id': self.id,
+            'kind': self.kind,
+            'state': self.state,
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+            'audience': self.audience,
+            'seats_max': self.seats_max,
+            'participant_count': self.participant_count,
+            'is_host': self.host_user_id == user,
+            'joined': bool(self_participant.filtered(lambda p: p.state == 'joined')),
+            'host': {'id': self.host_user_id.id, 'name': self.host_user_id.name},
+            'relation': ({'id': self.relation_id.id, 'name': self.relation_id.name}
+                         if self.relation_id else None),
+            'safe_zone': ({'id': self.safe_zone_id.id, 'name': self.safe_zone_id.name}
+                          if self.safe_zone_id else None),
+            'cell': ({'latitude': self.cell_lat, 'longitude': self.cell_lon}
+                     if (self.cell_lat or self.cell_lon) else None),
+            'participants': [{
+                'user_id': p.user_id.id,
+                'name': p.user_id.name,
+                'role': p.role,
+                'is_self': p.user_id == user,
+            } for p in self.participant_ids if p.state == 'joined'],
+            'event_id': self.event_id.id or None,
+            'channel_id': self.channel_id.id or None,
+        }
+
+    @api.model
+    def _api_list(self, user=None):
+        """Rencontres visibles par ``user`` : ouvertes, non terminées, accessibles."""
+        user = user or self.env.user
+        now = fields.Datetime.now()
+        meets = self.sudo().search([
+            ('state', 'in', ('open', 'full')),
+            ('date_end', '>', now),
+        ])
+        return meets.filtered(
+            lambda m: m.host_user_id == user or m._check_social_access(user))
+
     def _sync_full_state(self):
         for meet in self:
             if meet.state in ('cancelled', 'expired'):
@@ -204,7 +249,17 @@ class SocialMeet(models.Model):
             start = now
             audience = audience or 'nearby'
         else:
-            start = fields.Datetime.from_string(date_start) if isinstance(date_start, str) else date_start
+            if isinstance(date_start, str):
+                try:
+                    start = fields.Datetime.to_datetime(date_start)
+                except (TypeError, ValueError):
+                    raise ValidationError(_("Date de début invalide (format ISO attendu)."))
+                if start.tzinfo:
+                    start = start.astimezone(datetime.timezone.utc).replace(tzinfo=None)
+            else:
+                start = date_start
+            if not start:
+                raise ValidationError(_("Une rencontre planifiée demande une date de début."))
             audience = audience or 'connections'
 
         meet = self.sudo().create({
