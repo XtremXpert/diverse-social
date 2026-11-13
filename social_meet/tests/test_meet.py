@@ -61,10 +61,11 @@ class TestSocialMeet(TransactionCase):
             date_end=start + datetime.timedelta(hours=3),
             audience='connections')
         self.assertEqual(meet.kind, 'planned')
+        past = fields.Datetime.now() - datetime.timedelta(days=2)
         with self.assertRaises(ValidationError):
             self._create_meet(
-                kind='planned', date_start=start,
-                date_end=start - datetime.timedelta(hours=1),
+                kind='planned', date_start=past,
+                date_end=past + datetime.timedelta(hours=3),
                 audience='connections')
 
     def test_join_and_leave(self):
@@ -92,9 +93,12 @@ class TestSocialMeet(TransactionCase):
 
     def test_cron_expires_past_window(self):
         meet = self._create_meet()
+        past = fields.Datetime.now() - datetime.timedelta(hours=4)
+        # Fenêtre entièrement passée, mais cohérente (fin après début) : la
+        # contrainte SQL date_order reste satisfaite.
         self.env.cr.execute(
-            "UPDATE social_meet_meet SET date_end = %s WHERE id = %s",
-            (fields.Datetime.now() - datetime.timedelta(hours=1), meet.id))
+            "UPDATE social_meet_meet SET date_start = %s, date_end = %s WHERE id = %s",
+            (past, past + datetime.timedelta(hours=3), meet.id))
         meet.invalidate_recordset()
         self.env['social_meet.meet']._cron_expire()
         self.assertEqual(meet.state, 'expired')

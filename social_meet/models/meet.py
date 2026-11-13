@@ -230,14 +230,14 @@ class SocialMeet(models.Model):
         if not self._check_social_access(user):
             raise ValidationError(_("Rencontre introuvable."))
         participant = self.participant_ids.filtered(lambda p: p.user_id == user)
+        if participant and participant.state == 'joined':
+            return participant
+        # La limite de places vaut aussi pour un membre qui revient (left -> joined).
+        if self.seats_max and len(self._joined_participants()) >= self.seats_max:
+            raise ValidationError(_("Cette rencontre est complète."))
         if participant:
-            if participant.state == 'joined':
-                return participant
             participant.sudo().write({'state': 'joined'})
         else:
-            joined = self._joined_participants()
-            if self.seats_max and len(joined) >= self.seats_max:
-                raise ValidationError(_("Cette rencontre est complète."))
             participant = self.env['social_meet.participant'].sudo().create({
                 'meet_id': self.id, 'user_id': user.id, 'role': 'guest'})
         self._sync_full_state()
